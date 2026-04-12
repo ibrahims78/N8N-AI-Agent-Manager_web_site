@@ -95,7 +95,7 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
   const requiresOnboarding = user.role === "admin" && !user.onboardingComplete;
@@ -152,7 +152,7 @@ router.post("/refresh", async (req: Request, res: Response): Promise<void> => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     res.json({ success: true, data: { accessToken: newAccessToken } });

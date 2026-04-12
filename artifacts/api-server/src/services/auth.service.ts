@@ -23,8 +23,8 @@ function getRefreshSecret(): string {
   return `refresh_${secret}`;
 }
 
-const ACCESS_TOKEN_EXPIRY = "15m";
-const REFRESH_TOKEN_EXPIRY = "7d";
+const ACCESS_TOKEN_EXPIRY = "8h";
+const REFRESH_TOKEN_EXPIRY = "30d";
 
 export interface TokenPayload {
   userId: number;

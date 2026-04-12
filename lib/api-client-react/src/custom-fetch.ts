@@ -17,6 +17,13 @@ const DEFAULT_JSON_ACCEPT = "application/json, application/problem+json";
 
 let _baseUrl: string | null = null;
 let _authTokenGetter: AuthTokenGetter | null = null;
+let _tokenRefreshCallback: (() => Promise<string | null>) | null = null;
+let _isRefreshing = false;
+let _refreshQueue: Array<(token: string | null) => void> = [];
+
+export function setTokenRefreshCallback(cb: (() => Promise<string | null>) | null): void {
+  _tokenRefreshCallback = cb;
+}
 
 /**
  * Set a base URL that is prepended to every relative request URL
@@ -360,7 +367,36 @@ export async function customFetch<T = unknown>(
 
   const requestInfo = { method, url: resolveUrl(input) };
 
-  const response = await fetch(input, { ...init, method, headers });
+  const response = await fetch(input, { ...init, method, headers, credentials: "include" });
+
+  if (response.status === 401 && _tokenRefreshCallback) {
+    let newToken: string | null = null;
+
+    if (_isRefreshing) {
+      newToken = await new Promise<string | null>((resolve) => {
+        _refreshQueue.push(resolve);
+      });
+    } else {
+      _isRefreshing = true;
+      try {
+        newToken = await _tokenRefreshCallback();
+        _refreshQueue.forEach((resolve) => resolve(newToken));
+        _refreshQueue = [];
+      } finally {
+        _isRefreshing = false;
+      }
+    }
+
+    if (newToken) {
+      headers.set("authorization", `Bearer ${newToken}`);
+      const retryResponse = await fetch(input, { ...init, method, headers, credentials: "include" });
+      if (!retryResponse.ok) {
+        const errorData = await parseErrorBody(retryResponse, method);
+        throw new ApiError(retryResponse, errorData, requestInfo);
+      }
+      return (await parseSuccessBody(retryResponse, responseType, requestInfo)) as T;
+    }
+  }
 
   if (!response.ok) {
     const errorData = await parseErrorBody(response, method);
