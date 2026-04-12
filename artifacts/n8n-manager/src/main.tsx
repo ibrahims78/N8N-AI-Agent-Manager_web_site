@@ -4,8 +4,10 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
-const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
-setBaseUrl(`${BASE_URL}/api`);
+// The generated API client paths already include /api/v1/ prefix.
+// The Vite proxy rewrites /api/v1/ → /api/ for the Express server.
+// Do NOT set a baseUrl — it would double-prefix the paths.
+setBaseUrl(null);
 
 setAuthTokenGetter(() => {
   try {
