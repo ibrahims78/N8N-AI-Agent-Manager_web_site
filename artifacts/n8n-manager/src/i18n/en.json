@@ -20,7 +20,8 @@
     "loading": "Loading...",
     "error": "An error occurred",
     "success": "Operation successful",
-    "noData": "No data available"
+    "noData": "No data available",
+    "expand": "Expand Sidebar"
   },
   "auth": {
     "login": "Login",

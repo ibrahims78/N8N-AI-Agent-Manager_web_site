@@ -81,12 +81,15 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </motion.div>
             )}
           </AnimatePresence>
-          {sidebarCollapsed && (
-            <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center mx-auto">
+          {sidebarCollapsed ? (
+            <button
+              onClick={() => setSidebarCollapsed(false)}
+              className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center mx-auto hover:bg-accent/80 transition-colors"
+              title={t("app.expand")}
+            >
               <span className="text-white text-xs font-bold">N8</span>
-            </div>
-          )}
-          {!sidebarCollapsed && (
+            </button>
+          ) : (
             <button
               onClick={() => setSidebarCollapsed(true)}
               className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"

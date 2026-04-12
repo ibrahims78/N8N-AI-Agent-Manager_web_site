@@ -10,9 +10,11 @@ interface AppState {
   language: Language;
   theme: Theme;
   chatMode: ChatMode;
+  sidebarCollapsed: boolean;
   toggleLanguage: () => void;
   toggleTheme: () => void;
   setChatMode: (mode: ChatMode) => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -21,6 +23,8 @@ export const useAppStore = create<AppState>()(
       language: 'ar',
       theme: 'light',
       chatMode: 'beginner',
+      sidebarCollapsed: false,
+      setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
       toggleLanguage: () =>
         set((state) => {
           const newLang = state.language === 'ar' ? 'en' : 'ar';
