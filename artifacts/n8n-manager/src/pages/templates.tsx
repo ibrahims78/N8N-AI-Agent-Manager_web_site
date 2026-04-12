@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import {
   Search, Star, Eye, ArrowRight, Zap, X, Plus,
   Download, Globe, BookMarked, ChevronLeft, ChevronRight,
-  Loader2, User, BarChart2,
+  Loader2, User, BarChart2, Languages,
 } from "lucide-react";
 import { useGetTemplates, useUseTemplate, getGetTemplatesQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -35,8 +35,24 @@ interface N8nTemplate {
   createdAt: string | null;
 }
 
+interface TranslatedContent {
+  name: string;
+  description: string;
+}
+
 const LOCAL_CATEGORIES = ["all", "email", "reports", "api", "scheduling", "alerts", "database"];
 const N8N_CATEGORIES = ["all", "Marketing", "Sales", "Engineering", "IT Ops", "HR", "Finance", "Design", "Other"];
+
+async function translateToArabic(text: string): Promise<string> {
+  if (!text.trim()) return text;
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|ar`;
+  const res = await fetch(url);
+  const data = await res.json() as { responseData?: { translatedText?: string }; responseStatus?: number };
+  if (data.responseStatus === 200 && data.responseData?.translatedText) {
+    return data.responseData.translatedText;
+  }
+  throw new Error("Translation failed");
+}
 
 function StarRating({
   templateId, currentRating, ratingCount, isRTL, onRated,
@@ -115,6 +131,11 @@ export default function TemplatesPage() {
   const [importedIds, setImportedIds] = useState<Set<number>>(new Set());
   const [n8nPreview, setN8nPreview] = useState<N8nTemplate | null>(null);
 
+  const [translatedLocal, setTranslatedLocal] = useState<Record<number, TranslatedContent>>({});
+  const [translatingLocalId, setTranslatingLocalId] = useState<number | null>(null);
+  const [translatedN8n, setTranslatedN8n] = useState<Record<number, TranslatedContent>>({});
+  const [translatingN8nId, setTranslatingN8nId] = useState<number | null>(null);
+
   const N8N_ROWS = 18;
   const n8nTotalPages = Math.ceil(n8nTotal / N8N_ROWS);
 
@@ -129,14 +150,14 @@ export default function TemplatesPage() {
   } as Parameters<typeof useUseTemplate>[0]);
 
   const rawTemplates = ((res as { data?: { templates?: unknown[] } } | undefined)?.data?.templates ?? []) as LocalTemplate[];
-  const templates = rawTemplates.map(t => ({
-    ...t,
-    avgRating: localRatings[t.id]?.avgRating ?? (t.avgRating ?? 0),
-    ratingCount: localRatings[t.id]?.ratingCount ?? (t.ratingCount ?? 0),
+  const templates = rawTemplates.map(tmpl => ({
+    ...tmpl,
+    avgRating: localRatings[tmpl.id]?.avgRating ?? (tmpl.avgRating ?? 0),
+    ratingCount: localRatings[tmpl.id]?.ratingCount ?? (tmpl.ratingCount ?? 0),
   }));
-  const filtered = templates.filter(t => {
-    const matchSearch = !localSearch || t.name.toLowerCase().includes(localSearch.toLowerCase()) || t.description.toLowerCase().includes(localSearch.toLowerCase());
-    const matchCat = localCategory === "all" || t.category === localCategory;
+  const filtered = templates.filter(tmpl => {
+    const matchSearch = !localSearch || tmpl.name.toLowerCase().includes(localSearch.toLowerCase()) || tmpl.description.toLowerCase().includes(localSearch.toLowerCase());
+    const matchCat = localCategory === "all" || tmpl.category === localCategory;
     return matchSearch && matchCat;
   });
   const mostUsed = templates.slice().sort((a, b) => b.usageCount - a.usageCount).slice(0, 3);
@@ -165,7 +186,7 @@ export default function TemplatesPage() {
     } finally {
       setN8nLoading(false);
     }
-  }, [n8nSearch, n8nCategory, n8nPage, isRTL]);
+  }, [n8nSearch, n8nCategory, n8nPage, isRTL, authHeader]);
 
   useEffect(() => {
     if (tab === "n8n") fetchN8n();
@@ -194,6 +215,44 @@ export default function TemplatesPage() {
     }
   };
 
+  const handleTranslateLocal = async (template: LocalTemplate) => {
+    if (translatedLocal[template.id]) {
+      setTranslatedLocal(p => { const n = { ...p }; delete n[template.id]; return n; });
+      return;
+    }
+    setTranslatingLocalId(template.id);
+    try {
+      const [name, description] = await Promise.all([
+        translateToArabic(template.name),
+        translateToArabic(template.description),
+      ]);
+      setTranslatedLocal(p => ({ ...p, [template.id]: { name, description } }));
+    } catch {
+      toast({ title: "فشل الترجمة", variant: "destructive" });
+    } finally {
+      setTranslatingLocalId(null);
+    }
+  };
+
+  const handleTranslateN8n = async (template: N8nTemplate) => {
+    if (translatedN8n[template.id]) {
+      setTranslatedN8n(p => { const n = { ...p }; delete n[template.id]; return n; });
+      return;
+    }
+    setTranslatingN8nId(template.id);
+    try {
+      const [name, description] = await Promise.all([
+        translateToArabic(template.name),
+        template.description ? translateToArabic(template.description) : Promise.resolve(""),
+      ]);
+      setTranslatedN8n(p => ({ ...p, [template.id]: { name, description } }));
+    } catch {
+      toast({ title: "فشل الترجمة", variant: "destructive" });
+    } finally {
+      setTranslatingN8nId(null);
+    }
+  };
+
   const handleAddTemplate = async () => {
     if (!newTemplate.name.trim() || !newTemplate.description.trim()) return;
     setAddingTemplate(true);
@@ -209,6 +268,8 @@ export default function TemplatesPage() {
         queryClient.invalidateQueries({ queryKey: getGetTemplatesQueryKey() });
         setShowAddModal(false);
         setNewTemplate({ name: "", description: "", category: "api" });
+      } else {
+        toast({ title: isRTL ? "فشل إضافة القالب" : "Failed to add template", variant: "destructive" });
       }
     } catch {
       toast({ title: isRTL ? "فشل إضافة القالب" : "Failed to add template", variant: "destructive" });
@@ -266,26 +327,39 @@ export default function TemplatesPage() {
             <div>
               <h2 className="text-sm font-semibold text-foreground mb-3">{t("templates.mostUsed")}</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {mostUsed.map((template, i) => (
-                  <motion.div key={template.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                    className="bg-gradient-to-br from-accent/10 to-accent-secondary/5 rounded-xl p-5 border border-accent/20">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
-                        <Zap size={20} className="text-accent" />
+                {mostUsed.map((template, i) => {
+                  const translated = translatedLocal[template.id];
+                  const isTranslating = translatingLocalId === template.id;
+                  return (
+                    <motion.div key={template.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                      className="bg-gradient-to-br from-accent/10 to-accent-secondary/5 rounded-xl p-5 border border-accent/20">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
+                          <Zap size={20} className="text-accent" />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleTranslateLocal(template)}
+                            disabled={isTranslating}
+                            title={translated ? "إخفاء الترجمة" : "ترجمة إلى العربية"}
+                            className={`p-1 rounded-md transition-colors disabled:opacity-50 ${translated ? "bg-accent/20 text-accent" : "text-muted-foreground hover:text-accent hover:bg-accent/10"}`}>
+                            {isTranslating ? <Loader2 size={13} className="animate-spin" /> : <Languages size={13} />}
+                          </button>
+                          <StarRating templateId={template.id} currentRating={template.avgRating} ratingCount={template.ratingCount} isRTL={isRTL} onRated={(avg, count) => setLocalRatings(p => ({ ...p, [template.id]: { avgRating: avg, ratingCount: count } }))} />
+                        </div>
                       </div>
-                      <StarRating templateId={template.id} currentRating={template.avgRating} ratingCount={template.ratingCount} isRTL={isRTL} onRated={(avg, count) => setLocalRatings(p => ({ ...p, [template.id]: { avgRating: avg, ratingCount: count } }))} />
-                    </div>
-                    <h3 className="font-medium text-foreground text-sm mb-1">{template.name}</h3>
-                    <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{template.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">{template.nodesCount} {t("workflows.nodes")}</span>
-                      <button onClick={() => useTemplate({ id: template.id.toString() } as Parameters<typeof useTemplate>[0])}
-                        className="flex items-center gap-1 px-3 py-1 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors">
-                        {t("templates.use")} <ArrowRight size={12} />
-                      </button>
-                    </div>
-                  </motion.div>
-                ))}
+                      <h3 className="font-medium text-foreground text-sm mb-1">{translated ? translated.name : template.name}</h3>
+                      <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{translated ? translated.description : template.description}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">{template.nodesCount} {t("workflows.nodes")}</span>
+                        <button onClick={() => useTemplate({ id: template.id.toString() } as Parameters<typeof useTemplate>[0])}
+                          className="flex items-center gap-1 px-3 py-1 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors">
+                          {t("templates.use")} <ArrowRight size={12} />
+                        </button>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -311,35 +385,48 @@ export default function TemplatesPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {filtered.map((template, i) => (
-                  <motion.div key={template.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-                    className="bg-card rounded-xl p-5 border border-border hover:border-accent/50 transition-colors">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-                        <Zap size={18} className="text-accent" />
+                {filtered.map((template, i) => {
+                  const translated = translatedLocal[template.id];
+                  const isTranslating = translatingLocalId === template.id;
+                  return (
+                    <motion.div key={template.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                      className="bg-card rounded-xl p-5 border border-border hover:border-accent/50 transition-colors">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                          <Zap size={18} className="text-accent" />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleTranslateLocal(template)}
+                            disabled={isTranslating}
+                            title={translated ? "إخفاء الترجمة" : "ترجمة إلى العربية"}
+                            className={`p-1 rounded-md transition-colors disabled:opacity-50 ${translated ? "bg-accent/20 text-accent" : "text-muted-foreground hover:text-accent hover:bg-accent/10"}`}>
+                            {isTranslating ? <Loader2 size={13} className="animate-spin" /> : <Languages size={13} />}
+                          </button>
+                          <StarRating templateId={template.id} currentRating={template.avgRating} ratingCount={template.ratingCount} isRTL={isRTL} onRated={(avg, count) => setLocalRatings(p => ({ ...p, [template.id]: { avgRating: avg, ratingCount: count } }))} />
+                        </div>
                       </div>
-                      <StarRating templateId={template.id} currentRating={template.avgRating} ratingCount={template.ratingCount} isRTL={isRTL} onRated={(avg, count) => setLocalRatings(p => ({ ...p, [template.id]: { avgRating: avg, ratingCount: count } }))} />
-                    </div>
-                    <h3 className="font-medium text-foreground text-sm mb-1">{template.name}</h3>
-                    <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{template.description}</p>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
-                      <span>{template.nodesCount} {t("workflows.nodes")}</span>
-                      <span>|</span>
-                      <span>{template.usageCount} {isRTL ? "استخدام" : "uses"}</span>
-                      <span className="ms-auto px-2 py-0.5 rounded-full bg-muted capitalize">{template.category}</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <button onClick={() => setPreviewTemplate(template)}
-                        className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors">
-                        <Eye size={12} /> {t("templates.preview")}
-                      </button>
-                      <button onClick={() => useTemplate({ id: template.id.toString() } as Parameters<typeof useTemplate>[0])}
-                        className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors">
-                        {t("templates.use")} <ArrowRight size={12} />
-                      </button>
-                    </div>
-                  </motion.div>
-                ))}
+                      <h3 className="font-medium text-foreground text-sm mb-1">{translated ? translated.name : template.name}</h3>
+                      <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{translated ? translated.description : template.description}</p>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
+                        <span>{template.nodesCount} {t("workflows.nodes")}</span>
+                        <span>|</span>
+                        <span>{template.usageCount} {isRTL ? "استخدام" : "uses"}</span>
+                        <span className="ms-auto px-2 py-0.5 rounded-full bg-muted capitalize">{template.category}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => setPreviewTemplate(template)}
+                          className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors">
+                          <Eye size={12} /> {t("templates.preview")}
+                        </button>
+                        <button onClick={() => useTemplate({ id: template.id.toString() } as Parameters<typeof useTemplate>[0])}
+                          className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors">
+                          {t("templates.use")} <ArrowRight size={12} />
+                        </button>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -401,6 +488,8 @@ export default function TemplatesPage() {
                 {n8nTemplates.map((template, i) => {
                   const imported = importedIds.has(template.id);
                   const importing = importingId === template.id;
+                  const translated = translatedN8n[template.id];
+                  const isTranslating = translatingN8nId === template.id;
                   return (
                     <motion.div key={template.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}
                       className="bg-card rounded-xl border border-border hover:border-accent/50 transition-colors overflow-hidden flex flex-col">
@@ -413,14 +502,29 @@ export default function TemplatesPage() {
                       )}
                       <div className="p-4 flex flex-col flex-1">
                         <div className="flex items-start justify-between gap-2 mb-1">
-                          <h3 className="font-medium text-foreground text-sm leading-tight line-clamp-2 flex-1">{template.name}</h3>
-                          {imported && (
-                            <span className="shrink-0 px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-medium">
-                              {isRTL ? "مستورد" : "Imported"}
-                            </span>
-                          )}
+                          <h3 className="font-medium text-foreground text-sm leading-tight line-clamp-2 flex-1">
+                            {translated ? translated.name : template.name}
+                          </h3>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              onClick={() => handleTranslateN8n(template)}
+                              disabled={isTranslating}
+                              title={translated ? "إخفاء الترجمة" : "ترجمة إلى العربية"}
+                              className={`p-1 rounded-md transition-colors disabled:opacity-50 ${translated ? "bg-accent/20 text-accent" : "text-muted-foreground hover:text-accent hover:bg-accent/10"}`}>
+                              {isTranslating ? <Loader2 size={12} className="animate-spin" /> : <Languages size={12} />}
+                            </button>
+                            {imported && (
+                              <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-medium">
+                                {isRTL ? "مستورد" : "Imported"}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <p className="text-xs text-muted-foreground mb-3 line-clamp-2 flex-1">{template.description || (isRTL ? "لا يوجد وصف" : "No description")}</p>
+                        <p className="text-xs text-muted-foreground mb-3 line-clamp-2 flex-1">
+                          {translated
+                            ? (translated.description || (isRTL ? "لا يوجد وصف" : "No description"))
+                            : (template.description || (isRTL ? "لا يوجد وصف" : "No description"))}
+                        </p>
                         <div className="flex items-center gap-2 text-[11px] text-muted-foreground mb-3 flex-wrap">
                           <span className="flex items-center gap-1"><Zap size={11} />{template.nodesCount} {isRTL ? "عقدة" : "nodes"}</span>
                           <span className="flex items-center gap-1"><BarChart2 size={11} />{template.views.toLocaleString()} {isRTL ? "مشاهدة" : "views"}</span>
@@ -470,18 +574,44 @@ export default function TemplatesPage() {
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
               onClick={e => e.stopPropagation()} className="bg-card rounded-2xl p-6 max-w-lg w-full border border-border shadow-2xl">
               <div className="flex items-start justify-between mb-4">
-                <h2 className="text-lg font-semibold text-foreground">{previewTemplate.name}</h2>
-                <button onClick={() => setPreviewTemplate(null)} className="p-1 rounded-lg hover:bg-muted transition-colors">
-                  <X size={16} className="text-muted-foreground" />
-                </button>
+                <h2 className="text-lg font-semibold text-foreground flex-1 leading-tight">
+                  {translatedLocal[previewTemplate.id]?.name ?? previewTemplate.name}
+                </h2>
+                <div className="flex items-center gap-2 ms-2 shrink-0">
+                  <button
+                    onClick={() => handleTranslateLocal(previewTemplate)}
+                    disabled={translatingLocalId === previewTemplate.id}
+                    title={translatedLocal[previewTemplate.id] ? "إخفاء الترجمة" : "ترجمة إلى العربية"}
+                    className={`p-1.5 rounded-lg transition-colors disabled:opacity-50 ${translatedLocal[previewTemplate.id] ? "bg-accent/20 text-accent" : "text-muted-foreground hover:text-accent hover:bg-accent/10"}`}>
+                    {translatingLocalId === previewTemplate.id ? <Loader2 size={14} className="animate-spin" /> : <Languages size={14} />}
+                  </button>
+                  <button onClick={() => setPreviewTemplate(null)} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
+                    <X size={16} className="text-muted-foreground" />
+                  </button>
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground mb-4">{previewTemplate.description}</p>
+              <p className="text-sm text-muted-foreground mb-4">
+                {translatedLocal[previewTemplate.id]?.description ?? previewTemplate.description}
+              </p>
               <div className="mb-4">
                 <StarRating templateId={previewTemplate.id} currentRating={previewTemplate.avgRating} ratingCount={previewTemplate.ratingCount} isRTL={isRTL}
                   onRated={(avg, count) => { setLocalRatings(p => ({ ...p, [previewTemplate.id]: { avgRating: avg, ratingCount: count } })); setPreviewTemplate(prev => prev ? { ...prev, avgRating: avg, ratingCount: count } : null); }} />
               </div>
-              <div className="h-40 bg-muted rounded-lg flex items-center justify-center mb-4">
-                <p className="text-sm text-muted-foreground">{isRTL ? "معاينة المخطط" : "Node graph preview"}</p>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="bg-muted rounded-lg p-3 text-center">
+                  <p className="text-xs text-muted-foreground mb-1">{isRTL ? "العقد" : "Nodes"}</p>
+                  <p className="font-semibold text-foreground text-sm">{previewTemplate.nodesCount}</p>
+                </div>
+                <div className="bg-muted rounded-lg p-3 text-center">
+                  <p className="text-xs text-muted-foreground mb-1">{isRTL ? "الاستخدامات" : "Uses"}</p>
+                  <p className="font-semibold text-foreground text-sm">{previewTemplate.usageCount}</p>
+                </div>
+              </div>
+              <div className="h-32 bg-muted rounded-lg flex items-center justify-center mb-4">
+                <div className="text-center">
+                  <Zap size={24} className="mx-auto text-accent/40 mb-2" />
+                  <p className="text-xs text-muted-foreground">{isRTL ? "معاينة مخطط العقد" : "Node graph preview"}</p>
+                </div>
               </div>
               <div className="flex gap-3">
                 <button onClick={() => setPreviewTemplate(null)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">{t("app.cancel")}</button>
@@ -499,15 +629,29 @@ export default function TemplatesPage() {
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
               onClick={e => e.stopPropagation()} className="bg-card rounded-2xl p-6 max-w-lg w-full border border-border shadow-2xl">
               <div className="flex items-start justify-between mb-4">
-                <h2 className="text-base font-semibold text-foreground leading-tight">{n8nPreview.name}</h2>
-                <button onClick={() => setN8nPreview(null)} className="p-1 rounded-lg hover:bg-muted transition-colors ms-2 shrink-0">
-                  <X size={16} className="text-muted-foreground" />
-                </button>
+                <h2 className="text-base font-semibold text-foreground leading-tight flex-1">
+                  {translatedN8n[n8nPreview.id]?.name ?? n8nPreview.name}
+                </h2>
+                <div className="flex items-center gap-2 ms-2 shrink-0">
+                  <button
+                    onClick={() => handleTranslateN8n(n8nPreview)}
+                    disabled={translatingN8nId === n8nPreview.id}
+                    title={translatedN8n[n8nPreview.id] ? "إخفاء الترجمة" : "ترجمة إلى العربية"}
+                    className={`p-1.5 rounded-lg transition-colors disabled:opacity-50 ${translatedN8n[n8nPreview.id] ? "bg-accent/20 text-accent" : "text-muted-foreground hover:text-accent hover:bg-accent/10"}`}>
+                    {translatingN8nId === n8nPreview.id ? <Loader2 size={14} className="animate-spin" /> : <Languages size={14} />}
+                  </button>
+                  <button onClick={() => setN8nPreview(null)} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
+                    <X size={16} className="text-muted-foreground" />
+                  </button>
+                </div>
               </div>
               {n8nPreview.imageUrl && (
                 <img src={n8nPreview.imageUrl} alt={n8nPreview.name} className="w-full h-40 object-cover rounded-xl mb-4 bg-muted" />
               )}
-              <p className="text-sm text-muted-foreground mb-4">{n8nPreview.description || (isRTL ? "لا يوجد وصف" : "No description available")}</p>
+              <p className="text-sm text-muted-foreground mb-4">
+                {translatedN8n[n8nPreview.id]?.description
+                  ?? (n8nPreview.description || (isRTL ? "لا يوجد وصف" : "No description available"))}
+              </p>
               <div className="grid grid-cols-3 gap-3 mb-4">
                 <div className="bg-muted rounded-lg p-3 text-center">
                   <p className="text-xs text-muted-foreground mb-1">{isRTL ? "العقد" : "Nodes"}</p>
