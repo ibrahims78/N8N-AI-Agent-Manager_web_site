@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "wouter";
 import {
   Search, Star, Eye, ArrowRight, Zap, X, Plus,
   Download, Globe, BookMarked, ChevronLeft, ChevronRight,
@@ -228,6 +229,7 @@ export default function TemplatesPage() {
   const isRTL = language === "ar";
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [, navigate] = useLocation();
 
   const [tab, setTab] = useState<"local" | "n8n">("local");
 
@@ -264,8 +266,16 @@ export default function TemplatesPage() {
     query: { queryKey: getGetTemplatesQueryKey() },
   } as Parameters<typeof useGetTemplates>[0]);
 
-  const { mutate: useTemplate } = useUseTemplate({
-    mutation: { onSuccess: () => { window.location.hash = "#/chat"; } },
+  const { mutate: useTemplate, isPending: usingTemplate } = useUseTemplate({
+    mutation: {
+      onSuccess: () => {
+        toast({ title: isRTL ? "تم تطبيق القالب ✅" : "Template applied ✅" });
+        navigate("/chat");
+      },
+      onError: () => {
+        toast({ title: isRTL ? "فشل تطبيق القالب" : "Failed to apply template", variant: "destructive" });
+      },
+    },
     request: { headers: getAuthHeader() },
   } as Parameters<typeof useUseTemplate>[0]);
 
@@ -484,8 +494,9 @@ export default function TemplatesPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">{template.nodesCount} {t("workflows.nodes")}</span>
                         <button onClick={() => useTemplate({ id: template.id.toString() } as Parameters<typeof useTemplate>[0])}
-                          className="flex items-center gap-1 px-3 py-1 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors">
-                          {t("templates.use")} <ArrowRight size={12} />
+                          disabled={usingTemplate}
+                          className="flex items-center gap-1 px-3 py-1 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                          {usingTemplate ? <Loader2 size={12} className="animate-spin" /> : <>{t("templates.use")} <ArrowRight size={12} /></>}
                         </button>
                       </div>
                     </motion.div>
@@ -551,8 +562,9 @@ export default function TemplatesPage() {
                           <Eye size={12} /> {t("templates.preview")}
                         </button>
                         <button onClick={() => useTemplate({ id: template.id.toString() } as Parameters<typeof useTemplate>[0])}
-                          className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors">
-                          {t("templates.use")} <ArrowRight size={12} />
+                          disabled={usingTemplate}
+                          className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                          {usingTemplate ? <Loader2 size={12} className="animate-spin" /> : <>{t("templates.use")} <ArrowRight size={12} /></>}
                         </button>
                       </div>
                     </motion.div>
@@ -777,7 +789,10 @@ export default function TemplatesPage() {
               <div className="flex gap-3">
                 <button onClick={() => setPreviewTemplate(null)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">{t("app.cancel")}</button>
                 <button onClick={() => { useTemplate({ id: previewTemplate.id.toString() } as Parameters<typeof useTemplate>[0]); setPreviewTemplate(null); }}
-                  className="flex-1 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors">{t("templates.use")}</button>
+                  disabled={usingTemplate}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                  {usingTemplate ? <Loader2 size={14} className="animate-spin" /> : t("templates.use")}
+                </button>
               </div>
             </div>
             </motion.div>
