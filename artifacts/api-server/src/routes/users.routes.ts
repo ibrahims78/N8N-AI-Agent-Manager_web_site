@@ -194,7 +194,7 @@ router.put("/:id/permissions", authenticate, requireAdmin, async (req: Request, 
   const userId = parseInt(req.params.id, 10);
   if (isNaN(userId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid user ID" } }); return; }
 
-  const { permissions } = req.body as { permissions: Array<{ key: string; enabled: boolean }> };
+  const { permissions } = req.body as { permissions: Array<{ key: string; enabled?: boolean; isEnabled?: boolean }> };
   if (!Array.isArray(permissions)) {
     res.status(400).json({ success: false, error: { code: "INVALID_PERMISSIONS", message: "permissions must be an array" } });
     return;
@@ -202,6 +202,7 @@ router.put("/:id/permissions", authenticate, requireAdmin, async (req: Request, 
 
   for (const perm of permissions) {
     if (!ALL_PERMISSIONS.includes(perm.key as (typeof ALL_PERMISSIONS)[number])) continue;
+    const enabledValue = perm.enabled !== undefined ? perm.enabled : (perm.isEnabled ?? false);
 
     const existing = await db.select({ id: userPermissionsTable.id })
       .from(userPermissionsTable)
@@ -213,7 +214,7 @@ router.put("/:id/permissions", authenticate, requireAdmin, async (req: Request, 
 
     if (existing.length > 0) {
       await db.update(userPermissionsTable)
-        .set({ isEnabled: perm.enabled })
+        .set({ isEnabled: enabledValue })
         .where(and(
           eq(userPermissionsTable.userId, userId),
           eq(userPermissionsTable.permissionKey, perm.key)
@@ -222,13 +223,13 @@ router.put("/:id/permissions", authenticate, requireAdmin, async (req: Request, 
       await db.insert(userPermissionsTable).values({
         userId,
         permissionKey: perm.key,
-        isEnabled: perm.enabled,
+        isEnabled: enabledValue,
       });
     }
   }
 
   await logAudit(req.user.userId, "UPDATE_PERMISSIONS", "user", userId, {
-    permissionsChanged: permissions.filter(p => p.enabled).map(p => p.key),
+    permissionsChanged: permissions.filter(p => (p.enabled ?? p.isEnabled)).map(p => p.key),
   }, req);
 
   res.json({ success: true, message: "تم تحديث الصلاحيات بنجاح" });
