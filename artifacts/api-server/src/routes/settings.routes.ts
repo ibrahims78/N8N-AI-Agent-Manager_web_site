@@ -21,16 +21,19 @@ router.post("/n8n/test", authenticate, requireAdmin, async (req: Request, res: R
 
 router.put("/n8n", authenticate, requireAdmin, async (req: Request, res: Response): Promise<void> => {
   const { url, apiKey } = req.body as { url: string; apiKey: string };
-  const { encryptedKey, iv } = encryptApiKey(apiKey);
+  const keepExisting = !apiKey || apiKey === "KEEP_EXISTING";
 
   const existing = await db.select().from(systemSettingsTable).limit(1);
   if (existing[0]) {
-    await db.update(systemSettingsTable).set({
-      n8nUrl: url,
-      n8nApiKeyEncrypted: encryptedKey,
-      n8nApiKeyIv: iv,
-    }).where(eq(systemSettingsTable.id, existing[0].id));
+    const updateValues: Record<string, unknown> = { n8nUrl: url };
+    if (!keepExisting) {
+      const { encryptedKey, iv } = encryptApiKey(apiKey);
+      updateValues.n8nApiKeyEncrypted = encryptedKey;
+      updateValues.n8nApiKeyIv = iv;
+    }
+    await db.update(systemSettingsTable).set(updateValues).where(eq(systemSettingsTable.id, existing[0].id));
   } else {
+    const { encryptedKey, iv } = keepExisting ? { encryptedKey: null, iv: null } : encryptApiKey(apiKey);
     await db.insert(systemSettingsTable).values({
       n8nUrl: url,
       n8nApiKeyEncrypted: encryptedKey,

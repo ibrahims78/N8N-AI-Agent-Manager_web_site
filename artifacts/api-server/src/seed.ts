@@ -491,7 +491,7 @@ export async function seedDatabase() {
       passwordHash,
       role: "admin",
       isActive: true,
-      forcePasswordChange: false,
+      forcePasswordChange: true,
     }).returning();
 
     if (admin) {

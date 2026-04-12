@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { CheckCircle2, XCircle, Loader2, Eye, EyeOff, TestTube2, AlertTriangle, Trash2, RotateCcw } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, Eye, EyeOff, TestTube2, AlertTriangle, Trash2, RotateCcw, KeyRound } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getAuthHeader, API_BASE } from "@/lib/api";
 import { useGetN8nSettings, useTestN8nConnection, useSaveN8nSettings, useSaveOpenAiKey, useTestOpenAI, useSaveGeminiKey, useTestGemini, useChangePassword, useGetSystemStatus } from "@workspace/api-client-react";
@@ -81,6 +81,21 @@ export default function SettingsPage() {
   const { data: n8nSettings } = useGetN8nSettings({
     request: { headers: authHeader },
   } as Parameters<typeof useGetN8nSettings>[0]);
+
+  const { data: systemStatusData } = useGetSystemStatus({
+    request: { headers: authHeader },
+  } as Parameters<typeof useGetSystemStatus>[0]);
+
+  const systemServices = (systemStatusData as { data?: { services?: Array<{ name: string; status: string }> } } | undefined)?.data?.services ?? [];
+  const openaiSaved = systemServices.find(s => s.name === "openai")?.status === "ok";
+  const geminiSaved = systemServices.find(s => s.name === "gemini")?.status === "ok";
+
+  useEffect(() => {
+    const url = (n8nSettings as { data?: { url?: string } } | undefined)?.data?.url;
+    if (url && !n8nUrl) {
+      setN8nUrl(url);
+    }
+  }, [n8nSettings]);
 
   const { mutate: testN8n } = useTestN8nConnection({
     mutation: {
@@ -182,21 +197,39 @@ export default function SettingsPage() {
       {isAdmin && (
         <>
           <div className="bg-card rounded-xl p-5 border border-border">
-            <h2 className="text-sm font-semibold text-foreground mb-1">{t("settings.n8n")}</h2>
-            {n8nData?.url && <p className="text-xs text-muted-foreground mb-4">{isRTL ? "متصل حالياً:" : "Currently connected:"} {n8nData.url}</p>}
+            <div className="flex items-center justify-between mb-1">
+              <h2 className="text-sm font-semibold text-foreground">{t("settings.n8n")}</h2>
+              {n8nData?.hasApiKey && (
+                <span className="flex items-center gap-1 text-xs text-emerald-500 font-medium">
+                  <KeyRound size={12} />
+                  {isRTL ? "مفتاح محفوظ ✅" : "Key saved ✅"}
+                </span>
+              )}
+            </div>
+            {n8nData?.url && <p className="text-xs text-muted-foreground mb-4">{isRTL ? "متصل حالياً:" : "Currently connected:"} <span className="text-accent font-mono">{n8nData.url}</span></p>}
             <div className="space-y-3">
               <div>
                 <label className="text-xs font-medium text-foreground block mb-1">{t("settings.url")}</label>
-                <input value={n8nUrl} onChange={e => setN8nUrl(e.target.value)} placeholder={n8nData?.url ?? "http://localhost:5678"} className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                <input
+                  value={n8nUrl}
+                  onChange={e => setN8nUrl(e.target.value)}
+                  placeholder="https://n8n.example.com"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+                />
               </div>
               <div>
-                <label className="text-xs font-medium text-foreground block mb-1">{t("settings.apiKey")}</label>
+                <label className="text-xs font-medium text-foreground block mb-1">
+                  {t("settings.apiKey")}
+                  {n8nData?.hasApiKey && !n8nKey && (
+                    <span className="ms-2 text-xs text-muted-foreground font-normal">{isRTL ? "(اتركه فارغاً للإبقاء على المفتاح الحالي)" : "(leave blank to keep current key)"}</span>
+                  )}
+                </label>
                 <div className="relative">
                   <input
                     type={showN8nKey ? "text" : "password"}
                     value={n8nKey}
                     onChange={e => setN8nKey(e.target.value)}
-                    placeholder={n8nData?.hasApiKey ? "••••••••••••" : "n8n_api_..."}
+                    placeholder={n8nData?.hasApiKey ? "••••••••••••  (محفوظ)" : "n8n_api_..."}
                     className="w-full px-3 py-2 pe-10 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
                   />
                   <button type="button" onClick={() => setShowN8nKey(!showN8nKey)} className="absolute inset-y-0 end-3 text-muted-foreground">
@@ -205,11 +238,19 @@ export default function SettingsPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <button onClick={() => { setN8nStatus("testing"); testN8n({ url: n8nUrl, apiKey: n8nKey } as Parameters<typeof testN8n>[0]); }} disabled={!n8nUrl || !n8nKey} className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-50">
+                <button
+                  onClick={() => { setN8nStatus("testing"); testN8n({ url: n8nUrl, apiKey: n8nKey } as Parameters<typeof testN8n>[0]); }}
+                  disabled={!n8nUrl || (!n8nKey && !n8nData?.hasApiKey)}
+                  className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-50"
+                >
                   {t("settings.test")}
                 </button>
                 <StatusIcon status={n8nStatus} />
-                <button onClick={() => saveN8n({ url: n8nUrl, apiKey: n8nKey } as Parameters<typeof saveN8n>[0])} disabled={!n8nUrl || !n8nKey} className="px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-50">
+                <button
+                  onClick={() => saveN8n({ url: n8nUrl, apiKey: n8nKey || "KEEP_EXISTING" } as Parameters<typeof saveN8n>[0])}
+                  disabled={!n8nUrl}
+                  className="px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-50"
+                >
                   {t("app.save")}
                 </button>
               </div>
@@ -217,14 +258,22 @@ export default function SettingsPage() {
           </div>
 
           <div className="bg-card rounded-xl p-5 border border-border">
-            <h2 className="text-sm font-semibold text-foreground mb-4">{t("settings.openai")}</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-foreground">{t("settings.openai")}</h2>
+              {openaiSaved && (
+                <span className="flex items-center gap-1 text-xs text-emerald-500 font-medium">
+                  <KeyRound size={12} />
+                  {isRTL ? "مفتاح محفوظ ✅" : "Key saved ✅"}
+                </span>
+              )}
+            </div>
             <div className="space-y-3">
               <div className="relative">
                 <input
                   type={showOpenai ? "text" : "password"}
                   value={openaiKey}
                   onChange={e => setOpenaiKey(e.target.value)}
-                  placeholder="sk-..."
+                  placeholder={openaiSaved ? "••••••••••••  (محفوظ)" : "sk-..."}
                   className="w-full px-3 py-2 pe-10 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
                 />
                 <button type="button" onClick={() => setShowOpenai(!showOpenai)} className="absolute inset-y-0 end-3 text-muted-foreground">
@@ -232,11 +281,20 @@ export default function SettingsPage() {
                 </button>
               </div>
               <div className="flex items-center gap-3">
-                <button onClick={() => { setOpenaiStatus("testing"); testOai({ apiKey: openaiKey } as Parameters<typeof testOai>[0]); }} disabled={!openaiKey} className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-50">
+                <button
+                  onClick={() => { setOpenaiStatus("testing"); testOai({ apiKey: openaiKey } as Parameters<typeof testOai>[0]); }}
+                  disabled={!openaiKey}
+                  className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-50"
+                >
                   {t("settings.test")}
                 </button>
                 <StatusIcon status={openaiStatus} />
-                <button onClick={() => saveOai({ apiKey: openaiKey } as Parameters<typeof saveOai>[0])} disabled={!openaiKey} className="px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-50">
+                {openaiSaved && openaiStatus === "idle" && <CheckCircle2 size={16} className="text-emerald-500" />}
+                <button
+                  onClick={() => saveOai({ apiKey: openaiKey } as Parameters<typeof saveOai>[0])}
+                  disabled={!openaiKey}
+                  className="px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-50"
+                >
                   {t("app.save")}
                 </button>
               </div>
@@ -244,14 +302,22 @@ export default function SettingsPage() {
           </div>
 
           <div className="bg-card rounded-xl p-5 border border-border">
-            <h2 className="text-sm font-semibold text-foreground mb-4">{t("settings.gemini")}</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-foreground">{t("settings.gemini")}</h2>
+              {geminiSaved && (
+                <span className="flex items-center gap-1 text-xs text-emerald-500 font-medium">
+                  <KeyRound size={12} />
+                  {isRTL ? "مفتاح محفوظ ✅" : "Key saved ✅"}
+                </span>
+              )}
+            </div>
             <div className="space-y-3">
               <div className="relative">
                 <input
                   type={showGemini ? "text" : "password"}
                   value={geminiKey}
                   onChange={e => setGeminiKey(e.target.value)}
-                  placeholder="AIza..."
+                  placeholder={geminiSaved ? "••••••••••••  (محفوظ)" : "AIza..."}
                   className="w-full px-3 py-2 pe-10 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
                 />
                 <button type="button" onClick={() => setShowGemini(!showGemini)} className="absolute inset-y-0 end-3 text-muted-foreground">
@@ -259,11 +325,20 @@ export default function SettingsPage() {
                 </button>
               </div>
               <div className="flex items-center gap-3">
-                <button onClick={() => { setGeminiStatus("testing"); testGem({ apiKey: geminiKey } as Parameters<typeof testGem>[0]); }} disabled={!geminiKey} className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-50">
+                <button
+                  onClick={() => { setGeminiStatus("testing"); testGem({ apiKey: geminiKey } as Parameters<typeof testGem>[0]); }}
+                  disabled={!geminiKey}
+                  className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-50"
+                >
                   {t("settings.test")}
                 </button>
                 <StatusIcon status={geminiStatus} />
-                <button onClick={() => saveGem({ apiKey: geminiKey } as Parameters<typeof saveGem>[0])} disabled={!geminiKey} className="px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-50">
+                {geminiSaved && geminiStatus === "idle" && <CheckCircle2 size={16} className="text-emerald-500" />}
+                <button
+                  onClick={() => saveGem({ apiKey: geminiKey } as Parameters<typeof saveGem>[0])}
+                  disabled={!geminiKey}
+                  className="px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-50"
+                >
                   {t("app.save")}
                 </button>
               </div>
