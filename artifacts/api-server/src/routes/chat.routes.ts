@@ -28,23 +28,30 @@ async function getApiKeys() {
 router.get("/conversations", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
-  const page = parseInt(req.query.page as string || "1", 10);
-  const limit = parseInt(req.query.limit as string || "20", 10);
+  const page = Math.max(1, parseInt(req.query.page as string || "1", 10));
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string || "20", 10)));
   const offset = (page - 1) * limit;
 
   const isAdmin = req.user.role === "admin";
-  const query = db
-    .select()
-    .from(conversationsTable)
-    .orderBy(desc(conversationsTable.updatedAt))
-    .limit(limit)
-    .offset(offset);
 
-  const conversations = isAdmin
-    ? await query
-    : await query.where(eq(conversationsTable.userId, req.user.userId));
+  const allConversations = isAdmin
+    ? await db.select().from(conversationsTable).orderBy(desc(conversationsTable.updatedAt))
+    : await db.select().from(conversationsTable)
+        .where(eq(conversationsTable.userId, req.user.userId))
+        .orderBy(desc(conversationsTable.updatedAt));
 
-  res.json({ success: true, data: { conversations, total: conversations.length } });
+  const total = allConversations.length;
+  const conversations = allConversations.slice(offset, offset + limit);
+
+  res.json({
+    success: true,
+    data: {
+      conversations,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    },
+  });
 });
 
 router.post("/conversations", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {

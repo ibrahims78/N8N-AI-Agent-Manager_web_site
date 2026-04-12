@@ -1,8 +1,28 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-const ACCESS_TOKEN_SECRET = process.env.JWT_SECRET ?? "dev-access-secret-change-in-prod";
-const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET ?? "dev-refresh-secret-change-in-prod";
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("JWT_SECRET must be set in production");
+    }
+    return "dev-access-secret-change-in-prod-32chars";
+  }
+  return secret;
+}
+
+function getRefreshSecret(): string {
+  const secret = process.env.JWT_REFRESH_SECRET ?? process.env.JWT_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("JWT_REFRESH_SECRET must be set in production");
+    }
+    return "dev-refresh-secret-change-in-prod-32chars";
+  }
+  return `refresh_${secret}`;
+}
+
 const ACCESS_TOKEN_EXPIRY = "15m";
 const REFRESH_TOKEN_EXPIRY = "7d";
 
@@ -13,19 +33,19 @@ export interface TokenPayload {
 }
 
 export function generateAccessToken(payload: TokenPayload): string {
-  return jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY });
+  return jwt.sign(payload, getJwtSecret(), { expiresIn: ACCESS_TOKEN_EXPIRY });
 }
 
 export function generateRefreshToken(payload: TokenPayload): string {
-  return jwt.sign(payload, REFRESH_TOKEN_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRY });
+  return jwt.sign(payload, getRefreshSecret(), { expiresIn: REFRESH_TOKEN_EXPIRY });
 }
 
 export function verifyAccessToken(token: string): TokenPayload {
-  return jwt.verify(token, ACCESS_TOKEN_SECRET) as TokenPayload;
+  return jwt.verify(token, getJwtSecret()) as TokenPayload;
 }
 
 export function verifyRefreshToken(token: string): TokenPayload {
-  return jwt.verify(token, REFRESH_TOKEN_SECRET) as TokenPayload;
+  return jwt.verify(token, getRefreshSecret()) as TokenPayload;
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -40,7 +60,7 @@ const COMMON_PASSWORDS = [
   "123456", "password", "123456789", "12345678", "12345", "1234567",
   "1234567890", "qwerty", "abc123", "000000", "iloveyou", "admin",
   "welcome", "monkey", "dragon", "master", "letmein", "sunshine",
-  "princess", "football",
+  "princess", "football", "pass@123", "admin@123",
 ];
 
 export function validatePasswordStrength(password: string): { valid: boolean; message?: string } {

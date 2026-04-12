@@ -1,54 +1,96 @@
 import { Router } from "express";
-import { db, usersTable, userPermissionsTable, ALL_PERMISSIONS } from "@workspace/db";
-import { eq, ne } from "drizzle-orm";
+import { db, usersTable, userPermissionsTable, auditLogsTable, ALL_PERMISSIONS } from "@workspace/db";
+import { eq, and } from "drizzle-orm";
 import { authenticate, requireAdmin } from "../middleware/auth.middleware";
 import { hashPassword } from "../services/auth.service";
+import { logger } from "../lib/logger";
 import type { Request, Response } from "express";
 
 const router = Router();
 
-function generatePassword(): string {
-  const chars = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%";
-  let pass = "";
-  for (let i = 0; i < 12; i++) {
-    pass += chars[Math.floor(Math.random() * chars.length)];
+async function logAudit(
+  userId: number,
+  action: string,
+  entityType: string,
+  entityId: number | string | null,
+  details: Record<string, unknown>,
+  req: Request
+) {
+  try {
+    await db.insert(auditLogsTable).values({
+      userId,
+      action,
+      entityType,
+      entityId: entityId !== null ? String(entityId) : null,
+      detailsJson: details,
+      ipAddress: req.ip ?? req.socket?.remoteAddress ?? null,
+    });
+  } catch (err) {
+    logger.warn({ err }, "Failed to write audit log");
   }
-  return pass;
+}
+
+function generatePassword(): string {
+  const upper = "ABCDEFGHJKMNPQRSTUVWXYZ";
+  const lower = "abcdefghjkmnpqrstuvwxyz";
+  const digits = "23456789";
+  const special = "!@#$%";
+  const all = upper + lower + digits + special;
+  let pass = upper[Math.floor(Math.random() * upper.length)]!;
+  pass += lower[Math.floor(Math.random() * lower.length)]!;
+  pass += digits[Math.floor(Math.random() * digits.length)]!;
+  pass += special[Math.floor(Math.random() * special.length)]!;
+  for (let i = 4; i < 12; i++) {
+    pass += all[Math.floor(Math.random() * all.length)]!;
+  }
+  return pass.split("").sort(() => Math.random() - 0.5).join("");
 }
 
 router.get("/", authenticate, requireAdmin, async (req: Request, res: Response): Promise<void> => {
-  const users = await db.select({
-    id: usersTable.id,
-    username: usersTable.username,
-    role: usersTable.role,
-    isActive: usersTable.isActive,
-    forcePasswordChange: usersTable.forcePasswordChange,
-    lastLogin: usersTable.lastLogin,
-    createdAt: usersTable.createdAt,
-  }).from(usersTable);
+  try {
+    const users = await db.select({
+      id: usersTable.id,
+      username: usersTable.username,
+      role: usersTable.role,
+      isActive: usersTable.isActive,
+      forcePasswordChange: usersTable.forcePasswordChange,
+      lastLogin: usersTable.lastLogin,
+      createdAt: usersTable.createdAt,
+    }).from(usersTable);
 
-  const usersWithPermissions = await Promise.all(users.map(async u => {
-    const perms = await db.select().from(userPermissionsTable).where(eq(userPermissionsTable.userId, u.id));
-    return { ...u, permissions: perms.map(p => ({ key: p.permissionKey, isEnabled: p.isEnabled })) };
-  }));
+    const usersWithPermissions = await Promise.all(users.map(async u => {
+      const perms = await db.select().from(userPermissionsTable).where(eq(userPermissionsTable.userId, u.id));
+      return { ...u, permissions: perms.map(p => ({ key: p.permissionKey, isEnabled: p.isEnabled })) };
+    }));
 
-  res.json({ success: true, data: { users: usersWithPermissions, total: usersWithPermissions.length } });
+    res.json({ success: true, data: { users: usersWithPermissions, total: usersWithPermissions.length } });
+  } catch (err) {
+    logger.error({ err }, "GET /users failed");
+    res.status(500).json({ success: false, error: { code: "SERVER_ERROR", message: String(err) } });
+  }
 });
 
 router.post("/", authenticate, requireAdmin, async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
+
   const { username, password, role, permissions } = req.body as {
     username: string;
     password: string;
-    role: string;
+    role?: string;
     permissions?: string[];
   };
 
   if (!username || !password) {
-    res.status(400).json({ success: false, error: { code: "MISSING_FIELDS", message: "Username and password required" } });
+    res.status(400).json({ success: false, error: { code: "MISSING_FIELDS", message: "اسم المستخدم وكلمة المرور مطلوبان" } });
     return;
   }
 
-  const existing = await db.select().from(usersTable).where(eq(usersTable.username, username)).limit(1);
+  if (username.trim().length < 3) {
+    res.status(400).json({ success: false, error: { code: "INVALID_USERNAME", message: "اسم المستخدم يجب أن يكون 3 أحرف على الأقل" } });
+    return;
+  }
+
+  const existing = await db.select({ id: usersTable.id }).from(usersTable).where(eq(usersTable.username, username.trim())).limit(1);
   if (existing[0]) {
     res.status(400).json({ success: false, error: { code: "USERNAME_EXISTS", message: "اسم المستخدم موجود مسبقاً" } });
     return;
@@ -56,9 +98,9 @@ router.post("/", authenticate, requireAdmin, async (req: Request, res: Response)
 
   const hash = await hashPassword(password);
   const [user] = await db.insert(usersTable).values({
-    username,
+    username: username.trim(),
     passwordHash: hash,
-    role: role ?? "user",
+    role: role === "admin" ? "admin" : "user",
     isActive: true,
     forcePasswordChange: true,
   }).returning();
@@ -72,21 +114,27 @@ router.post("/", authenticate, requireAdmin, async (req: Request, res: Response)
         isEnabled: enabledPerms.includes(key),
       }))
     );
+
+    await logAudit(req.user.userId, "CREATE_USER", "user", user.id, { username: user.username, role: user.role }, req);
   }
 
-  res.json({ success: true, data: user });
+  res.status(201).json({ success: true, data: user });
 });
 
 router.put("/:id", authenticate, requireAdmin, async (req: Request, res: Response): Promise<void> => {
-  const userId = parseInt(req.params.id, 10);
-  const { username, role } = req.body as { username?: string; role?: string };
+  if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
+  const userId = parseInt(req.params.id, 10);
+  if (isNaN(userId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid user ID" } }); return; }
+
+  const { username, role } = req.body as { username?: string; role?: string };
   const update: Partial<typeof usersTable.$inferInsert> = {};
-  if (username) update.username = username;
-  if (role) update.role = role;
+  if (username) update.username = username.trim();
+  if (role && (role === "admin" || role === "user")) update.role = role;
 
   if (Object.keys(update).length > 0) {
     await db.update(usersTable).set(update).where(eq(usersTable.id, userId));
+    await logAudit(req.user.userId, "UPDATE_USER", "user", userId, update as Record<string, unknown>, req);
   }
 
   const users = await db.select().from(usersTable).where(eq(usersTable.id, userId)).limit(1);
@@ -97,42 +145,79 @@ router.delete("/:id", authenticate, requireAdmin, async (req: Request, res: Resp
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
   const userId = parseInt(req.params.id, 10);
+  if (isNaN(userId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid user ID" } }); return; }
+
   if (userId === req.user.userId) {
     res.status(400).json({ success: false, error: { code: "CANNOT_DELETE_SELF", message: "لا يمكنك حذف حسابك الخاص" } });
     return;
   }
 
+  const target = await db.select({ username: usersTable.username }).from(usersTable).where(eq(usersTable.id, userId)).limit(1);
+  if (!target[0]) {
+    res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "المستخدم غير موجود" } });
+    return;
+  }
+
+  await db.delete(userPermissionsTable).where(eq(userPermissionsTable.userId, userId));
   await db.delete(usersTable).where(eq(usersTable.id, userId));
-  res.json({ success: true, message: "User deleted" });
+  await logAudit(req.user.userId, "DELETE_USER", "user", userId, { deletedUsername: target[0].username }, req);
+
+  res.json({ success: true, message: "تم حذف المستخدم بنجاح" });
 });
 
 router.put("/:id/status", authenticate, requireAdmin, async (req: Request, res: Response): Promise<void> => {
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
   const userId = parseInt(req.params.id, 10);
+  if (isNaN(userId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid user ID" } }); return; }
+
   if (userId === req.user.userId) {
     res.status(400).json({ success: false, error: { code: "CANNOT_DISABLE_SELF", message: "لا يمكنك تعطيل حسابك الخاص" } });
     return;
   }
 
   const { isActive } = req.body as { isActive: boolean };
+  if (typeof isActive !== "boolean") {
+    res.status(400).json({ success: false, error: { code: "INVALID_STATUS", message: "isActive must be a boolean" } });
+    return;
+  }
+
   await db.update(usersTable).set({ isActive }).where(eq(usersTable.id, userId));
-  res.json({ success: true, message: `User ${isActive ? "activated" : "deactivated"}` });
+  await logAudit(req.user.userId, isActive ? "ACTIVATE_USER" : "DEACTIVATE_USER", "user", userId, { isActive }, req);
+
+  res.json({ success: true, message: isActive ? "تم تفعيل الحساب" : "تم تعطيل الحساب" });
 });
 
 router.put("/:id/permissions", authenticate, requireAdmin, async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
+
   const userId = parseInt(req.params.id, 10);
+  if (isNaN(userId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid user ID" } }); return; }
+
   const { permissions } = req.body as { permissions: Array<{ key: string; enabled: boolean }> };
+  if (!Array.isArray(permissions)) {
+    res.status(400).json({ success: false, error: { code: "INVALID_PERMISSIONS", message: "permissions must be an array" } });
+    return;
+  }
 
   for (const perm of permissions) {
-    const existing = await db.select().from(userPermissionsTable)
-      .where(eq(userPermissionsTable.userId, userId))
+    if (!ALL_PERMISSIONS.includes(perm.key as (typeof ALL_PERMISSIONS)[number])) continue;
+
+    const existing = await db.select({ id: userPermissionsTable.id })
+      .from(userPermissionsTable)
+      .where(and(
+        eq(userPermissionsTable.userId, userId),
+        eq(userPermissionsTable.permissionKey, perm.key)
+      ))
       .limit(1);
 
     if (existing.length > 0) {
       await db.update(userPermissionsTable)
         .set({ isEnabled: perm.enabled })
-        .where(eq(userPermissionsTable.userId, userId));
+        .where(and(
+          eq(userPermissionsTable.userId, userId),
+          eq(userPermissionsTable.permissionKey, perm.key)
+        ));
     } else {
       await db.insert(userPermissionsTable).values({
         userId,
@@ -142,11 +227,25 @@ router.put("/:id/permissions", authenticate, requireAdmin, async (req: Request, 
     }
   }
 
-  res.json({ success: true, message: "Permissions updated" });
+  await logAudit(req.user.userId, "UPDATE_PERMISSIONS", "user", userId, {
+    permissionsChanged: permissions.filter(p => p.enabled).map(p => p.key),
+  }, req);
+
+  res.json({ success: true, message: "تم تحديث الصلاحيات بنجاح" });
 });
 
 router.post("/:id/reset-password", authenticate, requireAdmin, async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
+
   const userId = parseInt(req.params.id, 10);
+  if (isNaN(userId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid user ID" } }); return; }
+
+  const target = await db.select({ username: usersTable.username }).from(usersTable).where(eq(usersTable.id, userId)).limit(1);
+  if (!target[0]) {
+    res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "المستخدم غير موجود" } });
+    return;
+  }
+
   const newPassword = generatePassword();
   const hash = await hashPassword(newPassword);
 
@@ -154,6 +253,8 @@ router.post("/:id/reset-password", authenticate, requireAdmin, async (req: Reque
     passwordHash: hash,
     forcePasswordChange: true,
   }).where(eq(usersTable.id, userId));
+
+  await logAudit(req.user.userId, "RESET_PASSWORD", "user", userId, { targetUsername: target[0].username }, req);
 
   res.json({ success: true, data: { newPassword } });
 });

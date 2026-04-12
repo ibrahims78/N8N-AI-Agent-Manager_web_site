@@ -4,11 +4,22 @@ const ALGORITHM = "aes-256-cbc";
 
 function getEncryptionKey(): Buffer {
   const key = process.env.ENCRYPTION_KEY;
-  if (key && key.length === 64) {
-    return Buffer.from(key, "hex");
+
+  if (key) {
+    if (key.length === 64) {
+      return Buffer.from(key, "hex");
+    }
+    if (key.length >= 32) {
+      return Buffer.from(key.slice(0, 32), "utf8");
+    }
   }
-  const sessionKey = process.env.SESSION_SECRET ?? "default-key-for-development-only-32b";
-  return Buffer.from(sessionKey.padEnd(32, "0").slice(0, 32), "utf8");
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("ENCRYPTION_KEY environment variable must be set in production (64 hex chars = 32 bytes)");
+  }
+
+  const devKey = "dev-encryption-key-change-in-prod!";
+  return Buffer.from(devKey.slice(0, 32), "utf8");
 }
 
 export function encryptApiKey(plaintext: string): { encryptedKey: string; iv: string } {

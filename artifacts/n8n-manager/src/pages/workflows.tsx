@@ -72,6 +72,25 @@ export default function WorkflowsPage() {
     });
   };
 
+  const WorkflowCardSkeleton = () => (
+    <div className="bg-card rounded-xl border border-border p-4 animate-pulse">
+      <div className="flex items-start justify-between mb-3">
+        <div className="h-5 bg-muted rounded w-2/3" />
+        <div className="h-5 bg-muted rounded w-16" />
+      </div>
+      <div className="space-y-2 mb-3">
+        <div className="h-1.5 bg-muted rounded-full" />
+        <div className="flex justify-between">
+          <div className="h-3 bg-muted rounded w-16" />
+          <div className="h-3 bg-muted rounded w-12" />
+        </div>
+      </div>
+      <div className="flex gap-1 pt-2 border-t border-border/50">
+        {[1,2,3,4].map(i => <div key={i} className="h-7 w-7 bg-muted rounded-md" />)}
+      </div>
+    </div>
+  );
+
   const SuccessRateBar = ({ rate }: { rate: number }) => (
     <div className="h-1.5 bg-muted rounded-full overflow-hidden">
       <motion.div
