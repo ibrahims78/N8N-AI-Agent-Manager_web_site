@@ -52,6 +52,27 @@ Last updated: 2026-04-12
 - [ ] Template creation from workflow
 - [ ] Template rating system
 
+## Phase 5 — Smart Dashboard ✅ (Complete)
+
+- [x] `GET /api/dashboard/stats` — حقيقي: total/active workflows، today executions، success rate، avg time، day-over-day comparison
+- [x] `GET /api/dashboard/live-feed` — آخر التنفيذات مع `refreshedAt`
+- [x] `GET /api/dashboard/chart-data?period=7d|30d|3m` — بيانات حقيقية من n8n مصنّفة حسب التاريخ
+- [x] `GET /api/dashboard/ai-insight` — تحليل ذكي يحسب معدل النجاح ويولّد ملخصاً
+- [x] `GET /api/dashboard/top-workflows?period=week|month|all` — أكثر 5 workflows نشاطاً بنسبة نجاح حقيقية
+- [x] `GET /api/dashboard/heatmap?year=YYYY` — بيانات خريطة الحرارة السنوية ✅ (جديد)
+- [x] `GET /api/dashboard/alerts` — تنبيهات ذكية عن workflows فاشلة متكررة ✅ (جديد)
+- [x] `/api/v1/dashboard/*` alias لدعم generated API client ✅ (جديد)
+- [x] KPI Cards بـ Sparklines (AreaChart) ✅ (جديد)
+- [x] Interactive Chart مع فلتر 7d/30d/3m ✅ (محسّن)
+- [x] Live Feed مع فلتر كل/ناجح/فاشل + auto-refresh 30s ✅ (جديد)
+- [x] Alerts Center مع dismiss ✅ (جديد)
+- [x] Top Workflows مع فلتر أسبوع/شهر/الكل ✅ (محسّن)
+- [x] AI Insight مع refresh ✅ (محسّن)
+- [x] Activity Heatmap متصل بـ API حقيقي بدل random ✅ (محسّن)
+- [x] Guided Tour — 4 خطوات تفاعلية عند أول دخول ✅ (جديد)
+- [x] Live pulse indicator ✅ (جديد)
+- [x] Route `/dashboard` alias ✅ (جديد)
+
 ## Phase 4 — Analytics + History 🔄 (~60%)
 
 - [x] Chat conversations CRUD

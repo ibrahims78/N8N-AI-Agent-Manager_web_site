@@ -47,6 +47,13 @@ function AppRoutes() {
           </AppLayout>
         </ProtectedRoute>
       </Route>
+      <Route path="/dashboard">
+        <ProtectedRoute>
+          <AppLayout>
+            <DashboardPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
       <Route path="/workflows">
         <ProtectedRoute>
           <AppLayout>
