@@ -235,6 +235,7 @@ export default function ChatPage() {
   const [selectedConvId, setSelectedConvId] = useState<number | null>(null);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const pendingAutoSend = useRef<string | null>(null);
   const [phases, setPhases] = useState<PhaseProgress[]>([]);
   const [generationResult, setGenerationResult] = useState<GenerationResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -292,10 +293,23 @@ export default function ChatPage() {
     }
   }, []);
 
-  const handleSend = useCallback(() => {
-    if (!input.trim() || sending || !selectedConvId) return;
+  // Load template use request and auto-send
+  useEffect(() => {
+    const stored = sessionStorage.getItem("templateUse");
+    if (stored) {
+      sessionStorage.removeItem("templateUse");
+      try {
+        const { convId, message } = JSON.parse(stored) as { convId: number; message: string };
+        queryClient.invalidateQueries({ queryKey: getGetConversationsQueryKey() });
+        pendingAutoSend.current = message;
+        setSelectedConvId(convId);
+      } catch { /* ignore */ }
+    }
+  }, [queryClient]);
 
-    const text = input.trim();
+  const handleSend = useCallback((overrideText?: string) => {
+    const text = (overrideText ?? input).trim();
+    if (!text || sending || !selectedConvId) return;
     setInput("");
     setSending(true);
     setIsGenerating(false);
