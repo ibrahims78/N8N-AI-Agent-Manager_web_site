@@ -8,6 +8,7 @@ import {
   activateWorkflow,
   deactivateWorkflow,
   deleteWorkflow,
+  createWorkflow,
   updateWorkflow,
   importWorkflow,
   getWorkflowExecutions,
@@ -70,6 +71,28 @@ router.get("/", authenticate, requirePermission("view_workflows"), async (req: R
     const message = err instanceof Error ? err.message : "Unknown error";
     if (message === "N8N_NOT_CONFIGURED") {
       res.json({ success: true, data: { workflows: [], total: 0 } });
+    } else {
+      res.status(500).json({ success: false, error: { code: "N8N_ERROR", message } });
+    }
+  }
+});
+
+router.post("/", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { name } = req.body as { name?: string };
+    const workflowName = (name ?? "").trim() || "مسار عمل جديد";
+    const result = await createWorkflow({
+      name: workflowName,
+      nodes: [],
+      connections: {},
+      settings: { executionOrder: "v1" },
+      active: false,
+    });
+    res.json({ success: true, data: result });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    if (message === "N8N_NOT_CONFIGURED") {
+      res.status(503).json({ success: false, error: { code: "N8N_NOT_CONFIGURED", message: "يرجى إعداد اتصال n8n في الإعدادات أولاً" } });
     } else {
       res.status(500).json({ success: false, error: { code: "N8N_ERROR", message } });
     }

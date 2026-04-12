@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Search, LayoutGrid, List, Plus, Trash2, Play, Pause, ChevronRight, BookmarkPlus, X } from "lucide-react";
-import { Link } from "wouter";
+import { Search, LayoutGrid, List, Plus, Trash2, Play, Pause, ChevronRight, BookmarkPlus, X, ExternalLink, MessageSquarePlus } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import { useGetWorkflows, useActivateWorkflow, useDeactivateWorkflow, useDeleteWorkflow, useBulkActionWorkflows, getGetWorkflowsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { getAuthHeader, API_BASE } from "@/lib/api";
+import { getAuthHeader, API_BASE, apiRequest } from "@/lib/api";
 import { useAppStore } from "@/stores/useAppStore";
 import { useToast } from "@/hooks/use-toast";
 
@@ -37,6 +37,12 @@ export default function WorkflowsPage() {
   const [saveAsTemplateWf, setSaveAsTemplateWf] = useState<Workflow | null>(null);
   const [templateForm, setTemplateForm] = useState({ name: "", description: "", category: "api" });
   const [savingTemplate, setSavingTemplate] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newWorkflowName, setNewWorkflowName] = useState("");
+  const [creatingWorkflow, setCreatingWorkflow] = useState(false);
+  const [createdWorkflowId, setCreatedWorkflowId] = useState<string | null>(null);
+  const [n8nUrl, setN8nUrl] = useState<string | null>(null);
+  const [, navigate] = useLocation();
 
   const authHeader = getAuthHeader();
   const { data: res, isLoading } = useGetWorkflows({
@@ -82,6 +88,36 @@ export default function WorkflowsPage() {
   const openSaveAsTemplate = (wf: Workflow) => {
     setSaveAsTemplateWf(wf);
     setTemplateForm({ name: wf.name, description: "", category: "api" });
+  };
+
+  const openCreateModal = useCallback(async () => {
+    setNewWorkflowName("");
+    setCreatedWorkflowId(null);
+    setShowCreateModal(true);
+    try {
+      const settings = await apiRequest<{ success: boolean; data?: { url?: string } }>("/settings/n8n");
+      if (settings.success && settings.data?.url) setN8nUrl(settings.data.url);
+    } catch {}
+  }, []);
+
+  const handleCreateWorkflow = async () => {
+    setCreatingWorkflow(true);
+    try {
+      const result = await apiRequest<{ success: boolean; data?: { id: string }; error?: { message: string } }>("/workflows", {
+        method: "POST",
+        body: JSON.stringify({ name: newWorkflowName.trim() || (isRTL ? "مسار عمل جديد" : "New Workflow") }),
+      });
+      if (result.success && result.data?.id) {
+        setCreatedWorkflowId(result.data.id);
+        queryClient.invalidateQueries({ queryKey: getGetWorkflowsQueryKey() });
+      } else {
+        toast({ title: result.error?.message ?? (isRTL ? "فشل إنشاء المسار" : "Failed to create workflow"), variant: "destructive" });
+      }
+    } catch (err) {
+      toast({ title: String(err), variant: "destructive" });
+    } finally {
+      setCreatingWorkflow(false);
+    }
   };
 
   const handleSaveAsTemplate = async () => {
@@ -159,7 +195,10 @@ export default function WorkflowsPage() {
           <button onClick={() => setViewMode("list")} className={`p-2 rounded-md transition-colors ${viewMode === "list" ? "bg-accent/10 text-accent" : "text-muted-foreground hover:bg-muted"}`}>
             <List size={16} />
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors">
+          <button
+            onClick={() => void openCreateModal()}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors"
+          >
             <Plus size={16} />
             {t("workflows.new")}
           </button>
@@ -422,6 +461,128 @@ export default function WorkflowsPage() {
                   {savingTemplate ? (isRTL ? "جاري الحفظ..." : "Saving...") : (isRTL ? "حفظ كقالب" : "Save as Template")}
                 </button>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Create Workflow Modal ─────────────────────────────────────── */}
+      <AnimatePresence>
+        {showCreateModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-card rounded-2xl p-6 w-full max-w-md border border-border shadow-2xl"
+              dir={isRTL ? "rtl" : "ltr"}
+            >
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-lg font-semibold text-foreground">
+                  {isRTL ? "إنشاء مسار عمل جديد" : "Create New Workflow"}
+                </h2>
+                <button onClick={() => setShowCreateModal(false)} className="p-1.5 rounded-md hover:bg-muted transition-colors">
+                  <X size={16} className="text-muted-foreground" />
+                </button>
+              </div>
+
+              {!createdWorkflowId ? (
+                <>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-1.5">
+                        {isRTL ? "اسم المسار" : "Workflow Name"}
+                      </label>
+                      <input
+                        value={newWorkflowName}
+                        onChange={e => setNewWorkflowName(e.target.value)}
+                        onKeyDown={e => { if (e.key === "Enter") void handleCreateWorkflow(); }}
+                        placeholder={isRTL ? "مسار عمل جديد" : "New Workflow"}
+                        className="w-full px-4 py-2.5 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                        autoFocus
+                      />
+                    </div>
+
+                    <div className="p-3 bg-muted/50 rounded-lg border border-border/50 text-xs text-muted-foreground space-y-1">
+                      <p className="font-medium text-foreground">
+                        {isRTL ? "⚙️ متطلبات إعداد n8n:" : "⚙️ n8n Setup Requirements:"}
+                      </p>
+                      <p>{isRTL ? "• رابط n8n (مثال: https://n8n.example.com)" : "• n8n URL (e.g. https://n8n.example.com)"}</p>
+                      <p>{isRTL ? "• مفتاح API من: الإعدادات ← API ← إنشاء مفتاح" : "• API Key from: Settings → API → Create Key"}</p>
+                      {n8nUrl && (
+                        <a
+                          href={n8nUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-accent hover:underline pt-1"
+                        >
+                          <ExternalLink size={11} />
+                          {isRTL ? "فتح لوحة n8n" : "Open n8n Dashboard"}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3 mt-5">
+                    <button
+                      onClick={() => setShowCreateModal(false)}
+                      className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors"
+                    >
+                      {isRTL ? "إلغاء" : "Cancel"}
+                    </button>
+                    <button
+                      onClick={() => void handleCreateWorkflow()}
+                      disabled={creatingWorkflow}
+                      className="flex-1 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-60"
+                    >
+                      {creatingWorkflow ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full" />
+                          {isRTL ? "جاري الإنشاء..." : "Creating..."}
+                        </span>
+                      ) : isRTL ? "إنشاء" : "Create"}
+                    </button>
+                  </div>
+
+                  <div className="mt-3 pt-3 border-t border-border">
+                    <button
+                      onClick={() => { setShowCreateModal(false); navigate("/chat"); }}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-accent/30 text-accent text-sm hover:bg-accent/5 transition-colors"
+                    >
+                      <MessageSquarePlus size={15} />
+                      {isRTL ? "إنشاء بالذكاء الاصطناعي" : "Create with AI"}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center space-y-4">
+                  <div className="w-14 h-14 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto">
+                    <span className="text-2xl">✅</span>
+                  </div>
+                  <p className="text-foreground font-medium">
+                    {isRTL ? "تم إنشاء المسار بنجاح!" : "Workflow created successfully!"}
+                  </p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => { setShowCreateModal(false); navigate(`/workflows/${createdWorkflowId}`); }}
+                      className="flex-1 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors"
+                    >
+                      {isRTL ? "عرض التفاصيل" : "View Details"}
+                    </button>
+                    {n8nUrl && (
+                      <a
+                        href={`${n8nUrl}/workflow/${createdWorkflowId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 flex items-center justify-center gap-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors"
+                      >
+                        <ExternalLink size={14} />
+                        {isRTL ? "فتح في n8n" : "Open in n8n"}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
             </motion.div>
           </div>
         )}
