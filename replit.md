@@ -58,9 +58,9 @@ pnpm run build
 
 ## Default Credentials
 
-- **Username**: `مدير`
+- **Username**: `admin`
 - **Password**: `123456`
-- **Note**: `force_password_change=true` — user must change password on first login
+- **Note**: Admin user is auto-created on startup if no admin role exists in the database
 
 ## Key Implementation Notes
 

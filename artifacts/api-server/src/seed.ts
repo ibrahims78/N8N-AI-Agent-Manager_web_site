@@ -478,19 +478,20 @@ export async function seedDatabase() {
   logger.info("Starting database seed...");
 
   // ─── Admin User ──────────────────────────────────────────────────────────────
+  // Check if ANY admin role user exists (not tied to a specific username)
   const existingAdmin = await db.select({ id: usersTable.id })
     .from(usersTable)
-    .where(eq(usersTable.username, "مدير"))
+    .where(eq(usersTable.role, "admin"))
     .limit(1);
 
   if (!existingAdmin[0]) {
     const passwordHash = await bcrypt.hash("123456", 12);
     const [admin] = await db.insert(usersTable).values({
-      username: "مدير",
+      username: "admin",
       passwordHash,
       role: "admin",
       isActive: true,
-      forcePasswordChange: true,
+      forcePasswordChange: false,
     }).returning();
 
     if (admin) {
@@ -501,7 +502,7 @@ export async function seedDatabase() {
           isEnabled: true,
         }))
       );
-      logger.info({ userId: admin.id }, "Admin user created: مدير / 123456");
+      logger.info({ userId: admin.id }, "Admin user created: admin / 123456");
     }
   } else {
     logger.info("Admin user already exists — skipping");

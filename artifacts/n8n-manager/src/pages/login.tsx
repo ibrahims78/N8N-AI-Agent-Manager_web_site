@@ -218,8 +218,8 @@ export default function LoginPage() {
 
             <p className="text-center text-xs text-muted-foreground mt-6">
               {language === "ar"
-                ? "المدير الافتراضي: مدير / 123456"
-                : "Default admin: مدير / 123456"}
+                ? "المدير الافتراضي: admin / 123456"
+                : "Default admin: admin / 123456"}
             </p>
           </div>
         </div>
