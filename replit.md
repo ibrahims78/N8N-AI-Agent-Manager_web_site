@@ -93,8 +93,11 @@ pnpm run build
 | POST | `/api/workflows/:id/deactivate` | Deactivate workflow |
 | POST | `/api/workflows/bulk-action` | Bulk activate/deactivate/delete |
 | POST | `/api/workflows/import` | Import AI-generated workflow (auto-saves v1) |
-| GET | `/api/templates` | List templates |
+| GET | `/api/templates` | List templates (filter by category/search) |
+| POST | `/api/templates` | Create new template (requires manage_workflows) |
+| POST | `/api/templates/:id/rate` | Rate a template 1-5 (updates avgRating + ratingCount) |
 | POST | `/api/templates/:id/use` | Use template → opens chat |
+| DELETE | `/api/templates/:id` | Delete template (admin only) |
 | GET | `/api/users` | List users (admin only) |
 | POST | `/api/users` | Create user (admin only) |
 | PUT | `/api/users/:id/permissions` | Update 10 permissions |
@@ -142,3 +145,13 @@ pnpm run build
 | 6 | Users (10 permissions) + Settings (danger zone) | ✅ Complete |
 | 7 | Security (Helmet, rate limiting, AES-256) + i18n | ✅ Complete |
 | 8 | Real execution stats + PDF export + version auto-save | ✅ Complete |
+| 9 | Template rating (⭐ interactive stars) + Save workflow as template + code audit fixes | ✅ Complete |
+
+## Code Fixes (v9 Audit)
+
+- **templates.routes.ts**: Added try-catch to all routes, added POST `/templates` (create) + POST `/:id/rate` + DELETE `/:id` endpoints
+- **workflows.routes.ts**: Fixed dynamic `import()` → static import for `importWorkflow`
+- **templates.ts (schema)**: Added `ratingCount: integer` column (DB migration applied)
+- **templates.tsx**: Added interactive 5-star rating UI, null-safe `(avgRating ?? 0).toFixed(1)`, AnimatePresence on modals, "New Template" button
+- **workflows.tsx**: Added `BookmarkPlus` "Save as Template" button with confirmation modal on all views
+- **chat.tsx**: Removed dead code (duplicate `message !== undefined` branch), added proper error handling for SSE error events

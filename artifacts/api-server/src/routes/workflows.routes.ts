@@ -9,6 +9,7 @@ import {
   deactivateWorkflow,
   deleteWorkflow,
   updateWorkflow,
+  importWorkflow,
   getWorkflowExecutions,
   getAllRecentExecutions,
 } from "../services/n8n.service";
@@ -217,7 +218,6 @@ router.post("/import", authenticate, requirePermission("manage_workflows"), asyn
   }
 
   try {
-    const { importWorkflow } = await import("../services/n8n.service");
     const result = await importWorkflow(workflowJson);
 
     // Auto-save version 1 for the newly created workflow

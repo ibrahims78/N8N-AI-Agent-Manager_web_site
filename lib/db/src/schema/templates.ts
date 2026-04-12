@@ -13,6 +13,7 @@ export const templatesTable = pgTable("templates", {
   workflowJson: jsonb("workflow_json").notNull(),
   usageCount: integer("usage_count").notNull().default(0),
   avgRating: real("avg_rating").notNull().default(0),
+  ratingCount: integer("rating_count").notNull().default(0),
   createdBy: integer("created_by"),
   isSystem: boolean("is_system").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

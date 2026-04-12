@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Search, LayoutGrid, List, Plus, CheckCircle2, XCircle, Trash2, Play, Pause, MoreHorizontal, ChevronRight } from "lucide-react";
+import { Search, LayoutGrid, List, Plus, Trash2, Play, Pause, ChevronRight, BookmarkPlus, X } from "lucide-react";
 import { Link } from "wouter";
 import { useGetWorkflows, useActivateWorkflow, useDeactivateWorkflow, useDeleteWorkflow, useBulkActionWorkflows, getGetWorkflowsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { getAuthHeader } from "@/lib/api";
+import { getAuthHeader, API_BASE } from "@/lib/api";
 import { useAppStore } from "@/stores/useAppStore";
+import { useToast } from "@/hooks/use-toast";
 
 interface Workflow {
   id: string;
@@ -20,16 +21,22 @@ interface Workflow {
 
 type ViewMode = "card" | "list";
 
+const TEMPLATE_CATEGORIES = ["email", "reports", "api", "scheduling", "alerts"];
+
 export default function WorkflowsPage() {
   const { t } = useTranslation();
   const { language } = useAppStore();
   const isRTL = language === "ar";
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const [viewMode, setViewMode] = useState<ViewMode>("card");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [saveAsTemplateWf, setSaveAsTemplateWf] = useState<Workflow | null>(null);
+  const [templateForm, setTemplateForm] = useState({ name: "", description: "", category: "api" });
+  const [savingTemplate, setSavingTemplate] = useState(false);
 
   const authHeader = getAuthHeader();
   const { data: res, isLoading } = useGetWorkflows({
@@ -72,24 +79,43 @@ export default function WorkflowsPage() {
     });
   };
 
-  const WorkflowCardSkeleton = () => (
-    <div className="bg-card rounded-xl border border-border p-4 animate-pulse">
-      <div className="flex items-start justify-between mb-3">
-        <div className="h-5 bg-muted rounded w-2/3" />
-        <div className="h-5 bg-muted rounded w-16" />
-      </div>
-      <div className="space-y-2 mb-3">
-        <div className="h-1.5 bg-muted rounded-full" />
-        <div className="flex justify-between">
-          <div className="h-3 bg-muted rounded w-16" />
-          <div className="h-3 bg-muted rounded w-12" />
-        </div>
-      </div>
-      <div className="flex gap-1 pt-2 border-t border-border/50">
-        {[1,2,3,4].map(i => <div key={i} className="h-7 w-7 bg-muted rounded-md" />)}
-      </div>
-    </div>
-  );
+  const openSaveAsTemplate = (wf: Workflow) => {
+    setSaveAsTemplateWf(wf);
+    setTemplateForm({ name: wf.name, description: "", category: "api" });
+  };
+
+  const handleSaveAsTemplate = async () => {
+    if (!saveAsTemplateWf || !templateForm.name.trim() || !templateForm.description.trim()) return;
+    setSavingTemplate(true);
+    try {
+      const headers: Record<string, string> = { ...authHeader, "Content-Type": "application/json" };
+      const token = localStorage.getItem("accessToken");
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const res = await fetch(`${API_BASE}/templates`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          name: templateForm.name.trim(),
+          description: templateForm.description.trim(),
+          category: templateForm.category,
+          nodesCount: 0,
+          workflowJson: { workflowId: saveAsTemplateWf.id, name: saveAsTemplateWf.name },
+        }),
+      });
+      const data = await res.json() as { success: boolean; error?: { message: string } };
+      if (data.success) {
+        toast({ title: isRTL ? "تم حفظ الـ workflow كقالب ✅" : "Workflow saved as template ✅" });
+        setSaveAsTemplateWf(null);
+      } else {
+        toast({ title: data.error?.message ?? "Failed", variant: "destructive" });
+      }
+    } catch (err) {
+      toast({ title: String(err), variant: "destructive" });
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
 
   const SuccessRateBar = ({ rate }: { rate: number }) => (
     <div className="h-1.5 bg-muted rounded-full overflow-hidden">
@@ -216,12 +242,21 @@ export default function WorkflowsPage() {
                   <button
                     onClick={() => wf.active ? deactivate({ id: wf.id } as Parameters<typeof deactivate>[0]) : activate({ id: wf.id } as Parameters<typeof activate>[0])}
                     className={`p-1.5 rounded-md text-xs transition-colors ${wf.active ? "text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950" : "text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950"}`}
+                    title={wf.active ? (isRTL ? "إيقاف" : "Deactivate") : (isRTL ? "تفعيل" : "Activate")}
                   >
                     {wf.active ? <Pause size={14} /> : <Play size={14} />}
                   </button>
                   <button
+                    onClick={() => openSaveAsTemplate(wf)}
+                    className="p-1.5 rounded-md text-accent hover:bg-accent/10 transition-colors"
+                    title={isRTL ? "حفظ كقالب" : "Save as template"}
+                  >
+                    <BookmarkPlus size={14} />
+                  </button>
+                  <button
                     onClick={() => deleteWf({ id: wf.id } as Parameters<typeof deleteWf>[0])}
                     className="p-1.5 rounded-md text-destructive hover:bg-destructive/10 transition-colors"
+                    title={isRTL ? "حذف" : "Delete"}
                   >
                     <Trash2 size={14} />
                   </button>
@@ -283,8 +318,18 @@ export default function WorkflowsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1">
-                      <button onClick={() => wf.active ? deactivate({ id: wf.id } as Parameters<typeof deactivate>[0]) : activate({ id: wf.id } as Parameters<typeof activate>[0])} className={`p-1.5 rounded-md ${wf.active ? "text-yellow-500 hover:bg-yellow-50" : "text-emerald-500 hover:bg-emerald-50"}`}>
+                      <button
+                        onClick={() => wf.active ? deactivate({ id: wf.id } as Parameters<typeof deactivate>[0]) : activate({ id: wf.id } as Parameters<typeof activate>[0])}
+                        className={`p-1.5 rounded-md ${wf.active ? "text-yellow-500 hover:bg-yellow-50" : "text-emerald-500 hover:bg-emerald-50"}`}
+                      >
                         {wf.active ? <Pause size={14} /> : <Play size={14} />}
+                      </button>
+                      <button
+                        onClick={() => openSaveAsTemplate(wf)}
+                        className="p-1.5 rounded-md text-accent hover:bg-accent/10 transition-colors"
+                        title={isRTL ? "حفظ كقالب" : "Save as template"}
+                      >
+                        <BookmarkPlus size={14} />
                       </button>
                       <button onClick={() => deleteWf({ id: wf.id } as Parameters<typeof deleteWf>[0])} className="p-1.5 rounded-md text-destructive hover:bg-destructive/10">
                         <Trash2 size={14} />
@@ -302,6 +347,85 @@ export default function WorkflowsPage() {
           </table>
         </div>
       )}
+
+      {/* Save as Template Modal */}
+      <AnimatePresence>
+        {saveAsTemplateWf && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setSaveAsTemplateWf(null)}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={e => e.stopPropagation()}
+              className="bg-card rounded-2xl p-6 max-w-md w-full border border-border shadow-2xl"
+              dir={isRTL ? "rtl" : "ltr"}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-base font-semibold text-foreground">
+                  {isRTL ? "حفظ كقالب" : "Save as Template"}
+                </h2>
+                <button onClick={() => setSaveAsTemplateWf(null)} className="p-1 rounded-lg hover:bg-muted transition-colors">
+                  <X size={16} className="text-muted-foreground" />
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground mb-4">
+                {isRTL ? `حفظ "${saveAsTemplateWf.name}" كقالب قابل لإعادة الاستخدام` : `Saving "${saveAsTemplateWf.name}" as a reusable template`}
+              </p>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">
+                    {isRTL ? "اسم القالب" : "Template Name"} *
+                  </label>
+                  <input
+                    value={templateForm.name}
+                    onChange={e => setTemplateForm(p => ({ ...p, name: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">
+                    {isRTL ? "وصف القالب" : "Description"} *
+                  </label>
+                  <textarea
+                    value={templateForm.description}
+                    onChange={e => setTemplateForm(p => ({ ...p, description: e.target.value }))}
+                    rows={3}
+                    placeholder={isRTL ? "ماذا يفعل هذا القالب؟" : "What does this template do?"}
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">
+                    {isRTL ? "التصنيف" : "Category"}
+                  </label>
+                  <select
+                    value={templateForm.category}
+                    onChange={e => setTemplateForm(p => ({ ...p, category: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  >
+                    {TEMPLATE_CATEGORIES.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="flex gap-3 mt-5">
+                <button onClick={() => setSaveAsTemplateWf(null)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">
+                  {t("app.cancel")}
+                </button>
+                <button
+                  onClick={handleSaveAsTemplate}
+                  disabled={savingTemplate || !templateForm.name.trim() || !templateForm.description.trim()}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-50"
+                >
+                  <BookmarkPlus size={15} />
+                  {savingTemplate ? (isRTL ? "جاري الحفظ..." : "Saving...") : (isRTL ? "حفظ كقالب" : "Save as Template")}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

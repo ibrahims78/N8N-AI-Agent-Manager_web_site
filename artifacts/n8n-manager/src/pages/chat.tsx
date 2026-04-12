@@ -362,7 +362,7 @@ export default function ChatPage() {
                 setIsGenerating(false);
                 setSending(false);
 
-                if ((parsed as { workflowJson?: unknown; isWorkflowCreation?: boolean }).workflowJson) {
+                if ((parsed as { workflowJson?: unknown }).workflowJson) {
                   const r = parsed as {
                     workflowJson: Record<string, unknown>;
                     qualityScore: number;
@@ -379,16 +379,15 @@ export default function ChatPage() {
                     totalTimeMs: r.totalTimeMs ?? 0,
                     phases: r.phases ?? [],
                   });
+                } else if ((parsed as { error?: string }).error) {
+                  toast({ title: String((parsed as { error: string }).error), variant: "destructive" });
+                  setPhases([]);
                 } else {
                   setPhases([]);
                 }
 
                 refetchConv();
                 queryClient.invalidateQueries({ queryKey: getGetConversationsQueryKey() });
-              } else if ((parsed as { message?: string }).message !== undefined && typeof (parsed as { message?: string }).message === "string") {
-                setIsGenerating(false);
-                setSending(false);
-                toast({ title: (parsed as { message: string }).message, variant: "destructive" });
               }
             } catch {
               // ignore JSON parse errors for non-data lines
