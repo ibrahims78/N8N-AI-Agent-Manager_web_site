@@ -3,20 +3,36 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: N8N AI Agent Manager API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: workflows
+    description: N8N Workflow management
+  - name: chat
+    description: AI Chat and conversation
+  - name: dashboard
+    description: Dashboard statistics
+  - name: templates
+    description: Workflow templates
+  - name: history
+    description: Conversation history
+  - name: users
+    description: User management
+  - name: settings
+    description: System settings
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +40,797 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # Auth
+  /v1/auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /v1/auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /v1/auth/refresh:
+    post:
+      operationId: refreshToken
+      tags: [auth]
+      summary: Refresh access token
+      responses:
+        "200":
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+
+  /v1/auth/change-password:
+    post:
+      operationId: changePassword
+      tags: [auth]
+      summary: Change password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordRequest"
+      responses:
+        "200":
+          description: Password changed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /v1/auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+  # Workflows
+  /v1/workflows:
+    get:
+      operationId: getWorkflows
+      tags: [workflows]
+      summary: Get all workflows
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [active, inactive, all]
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Workflows list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkflowsResponse"
+
+  /v1/workflows/{id}:
+    get:
+      operationId: getWorkflow
+      tags: [workflows]
+      summary: Get workflow by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workflow details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkflowDetailResponse"
+
+    delete:
+      operationId: deleteWorkflow
+      tags: [workflows]
+      summary: Delete workflow
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /v1/workflows/{id}/activate:
+    post:
+      operationId: activateWorkflow
+      tags: [workflows]
+      summary: Activate workflow
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Activated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /v1/workflows/{id}/deactivate:
+    post:
+      operationId: deactivateWorkflow
+      tags: [workflows]
+      summary: Deactivate workflow
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deactivated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /v1/workflows/{id}/executions:
+    get:
+      operationId: getWorkflowExecutions
+      tags: [workflows]
+      summary: Get workflow executions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Executions list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutionsResponse"
+
+  /v1/workflows/{id}/versions:
+    get:
+      operationId: getWorkflowVersions
+      tags: [workflows]
+      summary: Get workflow versions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Versions list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VersionsResponse"
+
+  /v1/workflows/bulk-action:
+    post:
+      operationId: bulkActionWorkflows
+      tags: [workflows]
+      summary: Bulk action on workflows
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkActionRequest"
+      responses:
+        "200":
+          description: Bulk action result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Chat
+  /v1/chat/conversations:
+    get:
+      operationId: getConversations
+      tags: [chat]
+      summary: Get all conversations
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Conversations list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationsResponse"
+
+    post:
+      operationId: createConversation
+      tags: [chat]
+      summary: Create a new conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateConversationRequest"
+      responses:
+        "200":
+          description: Created conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationResponse"
+
+  /v1/chat/conversations/{id}:
+    get:
+      operationId: getConversation
+      tags: [chat]
+      summary: Get conversation by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Conversation details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationDetailResponse"
+
+    delete:
+      operationId: deleteConversation
+      tags: [chat]
+      summary: Delete conversation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /v1/chat/conversations/{id}/messages:
+    post:
+      operationId: sendMessage
+      tags: [chat]
+      summary: Send a message in a conversation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendMessageRequest"
+      responses:
+        "200":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # Dashboard
+  /v1/dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard statistics
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStatsResponse"
+
+  /v1/dashboard/recent-executions:
+    get:
+      operationId: getRecentExecutions
+      tags: [dashboard]
+      summary: Get recent executions
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Recent executions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutionsResponse"
+
+  /v1/dashboard/chart-data:
+    get:
+      operationId: getChartData
+      tags: [dashboard]
+      summary: Get chart data for executions over time
+      parameters:
+        - in: query
+          name: period
+          schema:
+            type: string
+            enum: [day, week, month]
+      responses:
+        "200":
+          description: Chart data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChartDataResponse"
+
+  /v1/dashboard/ai-insight:
+    get:
+      operationId: getAiInsight
+      tags: [dashboard]
+      summary: Get AI-generated daily insight
+      responses:
+        "200":
+          description: AI insight text
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiInsightResponse"
+
+  /v1/dashboard/top-workflows:
+    get:
+      operationId: getTopWorkflows
+      tags: [dashboard]
+      summary: Get most active workflows
+      responses:
+        "200":
+          description: Top workflows
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TopWorkflowsResponse"
+
+  # Templates
+  /v1/templates:
+    get:
+      operationId: getTemplates
+      tags: [templates]
+      summary: Get all templates
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: search
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Templates list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemplatesResponse"
+
+  /v1/templates/{id}:
+    get:
+      operationId: getTemplate
+      tags: [templates]
+      summary: Get template by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Template details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemplateResponse"
+
+  /v1/templates/{id}/use:
+    post:
+      operationId: useTemplate
+      tags: [templates]
+      summary: Use a template (opens chat with it)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: New conversation created from template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationResponse"
+
+  # Users
+  /v1/users:
+    get:
+      operationId: getUsers
+      tags: [users]
+      summary: Get all users (admin only)
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersResponse"
+
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a new user (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "200":
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+  /v1/users/{id}:
+    put:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /v1/users/{id}/status:
+    put:
+      operationId: updateUserStatus
+      tags: [users]
+      summary: Toggle user active status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserStatusRequest"
+      responses:
+        "200":
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /v1/users/{id}/permissions:
+    put:
+      operationId: updateUserPermissions
+      tags: [users]
+      summary: Update user permissions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePermissionsRequest"
+      responses:
+        "200":
+          description: Permissions updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /v1/users/{id}/reset-password:
+    post:
+      operationId: resetUserPassword
+      tags: [users]
+      summary: Reset user password
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Password reset
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResetPasswordResponse"
+
+  # Settings
+  /v1/settings/n8n/test:
+    post:
+      operationId: testN8nConnection
+      tags: [settings]
+      summary: Test n8n connection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestN8nRequest"
+      responses:
+        "200":
+          description: Connection test result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/N8nTestResponse"
+
+  /v1/settings/n8n:
+    put:
+      operationId: saveN8nSettings
+      tags: [settings]
+      summary: Save n8n settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveN8nRequest"
+      responses:
+        "200":
+          description: Settings saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    get:
+      operationId: getN8nSettings
+      tags: [settings]
+      summary: Get n8n settings (masked)
+      responses:
+        "200":
+          description: N8n settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/N8nSettingsResponse"
+
+  /v1/settings/openai/test:
+    post:
+      operationId: testOpenAI
+      tags: [settings]
+      summary: Test OpenAI API key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestApiKeyRequest"
+      responses:
+        "200":
+          description: Test result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiKeyTestResponse"
+
+  /v1/settings/openai:
+    put:
+      operationId: saveOpenAiKey
+      tags: [settings]
+      summary: Save OpenAI API key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveApiKeyRequest"
+      responses:
+        "200":
+          description: Key saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /v1/settings/gemini/test:
+    post:
+      operationId: testGemini
+      tags: [settings]
+      summary: Test Gemini API key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestApiKeyRequest"
+      responses:
+        "200":
+          description: Test result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiKeyTestResponse"
+
+  /v1/settings/gemini:
+    put:
+      operationId: saveGeminiKey
+      tags: [settings]
+      summary: Save Gemini API key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveApiKeyRequest"
+      responses:
+        "200":
+          description: Key saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /v1/settings/system-status:
+    get:
+      operationId: getSystemStatus
+      tags: [settings]
+      summary: Get system status for all services
+      responses:
+        "200":
+          description: System status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemStatusResponse"
+
+  /v1/settings/onboarding-complete:
+    post:
+      operationId: completeOnboarding
+      tags: [settings]
+      summary: Mark onboarding as complete
+      responses:
+        "200":
+          description: Onboarding marked complete
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +841,854 @@ components:
       required:
         - status
 
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+          required:
+            - code
+            - message
+      required:
+        - success
+        - error
+
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        rememberMe:
+          type: boolean
+      required:
+        - username
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+            user:
+              $ref: "#/components/schemas/User"
+            requiresPasswordChange:
+              type: boolean
+            requiresOnboarding:
+              type: boolean
+          required:
+            - accessToken
+            - user
+      required:
+        - success
+        - data
+
+    ChangePasswordRequest:
+      type: object
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+      required:
+        - currentPassword
+        - newPassword
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        role:
+          type: string
+          enum: [admin, user]
+        isActive:
+          type: boolean
+        forcePasswordChange:
+          type: boolean
+        lastLogin:
+          type: string
+        createdAt:
+          type: string
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Permission"
+      required:
+        - id
+        - username
+        - role
+        - isActive
+        - forcePasswordChange
+
+    UserResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/User"
+      required:
+        - success
+        - data
+
+    UsersResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            users:
+              type: array
+              items:
+                $ref: "#/components/schemas/User"
+            total:
+              type: integer
+          required:
+            - users
+            - total
+      required:
+        - success
+        - data
+
+    CreateUserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [admin, user]
+        permissions:
+          type: array
+          items:
+            type: string
+      required:
+        - username
+        - password
+        - role
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        role:
+          type: string
+          enum: [admin, user]
+
+    UpdateUserStatusRequest:
+      type: object
+      properties:
+        isActive:
+          type: boolean
+      required:
+        - isActive
+
+    UpdatePermissionsRequest:
+      type: object
+      properties:
+        permissions:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              enabled:
+                type: boolean
+            required:
+              - key
+              - enabled
+      required:
+        - permissions
+
+    ResetPasswordResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            newPassword:
+              type: string
+          required:
+            - newPassword
+      required:
+        - success
+        - data
+
+    Permission:
+      type: object
+      properties:
+        key:
+          type: string
+        isEnabled:
+          type: boolean
+      required:
+        - key
+        - isEnabled
+
+    Workflow:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        active:
+          type: boolean
+        nodes:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        connections:
+          type: object
+          additionalProperties: true
+        settings:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        successRate:
+          type: number
+        lastExecution:
+          type: string
+        executionCount:
+          type: integer
+        isRunning:
+          type: boolean
+      required:
+        - id
+        - name
+        - active
+
+    WorkflowsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            workflows:
+              type: array
+              items:
+                $ref: "#/components/schemas/Workflow"
+            total:
+              type: integer
+          required:
+            - workflows
+            - total
+      required:
+        - success
+        - data
+
+    WorkflowDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/Workflow"
+      required:
+        - success
+        - data
+
+    Execution:
+      type: object
+      properties:
+        id:
+          type: string
+        workflowId:
+          type: string
+        workflowName:
+          type: string
+        status:
+          type: string
+          enum: [success, error, running, waiting]
+        startedAt:
+          type: string
+        stoppedAt:
+          type: string
+        duration:
+          type: number
+        errorMessage:
+          type: string
+      required:
+        - id
+        - status
+        - startedAt
+
+    ExecutionsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            executions:
+              type: array
+              items:
+                $ref: "#/components/schemas/Execution"
+            total:
+              type: integer
+          required:
+            - executions
+            - total
+      required:
+        - success
+        - data
+
+    WorkflowVersion:
+      type: object
+      properties:
+        id:
+          type: integer
+        versionNumber:
+          type: integer
+        changeDescription:
+          type: string
+        createdAt:
+          type: string
+        workflowJson:
+          type: object
+          additionalProperties: true
+      required:
+        - id
+        - versionNumber
+        - createdAt
+
+    VersionsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            versions:
+              type: array
+              items:
+                $ref: "#/components/schemas/WorkflowVersion"
+          required:
+            - versions
+      required:
+        - success
+        - data
+
+    BulkActionRequest:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        action:
+          type: string
+          enum: [activate, deactivate, delete]
+      required:
+        - ids
+        - action
+
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        type:
+          type: string
+          enum: [create, edit, diagnose, query]
+        status:
+          type: string
+        messageCount:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        userId:
+          type: integer
+        username:
+          type: string
+      required:
+        - id
+        - title
+        - type
+        - createdAt
+
+    ConversationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/Conversation"
+      required:
+        - success
+        - data
+
+    ConversationsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            conversations:
+              type: array
+              items:
+                $ref: "#/components/schemas/Conversation"
+            total:
+              type: integer
+          required:
+            - conversations
+            - total
+      required:
+        - success
+        - data
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        role:
+          type: string
+          enum: [user, assistant, system]
+        content:
+          type: string
+        modelUsed:
+          type: string
+        tokensUsed:
+          type: integer
+        createdAt:
+          type: string
+      required:
+        - id
+        - role
+        - content
+        - createdAt
+
+    ConversationDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            conversation:
+              $ref: "#/components/schemas/Conversation"
+            messages:
+              type: array
+              items:
+                $ref: "#/components/schemas/Message"
+          required:
+            - conversation
+            - messages
+      required:
+        - success
+        - data
+
+    SendMessageRequest:
+      type: object
+      properties:
+        content:
+          type: string
+        mode:
+          type: string
+          enum: [beginner, expert]
+      required:
+        - content
+
+    MessageResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/Message"
+      required:
+        - success
+        - data
+
+    CreateConversationRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        type:
+          type: string
+          enum: [create, edit, diagnose, query]
+        initialMessage:
+          type: string
+      required:
+        - type
+
+    DashboardStats:
+      type: object
+      properties:
+        totalWorkflows:
+          type: integer
+        activeWorkflows:
+          type: integer
+        todayExecutions:
+          type: integer
+        successRate:
+          type: number
+        avgExecutionTime:
+          type: number
+        n8nConnected:
+          type: boolean
+        openaiConfigured:
+          type: boolean
+        geminiConfigured:
+          type: boolean
+        todayExecutionsChange:
+          type: number
+        successRateChange:
+          type: number
+      required:
+        - totalWorkflows
+        - activeWorkflows
+        - todayExecutions
+        - successRate
+
+    DashboardStatsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/DashboardStats"
+      required:
+        - success
+        - data
+
+    ChartDataPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        successful:
+          type: integer
+        failed:
+          type: integer
+        avgDuration:
+          type: number
+      required:
+        - date
+        - successful
+        - failed
+
+    ChartDataResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            points:
+              type: array
+              items:
+                $ref: "#/components/schemas/ChartDataPoint"
+          required:
+            - points
+      required:
+        - success
+        - data
+
+    AiInsightResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            insight:
+              type: string
+            generatedAt:
+              type: string
+          required:
+            - insight
+      required:
+        - success
+        - data
+
+    TopWorkflow:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        executionCount:
+          type: integer
+        successRate:
+          type: number
+      required:
+        - id
+        - name
+        - executionCount
+        - successRate
+
+    TopWorkflowsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            workflows:
+              type: array
+              items:
+                $ref: "#/components/schemas/TopWorkflow"
+          required:
+            - workflows
+      required:
+        - success
+        - data
+
+    Template:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        nodesCount:
+          type: integer
+        usageCount:
+          type: integer
+        avgRating:
+          type: number
+        isSystem:
+          type: boolean
+        workflowJson:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - description
+        - category
+        - nodesCount
+
+    TemplateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/Template"
+      required:
+        - success
+        - data
+
+    TemplatesResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            templates:
+              type: array
+              items:
+                $ref: "#/components/schemas/Template"
+            total:
+              type: integer
+          required:
+            - templates
+            - total
+      required:
+        - success
+        - data
+
+    TestN8nRequest:
+      type: object
+      properties:
+        url:
+          type: string
+        apiKey:
+          type: string
+      required:
+        - url
+        - apiKey
+
+    SaveN8nRequest:
+      type: object
+      properties:
+        url:
+          type: string
+        apiKey:
+          type: string
+      required:
+        - url
+        - apiKey
+
+    N8nTestResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            connected:
+              type: boolean
+            version:
+              type: string
+            workflowsCount:
+              type: integer
+            message:
+              type: string
+          required:
+            - connected
+      required:
+        - success
+        - data
+
+    N8nSettingsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            url:
+              type: string
+            hasApiKey:
+              type: boolean
+            onboardingComplete:
+              type: boolean
+          required:
+            - hasApiKey
+            - onboardingComplete
+      required:
+        - success
+        - data
+
+    TestApiKeyRequest:
+      type: object
+      properties:
+        apiKey:
+          type: string
+      required:
+        - apiKey
+
+    SaveApiKeyRequest:
+      type: object
+      properties:
+        apiKey:
+          type: string
+      required:
+        - apiKey
+
+    ApiKeyTestResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            valid:
+              type: boolean
+            modelAvailable:
+              type: boolean
+            balanceInfo:
+              type: string
+            dailyQuota:
+              type: string
+            message:
+              type: string
+          required:
+            - valid
+      required:
+        - success
+        - data
+
+    ServiceStatus:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum: [ok, error, unconfigured]
+        message:
+          type: string
+      required:
+        - name
+        - status
+
+    SystemStatusResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            services:
+              type: array
+              items:
+                $ref: "#/components/schemas/ServiceStatus"
+            allReady:
+              type: boolean
+          required:
+            - services
+            - allReady
+      required:
+        - success
+        - data

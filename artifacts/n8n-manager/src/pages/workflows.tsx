@@ -1,0 +1,288 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import { Search, LayoutGrid, List, Plus, CheckCircle2, XCircle, Trash2, Play, Pause, MoreHorizontal, ChevronRight } from "lucide-react";
+import { Link } from "wouter";
+import { useGetWorkflows, useActivateWorkflow, useDeactivateWorkflow, useDeleteWorkflow, useBulkActionWorkflows, getGetWorkflowsQueryKey } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { getAuthHeader } from "@/lib/api";
+import { useAppStore } from "@/stores/useAppStore";
+
+interface Workflow {
+  id: string;
+  name: string;
+  active: boolean;
+  successRate: number;
+  executionCount: number;
+  lastExecution: string;
+  isRunning?: boolean;
+}
+
+type ViewMode = "card" | "list";
+
+export default function WorkflowsPage() {
+  const { t } = useTranslation();
+  const { language } = useAppStore();
+  const isRTL = language === "ar";
+  const queryClient = useQueryClient();
+
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [viewMode, setViewMode] = useState<ViewMode>("card");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  const authHeader = getAuthHeader();
+  const { data: res, isLoading } = useGetWorkflows({
+    request: { headers: authHeader },
+    query: { queryKey: getGetWorkflowsQueryKey(), refetchInterval: 30000 },
+  } as Parameters<typeof useGetWorkflows>[0]);
+
+  const { mutate: activate } = useActivateWorkflow({
+    mutation: { onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetWorkflowsQueryKey() }) },
+    request: { headers: authHeader },
+  } as Parameters<typeof useActivateWorkflow>[0]);
+
+  const { mutate: deactivate } = useDeactivateWorkflow({
+    mutation: { onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetWorkflowsQueryKey() }) },
+    request: { headers: authHeader },
+  } as Parameters<typeof useDeactivateWorkflow>[0]);
+
+  const { mutate: deleteWf } = useDeleteWorkflow({
+    mutation: { onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetWorkflowsQueryKey() }) },
+    request: { headers: authHeader },
+  } as Parameters<typeof useDeleteWorkflow>[0]);
+
+  const { mutate: bulkAction } = useBulkActionWorkflows({
+    mutation: { onSuccess: () => { queryClient.invalidateQueries({ queryKey: getGetWorkflowsQueryKey() }); setSelected(new Set()); } },
+    request: { headers: authHeader },
+  } as Parameters<typeof useBulkActionWorkflows>[0]);
+
+  const workflows: Workflow[] = ((res as { data?: { workflows?: unknown[] } } | undefined)?.data?.workflows ?? []) as Workflow[];
+  const filtered = workflows.filter(w => {
+    const matchSearch = !search || w.name.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === "all" || (statusFilter === "active" ? w.active : !w.active);
+    return matchSearch && matchStatus;
+  });
+
+  const toggleSelect = (id: string) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const SuccessRateBar = ({ rate }: { rate: number }) => (
+    <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+      <motion.div
+        initial={{ width: 0 }}
+        animate={{ width: `${rate}%` }}
+        className={`h-full rounded-full ${rate >= 90 ? "bg-emerald-500" : rate >= 70 ? "bg-yellow-500" : "bg-destructive"}`}
+      />
+    </div>
+  );
+
+  return (
+    <div className="space-y-4" dir={isRTL ? "rtl" : "ltr"}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3 flex-1">
+          <div className="relative flex-1 max-w-sm">
+            <Search size={16} className="absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder={t("workflows.search")}
+              className="w-full ps-9 pe-4 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+            />
+          </div>
+          <div className="flex gap-1 p-1 bg-muted rounded-lg">
+            {(["all", "active", "inactive"] as const).map(f => (
+              <button
+                key={f}
+                onClick={() => setStatusFilter(f)}
+                className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${statusFilter === f ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                {f === "all" ? (isRTL ? "الكل" : "All") : f === "active" ? t("workflows.active") : t("workflows.inactive")}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setViewMode("card")} className={`p-2 rounded-md transition-colors ${viewMode === "card" ? "bg-accent/10 text-accent" : "text-muted-foreground hover:bg-muted"}`}>
+            <LayoutGrid size={16} />
+          </button>
+          <button onClick={() => setViewMode("list")} className={`p-2 rounded-md transition-colors ${viewMode === "list" ? "bg-accent/10 text-accent" : "text-muted-foreground hover:bg-muted"}`}>
+            <List size={16} />
+          </button>
+          <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors">
+            <Plus size={16} />
+            {t("workflows.new")}
+          </button>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {selected.size > 0 && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="flex items-center gap-3 p-3 bg-accent/10 rounded-lg border border-accent/20"
+          >
+            <span className="text-sm text-accent font-medium">{selected.size} {isRTL ? "محدد" : "selected"}</span>
+            <div className="flex gap-2 ms-auto">
+              <button onClick={() => bulkAction({ ids: [...selected], action: "activate" } as Parameters<typeof bulkAction>[0])} className="px-3 py-1 rounded-md bg-emerald-500 text-white text-xs hover:bg-emerald-600 transition-colors">
+                {t("workflows.bulkActivate")}
+              </button>
+              <button onClick={() => bulkAction({ ids: [...selected], action: "deactivate" } as Parameters<typeof bulkAction>[0])} className="px-3 py-1 rounded-md bg-yellow-500 text-white text-xs hover:bg-yellow-600 transition-colors">
+                {t("workflows.bulkDeactivate")}
+              </button>
+              <button onClick={() => bulkAction({ ids: [...selected], action: "delete" } as Parameters<typeof bulkAction>[0])} className="px-3 py-1 rounded-md bg-destructive text-white text-xs hover:bg-destructive/80 transition-colors">
+                {t("workflows.bulkDelete")}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {isLoading ? (
+        <div className={`grid gap-4 ${viewMode === "card" ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-3" : "grid-cols-1"}`}>
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="bg-card rounded-xl p-5 border border-border animate-pulse">
+              <div className="h-4 bg-muted rounded w-40 mb-3" />
+              <div className="h-3 bg-muted rounded w-24 mb-4" />
+              <div className="h-1.5 bg-muted rounded w-full" />
+            </div>
+          ))}
+        </div>
+      ) : !filtered.length ? (
+        <div className="text-center py-16">
+          <p className="text-muted-foreground">{t("workflows.noWorkflows")}</p>
+          <p className="text-sm text-muted-foreground mt-1">{t("workflows.configureN8n")}</p>
+        </div>
+      ) : viewMode === "card" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {filtered.map((wf, i) => (
+            <motion.div
+              key={wf.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.03 }}
+              onClick={() => toggleSelect(wf.id)}
+              className={`bg-card rounded-xl p-5 border cursor-pointer transition-colors ${selected.has(wf.id) ? "border-accent ring-1 ring-accent" : "border-border hover:border-accent/50"}`}
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  {wf.isRunning && <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />}
+                  <h3 className="font-medium text-foreground text-sm truncate">{wf.name}</h3>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ms-2 ${wf.active ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground"}`}>
+                  {wf.active ? t("workflows.active") : t("workflows.inactive")}
+                </span>
+              </div>
+
+              <div className="mb-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-muted-foreground">{t("workflows.successRate")}</span>
+                  <span className="text-xs font-medium text-foreground">{wf.successRate?.toFixed(0) ?? 0}%</span>
+                </div>
+                <SuccessRateBar rate={wf.successRate ?? 0} />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">
+                  {t("workflows.lastExecution")}: {wf.lastExecution ? new Date(wf.lastExecution).toLocaleDateString() : "-"}
+                </span>
+                <div className="flex gap-1" onClick={e => e.stopPropagation()}>
+                  <button
+                    onClick={() => wf.active ? deactivate({ id: wf.id } as Parameters<typeof deactivate>[0]) : activate({ id: wf.id } as Parameters<typeof activate>[0])}
+                    className={`p-1.5 rounded-md text-xs transition-colors ${wf.active ? "text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950" : "text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950"}`}
+                  >
+                    {wf.active ? <Pause size={14} /> : <Play size={14} />}
+                  </button>
+                  <button
+                    onClick={() => deleteWf({ id: wf.id } as Parameters<typeof deleteWf>[0])}
+                    className="p-1.5 rounded-md text-destructive hover:bg-destructive/10 transition-colors"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                  <Link href={`/workflows/${wf.id}`}>
+                    <button className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                      <ChevronRight size={14} />
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-card rounded-xl border border-border overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/30">
+                <th className="px-4 py-3 text-start text-xs font-medium text-muted-foreground w-8">
+                  <input type="checkbox" onChange={e => setSelected(e.target.checked ? new Set(filtered.map(w => w.id)) : new Set())} />
+                </th>
+                <th className="px-4 py-3 text-start text-xs font-medium text-muted-foreground">{isRTL ? "الاسم" : "Name"}</th>
+                <th className="px-4 py-3 text-start text-xs font-medium text-muted-foreground">{isRTL ? "الحالة" : "Status"}</th>
+                <th className="px-4 py-3 text-start text-xs font-medium text-muted-foreground">{t("workflows.successRate")}</th>
+                <th className="px-4 py-3 text-start text-xs font-medium text-muted-foreground">{t("workflows.lastExecution")}</th>
+                <th className="px-4 py-3 text-start text-xs font-medium text-muted-foreground">{isRTL ? "إجراءات" : "Actions"}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(wf => (
+                <tr key={wf.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20">
+                  <td className="px-4 py-3">
+                    <input type="checkbox" checked={selected.has(wf.id)} onChange={() => toggleSelect(wf.id)} />
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      {wf.isRunning && <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />}
+                      <span className="font-medium text-foreground">{wf.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${wf.active ? "bg-emerald-100 text-emerald-700" : "bg-muted text-muted-foreground"}`}>
+                      {wf.active ? t("workflows.active") : t("workflows.inactive")}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${wf.successRate >= 90 ? "bg-emerald-500" : wf.successRate >= 70 ? "bg-yellow-500" : "bg-destructive"}`}
+                          style={{ width: `${wf.successRate ?? 0}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-muted-foreground">{wf.successRate?.toFixed(0) ?? 0}%</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {wf.lastExecution ? new Date(wf.lastExecution).toLocaleString() : "-"}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-1">
+                      <button onClick={() => wf.active ? deactivate({ id: wf.id } as Parameters<typeof deactivate>[0]) : activate({ id: wf.id } as Parameters<typeof activate>[0])} className={`p-1.5 rounded-md ${wf.active ? "text-yellow-500 hover:bg-yellow-50" : "text-emerald-500 hover:bg-emerald-50"}`}>
+                        {wf.active ? <Pause size={14} /> : <Play size={14} />}
+                      </button>
+                      <button onClick={() => deleteWf({ id: wf.id } as Parameters<typeof deleteWf>[0])} className="p-1.5 rounded-md text-destructive hover:bg-destructive/10">
+                        <Trash2 size={14} />
+                      </button>
+                      <Link href={`/workflows/${wf.id}`}>
+                        <button className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted">
+                          <ChevronRight size={14} />
+                        </button>
+                      </Link>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
