@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
@@ -219,7 +219,6 @@ export default function TemplatesPage() {
   const { language } = useAppStore();
   const isRTL = language === "ar";
   const queryClient = useQueryClient();
-  const authHeader = getAuthHeader();
   const { toast } = useToast();
 
   const [tab, setTab] = useState<"local" | "n8n">("local");
@@ -234,6 +233,7 @@ export default function TemplatesPage() {
 
   const [n8nSearch, setN8nSearch] = useState("");
   const [n8nCategory, setN8nCategory] = useState("all");
+  const [n8nSortBy, setN8nSortBy] = useState<"views" | "recent" | "default">("views");
   const [n8nPage, setN8nPage] = useState(1);
   const [n8nTemplates, setN8nTemplates] = useState<N8nTemplate[]>([]);
   const [n8nTotal, setN8nTotal] = useState(0);
@@ -252,13 +252,13 @@ export default function TemplatesPage() {
   const n8nTotalPages = Math.ceil(n8nTotal / N8N_ROWS);
 
   const { data: res, isLoading: localLoading } = useGetTemplates({
-    request: { headers: authHeader },
+    request: { headers: getAuthHeader() },
     query: { queryKey: getGetTemplatesQueryKey() },
   } as Parameters<typeof useGetTemplates>[0]);
 
   const { mutate: useTemplate } = useUseTemplate({
     mutation: { onSuccess: () => { window.location.hash = "#/chat"; } },
-    request: { headers: authHeader },
+    request: { headers: getAuthHeader() },
   } as Parameters<typeof useUseTemplate>[0]);
 
   const rawTemplates = ((res as { data?: { templates?: unknown[] } } | undefined)?.data?.templates ?? []) as LocalTemplate[];
@@ -274,43 +274,48 @@ export default function TemplatesPage() {
   });
   const mostUsed = templates.slice().sort((a, b) => b.usageCount - a.usageCount).slice(0, 3);
 
-  const fetchN8n = useCallback(async () => {
-    setN8nLoading(true);
-    setN8nError(null);
-    try {
-      const params = new URLSearchParams({
-        rows: String(N8N_ROWS),
-        page: String(n8nPage),
-      });
-      if (n8nSearch) params.set("search", n8nSearch);
-      if (n8nCategory !== "all") params.set("category", n8nCategory);
-      const headers: Record<string, string> = { ...authHeader };
-      const res = await fetch(`${API_BASE}/templates/n8n-library?${params}`, { headers });
-      const data = await res.json() as { success: boolean; data?: { templates: N8nTemplate[]; total: number } };
-      if (data.success && data.data) {
-        setN8nTemplates(data.data.templates);
-        setN8nTotal(data.data.total);
-      } else {
-        setN8nError(isRTL ? "تعذر جلب القوالب" : "Failed to load templates");
-      }
-    } catch {
-      setN8nError(isRTL ? "خطأ في الاتصال" : "Connection error");
-    } finally {
-      setN8nLoading(false);
-    }
-  }, [n8nSearch, n8nCategory, n8nPage, isRTL, authHeader]);
+  const n8nSearchRef = useRef(n8nSearch);
+  n8nSearchRef.current = n8nSearch;
+
+  const [fetchTrigger, setFetchTrigger] = useState(0);
+  const triggerFetch = useCallback(() => { setN8nPage(1); setFetchTrigger(c => c + 1); }, []);
 
   useEffect(() => {
-    if (tab === "n8n") fetchN8n();
-  }, [tab, fetchN8n]);
+    if (tab !== "n8n") return;
+    let cancelled = false;
+    setN8nLoading(true);
+    setN8nError(null);
+    const params = new URLSearchParams({
+      rows: String(N8N_ROWS),
+      page: String(n8nPage),
+      sortBy: n8nSortBy,
+    });
+    if (n8nSearchRef.current) params.set("search", n8nSearchRef.current);
+    if (n8nCategory !== "all") params.set("category", n8nCategory);
+    fetch(`${API_BASE}/templates/n8n-library?${params}`, { headers: { ...getAuthHeader() } })
+      .then(r => r.json())
+      .then((data: { success: boolean; data?: { templates: N8nTemplate[]; total: number } }) => {
+        if (cancelled) return;
+        if (data.success && data.data) {
+          setN8nTemplates(data.data.templates);
+          setN8nTotal(data.data.total);
+        } else {
+          setN8nError("تعذر جلب القوالب");
+        }
+      })
+      .catch(() => { if (!cancelled) setN8nError("خطأ في الاتصال"); })
+      .finally(() => { if (!cancelled) setN8nLoading(false); });
+    return () => { cancelled = true; };
+  }, [tab, n8nPage, n8nSortBy, n8nCategory, fetchTrigger]);
 
-  const handleN8nSearch = (val: string) => { setN8nSearch(val); setN8nPage(1); };
+  const fetchN8n = triggerFetch;
+  const handleN8nSearch = (val: string) => { setN8nSearch(val); };
   const handleN8nCategory = (cat: string) => { setN8nCategory(cat); setN8nPage(1); };
 
   const handleImport = async (template: N8nTemplate) => {
     setImportingId(template.id);
     try {
-      const headers: Record<string, string> = { ...authHeader, "Content-Type": "application/json" };
+      const headers: Record<string, string> = { ...getAuthHeader(), "Content-Type": "application/json" };
       const res = await fetch(`${API_BASE}/templates/n8n-library/import/${template.id}`, { method: "POST", headers });
       const data = await res.json() as { success: boolean };
       if (data.success) {
@@ -369,7 +374,7 @@ export default function TemplatesPage() {
     if (!newTemplate.name.trim() || !newTemplate.description.trim()) return;
     setAddingTemplate(true);
     try {
-      const headers: Record<string, string> = { ...authHeader, "Content-Type": "application/json" };
+      const headers: Record<string, string> = { ...getAuthHeader(), "Content-Type": "application/json" };
       const res = await fetch(`${API_BASE}/templates`, {
         method: "POST", headers,
         body: JSON.stringify({ name: newTemplate.name.trim(), description: newTemplate.description.trim(), category: newTemplate.category, nodesCount: 0, workflowJson: { name: newTemplate.name.trim(), nodes: [], connections: {} } }),
@@ -407,7 +412,7 @@ export default function TemplatesPage() {
         >
           <Globe size={15} />
           {isRTL ? "مكتبة n8n" : "n8n Library"}
-          {n8nTotal > 0 && <span className="px-1.5 py-0.5 rounded-full bg-accent/10 text-accent text-xs">{n8nTotal.toLocaleString()}</span>}
+          {n8nTemplates.length > 0 && <span className="px-1.5 py-0.5 rounded-full bg-accent/10 text-accent text-xs">{n8nTemplates.length} {isRTL ? "قالب" : "templates"}</span>}
         </button>
       </div>
 
@@ -546,28 +551,59 @@ export default function TemplatesPage() {
       )}
 
       {tab === "n8n" && (
-        <div className="space-y-5">
+        <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="relative flex-1 max-w-sm">
+            <div className="relative flex-1 min-w-48">
               <Search size={16} className="absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input value={n8nSearch} onChange={e => handleN8nSearch(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && fetchN8n()}
                 placeholder={isRTL ? "ابحث في مكتبة n8n..." : "Search n8n library..."}
                 className="w-full ps-9 pe-4 py-2 rounded-lg border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent/50" />
             </div>
-            <div className="flex gap-1 flex-wrap flex-1">
-              {N8N_CATEGORIES.map(cat => (
-                <button key={cat} onClick={() => handleN8nCategory(cat)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${n8nCategory === cat ? "bg-accent text-white" : "bg-muted text-muted-foreground hover:text-foreground"}`}>
-                  {cat === "all" ? (isRTL ? "الكل" : "All") : cat}
-                </button>
-              ))}
-            </div>
             <button onClick={fetchN8n} disabled={n8nLoading}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors shrink-0 disabled:opacity-50">
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors shrink-0 disabled:opacity-50">
               {n8nLoading ? <Loader2 size={15} className="animate-spin" /> : <Search size={15} />}
               {isRTL ? "بحث" : "Search"}
             </button>
           </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs text-muted-foreground shrink-0">{isRTL ? "ترتيب:" : "Sort:"}</span>
+            {([
+              { key: "views", labelAr: "الأكثر مشاهدة", labelEn: "Most Viewed" },
+              { key: "recent", labelAr: "الأحدث", labelEn: "Latest" },
+              { key: "default", labelAr: "المميزة", labelEn: "Featured" },
+            ] as const).map(opt => (
+              <button key={opt.key}
+                onClick={() => { setN8nSortBy(opt.key); setN8nPage(1); }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${n8nSortBy === opt.key ? "bg-accent text-white" : "bg-muted text-muted-foreground hover:text-foreground"}`}>
+                {isRTL ? opt.labelAr : opt.labelEn}
+              </button>
+            ))}
+            <span className="text-muted-foreground/40 text-xs">|</span>
+            <span className="text-xs text-muted-foreground shrink-0">{isRTL ? "التصنيف:" : "Category:"}</span>
+            {N8N_CATEGORIES.map(cat => (
+              <button key={cat} onClick={() => handleN8nCategory(cat)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${n8nCategory === cat ? "bg-accent/20 text-accent border border-accent/30" : "bg-muted text-muted-foreground hover:text-foreground"}`}>
+                {cat === "all" ? (isRTL ? "الكل" : "All") : cat}
+              </button>
+            ))}
+          </div>
+
+          {!n8nLoading && !n8nError && n8nTemplates.length > 0 && (
+            <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+              <span>
+                {isRTL
+                  ? `صفحة ${n8nPage} من ${n8nTotalPages} · ${n8nTotal.toLocaleString()} قالب إجمالاً`
+                  : `Page ${n8nPage} of ${n8nTotalPages} · ${n8nTotal.toLocaleString()} total templates`}
+              </span>
+              <span className="flex items-center gap-1">
+                {n8nSortBy === "views" && (isRTL ? "مرتبة: الأكثر مشاهدة" : "Sorted: Most Viewed")}
+                {n8nSortBy === "recent" && (isRTL ? "مرتبة: الأحدث" : "Sorted: Latest")}
+                {n8nSortBy === "default" && (isRTL ? "مرتبة: المميزة" : "Sorted: Featured")}
+              </span>
+            </div>
+          )}
 
           {n8nError ? (
             <div className="text-center py-16">

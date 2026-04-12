@@ -14,10 +14,12 @@ router.get("/n8n-library", authenticate, requirePermission("view_templates"), as
     const page = parseInt(req.query.page as string) || 1;
     const rows = parseInt(req.query.rows as string) || 20;
     const category = req.query.category as string;
+    const sortBy = (req.query.sortBy as string) || "views";
 
     let url = `${N8N_API}/templates/search?rows=${rows}&page=${page}`;
     if (search) url += `&search=${encodeURIComponent(search)}`;
     if (category && category !== "all") url += `&categories[]=${encodeURIComponent(category)}`;
+    if (sortBy && sortBy !== "default") url += `&sortBy=${encodeURIComponent(sortBy)}`;
 
     const response = await fetch(url, {
       headers: { "Accept": "application/json", "User-Agent": "n8n-manager/1.0" },
