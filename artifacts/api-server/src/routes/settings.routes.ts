@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db, systemSettingsTable, usersTable } from "@workspace/db";
+import { db, systemSettingsTable, usersTable, conversationsTable, messagesTable, workflowVersionsTable, generationSessionsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { authenticate, requireAdmin } from "../middleware/auth.middleware";
 import { encryptApiKey, decryptApiKey } from "../services/encryption.service";
@@ -210,6 +210,50 @@ router.post("/onboarding-complete", authenticate, requireAdmin, async (req: Requ
   await db.update(usersTable).set({ onboardingComplete: true }).where(eq(usersTable.id, req.user.userId));
 
   res.json({ success: true, message: "Onboarding complete" });
+});
+
+// ─── Danger Zone ─────────────────────────────────────────────────────────────
+
+router.delete("/danger/conversations", authenticate, requireAdmin, async (_req: Request, res: Response): Promise<void> => {
+  try {
+    await db.delete(messagesTable);
+    await db.delete(generationSessionsTable);
+    await db.delete(conversationsTable);
+    res.json({ success: true, message: "All conversations deleted" });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { code: "DELETE_ERROR", message: String(err) } });
+  }
+});
+
+router.delete("/danger/versions", authenticate, requireAdmin, async (_req: Request, res: Response): Promise<void> => {
+  try {
+    await db.delete(workflowVersionsTable);
+    res.json({ success: true, message: "All workflow versions deleted" });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { code: "DELETE_ERROR", message: String(err) } });
+  }
+});
+
+router.post("/danger/factory-reset", authenticate, requireAdmin, async (_req: Request, res: Response): Promise<void> => {
+  try {
+    await db.delete(messagesTable);
+    await db.delete(generationSessionsTable);
+    await db.delete(conversationsTable);
+    await db.delete(workflowVersionsTable);
+    await db.update(systemSettingsTable).set({
+      n8nUrl: null,
+      n8nApiKeyEncrypted: null,
+      n8nApiKeyIv: null,
+      openaiKeyEncrypted: null,
+      openaiKeyIv: null,
+      geminiKeyEncrypted: null,
+      geminiKeyIv: null,
+      onboardingComplete: "false",
+    });
+    res.json({ success: true, message: "Factory reset complete" });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { code: "RESET_ERROR", message: String(err) } });
+  }
 });
 
 export { router as settingsRouter };

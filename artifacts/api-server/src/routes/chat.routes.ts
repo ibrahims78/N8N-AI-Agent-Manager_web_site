@@ -97,6 +97,232 @@ router.delete("/conversations/:id", authenticate, requirePermission("use_chat"),
   res.json({ success: true, message: "Conversation deleted" });
 });
 
+// ─── SSE: Real-time phase progress for workflow generation ─────────────────
+router.post("/conversations/:id/generate", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
+
+  const convId = parseInt(req.params.id, 10);
+  const { content } = req.body as { content: string };
+
+  if (!content) {
+    res.status(400).json({ success: false, error: { code: "MISSING_CONTENT", message: "Content required" } });
+    return;
+  }
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("X-Accel-Buffering", "no");
+  res.flushHeaders();
+
+  const sendEvent = (event: string, data: unknown) => {
+    res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    if (typeof (res as unknown as { flush?: () => void }).flush === "function") {
+      (res as unknown as { flush: () => void }).flush();
+    }
+  };
+
+  try {
+    const isArabic = /[\u0600-\u06FF]/.test(content);
+    const lang = isArabic ? "ar" : "en";
+
+    await db.insert(messagesTable).values({
+      conversationId: convId,
+      role: "user",
+      content,
+    });
+
+    const { openaiKey, geminiKey } = await getApiKeys();
+
+    if (!openaiKey) {
+      sendEvent("error", {
+        message: lang === "ar"
+          ? "مفتاح OpenAI غير مضبوط. يرجى الذهاب للإعدادات."
+          : "OpenAI key not configured. Please go to Settings.",
+      });
+      res.end();
+      return;
+    }
+
+    const previousMessages = await db
+      .select()
+      .from(messagesTable)
+      .where(eq(messagesTable.conversationId, convId))
+      .orderBy(desc(messagesTable.createdAt))
+      .limit(20);
+
+    const messageCount = previousMessages.length;
+
+    const isCreateIntent = detectWorkflowCreationIntent(content);
+
+    if (isCreateIntent && openaiKey && geminiKey) {
+      sendEvent("start", { type: "sequential", rounds: 3 });
+
+      const engineResult = await runSequentialEngine(content, {
+        openaiKey,
+        geminiKey,
+        maxRefinementRounds: 2,
+        qualityThreshold: 80,
+        onPhaseUpdate: (phase) => {
+          sendEvent("phase", phase);
+        },
+      });
+
+      let assistantContent = engineResult.userMessage;
+
+      if (engineResult.success && engineResult.workflowJson) {
+        assistantContent += `\n\n\`\`\`json\n${JSON.stringify(engineResult.workflowJson, null, 2)}\n\`\`\``;
+
+        try {
+          await db.insert(generationSessionsTable).values({
+            conversationId: convId,
+            userRequest: content,
+            phase1Result: engineResult.phase1Result as Record<string, unknown>,
+            phase2Feedback: engineResult.phase2Feedback ?? "",
+            phase3Result: engineResult.phase3Result as Record<string, unknown>,
+            phase4Approved: engineResult.phase4Approved,
+            roundsCount: engineResult.roundsCount,
+            totalTimeMs: engineResult.totalTimeMs,
+            finalWorkflowJson: engineResult.workflowJson as Record<string, unknown>,
+            qualityScore: engineResult.qualityScore,
+            qualityReport: JSON.stringify({
+              grade: engineResult.qualityGrade,
+              phases: engineResult.phases,
+            }),
+          });
+        } catch (err) {
+          logger.error({ err }, "Failed to save generation session");
+        }
+      }
+
+      const [assistantMsg] = await db.insert(messagesTable).values({
+        conversationId: convId,
+        role: "assistant",
+        content: assistantContent,
+        modelUsed: "sequential-gpt4o+gemini",
+      }).returning();
+
+      await db.update(conversationsTable)
+        .set({ messageCount: messageCount + 1, updatedAt: new Date(), type: "create" })
+        .where(eq(conversationsTable.id, convId));
+
+      sendEvent("complete", {
+        message: assistantMsg,
+        workflowJson: engineResult.workflowJson,
+        qualityScore: engineResult.qualityScore,
+        qualityGrade: engineResult.qualityGrade,
+        roundsCount: engineResult.roundsCount,
+        totalTimeMs: engineResult.totalTimeMs,
+        phases: engineResult.phases,
+        isWorkflowCreation: true,
+      });
+    } else if (isCreateIntent && openaiKey && !geminiKey) {
+      sendEvent("start", { type: "gpt-only" });
+      sendEvent("phase", { phase: 1, label: "GPT-4o: Creating workflow", labelAr: "GPT-4o: إنشاء الـ workflow", status: "running" });
+
+      const noGeminiNote = lang === "ar"
+        ? "\n\n⚠️ *ملاحظة: مفتاح Gemini غير مضبوط. استُخدم GPT-4o فقط.*"
+        : "\n\n⚠️ *Note: Gemini key not configured. GPT-4o only mode.*";
+
+      try {
+        const OpenAI = (await import("openai")).default;
+        const openai = new OpenAI({ apiKey: openaiKey, timeout: 90000 });
+        const systemPrompt = lang === "ar"
+          ? "أنت خبير في بناء n8n workflows. أنشئ workflow JSON صالح وكامل. أرجع JSON فقط."
+          : "You are an n8n workflow expert. Create a valid, complete workflow JSON. Return JSON only.";
+
+        const p1Response = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [{ role: "system", content: systemPrompt }, { role: "user", content }],
+          max_tokens: 3000,
+          temperature: 0.3,
+          response_format: { type: "json_object" },
+        });
+
+        const workflowJson = p1Response.choices[0]?.message?.content ?? "{}";
+        let parsed: Record<string, unknown> | null = null;
+        try { parsed = JSON.parse(workflowJson) as Record<string, unknown>; } catch { parsed = null; }
+
+        sendEvent("phase", { phase: 1, status: "done", durationMs: 0 });
+
+        const assistantContent = (lang === "ar"
+          ? "✅ تم إنشاء الـ workflow (GPT-4o فقط):\n\n"
+          : "✅ Workflow created (GPT-4o only):\n\n") +
+          `\`\`\`json\n${workflowJson}\n\`\`\`` + noGeminiNote;
+
+        const [assistantMsg] = await db.insert(messagesTable).values({
+          conversationId: convId,
+          role: "assistant",
+          content: assistantContent,
+          modelUsed: "gpt-4o",
+        }).returning();
+
+        await db.update(conversationsTable)
+          .set({ messageCount: messageCount + 1, updatedAt: new Date(), type: "create" })
+          .where(eq(conversationsTable.id, convId));
+
+        sendEvent("complete", {
+          message: assistantMsg,
+          workflowJson: parsed,
+          qualityScore: 70,
+          qualityGrade: "C",
+          isWorkflowCreation: true,
+        });
+      } catch (err) {
+        sendEvent("error", { message: String(err) });
+      }
+    } else {
+      sendEvent("start", { type: "chat" });
+
+      const OpenAI = (await import("openai")).default;
+      const openai = new OpenAI({ apiKey: openaiKey, timeout: 60000 });
+
+      const isArabicReq = /[\u0600-\u06FF]/.test(content);
+      const systemPrompt = isArabicReq
+        ? `أنت مساعد ذكي متخصص في n8n. تحدث بالعربية. ساعد في شرح n8n وتشخيص المشاكل وتعديل الـ workflows.`
+        : `You are an AI assistant specialized in n8n workflow management. Help with understanding, diagnosing, and modifying workflows.`;
+
+      const contextMessages = [...previousMessages]
+        .reverse()
+        .slice(-10)
+        .map(m => ({ role: m.role as "user" | "assistant", content: m.content }));
+
+      let assistantContent = "";
+      try {
+        const response = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [{ role: "system", content: systemPrompt }, ...contextMessages],
+          max_tokens: 1500,
+          temperature: 0.7,
+        });
+        assistantContent = response.choices[0]?.message?.content ?? "";
+      } catch (err) {
+        assistantContent = isArabicReq
+          ? `عذراً، تعذر الاتصال بـ GPT: ${String(err)}`
+          : `Sorry, could not connect to GPT: ${String(err)}`;
+      }
+
+      const [assistantMsg] = await db.insert(messagesTable).values({
+        conversationId: convId,
+        role: "assistant",
+        content: assistantContent,
+        modelUsed: "gpt-4o",
+      }).returning();
+
+      await db.update(conversationsTable)
+        .set({ messageCount: messageCount + 1, updatedAt: new Date() })
+        .where(eq(conversationsTable.id, convId));
+
+      sendEvent("complete", { message: assistantMsg, isWorkflowCreation: false });
+    }
+  } catch (err) {
+    logger.error({ err }, "SSE generate error");
+    sendEvent("error", { message: String(err) });
+  } finally {
+    res.end();
+  }
+});
+
 router.post("/conversations/:id/messages", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
@@ -111,7 +337,6 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
   const isArabic = /[\u0600-\u06FF]/.test(content);
   const lang = isArabic ? "ar" : "en";
 
-  // Save the user message
   await db.insert(messagesTable).values({
     conversationId: convId,
     role: "user",
@@ -134,11 +359,9 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
   let tokensUsed: number | undefined;
   let generationSessionId: number | undefined;
 
-  // ── Determine if this is a workflow creation request ──────────────────────
   const isCreateIntent = detectWorkflowCreationIntent(content);
 
   if (isCreateIntent && openaiKey && geminiKey) {
-    // ── PATH A: Sequential 4-Phase Engine ──────────────────────────────────
     logger.info({ convId, content: content.slice(0, 50) }, "Routing to sequential engine");
 
     const engineResult = await runSequentialEngine(content, {
@@ -150,9 +373,7 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
 
     assistantContent = engineResult.userMessage;
     modelUsed = "sequential-gpt4o+gemini";
-    tokensUsed = undefined;
 
-    // Save generation session to DB
     if (engineResult.success) {
       try {
         const [session] = await db.insert(generationSessionsTable).values({
@@ -176,33 +397,28 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
         logger.error({ err }, "Failed to save generation session");
       }
 
-      // Append workflow JSON to assistant message if available
       if (engineResult.workflowJson) {
         assistantContent += `\n\n\`\`\`json\n${JSON.stringify(engineResult.workflowJson, null, 2)}\n\`\`\``;
       }
     }
   } else if (isCreateIntent && openaiKey && !geminiKey) {
-    // ── PATH B: GPT-4o only (no Gemini key configured) ────────────────────
     logger.info({ convId }, "Gemini key not configured — using GPT-4o only mode");
 
     const noGeminiNote = lang === "ar"
-      ? "\n\n⚠️ *ملاحظة: مفتاح Gemini API غير مُضبوط. استُخدم GPT-4o فقط بدون مراجعة Gemini. للحصول على أفضل جودة، أضف مفتاح Gemini في الإعدادات.*"
-      : "\n\n⚠️ *Note: Gemini API key is not configured. GPT-4o only mode was used without Gemini review. For best quality, add Gemini key in Settings.*";
+      ? "\n\n⚠️ *ملاحظة: مفتاح Gemini API غير مُضبوط. استُخدم GPT-4o فقط.*"
+      : "\n\n⚠️ *Note: Gemini API key is not configured. GPT-4o only mode.*";
 
     try {
       const OpenAI = (await import("openai")).default;
       const openai = new OpenAI({ apiKey: openaiKey, timeout: 90000 });
 
       const systemPrompt = lang === "ar"
-        ? `أنت خبير متقدم في بناء n8n workflows. أنشئ workflow JSON صالح وكامل بناءً على طلب المستخدم. أرجع JSON فقط، بدون أي نص إضافي.`
-        : `You are an advanced n8n workflow expert. Create a valid, complete workflow JSON based on the user's request. Return JSON only, without any additional text.`;
+        ? "أنت خبير متقدم في بناء n8n workflows. أنشئ workflow JSON صالح وكامل. أرجع JSON فقط."
+        : "You are an advanced n8n workflow expert. Create a valid, complete workflow JSON. Return JSON only.";
 
       const p1Response = await openai.chat.completions.create({
         model: "gpt-4o",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content },
-        ],
+        messages: [{ role: "system", content: systemPrompt }, { role: "user", content }],
         max_tokens: 3000,
         temperature: 0.3,
         response_format: { type: "json_object" },
@@ -221,39 +437,22 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
         : `❌ Workflow creation failed: ${String(err)}`;
     }
   } else if (openaiKey) {
-    // ── PATH C: Regular Chat (Q&A, help, etc.) ────────────────────────────
     const OpenAI = (await import("openai")).default;
     const openai = new OpenAI({ apiKey: openaiKey, timeout: 60000 });
 
     const systemPrompt = lang === "ar"
-      ? `أنت مساعد ذكي متخصص في إدارة n8n workflows. تتحدث باللغة العربية. ساعد المستخدم في:
-- شرح كيفية عمل n8n ومكوناته
-- تشخيص مشاكل الـ workflows
-- تعديل workflows موجودة
-- الإجابة على أسئلة عامة حول n8n
-إذا أراد المستخدم إنشاء workflow جديد، اطلب منه توصيف تفصيلي للمهمة.`
-      : `You are an AI assistant specialized in n8n workflow management. Help users with:
-- Understanding how n8n works and its components
-- Diagnosing workflow issues
-- Modifying existing workflows
-- Answering general n8n questions
-If a user wants to create a new workflow, ask for a detailed description of the task.`;
+      ? `أنت مساعد ذكي متخصص في إدارة n8n workflows. تتحدث باللغة العربية.`
+      : `You are an AI assistant specialized in n8n workflow management.`;
 
     const contextMessages = [...previousMessages]
       .reverse()
       .slice(-10)
-      .map(m => ({
-        role: m.role as "user" | "assistant",
-        content: m.content,
-      }));
+      .map(m => ({ role: m.role as "user" | "assistant", content: m.content }));
 
     try {
       const response = await openai.chat.completions.create({
         model: "gpt-4o",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...contextMessages,
-        ],
+        messages: [{ role: "system", content: systemPrompt }, ...contextMessages],
         max_tokens: 1500,
         temperature: 0.7,
       });
@@ -267,13 +466,11 @@ If a user wants to create a new workflow, ask for a detailed description of the 
         : `Sorry, could not connect to GPT: ${String(err)}`;
     }
   } else {
-    // ── PATH D: No API Keys ───────────────────────────────────────────────
     assistantContent = lang === "ar"
-      ? "⚠️ لم يتم ضبط مفتاح OpenAI بعد. يرجى الذهاب إلى **الإعدادات** وإضافة مفتاح API لبدء استخدام الذكاء الاصطناعي."
-      : "⚠️ OpenAI API key is not configured. Please go to **Settings** and add your API key to start using AI features.";
+      ? "⚠️ لم يتم ضبط مفتاح OpenAI بعد. يرجى الذهاب إلى **الإعدادات**."
+      : "⚠️ OpenAI API key is not configured. Please go to **Settings**.";
   }
 
-  // Save assistant response
   const [assistantMsg] = await db.insert(messagesTable).values({
     conversationId: convId,
     role: "assistant",

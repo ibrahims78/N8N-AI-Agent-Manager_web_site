@@ -38,10 +38,11 @@ import {
 export interface EngineConfig {
   openaiKey: string;
   geminiKey: string;
-  maxRefinementRounds?: number;    // default: 2
-  qualityThreshold?: number;       // default: 80
-  openaiModel?: string;            // default: "gpt-4o"
-  geminiModel?: string;            // default: "gemini-2.5-pro-exp-03-25"
+  maxRefinementRounds?: number;
+  qualityThreshold?: number;
+  openaiModel?: string;
+  geminiModel?: string;
+  onPhaseUpdate?: (phase: PhaseProgress) => void;
 }
 
 export interface PhaseProgress {
@@ -50,6 +51,7 @@ export interface PhaseProgress {
   labelAr: string;
   status: "pending" | "running" | "done" | "failed";
   durationMs?: number;
+  round?: number;
 }
 
 export interface EngineResult {
@@ -100,6 +102,7 @@ export async function runSequentialEngine(
   const lang = detectLanguage(userRequest);
   const maxRounds = config.maxRefinementRounds ?? 2;
   const threshold = config.qualityThreshold ?? 80;
+  const notify = config.onPhaseUpdate ?? (() => undefined);
 
   const phases: PhaseProgress[] = [
     { phase: 1, label: "GPT-4o: Creating workflow", labelAr: "GPT-4o: إنشاء الـ workflow", status: "pending" },
@@ -124,7 +127,6 @@ export async function runSequentialEngine(
     lang,
   };
 
-  // Initialize clients
   const openai = new OpenAI({ apiKey: config.openaiKey, timeout: 90000 });
   const geminiAI = new GoogleGenerativeAI(config.geminiKey);
   const openaiModel = config.openaiModel ?? "gpt-4o";
@@ -134,6 +136,7 @@ export async function runSequentialEngine(
     // ─── PHASE 1: GPT-4o Creates Workflow ────────────────────────────────────
     const p1Start = Date.now();
     phases[0]!.status = "running";
+    notify({ ...phases[0]! });
     logger.info({ phase: 1 }, "Sequential engine: Phase 1 starting");
 
     let phase1JsonString: string;
@@ -153,6 +156,7 @@ export async function runSequentialEngine(
     } catch (err) {
       logger.error({ err }, "Phase 1 OpenAI call failed");
       phases[0]!.status = "failed";
+      notify({ ...phases[0]! });
       result.error = `Phase 1 failed: ${String(err)}`;
       result.userMessage = lang === "ar"
         ? "❌ فشلت المرحلة الأولى. تأكد من مفتاح OpenAI API."
@@ -163,17 +167,14 @@ export async function runSequentialEngine(
 
     phases[0]!.status = "done";
     phases[0]!.durationMs = Date.now() - p1Start;
+    notify({ ...phases[0]! });
 
-    // Validate Phase 1 output
     const p1Validation = validateWorkflowJson(phase1JsonString);
     if (!p1Validation.valid || !p1Validation.parsedJson) {
-      logger.warn({ errors: p1Validation.errors }, "Phase 1 JSON validation failed, attempting extraction");
       const extracted = extractJson(phase1JsonString);
       try {
-        const fallback = JSON.parse(extracted) as Record<string, unknown>;
-        result.phase1Result = fallback;
+        result.phase1Result = JSON.parse(extracted) as Record<string, unknown>;
       } catch {
-        // Use raw string as fallback object
         result.phase1Result = { raw: phase1JsonString };
       }
     } else {
@@ -186,6 +187,7 @@ export async function runSequentialEngine(
     // ─── PHASE 2: Gemini Reviews ──────────────────────────────────────────────
     const p2Start = Date.now();
     phases[1]!.status = "running";
+    notify({ ...phases[1]! });
     logger.info({ phase: 2 }, "Sequential engine: Phase 2 starting");
 
     let reviewReport: GeminiReviewReport = {
@@ -223,22 +225,24 @@ export async function runSequentialEngine(
     result.phase2Feedback = JSON.stringify(reviewReport, null, 2);
     phases[1]!.status = "done";
     phases[1]!.durationMs = Date.now() - p2Start;
+    notify({ ...phases[1]! });
     logger.info({ score: reviewReport.overallScore }, "Phase 2 complete");
 
     // ─── PHASE 3: GPT-4o Refines ─────────────────────────────────────────────
     const p3Start = Date.now();
     phases[2]!.status = "running";
+    notify({ ...phases[2]! });
     logger.info({ phase: 3 }, "Sequential engine: Phase 3 starting");
 
     let phase3JsonString: string = phase1JsonForReview;
     let roundsCount = 1;
 
-    // If Gemini approved (score >= 85), skip refinement
     if (reviewReport.approved && (reviewReport.overallScore ?? 0) >= 85) {
       logger.info("Gemini approved Phase 1 — skipping Phase 3 refinement");
       result.phase3Result = result.phase1Result;
       phases[2]!.status = "done";
       phases[2]!.durationMs = 0;
+      notify({ ...phases[2]! });
     } else {
       try {
         const p3Response = await openai.chat.completions.create({
@@ -279,6 +283,7 @@ export async function runSequentialEngine(
 
       phases[2]!.status = "done";
       phases[2]!.durationMs = Date.now() - p3Start;
+      notify({ ...phases[2]! });
     }
 
     result.roundsCount = roundsCount;
@@ -288,6 +293,7 @@ export async function runSequentialEngine(
     // ─── PHASE 4: Gemini Final Validation ────────────────────────────────────
     const p4Start = Date.now();
     phases[3]!.status = "running";
+    notify({ ...phases[3]! });
     logger.info({ phase: 4 }, "Sequential engine: Phase 4 starting");
 
     let validationReport: GeminiValidationReport = {
@@ -331,6 +337,7 @@ export async function runSequentialEngine(
 
     phases[3]!.status = "done";
     phases[3]!.durationMs = Date.now() - p4Start;
+    notify({ ...phases[3]! });
 
     // ─── Additional Refinement Round if Below Threshold ───────────────────────
     if (!result.phase4Approved && result.qualityScore < threshold && maxRounds > 1) {
@@ -409,7 +416,7 @@ export async function runSequentialEngine(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Intent Detection — decides if request is a "create workflow" intent
+// Intent Detection
 // ─────────────────────────────────────────────────────────────────────────────
 
 const CREATE_KEYWORDS_AR = [

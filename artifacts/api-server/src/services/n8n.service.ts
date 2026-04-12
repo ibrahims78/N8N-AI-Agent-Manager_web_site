@@ -159,3 +159,14 @@ export async function getAllRecentExecutions(limit = 20): Promise<N8nExecution[]
   const body = await res.json() as { data: N8nExecution[] };
   return body.data ?? [];
 }
+
+export async function importWorkflow(workflowJson: Record<string, unknown>): Promise<N8nWorkflow> {
+  const workflowData = {
+    name: (workflowJson.name as string) ?? "Imported Workflow",
+    nodes: workflowJson.nodes ?? [],
+    connections: workflowJson.connections ?? {},
+    settings: workflowJson.settings ?? {},
+    active: false,
+  };
+  return createWorkflow(workflowData);
+}

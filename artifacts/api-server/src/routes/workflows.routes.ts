@@ -170,4 +170,21 @@ router.post("/bulk-action", authenticate, requirePermission("manage_workflows"),
   res.json({ success: true, message: `Bulk ${action} completed. ${errors.length > 0 ? `${errors.length} failed.` : ""}` });
 });
 
+router.post("/import", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
+  const { workflowJson } = req.body as { workflowJson: Record<string, unknown> };
+
+  if (!workflowJson) {
+    res.status(400).json({ success: false, error: { code: "MISSING_JSON", message: "workflowJson required" } });
+    return;
+  }
+
+  try {
+    const { importWorkflow } = await import("../services/n8n.service");
+    const result = await importWorkflow(workflowJson);
+    res.json({ success: true, data: result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { code: "IMPORT_ERROR", message: String(err) } });
+  }
+});
+
 export { router as workflowsRouter };

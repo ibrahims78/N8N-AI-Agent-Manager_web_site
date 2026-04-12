@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { CheckCircle2, XCircle, Loader2, Eye, EyeOff, TestTube2 } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, Eye, EyeOff, TestTube2, AlertTriangle, Trash2, RotateCcw } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { getAuthHeader, API_BASE } from "@/lib/api";
 import { useGetN8nSettings, useTestN8nConnection, useSaveN8nSettings, useSaveOpenAiKey, useTestOpenAI, useSaveGeminiKey, useTestGemini, useChangePassword, useGetSystemStatus } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { getAuthHeader } from "@/lib/api";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 
@@ -18,6 +19,48 @@ export default function SettingsPage() {
   const authHeader = getAuthHeader();
   const queryClient = useQueryClient();
   const isAdmin = user?.role === "admin";
+  const { toast } = useToast();
+  const [dangerAction, setDangerAction] = useState<"conversations" | "versions" | "factory" | null>(null);
+  const [dangerConfirmText, setDangerConfirmText] = useState("");
+  const [dangerLoading, setDangerLoading] = useState(false);
+
+  const DANGER_CONFIRM_WORD = isRTL ? "احذف" : "DELETE";
+
+  const executeDangerAction = async () => {
+    if (dangerConfirmText !== DANGER_CONFIRM_WORD) return;
+    setDangerLoading(true);
+
+    const headers: Record<string, string> = { ...authHeader, "Content-Type": "application/json" };
+    const token = localStorage.getItem("accessToken");
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    let url = "";
+    let method = "DELETE";
+
+    if (dangerAction === "conversations") url = `${API_BASE}/settings/danger/conversations`;
+    else if (dangerAction === "versions") url = `${API_BASE}/settings/danger/versions`;
+    else if (dangerAction === "factory") { url = `${API_BASE}/settings/danger/factory-reset`; method = "POST"; }
+
+    try {
+      const res = await fetch(url, { method, headers });
+      const data = await res.json() as { success: boolean; message?: string; error?: { message: string } };
+      if (data.success) {
+        toast({ title: isRTL ? "تم تنفيذ العملية بنجاح ✅" : "Operation completed successfully ✅" });
+        queryClient.invalidateQueries();
+        if (dangerAction === "factory") {
+          setTimeout(() => { window.location.href = "/"; }, 1500);
+        }
+      } else {
+        toast({ title: data.error?.message ?? "Error", variant: "destructive" });
+      }
+    } catch (err) {
+      toast({ title: String(err), variant: "destructive" });
+    } finally {
+      setDangerLoading(false);
+      setDangerAction(null);
+      setDangerConfirmText("");
+    }
+  };
 
   const [n8nUrl, setN8nUrl] = useState("");
   const [n8nKey, setN8nKey] = useState("");
@@ -226,6 +269,140 @@ export default function SettingsPage() {
               </div>
             </div>
           </div>
+
+          {/* Danger Zone */}
+          {isAdmin && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-destructive/5 rounded-xl p-5 border border-destructive/30"
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <AlertTriangle size={16} className="text-destructive" />
+                <h2 className="text-sm font-semibold text-destructive">
+                  {isRTL ? "منطقة الخطر" : "Danger Zone"}
+                </h2>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between py-2 border-b border-destructive/10">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      {isRTL ? "حذف جميع المحادثات" : "Delete all conversations"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {isRTL ? "يحذف جميع الرسائل والمحادثات نهائياً" : "Permanently deletes all messages and conversations"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => { setDangerAction("conversations"); setDangerConfirmText(""); }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-destructive/40 text-destructive text-xs hover:bg-destructive/10 transition-colors"
+                  >
+                    <Trash2 size={12} />
+                    {isRTL ? "حذف" : "Delete"}
+                  </button>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-destructive/10">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      {isRTL ? "حذف سجلات الإصدارات" : "Delete workflow versions"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {isRTL ? "يحذف جميع إصدارات الـ workflows المحفوظة" : "Deletes all saved workflow version history"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => { setDangerAction("versions"); setDangerConfirmText(""); }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-destructive/40 text-destructive text-xs hover:bg-destructive/10 transition-colors"
+                  >
+                    <Trash2 size={12} />
+                    {isRTL ? "حذف" : "Delete"}
+                  </button>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <div>
+                    <p className="text-sm font-bold text-destructive">
+                      {isRTL ? "إعادة الضبط الكاملة" : "Factory Reset"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {isRTL ? "يمسح كل البيانات والإعدادات — لا يمكن التراجع!" : "Wipes all data and settings — irreversible!"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => { setDangerAction("factory"); setDangerConfirmText(""); }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-destructive text-destructive-foreground text-xs hover:bg-destructive/90 transition-colors"
+                  >
+                    <RotateCcw size={12} />
+                    {isRTL ? "إعادة الضبط" : "Reset"}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Danger Confirmation Modal */}
+          <AnimatePresence>
+            {dangerAction && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+                onClick={() => { setDangerAction(null); setDangerConfirmText(""); }}
+              >
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.9, opacity: 0 }}
+                  onClick={e => e.stopPropagation()}
+                  className="bg-card border border-destructive/40 rounded-2xl p-6 max-w-sm w-full shadow-2xl"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
+                      <AlertTriangle size={20} className="text-destructive" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-foreground">
+                        {isRTL ? "تأكيد العملية الخطرة" : "Confirm Dangerous Action"}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {isRTL ? "هذا الإجراء لا يمكن التراجع عنه" : "This action cannot be undone"}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
+                    {isRTL
+                      ? `اكتب "${DANGER_CONFIRM_WORD}" للتأكيد`
+                      : `Type "${DANGER_CONFIRM_WORD}" to confirm`}
+                  </p>
+                  <input
+                    autoFocus
+                    type="text"
+                    value={dangerConfirmText}
+                    onChange={e => setDangerConfirmText(e.target.value)}
+                    placeholder={DANGER_CONFIRM_WORD}
+                    className="w-full px-3 py-2 text-sm rounded-lg border border-destructive/40 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-destructive/50 mb-3"
+                    onKeyDown={e => { if (e.key === "Enter") executeDangerAction(); }}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => { setDangerAction(null); setDangerConfirmText(""); }}
+                      className="flex-1 px-3 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors"
+                    >
+                      {isRTL ? "إلغاء" : "Cancel"}
+                    </button>
+                    <button
+                      onClick={executeDangerAction}
+                      disabled={dangerConfirmText !== DANGER_CONFIRM_WORD || dangerLoading}
+                      className="flex-1 px-3 py-2 rounded-lg bg-destructive text-destructive-foreground text-sm hover:bg-destructive/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+                    >
+                      {dangerLoading ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                      {isRTL ? "تأكيد" : "Confirm"}
+                    </button>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </>
       )}
     </div>
