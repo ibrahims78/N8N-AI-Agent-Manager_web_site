@@ -71,36 +71,24 @@ router.post("/n8n-library/import/:id", authenticate, requirePermission("manage_w
     const n8nId = parseInt(req.params.id, 10);
     if (isNaN(n8nId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid ID" } }); return; }
 
-    const response = await fetch(`${N8N_API}/templates/${n8nId}`, {
-      headers: { "Accept": "application/json", "User-Agent": "n8n-manager/1.0" },
-      signal: AbortSignal.timeout(10000),
-    });
+    const { name, description, category, nodesCount } = req.body as {
+      name?: string;
+      description?: string;
+      category?: string;
+      nodesCount?: number;
+    };
 
-    if (!response.ok) {
-      res.status(502).json({ success: false, error: { code: "UPSTREAM_ERROR", message: `n8n API returned ${response.status}` } });
+    if (!name) {
+      res.status(400).json({ success: false, error: { code: "MISSING_FIELDS", message: "Template name is required" } });
       return;
     }
 
-    const data = await response.json() as {
-      workflow?: {
-        id: number;
-        name: string;
-        description?: string;
-        categories?: Array<{ name: string }>;
-        nodes?: Array<{ name: string }>;
-        workflowInfo?: Record<string, unknown>;
-      };
-    };
-
-    const w = data.workflow;
-    if (!w) { res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Template not found on n8n" } }); return; }
-
     const [template] = await db.insert(templatesTable).values({
-      name: w.name,
-      description: w.description ?? "",
-      category: w.categories?.[0]?.name ?? "general",
-      nodesCount: w.nodes?.length ?? 0,
-      workflowJson: (w.workflowInfo ?? { name: w.name, nodes: w.nodes ?? [], connections: {} }) as Record<string, unknown>,
+      name,
+      description: description ?? "",
+      category: category ?? "general",
+      nodesCount: nodesCount ?? 0,
+      workflowJson: { name, nodes: [], connections: {}, source: "n8n-library", n8nId },
       usageCount: 0,
       avgRating: 0,
       ratingCount: 0,

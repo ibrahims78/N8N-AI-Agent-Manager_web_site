@@ -155,10 +155,18 @@ function NodeGraphPreview({ workflowJson, isRTL }: { workflowJson?: WorkflowJson
   );
 }
 
-async function translateToArabic(text: string): Promise<string> {
+function isArabicText(text: string): boolean {
+  const arabicChars = (text.match(/[\u0600-\u06FF]/g) || []).length;
+  return arabicChars / text.length > 0.2;
+}
+
+async function translateText(text: string): Promise<string> {
   if (!text.trim()) return text;
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|ar`;
-  const res = await fetch(url);
+  const arabic = isArabicText(text);
+  const langpair = arabic ? "ar|en" : "en|ar";
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.slice(0, 500))}&langpair=${langpair}`;
+  const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+  if (!res.ok) throw new Error("Translation request failed");
   const data = await res.json() as { responseData?: { translatedText?: string }; responseStatus?: number };
   if (data.responseStatus === 200 && data.responseData?.translatedText) {
     return data.responseData.translatedText;
@@ -316,7 +324,13 @@ export default function TemplatesPage() {
     setImportingId(template.id);
     try {
       const headers: Record<string, string> = { ...getAuthHeader(), "Content-Type": "application/json" };
-      const res = await fetch(`${API_BASE}/templates/n8n-library/import/${template.id}`, { method: "POST", headers });
+      const body = JSON.stringify({
+        name: template.name,
+        description: template.description,
+        category: template.category,
+        nodesCount: template.nodesCount,
+      });
+      const res = await fetch(`${API_BASE}/templates/n8n-library/import/${template.id}`, { method: "POST", headers, body });
       const data = await res.json() as { success: boolean };
       if (data.success) {
         setImportedIds(prev => new Set(prev).add(template.id));
@@ -340,12 +354,12 @@ export default function TemplatesPage() {
     setTranslatingLocalId(template.id);
     try {
       const [name, description] = await Promise.all([
-        translateToArabic(template.name),
-        translateToArabic(template.description),
+        translateText(template.name),
+        template.description ? translateText(template.description) : Promise.resolve(""),
       ]);
       setTranslatedLocal(p => ({ ...p, [template.id]: { name, description } }));
     } catch {
-      toast({ title: "فشل الترجمة", variant: "destructive" });
+      toast({ title: isRTL ? "فشل الترجمة، حاول مجدداً" : "Translation failed, try again", variant: "destructive" });
     } finally {
       setTranslatingLocalId(null);
     }
@@ -359,12 +373,12 @@ export default function TemplatesPage() {
     setTranslatingN8nId(template.id);
     try {
       const [name, description] = await Promise.all([
-        translateToArabic(template.name),
-        template.description ? translateToArabic(template.description) : Promise.resolve(""),
+        translateText(template.name),
+        template.description ? translateText(template.description) : Promise.resolve(""),
       ]);
       setTranslatedN8n(p => ({ ...p, [template.id]: { name, description } }));
     } catch {
-      toast({ title: "فشل الترجمة", variant: "destructive" });
+      toast({ title: isRTL ? "فشل الترجمة، حاول مجدداً" : "Translation failed, try again", variant: "destructive" });
     } finally {
       setTranslatingN8nId(null);
     }
@@ -718,9 +732,10 @@ export default function TemplatesPage() {
 
       <AnimatePresence>
         {previewTemplate && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setPreviewTemplate(null)}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-4" onClick={() => setPreviewTemplate(null)}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              onClick={e => e.stopPropagation()} className="bg-card rounded-2xl p-6 max-w-lg w-full border border-border shadow-2xl">
+              onClick={e => e.stopPropagation()} className="bg-card rounded-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto border border-border shadow-2xl">
+            <div className="p-4 sm:p-6">
               <div className="flex items-start justify-between mb-4">
                 <h2 className="text-lg font-semibold text-foreground flex-1 leading-tight">
                   {translatedLocal[previewTemplate.id]?.name ?? previewTemplate.name}
@@ -764,6 +779,7 @@ export default function TemplatesPage() {
                 <button onClick={() => { useTemplate({ id: previewTemplate.id.toString() } as Parameters<typeof useTemplate>[0]); setPreviewTemplate(null); }}
                   className="flex-1 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors">{t("templates.use")}</button>
               </div>
+            </div>
             </motion.div>
           </div>
         )}
@@ -771,9 +787,10 @@ export default function TemplatesPage() {
 
       <AnimatePresence>
         {n8nPreview && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setN8nPreview(null)}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-4" onClick={() => setN8nPreview(null)}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              onClick={e => e.stopPropagation()} className="bg-card rounded-2xl p-6 max-w-lg w-full border border-border shadow-2xl">
+              onClick={e => e.stopPropagation()} className="bg-card rounded-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto border border-border shadow-2xl">
+            <div className="p-4 sm:p-6">
               <div className="flex items-start justify-between mb-4">
                 <h2 className="text-base font-semibold text-foreground leading-tight flex-1">
                   {translatedN8n[n8nPreview.id]?.name ?? n8nPreview.name}
@@ -830,6 +847,7 @@ export default function TemplatesPage() {
                   {importedIds.has(n8nPreview.id) ? (isRTL ? "تم الاستيراد" : "Imported") : (isRTL ? "استيراد القالب" : "Import Template")}
                 </button>
               </div>
+            </div>
             </motion.div>
           </div>
         )}
@@ -837,9 +855,10 @@ export default function TemplatesPage() {
 
       <AnimatePresence>
         {showAddModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setShowAddModal(false)}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-4" onClick={() => setShowAddModal(false)}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              onClick={e => e.stopPropagation()} className="bg-card rounded-2xl p-6 max-w-md w-full border border-border shadow-2xl">
+              onClick={e => e.stopPropagation()} className="bg-card rounded-2xl w-full max-w-md max-h-[92vh] overflow-y-auto border border-border shadow-2xl">
+            <div className="p-4 sm:p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-base font-semibold text-foreground">{isRTL ? "إضافة قالب جديد" : "Add New Template"}</h2>
                 <button onClick={() => setShowAddModal(false)} className="p-1 rounded-lg hover:bg-muted transition-colors">
@@ -874,6 +893,7 @@ export default function TemplatesPage() {
                   {addingTemplate ? (isRTL ? "جاري الحفظ..." : "Saving...") : (isRTL ? "حفظ القالب" : "Save Template")}
                 </button>
               </div>
+            </div>
             </motion.div>
           </div>
         )}
