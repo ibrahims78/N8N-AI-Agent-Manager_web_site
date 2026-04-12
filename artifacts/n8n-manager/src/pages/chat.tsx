@@ -283,6 +283,15 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isGenerating, generationResult]);
 
+  // Load replay request from History page
+  useEffect(() => {
+    const replay = sessionStorage.getItem("chatReplay");
+    if (replay) {
+      sessionStorage.removeItem("chatReplay");
+      setInput(replay);
+    }
+  }, []);
+
   const handleSend = useCallback(() => {
     if (!input.trim() || sending || !selectedConvId) return;
 

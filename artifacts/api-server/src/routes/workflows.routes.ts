@@ -10,6 +10,7 @@ import {
   deleteWorkflow,
   updateWorkflow,
   getWorkflowExecutions,
+  getAllRecentExecutions,
 } from "../services/n8n.service";
 import type { Request, Response } from "express";
 
@@ -31,13 +32,37 @@ router.get("/", authenticate, requirePermission("view_workflows"), async (req: R
       filtered = filtered.filter(w => !w.active);
     }
 
-    const enriched = filtered.map(w => ({
-      ...w,
-      successRate: Math.random() * 30 + 70,
-      executionCount: Math.floor(Math.random() * 100),
-      isRunning: false,
-      lastExecution: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-    }));
+    // Fetch real execution data from n8n to compute per-workflow stats
+    let executionsByWorkflow: Record<string, { total: number; success: number; lastAt: string | null }> = {};
+    try {
+      const recentExecs = await getAllRecentExecutions(200);
+      for (const exec of recentExecs) {
+        const wid = exec.workflowId;
+        if (!executionsByWorkflow[wid]) {
+          executionsByWorkflow[wid] = { total: 0, success: 0, lastAt: null };
+        }
+        executionsByWorkflow[wid].total++;
+        if (exec.status === "success") executionsByWorkflow[wid].success++;
+        if (!executionsByWorkflow[wid].lastAt && exec.startedAt) {
+          executionsByWorkflow[wid].lastAt = exec.startedAt;
+        }
+      }
+    } catch {
+      // n8n may not be configured — stats will show 0/null gracefully
+    }
+
+    const enriched = filtered.map(w => {
+      const stats = executionsByWorkflow[w.id];
+      const total = stats?.total ?? 0;
+      const successRate = total > 0 ? Math.round((stats!.success / total) * 100) : 0;
+      return {
+        ...w,
+        successRate,
+        executionCount: total,
+        isRunning: false,
+        lastExecution: stats?.lastAt ?? null,
+      };
+    });
 
     res.json({ success: true, data: { workflows: enriched, total: enriched.length } });
   } catch (err) {
@@ -53,14 +78,27 @@ router.get("/", authenticate, requirePermission("view_workflows"), async (req: R
 router.get("/:id", authenticate, requirePermission("view_workflows"), async (req: Request, res: Response): Promise<void> => {
   try {
     const workflow = await getWorkflow(req.params.id);
+    // Fetch real execution stats for this specific workflow
+    let successRate = 0;
+    let executionCount = 0;
+    let lastExecution: string | null = null;
+    try {
+      const execs = await getWorkflowExecutions(req.params.id, 100);
+      executionCount = execs.length;
+      const successCount = execs.filter(e => e.status === "success").length;
+      successRate = executionCount > 0 ? Math.round((successCount / executionCount) * 100) : 0;
+      lastExecution = execs[0]?.startedAt ?? null;
+    } catch {
+      // n8n not configured — show zeroes
+    }
     res.json({
       success: true,
       data: {
         ...workflow,
-        successRate: 85,
-        executionCount: 42,
+        successRate,
+        executionCount,
         isRunning: false,
-        lastExecution: new Date(Date.now() - 3600000).toISOString(),
+        lastExecution,
       },
     });
   } catch (err) {
@@ -181,6 +219,22 @@ router.post("/import", authenticate, requirePermission("manage_workflows"), asyn
   try {
     const { importWorkflow } = await import("../services/n8n.service");
     const result = await importWorkflow(workflowJson);
+
+    // Auto-save version 1 for the newly created workflow
+    if (result.id) {
+      try {
+        await db.insert(workflowVersionsTable).values({
+          workflowN8nId: result.id,
+          versionNumber: 1,
+          workflowJson: workflowJson,
+          changeDescription: "الإنشاء الأولي بواسطة وكيل الذكاء الاصطناعي",
+          createdBy: req.user!.userId,
+        });
+      } catch {
+        // Non-fatal — still return success
+      }
+    }
+
     res.json({ success: true, data: result });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: "IMPORT_ERROR", message: String(err) } });
