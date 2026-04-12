@@ -4,13 +4,29 @@ import { useTranslation } from "react-i18next";
 import {
   Search, Star, Eye, ArrowRight, Zap, X, Plus,
   Download, Globe, BookMarked, ChevronLeft, ChevronRight,
-  Loader2, User, BarChart2, Languages,
+  Loader2, User, BarChart2, Languages, Mail, Webhook,
+  Clock, Code2, Database, Globe2, Send, GitBranch, Filter,
 } from "lucide-react";
 import { useGetTemplates, useUseTemplate, getGetTemplatesQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getAuthHeader, API_BASE } from "@/lib/api";
 import { useAppStore } from "@/stores/useAppStore";
 import { useToast } from "@/hooks/use-toast";
+
+interface WorkflowNode {
+  id: string;
+  name: string;
+  type: string;
+  position?: [number, number];
+  parameters?: Record<string, unknown>;
+}
+
+interface WorkflowJson {
+  name?: string;
+  nodes?: WorkflowNode[];
+  connections?: Record<string, unknown>;
+  settings?: Record<string, unknown>;
+}
 
 interface LocalTemplate {
   id: number;
@@ -21,6 +37,7 @@ interface LocalTemplate {
   usageCount: number;
   avgRating: number;
   ratingCount: number;
+  workflowJson?: WorkflowJson;
 }
 
 interface N8nTemplate {
@@ -42,6 +59,101 @@ interface TranslatedContent {
 
 const LOCAL_CATEGORIES = ["all", "email", "reports", "api", "scheduling", "alerts", "database"];
 const N8N_CATEGORIES = ["all", "Marketing", "Sales", "Engineering", "IT Ops", "HR", "Finance", "Design", "Other"];
+
+function getNodeStyle(type: string): { color: string; bg: string; Icon: React.ElementType } {
+  const t = type.toLowerCase();
+  if (t.includes("schedule") || t.includes("cron")) return { color: "text-blue-600", bg: "bg-blue-500/10 border-blue-500/30", Icon: Clock };
+  if (t.includes("webhook")) return { color: "text-emerald-600", bg: "bg-emerald-500/10 border-emerald-500/30", Icon: Webhook };
+  if (t.includes("email") || t.includes("gmail")) return { color: "text-orange-600", bg: "bg-orange-500/10 border-orange-500/30", Icon: Mail };
+  if (t.includes("send") || t.includes("telegram") || t.includes("slack")) return { color: "text-purple-600", bg: "bg-purple-500/10 border-purple-500/30", Icon: Send };
+  if (t.includes("http") || t.includes("request")) return { color: "text-cyan-600", bg: "bg-cyan-500/10 border-cyan-500/30", Icon: Globe2 };
+  if (t.includes("code") || t.includes("function") || t.includes("javascript")) return { color: "text-yellow-600", bg: "bg-yellow-500/10 border-yellow-500/30", Icon: Code2 };
+  if (t.includes("database") || t.includes("postgres") || t.includes("mysql") || t.includes("mongo")) return { color: "text-rose-600", bg: "bg-rose-500/10 border-rose-500/30", Icon: Database };
+  if (t.includes("if") || t.includes("switch") || t.includes("filter")) return { color: "text-violet-600", bg: "bg-violet-500/10 border-violet-500/30", Icon: Filter };
+  if (t.includes("merge") || t.includes("split") || t.includes("aggregate")) return { color: "text-teal-600", bg: "bg-teal-500/10 border-teal-500/30", Icon: GitBranch };
+  return { color: "text-accent", bg: "bg-accent/10 border-accent/30", Icon: Zap };
+}
+
+function NodeGraphPreview({ workflowJson, isRTL }: { workflowJson?: WorkflowJson; isRTL: boolean }) {
+  const nodes = workflowJson?.nodes ?? [];
+
+  if (nodes.length === 0) {
+    return (
+      <div className="h-36 bg-muted/50 rounded-xl border border-border flex items-center justify-center">
+        <div className="text-center">
+          <Zap size={22} className="mx-auto text-muted-foreground/30 mb-2" />
+          <p className="text-xs text-muted-foreground">{isRTL ? "لا توجد عقد في هذا القالب" : "No nodes in this template"}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const hasPositions = nodes.every(n => n.position && n.position.length === 2);
+
+  if (hasPositions && nodes.length > 1) {
+    const xs = nodes.map(n => n.position![0]);
+    const ys = nodes.map(n => n.position![1]);
+    const minX = Math.min(...xs), maxX = Math.max(...xs);
+    const minY = Math.min(...ys), maxY = Math.max(...ys);
+    const rangeX = maxX - minX || 1;
+    const rangeY = maxY - minY || 1;
+    const W = 340, H = 120;
+
+    return (
+      <div className="relative bg-muted/40 rounded-xl border border-border overflow-hidden" style={{ height: 144 }}>
+        <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+          {nodes.map((node, i) => {
+            if (i === 0) return null;
+            const prev = nodes[i - 1];
+            const x1 = 12 + ((prev.position![0] - minX) / rangeX) * W;
+            const y1 = 12 + ((prev.position![1] - minY) / rangeY) * H;
+            const x2 = 12 + ((node.position![0] - minX) / rangeX) * W;
+            const y2 = 12 + ((node.position![1] - minY) / rangeY) * H;
+            return (
+              <line key={`line-${i}`} x1={x1 + 28} y1={y1 + 14} x2={x2} y2={y2 + 14}
+                stroke="currentColor" strokeOpacity={0.2} strokeWidth={1.5} strokeDasharray="4 3" className="text-foreground" />
+            );
+          })}
+        </svg>
+        {nodes.map((node) => {
+          const { color, bg, Icon } = getNodeStyle(node.type);
+          const x = 12 + ((node.position![0] - minX) / rangeX) * W;
+          const y = 12 + ((node.position![1] - minY) / rangeY) * H;
+          return (
+            <div key={node.id} className="absolute" style={{ left: x, top: y, zIndex: 1 }}>
+              <div className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[10px] font-medium whitespace-nowrap shadow-sm ${bg} ${color}`}
+                style={{ maxWidth: 120 }}>
+                <Icon size={10} className="shrink-0" />
+                <span className="truncate">{node.name}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-muted/40 rounded-xl border border-border p-3 overflow-x-auto">
+      <div className="flex items-center gap-1.5 flex-nowrap min-w-0">
+        {nodes.map((node, i) => {
+          const { color, bg, Icon } = getNodeStyle(node.type);
+          return (
+            <div key={node.id ?? i} className="flex items-center gap-1.5 shrink-0">
+              <div className={`flex items-center gap-1 px-2 py-1.5 rounded-lg border text-[10px] font-medium shadow-sm ${bg} ${color}`}>
+                <Icon size={11} className="shrink-0" />
+                <span className="whitespace-nowrap max-w-[90px] truncate">{node.name}</span>
+              </div>
+              {i < nodes.length - 1 && (
+                <ArrowRight size={11} className="text-muted-foreground/50 shrink-0" />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 async function translateToArabic(text: string): Promise<string> {
   if (!text.trim()) return text;
@@ -600,18 +712,16 @@ export default function TemplatesPage() {
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div className="bg-muted rounded-lg p-3 text-center">
                   <p className="text-xs text-muted-foreground mb-1">{isRTL ? "العقد" : "Nodes"}</p>
-                  <p className="font-semibold text-foreground text-sm">{previewTemplate.nodesCount}</p>
+                  <p className="font-semibold text-foreground text-sm">{previewTemplate.nodesCount || previewTemplate.workflowJson?.nodes?.length || 0}</p>
                 </div>
                 <div className="bg-muted rounded-lg p-3 text-center">
                   <p className="text-xs text-muted-foreground mb-1">{isRTL ? "الاستخدامات" : "Uses"}</p>
                   <p className="font-semibold text-foreground text-sm">{previewTemplate.usageCount}</p>
                 </div>
               </div>
-              <div className="h-32 bg-muted rounded-lg flex items-center justify-center mb-4">
-                <div className="text-center">
-                  <Zap size={24} className="mx-auto text-accent/40 mb-2" />
-                  <p className="text-xs text-muted-foreground">{isRTL ? "معاينة مخطط العقد" : "Node graph preview"}</p>
-                </div>
+              <div className="mb-4">
+                <p className="text-xs font-medium text-muted-foreground mb-2">{isRTL ? "مخطط العقد" : "Node Graph"}</p>
+                <NodeGraphPreview workflowJson={previewTemplate.workflowJson} isRTL={isRTL} />
               </div>
               <div className="flex gap-3">
                 <button onClick={() => setPreviewTemplate(null)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">{t("app.cancel")}</button>
