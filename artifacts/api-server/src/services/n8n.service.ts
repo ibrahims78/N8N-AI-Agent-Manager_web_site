@@ -137,6 +137,15 @@ export async function createWorkflow(data: Record<string, unknown>): Promise<N8n
   return res.json() as Promise<N8nWorkflow>;
 }
 
+export async function updateWorkflow(id: string, data: Record<string, unknown>): Promise<N8nWorkflow> {
+  const res = await n8nFetch(`/workflows/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to update workflow");
+  return res.json() as Promise<N8nWorkflow>;
+}
+
 export async function getWorkflowExecutions(workflowId: string, limit = 20): Promise<N8nExecution[]> {
   const res = await n8nFetch(`/executions?workflowId=${workflowId}&limit=${limit}`);
   if (!res.ok) return [];

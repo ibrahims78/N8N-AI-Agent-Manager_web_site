@@ -8,6 +8,7 @@ import {
   activateWorkflow,
   deactivateWorkflow,
   deleteWorkflow,
+  updateWorkflow,
   getWorkflowExecutions,
 } from "../services/n8n.service";
 import type { Request, Response } from "express";
@@ -111,6 +112,41 @@ router.get("/:id/versions", authenticate, requirePermission("view_workflows"), a
     .where(eq(workflowVersionsTable.workflowN8nId, req.params.id));
 
   res.json({ success: true, data: { versions } });
+});
+
+router.post("/:id/restore/:versionId", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
+  const { id, versionId } = req.params;
+  try {
+    const versions = await db
+      .select()
+      .from(workflowVersionsTable)
+      .where(and(eq(workflowVersionsTable.workflowN8nId, id), eq(workflowVersionsTable.id, parseInt(versionId, 10))));
+
+    const version = versions[0];
+    if (!version) {
+      res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Version not found" } });
+      return;
+    }
+
+    await updateWorkflow(id, version.workflowJson as Record<string, unknown>);
+
+    const nextVersion = await db
+      .select()
+      .from(workflowVersionsTable)
+      .where(eq(workflowVersionsTable.workflowN8nId, id));
+
+    await db.insert(workflowVersionsTable).values({
+      workflowN8nId: id,
+      versionNumber: nextVersion.length + 1,
+      workflowJson: version.workflowJson,
+      changeDescription: `استعادة الإصدار ${version.versionNumber}`,
+      createdBy: req.user!.userId,
+    });
+
+    res.json({ success: true, message: `تم استعادة الإصدار ${version.versionNumber} بنجاح` });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { code: "RESTORE_ERROR", message: String(err) } });
+  }
 });
 
 router.post("/bulk-action", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {

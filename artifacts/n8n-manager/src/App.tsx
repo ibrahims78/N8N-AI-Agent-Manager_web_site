@@ -14,6 +14,7 @@ import HistoryPage from "@/pages/history";
 import UsersPage from "@/pages/users";
 import SettingsPage from "@/pages/settings";
 import ChangePasswordPage from "@/pages/change-password";
+import WorkflowDetailPage from "@/pages/workflow-detail";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -50,6 +51,13 @@ function AppRoutes() {
         <ProtectedRoute>
           <AppLayout>
             <WorkflowsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/workflows/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <WorkflowDetailPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
