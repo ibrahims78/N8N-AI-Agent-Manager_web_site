@@ -180,7 +180,7 @@ export default function UsersPage() {
                         <Pencil size={14} />
                       </button>
                       <button
-                        onClick={() => updateStatus({ id: user.id.toString(), isActive: !user.isActive } as Parameters<typeof updateStatus>[0])}
+                        onClick={() => updateStatus({ id: user.id.toString(), data: { isActive: !user.isActive } } as Parameters<typeof updateStatus>[0])}
                         className={`p-1.5 rounded-md transition-colors ${user.isActive ? "text-yellow-500 hover:bg-yellow-50" : "text-emerald-500 hover:bg-emerald-50"}`}
                         title={user.isActive ? t("users.disable") : t("users.enable")}
                       >
@@ -253,7 +253,7 @@ export default function UsersPage() {
             <div className="flex gap-3 mt-5">
               <button onClick={() => setShowCreateModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">{t("app.cancel")}</button>
               <button
-                onClick={() => createUser({ username: formData.username, password: formData.password, role: formData.role } as Parameters<typeof createUser>[0])}
+                onClick={() => createUser({ data: { username: formData.username, password: formData.password, role: formData.role } } as Parameters<typeof createUser>[0])}
                 className="flex-1 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors"
               >
                 {t("users.addUser")}
@@ -358,7 +358,7 @@ export default function UsersPage() {
               <button onClick={() => setSelectedUser(null)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">{t("app.cancel")}</button>
               <button
                 onClick={() => {
-                  updatePerms({ id: selectedUser.id.toString(), permissions: selectedUser.permissions.map(p => ({ key: p.key, enabled: p.isEnabled })) } as Parameters<typeof updatePerms>[0]);
+                  updatePerms({ id: selectedUser.id.toString(), data: { permissions: selectedUser.permissions.map(p => ({ key: p.key, enabled: p.isEnabled })) } } as Parameters<typeof updatePerms>[0]);
                   setSelectedUser(null);
                 }}
                 className="flex-1 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors"

@@ -194,7 +194,7 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => { setN8nStatus("testing"); testN8n({ url: n8nUrl, apiKey: n8nKey } as Parameters<typeof testN8n>[0]); }}
+                  onClick={() => { setN8nStatus("testing"); testN8n({ data: { url: n8nUrl, apiKey: n8nKey } } as Parameters<typeof testN8n>[0]); }}
                   disabled={!n8nUrl || (!n8nKey && !n8nData?.hasApiKey)}
                   className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-50"
                 >
@@ -202,7 +202,7 @@ export default function SettingsPage() {
                 </button>
                 <StatusIcon status={n8nStatus} />
                 <button
-                  onClick={() => saveN8n({ url: n8nUrl, apiKey: n8nKey || "KEEP_EXISTING" } as Parameters<typeof saveN8n>[0])}
+                  onClick={() => saveN8n({ data: { url: n8nUrl, apiKey: n8nKey || "KEEP_EXISTING" } } as Parameters<typeof saveN8n>[0])}
                   disabled={!n8nUrl}
                   className="px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-50"
                 >
@@ -237,7 +237,7 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => { setOpenaiStatus("testing"); testOai({ apiKey: openaiKey } as Parameters<typeof testOai>[0]); }}
+                  onClick={() => { setOpenaiStatus("testing"); testOai({ data: { apiKey: openaiKey } } as Parameters<typeof testOai>[0]); }}
                   disabled={!openaiKey && !openaiSaved}
                   className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-50"
                 >
@@ -246,7 +246,7 @@ export default function SettingsPage() {
                 <StatusIcon status={openaiStatus} />
                 {openaiSaved && openaiStatus === "idle" && <CheckCircle2 size={16} className="text-emerald-500" />}
                 <button
-                  onClick={() => saveOai({ apiKey: openaiKey } as Parameters<typeof saveOai>[0])}
+                  onClick={() => saveOai({ data: { apiKey: openaiKey } } as Parameters<typeof saveOai>[0])}
                   disabled={!openaiKey}
                   className="px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-50"
                 >
@@ -281,7 +281,7 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => { setGeminiStatus("testing"); testGem({ apiKey: geminiKey } as Parameters<typeof testGem>[0]); }}
+                  onClick={() => { setGeminiStatus("testing"); testGem({ data: { apiKey: geminiKey } } as Parameters<typeof testGem>[0]); }}
                   disabled={!geminiKey && !geminiSaved}
                   className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-50"
                 >
@@ -290,7 +290,7 @@ export default function SettingsPage() {
                 <StatusIcon status={geminiStatus} />
                 {geminiSaved && geminiStatus === "idle" && <CheckCircle2 size={16} className="text-emerald-500" />}
                 <button
-                  onClick={() => saveGem({ apiKey: geminiKey } as Parameters<typeof saveGem>[0])}
+                  onClick={() => saveGem({ data: { apiKey: geminiKey } } as Parameters<typeof saveGem>[0])}
                   disabled={!geminiKey}
                   className="px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-50"
                 >
