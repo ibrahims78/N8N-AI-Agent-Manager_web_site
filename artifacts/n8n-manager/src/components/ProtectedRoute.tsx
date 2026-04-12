@@ -1,33 +1,46 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { useTranslation } from 'react-i18next';
 
 interface ProtectedRouteProps {
   children: ReactNode;
   requiredPermission?: string;
+  requireAdmin?: boolean;
   adminOnly?: boolean;
 }
 
-export function ProtectedRoute({ children, requiredPermission, adminOnly }: ProtectedRouteProps) {
+export function ProtectedRoute({ children, requiredPermission, requireAdmin, adminOnly }: ProtectedRouteProps) {
   const { user, token, hasPermission } = useAuthStore();
-  const [, setLocation] = useLocation();
-  const { t } = useTranslation();
+  const [location, setLocation] = useLocation();
 
-  if (!token || !user) {
-    setLocation('/login');
-    return null;
-  }
+  const needsAdmin = requireAdmin || adminOnly;
 
-  if (adminOnly && user.role !== 'admin') {
-    setLocation('/');
-    return null;
-  }
+  useEffect(() => {
+    if (!token || !user) {
+      setLocation('/login');
+      return;
+    }
 
-  if (requiredPermission && !hasPermission(requiredPermission)) {
-    setLocation('/');
-    return null;
-  }
+    if (user.forcePasswordChange && location !== '/change-password') {
+      setLocation('/change-password');
+      return;
+    }
+
+    if (needsAdmin && user.role !== 'admin') {
+      setLocation('/');
+      return;
+    }
+
+    if (requiredPermission && !hasPermission(requiredPermission)) {
+      setLocation('/');
+      return;
+    }
+  }, [token, user, location, needsAdmin, requiredPermission, hasPermission, setLocation]);
+
+  if (!token || !user) return null;
+  if (user.forcePasswordChange && location !== '/change-password') return null;
+  if (needsAdmin && user.role !== 'admin') return null;
+  if (requiredPermission && !hasPermission(requiredPermission)) return null;
 
   return <>{children}</>;
 }

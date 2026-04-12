@@ -1,4 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
+import { db, userPermissionsTable } from "@workspace/db";
+import { eq } from "drizzle-orm";
 import { verifyAccessToken, type TokenPayload } from "../services/auth.service";
 
 declare global {
@@ -36,4 +38,41 @@ export function requireAdmin(req: Request, res: Response, next: NextFunction): v
     return;
   }
   next();
+}
+
+export function requirePermission(permissionKey: string) {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    if (!req.user) {
+      res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Authentication required" } });
+      return;
+    }
+
+    if (req.user.role === "admin") {
+      next();
+      return;
+    }
+
+    try {
+      const perms = await db
+        .select()
+        .from(userPermissionsTable)
+        .where(eq(userPermissionsTable.userId, req.user.userId));
+
+      const perm = perms.find(p => p.permissionKey === permissionKey);
+      if (!perm || !perm.isEnabled) {
+        res.status(403).json({
+          success: false,
+          error: {
+            code: "PERMISSION_DENIED",
+            message: `ليس لديك صلاحية للوصول إلى هذا المورد`,
+          },
+        });
+        return;
+      }
+
+      next();
+    } catch {
+      res.status(500).json({ success: false, error: { code: "SERVER_ERROR", message: "Permission check failed" } });
+    }
+  };
 }

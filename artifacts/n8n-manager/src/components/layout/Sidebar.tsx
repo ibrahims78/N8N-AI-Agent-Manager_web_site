@@ -16,17 +16,23 @@ import { motion } from 'framer-motion';
 export function Sidebar() {
   const { t } = useTranslation();
   const [location] = useLocation();
-  const { user } = useAuthStore();
+  const { user, hasPermission } = useAuthStore();
 
-  const navItems = [
-    { href: '/', icon: LayoutDashboard, label: t('app.dashboard') },
-    { href: '/workflows', icon: Workflow, label: t('app.workflows') },
-    { href: '/chat', icon: MessageSquare, label: t('app.chat') },
-    { href: '/templates', icon: LayoutTemplate, label: t('app.templates') },
-    { href: '/history', icon: History, label: t('app.history') },
-    ...(user?.role === 'admin' ? [{ href: '/users', icon: Users, label: t('app.users') }] : []),
-    { href: '/settings', icon: Settings, label: t('app.settings') },
+  const allNavItems = [
+    { href: '/', icon: LayoutDashboard, label: t('app.dashboard'), permission: 'view_dashboard' },
+    { href: '/workflows', icon: Workflow, label: t('app.workflows'), permission: 'view_workflows' },
+    { href: '/chat', icon: MessageSquare, label: t('app.chat'), permission: 'use_chat' },
+    { href: '/templates', icon: LayoutTemplate, label: t('app.templates'), permission: 'view_templates' },
+    { href: '/history', icon: History, label: t('app.history'), permission: 'view_history' },
+    { href: '/users', icon: Users, label: t('app.users'), permission: null, adminOnly: true },
+    { href: '/settings', icon: Settings, label: t('app.settings'), permission: null },
   ];
+
+  const navItems = allNavItems.filter(item => {
+    if (item.adminOnly) return user?.role === 'admin';
+    if (!item.permission) return true;
+    return hasPermission(item.permission);
+  });
 
   return (
     <div className="flex flex-col h-full bg-sidebar border-x border-sidebar-border w-64 flex-shrink-0 z-10 transition-all duration-300">

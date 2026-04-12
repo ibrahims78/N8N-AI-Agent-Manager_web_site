@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { db, templatesTable, conversationsTable } from "@workspace/db";
 import { eq, ilike, or } from "drizzle-orm";
-import { authenticate } from "../middleware/auth.middleware";
+import { authenticate, requirePermission } from "../middleware/auth.middleware";
 import type { Request, Response } from "express";
 
 const router = Router();
 
-router.get("/", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.get("/", authenticate, requirePermission("view_templates"), async (req: Request, res: Response): Promise<void> => {
   const category = req.query.category as string | undefined;
   const search = req.query.search as string | undefined;
 
@@ -27,7 +27,7 @@ router.get("/", authenticate, async (req: Request, res: Response): Promise<void>
   res.json({ success: true, data: { templates: filtered, total: filtered.length } });
 });
 
-router.get("/:id", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.get("/:id", authenticate, requirePermission("view_templates"), async (req: Request, res: Response): Promise<void> => {
   const id = parseInt(req.params.id, 10);
   const templates = await db.select().from(templatesTable).where(eq(templatesTable.id, id)).limit(1);
   if (!templates[0]) {
@@ -37,7 +37,7 @@ router.get("/:id", authenticate, async (req: Request, res: Response): Promise<vo
   res.json({ success: true, data: templates[0] });
 });
 
-router.post("/:id/use", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.post("/:id/use", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
   const id = parseInt(req.params.id, 10);

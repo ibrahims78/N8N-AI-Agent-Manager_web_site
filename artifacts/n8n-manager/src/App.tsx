@@ -13,6 +13,7 @@ import TemplatesPage from "@/pages/templates";
 import HistoryPage from "@/pages/history";
 import UsersPage from "@/pages/users";
 import SettingsPage from "@/pages/settings";
+import ChangePasswordPage from "@/pages/change-password";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -31,6 +32,11 @@ function AppRoutes() {
       <Route path="/onboarding">
         <ProtectedRoute>
           <OnboardingPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/change-password">
+        <ProtectedRoute>
+          <ChangePasswordPage />
         </ProtectedRoute>
       </Route>
       <Route path="/">

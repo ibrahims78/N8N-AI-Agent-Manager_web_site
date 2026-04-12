@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db, conversationsTable, messagesTable, systemSettingsTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
-import { authenticate } from "../middleware/auth.middleware";
+import { authenticate, requirePermission } from "../middleware/auth.middleware";
 import { decryptApiKey } from "../services/encryption.service";
 import type { Request, Response } from "express";
 
@@ -23,7 +23,7 @@ async function getApiKeys() {
   return { openaiKey, geminiKey };
 }
 
-router.get("/conversations", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.get("/conversations", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
   const page = parseInt(req.query.page as string || "1", 10);
@@ -45,7 +45,7 @@ router.get("/conversations", authenticate, async (req: Request, res: Response): 
   res.json({ success: true, data: { conversations, total: conversations.length } });
 });
 
-router.post("/conversations", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.post("/conversations", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
   const { title, type, initialMessage } = req.body as { title?: string; type: string; initialMessage?: string };
@@ -70,7 +70,7 @@ router.post("/conversations", authenticate, async (req: Request, res: Response):
   res.json({ success: true, data: conv });
 });
 
-router.get("/conversations/:id", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.get("/conversations/:id", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   const convId = parseInt(req.params.id, 10);
   const convs = await db.select().from(conversationsTable).where(eq(conversationsTable.id, convId)).limit(1);
   const conv = convs[0];
@@ -89,13 +89,13 @@ router.get("/conversations/:id", authenticate, async (req: Request, res: Respons
   res.json({ success: true, data: { conversation: conv, messages } });
 });
 
-router.delete("/conversations/:id", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.delete("/conversations/:id", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   const convId = parseInt(req.params.id, 10);
   await db.delete(conversationsTable).where(eq(conversationsTable.id, convId));
   res.json({ success: true, message: "Conversation deleted" });
 });
 
-router.post("/conversations/:id/messages", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.post("/conversations/:id/messages", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
   const convId = parseInt(req.params.id, 10);

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db, workflowVersionsTable } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
-import { authenticate } from "../middleware/auth.middleware";
+import { authenticate, requirePermission } from "../middleware/auth.middleware";
 import {
   getWorkflows,
   getWorkflow,
@@ -14,7 +14,7 @@ import type { Request, Response } from "express";
 
 const router = Router();
 
-router.get("/", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.get("/", authenticate, requirePermission("view_workflows"), async (req: Request, res: Response): Promise<void> => {
   try {
     const workflows = await getWorkflows();
     const search = req.query.search as string | undefined;
@@ -49,7 +49,7 @@ router.get("/", authenticate, async (req: Request, res: Response): Promise<void>
   }
 });
 
-router.get("/:id", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.get("/:id", authenticate, requirePermission("view_workflows"), async (req: Request, res: Response): Promise<void> => {
   try {
     const workflow = await getWorkflow(req.params.id);
     res.json({
@@ -67,7 +67,7 @@ router.get("/:id", authenticate, async (req: Request, res: Response): Promise<vo
   }
 });
 
-router.post("/:id/activate", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.post("/:id/activate", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
   try {
     await activateWorkflow(req.params.id);
     res.json({ success: true, message: "Workflow activated" });
@@ -76,7 +76,7 @@ router.post("/:id/activate", authenticate, async (req: Request, res: Response): 
   }
 });
 
-router.post("/:id/deactivate", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.post("/:id/deactivate", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
   try {
     await deactivateWorkflow(req.params.id);
     res.json({ success: true, message: "Workflow deactivated" });
@@ -85,7 +85,7 @@ router.post("/:id/deactivate", authenticate, async (req: Request, res: Response)
   }
 });
 
-router.delete("/:id", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.delete("/:id", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
   try {
     await deleteWorkflow(req.params.id);
     res.json({ success: true, message: "Workflow deleted" });
@@ -94,7 +94,7 @@ router.delete("/:id", authenticate, async (req: Request, res: Response): Promise
   }
 });
 
-router.get("/:id/executions", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.get("/:id/executions", authenticate, requirePermission("view_workflows"), async (req: Request, res: Response): Promise<void> => {
   try {
     const limit = parseInt(req.query.limit as string || "20", 10);
     const executions = await getWorkflowExecutions(req.params.id, limit);
@@ -104,7 +104,7 @@ router.get("/:id/executions", authenticate, async (req: Request, res: Response):
   }
 });
 
-router.get("/:id/versions", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.get("/:id/versions", authenticate, requirePermission("view_workflows"), async (req: Request, res: Response): Promise<void> => {
   const versions = await db
     .select()
     .from(workflowVersionsTable)
@@ -113,7 +113,7 @@ router.get("/:id/versions", authenticate, async (req: Request, res: Response): P
   res.json({ success: true, data: { versions } });
 });
 
-router.post("/bulk-action", authenticate, async (req: Request, res: Response): Promise<void> => {
+router.post("/bulk-action", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
   const { ids, action } = req.body as { ids: string[]; action: string };
   if (!ids || !action) {
     res.status(400).json({ success: false, error: { code: "MISSING_FIELDS", message: "ids and action required" } });
