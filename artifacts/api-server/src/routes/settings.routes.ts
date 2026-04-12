@@ -9,13 +9,31 @@ import type { Request, Response } from "express";
 const router = Router();
 
 router.post("/n8n/test", authenticate, requireAdmin, async (req: Request, res: Response): Promise<void> => {
-  const { url, apiKey } = req.body as { url: string; apiKey: string };
-  if (!url || !apiKey) {
-    res.status(400).json({ success: false, error: { code: "MISSING_FIELDS", message: "URL and API key required" } });
+  const { url, apiKey } = req.body as { url: string; apiKey?: string };
+  if (!url) {
+    res.status(400).json({ success: false, error: { code: "MISSING_FIELDS", message: "URL is required" } });
     return;
   }
 
-  const result = await testN8nConnection(url, apiKey);
+  let resolvedKey = apiKey;
+
+  if (!resolvedKey || resolvedKey === "KEEP_EXISTING") {
+    const settings = await db.select().from(systemSettingsTable).limit(1);
+    const s = settings[0];
+    if (s?.n8nApiKeyEncrypted && s?.n8nApiKeyIv) {
+      try {
+        resolvedKey = decryptApiKey(s.n8nApiKeyEncrypted, s.n8nApiKeyIv);
+      } catch {
+        res.status(400).json({ success: false, error: { code: "DECRYPT_ERROR", message: "Failed to retrieve saved API key" } });
+        return;
+      }
+    } else {
+      res.status(400).json({ success: false, error: { code: "MISSING_KEY", message: "API key required" } });
+      return;
+    }
+  }
+
+  const result = await testN8nConnection(url, resolvedKey);
   res.json({ success: true, data: result });
 });
 
@@ -59,15 +77,28 @@ router.get("/n8n", authenticate, async (req: Request, res: Response): Promise<vo
 });
 
 router.post("/openai/test", authenticate, requireAdmin, async (req: Request, res: Response): Promise<void> => {
-  const { apiKey } = req.body as { apiKey: string };
-  if (!apiKey) {
-    res.status(400).json({ success: false, error: { code: "MISSING_KEY", message: "API key required" } });
-    return;
+  const { apiKey } = req.body as { apiKey?: string };
+  let resolvedKey = apiKey;
+
+  if (!resolvedKey) {
+    const settings = await db.select().from(systemSettingsTable).limit(1);
+    const s = settings[0];
+    if (s?.openaiKeyEncrypted && s?.openaiKeyIv) {
+      try {
+        resolvedKey = decryptApiKey(s.openaiKeyEncrypted, s.openaiKeyIv);
+      } catch {
+        res.status(400).json({ success: false, error: { code: "DECRYPT_ERROR", message: "Failed to retrieve saved API key" } });
+        return;
+      }
+    } else {
+      res.status(400).json({ success: false, error: { code: "MISSING_KEY", message: "API key required" } });
+      return;
+    }
   }
 
   try {
     const response = await fetch("https://api.openai.com/v1/models", {
-      headers: { Authorization: `Bearer ${apiKey}` },
+      headers: { Authorization: `Bearer ${resolvedKey}` },
       signal: AbortSignal.timeout(10000),
     });
 
@@ -120,14 +151,27 @@ router.put("/openai", authenticate, requireAdmin, async (req: Request, res: Resp
 });
 
 router.post("/gemini/test", authenticate, requireAdmin, async (req: Request, res: Response): Promise<void> => {
-  const { apiKey } = req.body as { apiKey: string };
-  if (!apiKey) {
-    res.status(400).json({ success: false, error: { code: "MISSING_KEY", message: "API key required" } });
-    return;
+  const { apiKey } = req.body as { apiKey?: string };
+  let resolvedKey = apiKey;
+
+  if (!resolvedKey) {
+    const settings = await db.select().from(systemSettingsTable).limit(1);
+    const s = settings[0];
+    if (s?.geminiKeyEncrypted && s?.geminiKeyIv) {
+      try {
+        resolvedKey = decryptApiKey(s.geminiKeyEncrypted, s.geminiKeyIv);
+      } catch {
+        res.status(400).json({ success: false, error: { code: "DECRYPT_ERROR", message: "Failed to retrieve saved API key" } });
+        return;
+      }
+    } else {
+      res.status(400).json({ success: false, error: { code: "MISSING_KEY", message: "API key required" } });
+      return;
+    }
   }
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${resolvedKey}`, {
       signal: AbortSignal.timeout(10000),
     });
 

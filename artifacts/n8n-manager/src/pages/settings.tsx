@@ -238,7 +238,7 @@ export default function SettingsPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => { setOpenaiStatus("testing"); testOai({ apiKey: openaiKey } as Parameters<typeof testOai>[0]); }}
-                  disabled={!openaiKey}
+                  disabled={!openaiKey && !openaiSaved}
                   className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-50"
                 >
                   {t("settings.test")}
@@ -282,7 +282,7 @@ export default function SettingsPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => { setGeminiStatus("testing"); testGem({ apiKey: geminiKey } as Parameters<typeof testGem>[0]); }}
-                  disabled={!geminiKey}
+                  disabled={!geminiKey && !geminiSaved}
                   className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-50"
                 >
                   {t("settings.test")}
