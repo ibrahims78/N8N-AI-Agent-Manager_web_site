@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { CheckCircle2, XCircle, Loader2, Eye, EyeOff, TestTube2, AlertTriangle, Trash2, RotateCcw, KeyRound } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, Eye, EyeOff, AlertTriangle, Trash2, RotateCcw, KeyRound } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getAuthHeader, API_BASE } from "@/lib/api";
-import { useGetN8nSettings, useTestN8nConnection, useSaveN8nSettings, useSaveOpenAiKey, useTestOpenAI, useSaveGeminiKey, useTestGemini, useChangePassword, useGetSystemStatus } from "@workspace/api-client-react";
+import { useGetN8nSettings, useTestN8nConnection, useSaveN8nSettings, useSaveOpenAiKey, useTestOpenAI, useSaveGeminiKey, useTestGemini, useGetSystemStatus } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -73,11 +73,6 @@ export default function SettingsPage() {
   const [openaiStatus, setOpenaiStatus] = useState<TestStatus>("idle");
   const [geminiStatus, setGeminiStatus] = useState<TestStatus>("idle");
 
-  const [currentPwd, setCurrentPwd] = useState("");
-  const [newPwd, setNewPwd] = useState("");
-  const [confirmPwd, setConfirmPwd] = useState("");
-  const [pwdMsg, setPwdMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
-
   const { data: n8nSettings } = useGetN8nSettings({
     request: { headers: authHeader },
   } as Parameters<typeof useGetN8nSettings>[0]);
@@ -143,22 +138,6 @@ export default function SettingsPage() {
     request: { headers: authHeader },
   } as Parameters<typeof useSaveGeminiKey>[0]);
 
-  const { mutate: changePwd } = useChangePassword({
-    mutation: {
-      onSuccess: () => setPwdMsg({ type: "ok", text: t("auth.changePassword") + " ✓" }),
-      onError: () => setPwdMsg({ type: "err", text: isRTL ? "حدث خطأ" : "Error occurred" }),
-    },
-    request: { headers: authHeader },
-  } as Parameters<typeof useChangePassword>[0]);
-
-  const handleChangePassword = () => {
-    if (newPwd !== confirmPwd) {
-      setPwdMsg({ type: "err", text: t("auth.passwordMismatch") });
-      return;
-    }
-    changePwd({ currentPassword: currentPwd, newPassword: newPwd } as Parameters<typeof changePwd>[0]);
-  };
-
   const StatusIcon = ({ status }: { status: TestStatus }) => {
     if (status === "testing") return <Loader2 size={16} className="animate-spin text-accent" />;
     if (status === "valid") return <CheckCircle2 size={16} className="text-emerald-500" />;
@@ -170,30 +149,6 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6 max-w-2xl" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="bg-card rounded-xl p-5 border border-border">
-        <h2 className="text-sm font-semibold text-foreground mb-4">{t("settings.password")}</h2>
-        <div className="space-y-3">
-          <div>
-            <label className="text-xs font-medium text-foreground block mb-1">{t("auth.currentPassword")}</label>
-            <input type="password" value={currentPwd} onChange={e => setCurrentPwd(e.target.value)} className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50" />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-foreground block mb-1">{t("auth.newPassword")}</label>
-            <input type="password" value={newPwd} onChange={e => setNewPwd(e.target.value)} className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50" />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-foreground block mb-1">{t("auth.confirmPassword")}</label>
-            <input type="password" value={confirmPwd} onChange={e => setConfirmPwd(e.target.value)} className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50" />
-          </div>
-          {pwdMsg && (
-            <p className={`text-xs ${pwdMsg.type === "ok" ? "text-emerald-500" : "text-destructive"}`}>{pwdMsg.text}</p>
-          )}
-          <button onClick={handleChangePassword} className="px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors">
-            {t("auth.updatePassword")}
-          </button>
-        </div>
-      </div>
-
       {isAdmin && (
         <>
           <div className="bg-card rounded-xl p-5 border border-border">

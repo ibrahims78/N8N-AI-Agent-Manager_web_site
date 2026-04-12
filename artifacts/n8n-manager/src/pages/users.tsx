@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Plus, UserCheck, UserX, Trash2, KeyRound, Shield, Search } from "lucide-react";
-import { useGetUsers, useCreateUser, useUpdateUserStatus, useDeleteUser, useResetUserPassword, useUpdateUserPermissions, getGetUsersQueryKey } from "@workspace/api-client-react";
+import { Plus, UserCheck, UserX, Trash2, KeyRound, Shield, Search, Pencil } from "lucide-react";
+import { useGetUsers, useCreateUser, useUpdateUserStatus, useDeleteUser, useResetUserPassword, useUpdateUserPermissions, useUpdateUser, getGetUsersQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getAuthHeader } from "@/lib/api";
 import { useAppStore } from "@/stores/useAppStore";
@@ -34,6 +34,8 @@ export default function UsersPage() {
   const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "user">("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [editUser, setEditUser] = useState<User | null>(null);
+  const [editForm, setEditForm] = useState({ username: "", role: "user" });
   const [newPassword, setNewPassword] = useState<string | null>(null);
   const [formData, setFormData] = useState({ username: "", password: "", role: "user", permissions: [] as string[] });
 
@@ -46,6 +48,11 @@ export default function UsersPage() {
     mutation: { onSuccess: () => { queryClient.invalidateQueries({ queryKey: getGetUsersQueryKey() }); setShowCreateModal(false); setFormData({ username: "", password: "", role: "user", permissions: [] }); } },
     request: { headers: authHeader },
   } as Parameters<typeof useCreateUser>[0]);
+
+  const { mutate: updateUser, isPending: isUpdating } = useUpdateUser({
+    mutation: { onSuccess: () => { queryClient.invalidateQueries({ queryKey: getGetUsersQueryKey() }); setEditUser(null); } },
+    request: { headers: authHeader },
+  } as Parameters<typeof useUpdateUser>[0]);
 
   const { mutate: updateStatus } = useUpdateUserStatus({
     mutation: { onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetUsersQueryKey() }) },
@@ -78,6 +85,16 @@ export default function UsersPage() {
     const matchRole = roleFilter === "all" || u.role === roleFilter;
     return matchSearch && matchRole;
   });
+
+  const openEditModal = (user: User) => {
+    setEditUser(user);
+    setEditForm({ username: user.username, role: user.role });
+  };
+
+  const handleEditSave = () => {
+    if (!editUser) return;
+    updateUser({ id: editUser.id.toString(), data: { username: editForm.username, role: editForm.role } } as Parameters<typeof updateUser>[0]);
+  };
 
   return (
     <div className="space-y-4" dir={isRTL ? "rtl" : "ltr"}>
@@ -156,6 +173,13 @@ export default function UsersPage() {
                   <td className="px-4 py-3">
                     <div className="flex gap-1">
                       <button
+                        onClick={() => openEditModal(user)}
+                        className="p-1.5 rounded-md text-blue-500 hover:bg-blue-50 transition-colors"
+                        title={isRTL ? "تعديل المستخدم" : "Edit user"}
+                      >
+                        <Pencil size={14} />
+                      </button>
+                      <button
                         onClick={() => updateStatus({ id: user.id.toString(), isActive: !user.isActive } as Parameters<typeof updateStatus>[0])}
                         className={`p-1.5 rounded-md transition-colors ${user.isActive ? "text-yellow-500 hover:bg-yellow-50" : "text-emerald-500 hover:bg-emerald-50"}`}
                         title={user.isActive ? t("users.disable") : t("users.enable")}
@@ -191,6 +215,7 @@ export default function UsersPage() {
         )}
       </div>
 
+      {/* Add User Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card rounded-2xl p-6 w-full max-w-md border border-border shadow-2xl">
@@ -238,6 +263,59 @@ export default function UsersPage() {
         </div>
       )}
 
+      {/* Edit User Modal */}
+      {editUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card rounded-2xl p-6 w-full max-w-md border border-border shadow-2xl">
+            <h2 className="text-lg font-semibold text-foreground mb-1">
+              {isRTL ? "تعديل المستخدم" : "Edit User"}
+            </h2>
+            <p className="text-xs text-muted-foreground mb-4">
+              {isRTL ? `تعديل بيانات: ${editUser.username}` : `Editing: ${editUser.username}`}
+            </p>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-medium text-foreground block mb-1">{t("users.username")}</label>
+                <input
+                  value={editForm.username}
+                  onChange={e => setEditForm(f => ({ ...f, username: e.target.value }))}
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-foreground block mb-1">{t("users.role")}</label>
+                <select
+                  value={editForm.role}
+                  onChange={e => setEditForm(f => ({ ...f, role: e.target.value }))}
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+                >
+                  <option value="user">{t("users.user")}</option>
+                  <option value="admin">{t("users.admin")}</option>
+                </select>
+              </div>
+              <div className="pt-1">
+                <p className="text-xs text-muted-foreground">
+                  {isRTL
+                    ? "لإعادة تعيين كلمة المرور، استخدم زر المفتاح في قائمة المستخدمين"
+                    : "To reset the password, use the key button in the users list"}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-5">
+              <button onClick={() => setEditUser(null)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">{t("app.cancel")}</button>
+              <button
+                onClick={handleEditSave}
+                disabled={isUpdating || !editForm.username.trim()}
+                className="flex-1 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-50"
+              >
+                {isUpdating ? (isRTL ? "جاري الحفظ..." : "Saving...") : t("app.save")}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Reset Password Result Modal */}
       {newPassword && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card rounded-2xl p-6 w-full max-w-sm border border-border shadow-2xl">
@@ -249,6 +327,7 @@ export default function UsersPage() {
         </div>
       )}
 
+      {/* Permissions Modal */}
       {selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card rounded-2xl p-6 w-full max-w-md border border-border shadow-2xl">
