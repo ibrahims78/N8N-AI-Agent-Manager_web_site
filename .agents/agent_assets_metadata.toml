@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "kU7SVdWRykYNXJn8ZRXjr"
+uri = "file://chat-page-improvements-plan.md"
+type = "text"
+title = "خطة تحسين صفحة المحادثة — الدليل الكامل"
