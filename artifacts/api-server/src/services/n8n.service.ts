@@ -68,13 +68,25 @@ export async function testN8nConnection(url: string, apiKey: string): Promise<{ 
     
     let version = "Unknown";
     try {
-      const versionRes = await fetch(`${url}/rest/settings`, {
+      const versionRes = await fetch(`${url}/api/v1/`, {
         headers: { "X-N8N-API-KEY": apiKey },
         signal: AbortSignal.timeout(5000),
       });
       if (versionRes.ok) {
-        const vd = await versionRes.json() as { data?: { versionCli?: string } };
-        version = vd?.data?.versionCli ?? version;
+        const vd = await versionRes.json() as { data?: { n8nVersion?: string; versionCli?: string } };
+        version =
+          vd?.data?.n8nVersion ??
+          vd?.data?.versionCli ??
+          version;
+      }
+      if (version === "Unknown") {
+        const settingsRes = await fetch(`${url}/rest/settings`, {
+          signal: AbortSignal.timeout(5000),
+        });
+        if (settingsRes.ok) {
+          const sd = await settingsRes.json() as { data?: { versionCli?: string } };
+          version = sd?.data?.versionCli ?? version;
+        }
       }
     } catch {}
 
