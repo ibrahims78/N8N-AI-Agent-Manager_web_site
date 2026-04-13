@@ -8,7 +8,7 @@ import {
   Loader2, User, BarChart2, Languages, Mail, Webhook,
   Clock, Code2, Database, Globe2, Send, GitBranch, Filter,
 } from "lucide-react";
-import { useGetTemplates, useUseTemplate, getGetTemplatesQueryKey } from "@workspace/api-client-react";
+import { useGetTemplates, getGetTemplatesQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getAuthHeader, API_BASE } from "@/lib/api";
 import { useAppStore } from "@/stores/useAppStore";
@@ -266,18 +266,31 @@ export default function TemplatesPage() {
     query: { queryKey: getGetTemplatesQueryKey() },
   } as Parameters<typeof useGetTemplates>[0]);
 
-  const { mutate: useTemplate, isPending: usingTemplate } = useUseTemplate({
-    mutation: {
-      onSuccess: () => {
-        toast({ title: isRTL ? "تم تطبيق القالب ✅" : "Template applied ✅" });
+  const [usingTemplate, setUsingTemplate] = useState(false);
+
+  const handleUseTemplate = async (template: LocalTemplate) => {
+    if (usingTemplate) return;
+    setUsingTemplate(true);
+    try {
+      const headers: Record<string, string> = { ...getAuthHeader(), "Content-Type": "application/json" };
+      const res = await fetch(`${API_BASE}/templates/${template.id}/use`, { method: "POST", headers });
+      const data = await res.json() as { success: boolean; data?: { id?: number } };
+      if (data.success && data.data?.id) {
+        const convId = data.data.id;
+        const message = isRTL
+          ? `أريد إنشاء workflow مشابه لهذا القالب:\n📌 الاسم: ${template.name}${template.description ? `\n📝 الوصف: ${template.description}` : ""}`
+          : `I want to create a workflow similar to this template:\n📌 Name: ${template.name}${template.description ? `\n📝 Description: ${template.description}` : ""}`;
+        sessionStorage.setItem("templateUse", JSON.stringify({ convId, message }));
         navigate("/chat");
-      },
-      onError: () => {
+      } else {
         toast({ title: isRTL ? "فشل تطبيق القالب" : "Failed to apply template", variant: "destructive" });
-      },
-    },
-    request: { headers: getAuthHeader() },
-  } as Parameters<typeof useUseTemplate>[0]);
+      }
+    } catch {
+      toast({ title: isRTL ? "فشل تطبيق القالب" : "Failed to apply template", variant: "destructive" });
+    } finally {
+      setUsingTemplate(false);
+    }
+  };
 
   const rawTemplates = ((res as { data?: { templates?: unknown[] } } | undefined)?.data?.templates ?? []) as LocalTemplate[];
   const templates = rawTemplates.map(tmpl => ({
@@ -493,7 +506,7 @@ export default function TemplatesPage() {
                       <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{translated ? translated.description : template.description}</p>
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">{template.nodesCount} {t("workflows.nodes")}</span>
-                        <button onClick={() => useTemplate({ id: template.id.toString() } as Parameters<typeof useTemplate>[0])}
+                        <button onClick={() => handleUseTemplate(template)}
                           disabled={usingTemplate}
                           className="flex items-center gap-1 px-3 py-1 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                           {usingTemplate ? <Loader2 size={12} className="animate-spin" /> : <>{t("templates.use")} <ArrowRight size={12} /></>}
@@ -561,7 +574,7 @@ export default function TemplatesPage() {
                           className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors">
                           <Eye size={12} /> {t("templates.preview")}
                         </button>
-                        <button onClick={() => useTemplate({ id: template.id.toString() } as Parameters<typeof useTemplate>[0])}
+                        <button onClick={() => handleUseTemplate(template)}
                           disabled={usingTemplate}
                           className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                           {usingTemplate ? <Loader2 size={12} className="animate-spin" /> : <>{t("templates.use")} <ArrowRight size={12} /></>}
@@ -788,7 +801,7 @@ export default function TemplatesPage() {
               </div>
               <div className="flex gap-3">
                 <button onClick={() => setPreviewTemplate(null)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">{t("app.cancel")}</button>
-                <button onClick={() => { useTemplate({ id: previewTemplate.id.toString() } as Parameters<typeof useTemplate>[0]); setPreviewTemplate(null); }}
+                <button onClick={() => { void handleUseTemplate(previewTemplate); setPreviewTemplate(null); }}
                   disabled={usingTemplate}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                   {usingTemplate ? <Loader2 size={14} className="animate-spin" /> : t("templates.use")}

@@ -416,6 +416,15 @@ export default function ChatPage() {
     });
   }, [input, sending, selectedConvId, authHeader, chatMode, refetchConv, queryClient, toast]);
 
+  // Auto-send when selectedConvId is ready and there's a pending template message
+  useEffect(() => {
+    if (selectedConvId && pendingAutoSend.current) {
+      const message = pendingAutoSend.current;
+      pendingAutoSend.current = null;
+      handleSend(message);
+    }
+  }, [selectedConvId, handleSend]);
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
