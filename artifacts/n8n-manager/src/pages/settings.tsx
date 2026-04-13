@@ -70,6 +70,8 @@ export default function SettingsPage() {
   const [showOpenai, setShowOpenai] = useState(false);
   const [showGemini, setShowGemini] = useState(false);
   const [n8nStatus, setN8nStatus] = useState<TestStatus>("idle");
+  const [n8nVersion, setN8nVersion] = useState<string | null>(null);
+  const [n8nWorkflowsCount, setN8nWorkflowsCount] = useState<number | null>(null);
   const [openaiStatus, setOpenaiStatus] = useState<TestStatus>("idle");
   const [geminiStatus, setGeminiStatus] = useState<TestStatus>("idle");
 
@@ -95,10 +97,17 @@ export default function SettingsPage() {
   const { mutate: testN8n } = useTestN8nConnection({
     mutation: {
       onSuccess: (data) => {
-        const d = (data as { data?: { connected?: boolean } })?.data;
+        const d = (data as { data?: { connected?: boolean; version?: string; workflowsCount?: number } })?.data;
         setN8nStatus(d?.connected ? "valid" : "invalid");
+        if (d?.connected) {
+          setN8nVersion(d.version ?? null);
+          setN8nWorkflowsCount(d.workflowsCount ?? null);
+        } else {
+          setN8nVersion(null);
+          setN8nWorkflowsCount(null);
+        }
       },
-      onError: () => setN8nStatus("invalid"),
+      onError: () => { setN8nStatus("invalid"); setN8nVersion(null); setN8nWorkflowsCount(null); },
     },
     request: { headers: authHeader },
   } as Parameters<typeof useTestN8nConnection>[0]);
@@ -194,7 +203,7 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => { setN8nStatus("testing"); testN8n({ data: { url: n8nUrl, apiKey: n8nKey } } as Parameters<typeof testN8n>[0]); }}
+                  onClick={() => { setN8nStatus("testing"); setN8nVersion(null); setN8nWorkflowsCount(null); testN8n({ data: { url: n8nUrl, apiKey: n8nKey } } as Parameters<typeof testN8n>[0]); }}
                   disabled={!n8nUrl || (!n8nKey && !n8nData?.hasApiKey)}
                   className="px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-50"
                 >
@@ -209,6 +218,22 @@ export default function SettingsPage() {
                   {t("app.save")}
                 </button>
               </div>
+              {n8nStatus === "valid" && (
+                <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-600 dark:text-emerald-400">
+                  {n8nVersion && n8nVersion !== "Unknown" && (
+                    <>
+                      <span>{isRTL ? "الإصدار:" : "Version:"} <span className="font-mono font-semibold">{n8nVersion}</span></span>
+                      {n8nWorkflowsCount !== null && <span className="text-emerald-500/50">|</span>}
+                    </>
+                  )}
+                  {n8nWorkflowsCount !== null && (
+                    <span>{isRTL ? "المسارات:" : "Workflows:"} <span className="font-semibold">{n8nWorkflowsCount}</span></span>
+                  )}
+                  {(!n8nVersion || n8nVersion === "Unknown") && n8nWorkflowsCount === null && (
+                    <span>{isRTL ? "متصل ✓" : "Connected ✓"}</span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
