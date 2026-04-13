@@ -127,14 +127,17 @@ router.put("/:id", authenticate, requireAdmin, async (req: Request, res: Respons
   const userId = parseInt(req.params.id, 10);
   if (isNaN(userId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid user ID" } }); return; }
 
-  const { username, role } = req.body as { username?: string; role?: string };
+  const { username, role, password } = req.body as { username?: string; role?: string; password?: string };
   const update: Partial<typeof usersTable.$inferInsert> = {};
   if (username) update.username = username.trim();
   if (role && (role === "admin" || role === "user")) update.role = role;
+  if (password && password.length >= 6) update.passwordHash = await hashPassword(password);
 
   if (Object.keys(update).length > 0) {
     await db.update(usersTable).set(update).where(eq(usersTable.id, userId));
-    await logAudit(req.user.userId, "UPDATE_USER", "user", userId, update as Record<string, unknown>, req);
+    const auditData: Record<string, unknown> = { ...update };
+    if (auditData.passwordHash) auditData.passwordHash = "[CHANGED]";
+    await logAudit(req.user.userId, "UPDATE_USER", "user", userId, auditData, req);
   }
 
   const users = await db.select().from(usersTable).where(eq(usersTable.id, userId)).limit(1);

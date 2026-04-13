@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Plus, UserCheck, UserX, Trash2, KeyRound, Shield, Search, Pencil } from "lucide-react";
-import { useGetUsers, useCreateUser, useUpdateUserStatus, useDeleteUser, useResetUserPassword, useUpdateUserPermissions, useUpdateUser, getGetUsersQueryKey } from "@workspace/api-client-react";
+import { Plus, UserCheck, UserX, Trash2, Shield, Search, Pencil } from "lucide-react";
+import { useGetUsers, useCreateUser, useUpdateUserStatus, useDeleteUser, useUpdateUserPermissions, useUpdateUser, getGetUsersQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getAuthHeader } from "@/lib/api";
 import { useAppStore } from "@/stores/useAppStore";
@@ -35,8 +35,7 @@ export default function UsersPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [editUser, setEditUser] = useState<User | null>(null);
-  const [editForm, setEditForm] = useState({ username: "", role: "user" });
-  const [newPassword, setNewPassword] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ username: "", role: "user", newPassword: "" });
   const [formData, setFormData] = useState({ username: "", password: "", role: "user", permissions: [] as string[] });
 
   const { data: res, isLoading } = useGetUsers({
@@ -64,16 +63,6 @@ export default function UsersPage() {
     request: { headers: authHeader },
   } as Parameters<typeof useDeleteUser>[0]);
 
-  const { mutate: resetPassword } = useResetUserPassword({
-    mutation: {
-      onSuccess: (data) => {
-        const pwd = (data as { data?: { newPassword?: string } })?.data?.newPassword;
-        if (pwd) setNewPassword(pwd);
-      },
-    },
-    request: { headers: authHeader },
-  } as Parameters<typeof useResetUserPassword>[0]);
-
   const { mutate: updatePerms } = useUpdateUserPermissions({
     mutation: { onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetUsersQueryKey() }) },
     request: { headers: authHeader },
@@ -88,12 +77,14 @@ export default function UsersPage() {
 
   const openEditModal = (user: User) => {
     setEditUser(user);
-    setEditForm({ username: user.username, role: user.role });
+    setEditForm({ username: user.username, role: user.role, newPassword: "" });
   };
 
   const handleEditSave = () => {
     if (!editUser) return;
-    updateUser({ id: editUser.id.toString(), data: { username: editForm.username, role: editForm.role } } as Parameters<typeof updateUser>[0]);
+    const data: Record<string, string> = { username: editForm.username, role: editForm.role };
+    if (editForm.newPassword.trim()) data.password = editForm.newPassword.trim();
+    updateUser({ id: editUser.id.toString(), data } as Parameters<typeof updateUser>[0]);
   };
 
   return (
@@ -194,13 +185,6 @@ export default function UsersPage() {
                         <Shield size={14} />
                       </button>
                       <button
-                        onClick={() => resetPassword({ id: user.id.toString() } as Parameters<typeof resetPassword>[0])}
-                        className="p-1.5 rounded-md text-accent hover:bg-accent/10 transition-colors"
-                        title={t("users.resetPassword")}
-                      >
-                        <KeyRound size={14} />
-                      </button>
-                      <button
                         onClick={() => deleteUser({ id: user.id.toString() } as Parameters<typeof deleteUser>[0])}
                         className="p-1.5 rounded-md text-destructive hover:bg-destructive/10 transition-colors"
                       >
@@ -293,36 +277,35 @@ export default function UsersPage() {
                   <option value="admin">{t("users.admin")}</option>
                 </select>
               </div>
-              <div className="pt-1">
-                <p className="text-xs text-muted-foreground">
-                  {isRTL
-                    ? "لإعادة تعيين كلمة المرور، استخدم زر المفتاح في قائمة المستخدمين"
-                    : "To reset the password, use the key button in the users list"}
-                </p>
+              <div>
+                <label className="text-xs font-medium text-foreground block mb-1">
+                  {isRTL ? "كلمة السر الجديدة" : "New Password"}
+                  <span className="text-muted-foreground font-normal ms-1">({isRTL ? "اختياري" : "optional"})</span>
+                </label>
+                <input
+                  type="password"
+                  value={editForm.newPassword}
+                  onChange={e => setEditForm(f => ({ ...f, newPassword: e.target.value }))}
+                  placeholder={isRTL ? "اتركه فارغاً للإبقاء على الحالية" : "Leave blank to keep current"}
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+                />
+                {editForm.newPassword && editForm.newPassword.length < 6 && (
+                  <p className="text-xs text-destructive mt-1">
+                    {isRTL ? "كلمة السر يجب أن تكون 6 أحرف على الأقل" : "Password must be at least 6 characters"}
+                  </p>
+                )}
               </div>
             </div>
             <div className="flex gap-3 mt-5">
               <button onClick={() => setEditUser(null)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">{t("app.cancel")}</button>
               <button
                 onClick={handleEditSave}
-                disabled={isUpdating || !editForm.username.trim()}
+                disabled={isUpdating || !editForm.username.trim() || (!!editForm.newPassword && editForm.newPassword.length < 6)}
                 className="flex-1 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-50"
               >
                 {isUpdating ? (isRTL ? "جاري الحفظ..." : "Saving...") : t("app.save")}
               </button>
             </div>
-          </motion.div>
-        </div>
-      )}
-
-      {/* Reset Password Result Modal */}
-      {newPassword && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card rounded-2xl p-6 w-full max-w-sm border border-border shadow-2xl">
-            <h2 className="text-lg font-semibold text-foreground mb-2">{t("users.resetPassword")}</h2>
-            <p className="text-sm text-muted-foreground mb-4">{isRTL ? "كلمة المرور الجديدة (احفظها الآن، لن تُعرض مرة أخرى):" : "New password (save it now, it won't be shown again):"}</p>
-            <div className="bg-muted p-3 rounded-lg font-mono text-sm text-foreground mb-4 text-center tracking-wider">{newPassword}</div>
-            <button onClick={() => setNewPassword(null)} className="w-full px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors">{t("app.confirm")}</button>
           </motion.div>
         </div>
       )}
