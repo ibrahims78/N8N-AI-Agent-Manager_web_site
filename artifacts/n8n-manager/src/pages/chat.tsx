@@ -188,36 +188,83 @@ function MessageContent({ content, isRTL }: { content: string; isRTL: boolean })
   const textPart = jsonMatch ? content.replace(/```json\n[\s\S]*?\n```/, "").trim() : content;
 
   const [showJson, setShowJson] = useState(false);
+  const [copiedText, setCopiedText] = useState(false);
+  const [copiedJson, setCopiedJson] = useState(false);
+
+  const handleCopyText = async () => {
+    await navigator.clipboard.writeText(textPart || content);
+    setCopiedText(true);
+    setTimeout(() => setCopiedText(false), 2000);
+  };
+
+  const handleCopyJson = async () => {
+    if (jsonMatch) {
+      await navigator.clipboard.writeText(jsonMatch[1]);
+      setCopiedJson(true);
+      setTimeout(() => setCopiedJson(false), 2000);
+    }
+  };
 
   return (
     <div className="space-y-2">
       {textPart && (
         <p className="whitespace-pre-wrap leading-relaxed text-sm">{textPart}</p>
       )}
+
+      <div className="flex items-center gap-2 flex-wrap pt-0.5">
+        <button
+          onClick={handleCopyText}
+          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {copiedText
+            ? <CheckCircle2 size={11} className="text-emerald-500" />
+            : <Copy size={11} />}
+          {copiedText
+            ? (isRTL ? "تم النسخ!" : "Copied!")
+            : (isRTL ? "نسخ" : "Copy")}
+        </button>
+
+        {jsonMatch && (
+          <>
+            <span className="text-muted-foreground/30 select-none">·</span>
+            <button
+              onClick={() => setShowJson(!showJson)}
+              className="flex items-center gap-1 text-xs text-accent hover:text-accent/80 transition-colors"
+            >
+              <ChevronRight size={11} className={`transition-transform ${showJson ? "rotate-90" : ""}`} />
+              {isRTL ? "عرض / إخفاء JSON" : "Show / Hide JSON"}
+            </button>
+            <span className="text-muted-foreground/30 select-none">·</span>
+            <button
+              onClick={handleCopyJson}
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {copiedJson
+                ? <CheckCircle2 size={11} className="text-emerald-500" />
+                : <Copy size={11} />}
+              {copiedJson
+                ? (isRTL ? "تم النسخ!" : "Copied!")
+                : (isRTL ? "نسخ JSON" : "Copy JSON")}
+            </button>
+          </>
+        )}
+      </div>
+
       {jsonMatch && (
-        <div>
-          <button
-            onClick={() => setShowJson(!showJson)}
-            className="flex items-center gap-1 text-xs text-accent hover:text-accent/80 transition-colors mb-1"
-          >
-            <ChevronRight size={12} className={`transition-transform ${showJson ? "rotate-90" : ""}`} />
-            {isRTL ? "عرض / إخفاء JSON" : "Show / Hide JSON"}
-          </button>
-          <AnimatePresence>
-            {showJson && (
-              <motion.pre
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden"
-              >
-                <code className="block p-3 bg-muted rounded-lg text-xs font-mono overflow-auto max-h-48 text-foreground whitespace-pre">
-                  {jsonMatch[1]}
-                </code>
-              </motion.pre>
-            )}
-          </AnimatePresence>
-        </div>
+        <AnimatePresence>
+          {showJson && (
+            <motion.pre
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <code className="block p-3 bg-muted rounded-lg text-xs font-mono overflow-auto max-h-48 text-foreground whitespace-pre">
+                {jsonMatch[1]}
+              </code>
+            </motion.pre>
+          )}
+        </AnimatePresence>
       )}
     </div>
   );
