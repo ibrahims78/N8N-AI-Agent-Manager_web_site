@@ -66,29 +66,57 @@ export async function testN8nConnection(url: string, apiKey: string): Promise<{ 
 
     const data = await response.json() as { data?: unknown[] };
     
-    let version = "Unknown";
+    let version: string | null = null;
     try {
+      // Approach 1: /api/v1/ root (works on some n8n versions)
       const versionRes = await fetch(`${url}/api/v1/`, {
         headers: { "X-N8N-API-KEY": apiKey },
         signal: AbortSignal.timeout(5000),
       });
       if (versionRes.ok) {
-        const vd = await versionRes.json() as { data?: { n8nVersion?: string; versionCli?: string } };
-        version =
-          vd?.data?.n8nVersion ??
-          vd?.data?.versionCli ??
-          version;
+        const vd = await versionRes.json() as Record<string, unknown>;
+        const d = vd?.data as Record<string, unknown> | undefined;
+        const raw =
+          (d?.n8nVersion as string | undefined) ??
+          (d?.versionCli as string | undefined) ??
+          (vd?.n8nVersion as string | undefined);
+        if (raw) version = raw;
       }
-      if (version === "Unknown") {
+    } catch {}
+
+    if (!version) {
+      try {
+        // Approach 2: /rest/settings (works on some n8n versions without auth)
         const settingsRes = await fetch(`${url}/rest/settings`, {
           signal: AbortSignal.timeout(5000),
         });
         if (settingsRes.ok) {
           const sd = await settingsRes.json() as { data?: { versionCli?: string } };
-          version = sd?.data?.versionCli ?? version;
+          if (sd?.data?.versionCli) version = sd.data.versionCli;
         }
-      }
-    } catch {}
+      } catch {}
+    }
+
+    if (!version) {
+      try {
+        // Approach 3: parse version from n8n UI assets (works on all n8n versions with a UI)
+        const htmlRes = await fetch(`${url}/`, { signal: AbortSignal.timeout(5000) });
+        if (htmlRes.ok) {
+          const html = await htmlRes.text();
+          const assetMatch = html.match(/\/assets\/(versions\.store-[^"']+\.js)/);
+          if (assetMatch) {
+            const jsRes = await fetch(`${url}/assets/${assetMatch[1]}`, {
+              signal: AbortSignal.timeout(5000),
+            });
+            if (jsRes.ok) {
+              const js = await jsRes.text();
+              const vMatch = js.match(/n8n@([0-9]+\.[0-9]+\.[0-9]+[^`'"]*)/);
+              if (vMatch) version = vMatch[1];
+            }
+          }
+        }
+      } catch {}
+    }
 
     return {
       connected: true,
