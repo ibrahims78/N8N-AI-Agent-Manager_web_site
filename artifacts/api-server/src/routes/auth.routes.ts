@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db, usersTable, userPermissionsTable } from "@workspace/db";
+import { db, usersTable, userPermissionsTable, systemSettingsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import {
   generateAccessToken,
@@ -80,7 +80,17 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    const requiresOnboarding = user.role === "admin" && !user.onboardingComplete;
+    let requiresOnboarding = user.role === "admin" && !user.onboardingComplete;
+
+    if (requiresOnboarding) {
+      const settings = await db.select().from(systemSettingsTable).limit(1);
+      const s = settings[0];
+      const settingsConfigured = !!(s?.n8nUrl && s?.n8nApiKeyEncrypted);
+      if (settingsConfigured || s?.onboardingComplete === "true") {
+        requiresOnboarding = false;
+        await db.update(usersTable).set({ onboardingComplete: true }).where(eq(usersTable.id, user.id));
+      }
+    }
 
     res.json({
       success: true,
