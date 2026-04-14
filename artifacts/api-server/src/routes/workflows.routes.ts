@@ -14,6 +14,7 @@ import {
   getWorkflowExecutions,
   getAllRecentExecutions,
 } from "../services/n8n.service";
+import { logger } from "../lib/logger";
 import type { Request, Response } from "express";
 
 const router = Router();
@@ -260,7 +261,16 @@ router.post("/import", authenticate, requirePermission("manage_workflows"), asyn
 
     res.json({ success: true, data: result });
   } catch (err) {
-    res.status(500).json({ success: false, error: { code: "IMPORT_ERROR", message: String(err) } });
+    const message = err instanceof Error ? err.message : String(err);
+    logger.error({ err, workflowName: workflowJson?.name }, "workflow import failed");
+    const statusCode = message.includes("N8N_NOT_CONFIGURED") ? 503 : 500;
+    res.status(statusCode).json({
+      success: false,
+      error: {
+        code: message.includes("N8N_NOT_CONFIGURED") ? "N8N_NOT_CONFIGURED" : "IMPORT_ERROR",
+        message,
+      },
+    });
   }
 });
 

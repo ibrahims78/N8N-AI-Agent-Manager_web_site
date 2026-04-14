@@ -173,7 +173,14 @@ export async function createWorkflow(data: Record<string, unknown>): Promise<N8n
     method: "POST",
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Failed to create workflow");
+  if (!res.ok) {
+    let detail = `n8n responded with ${res.status}`;
+    try {
+      const body = await res.json() as { message?: string; error?: string };
+      detail = body.message ?? body.error ?? JSON.stringify(body);
+    } catch {}
+    throw new Error(`فشل إنشاء الـ workflow في n8n: ${detail}`);
+  }
   return res.json() as Promise<N8nWorkflow>;
 }
 

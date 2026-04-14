@@ -130,7 +130,7 @@ export async function runSequentialEngine(
   const openai = new OpenAI({ apiKey: config.openaiKey, timeout: 90000 });
   const geminiAI = new GoogleGenerativeAI(config.geminiKey);
   const openaiModel = config.openaiModel ?? "gpt-4o";
-  const geminiModel = config.geminiModel ?? "gemini-2.5-pro-exp-03-25";
+  const geminiModel = config.geminiModel ?? "gemini-2.0-flash";
 
   try {
     // ─── PHASE 1: GPT-4o Creates Workflow ────────────────────────────────────

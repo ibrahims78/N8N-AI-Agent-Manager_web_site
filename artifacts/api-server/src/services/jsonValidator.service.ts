@@ -182,6 +182,32 @@ export function validateWorkflowJson(jsonString: string): ValidationResult {
 }
 
 /**
+ * Generates a simple UUID v4.
+ */
+function generateUUID(): string {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
+
+/**
+ * Normalises a position value to the [x, y] array format required by n8n.
+ */
+function normalisePosition(position: unknown, fallback: [number, number]): [number, number] {
+  if (Array.isArray(position) && position.length >= 2) {
+    return [Number(position[0]) || fallback[0], Number(position[1]) || fallback[1]];
+  }
+  if (position && typeof position === "object") {
+    const p = position as { x?: unknown; y?: unknown };
+    if (p.x !== undefined && p.y !== undefined) {
+      return [Number(p.x) || fallback[0], Number(p.y) || fallback[1]];
+    }
+  }
+  return fallback;
+}
+
+/**
  * Attempts to fix common JSON issues in workflow JSON strings.
  */
 export function sanitizeWorkflowJson(workflowJson: N8nWorkflow): N8nWorkflow {
@@ -191,15 +217,20 @@ export function sanitizeWorkflowJson(workflowJson: N8nWorkflow): N8nWorkflow {
     sanitized.nodes = sanitized.nodes.map((node, index) => {
       const fixed = { ...node };
 
-      // Add missing typeVersion
-      if (fixed.typeVersion === undefined) {
-        fixed.typeVersion = 1;
+      // Ensure node has a proper UUID id
+      if (!fixed.id || typeof fixed.id !== "string" || fixed.id.trim() === "") {
+        fixed.id = generateUUID();
       }
 
-      // Add default position if missing
-      if (!fixed.position) {
-        fixed.position = [200 + index * 250, 300];
+      // Add missing typeVersion
+      if (fixed.typeVersion === undefined || fixed.typeVersion === null) {
+        fixed.typeVersion = 1;
+      } else {
+        fixed.typeVersion = Number(fixed.typeVersion) || 1;
       }
+
+      // Normalise position to [x, y] array (n8n API requirement)
+      fixed.position = normalisePosition(fixed.position, [200 + index * 250, 300]);
 
       // Add empty parameters if missing
       if (!fixed.parameters) {
@@ -210,13 +241,15 @@ export function sanitizeWorkflowJson(workflowJson: N8nWorkflow): N8nWorkflow {
     });
   }
 
-  // Add settings if missing
-  if (!sanitized.settings) {
+  // Add settings with executionOrder if missing or incomplete
+  if (!sanitized.settings || typeof sanitized.settings !== "object") {
     sanitized.settings = { executionOrder: "v1" };
+  } else if (!(sanitized.settings as Record<string, unknown>).executionOrder) {
+    sanitized.settings = { ...sanitized.settings as Record<string, unknown>, executionOrder: "v1" };
   }
 
   // Ensure connections is an object
-  if (!sanitized.connections) {
+  if (!sanitized.connections || typeof sanitized.connections !== "object") {
     sanitized.connections = {};
   }
 
