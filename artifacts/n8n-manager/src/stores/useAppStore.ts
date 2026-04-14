@@ -11,10 +11,12 @@ interface AppState {
   theme: Theme;
   chatMode: ChatMode;
   sidebarCollapsed: boolean;
+  sendOnEnter: boolean;
   toggleLanguage: () => void;
   toggleTheme: () => void;
   setChatMode: (mode: ChatMode) => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
+  setSendOnEnter: (value: boolean) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -24,7 +26,9 @@ export const useAppStore = create<AppState>()(
       theme: 'light',
       chatMode: 'beginner',
       sidebarCollapsed: false,
+      sendOnEnter: true,
       setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
+      setSendOnEnter: (value) => set({ sendOnEnter: value }),
       toggleLanguage: () =>
         set((state) => {
           const newLang = state.language === 'ar' ? 'en' : 'ar';

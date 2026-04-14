@@ -100,6 +100,29 @@ router.get("/conversations/:id", authenticate, requirePermission("use_chat"), as
   res.json({ success: true, data: { conversation: conv, messages } });
 });
 
+router.put("/conversations/:id", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
+  const convId = parseInt(req.params.id, 10);
+  if (isNaN(convId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid conversation ID" } }); return; }
+
+  const { title } = req.body as { title?: string };
+  if (!title || !title.trim()) {
+    res.status(400).json({ success: false, error: { code: "MISSING_TITLE", message: "Title is required" } });
+    return;
+  }
+
+  const [updated] = await db.update(conversationsTable)
+    .set({ title: title.trim(), updatedAt: new Date() })
+    .where(eq(conversationsTable.id, convId))
+    .returning();
+
+  if (!updated) {
+    res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Conversation not found" } });
+    return;
+  }
+
+  res.json({ success: true, data: updated });
+});
+
 router.delete("/conversations/:id", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   const convId = parseInt(req.params.id, 10);
   if (isNaN(convId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid conversation ID" } }); return; }
