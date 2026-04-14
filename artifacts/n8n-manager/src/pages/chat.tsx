@@ -431,6 +431,25 @@ export default function ChatPage() {
   const [generationResult, setGenerationResult] = useState<GenerationResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  // Persist generation result per conversation in sessionStorage
+  const saveGenerationResult = useCallback((convId: number | null, result: GenerationResult | null) => {
+    if (!convId) return;
+    const key = `gen_result_${convId}`;
+    if (result) {
+      try { sessionStorage.setItem(key, JSON.stringify(result)); } catch { /* ignore */ }
+    } else {
+      sessionStorage.removeItem(key);
+    }
+  }, []);
+
+  const loadGenerationResult = useCallback((convId: number | null): GenerationResult | null => {
+    if (!convId) return null;
+    try {
+      const raw = sessionStorage.getItem(`gen_result_${convId}`);
+      return raw ? (JSON.parse(raw) as GenerationResult) : null;
+    } catch { return null; }
+  }, []);
+
   // ── Phase 2: Layout state ──
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(() => {
@@ -556,6 +575,13 @@ export default function ChatPage() {
     }
   }, [queryClient]);
 
+  // Restore generation result when switching conversations
+  useEffect(() => {
+    const saved = loadGenerationResult(selectedConvId);
+    setGenerationResult(saved);
+    if (!saved) setPhases([]);
+  }, [selectedConvId, loadGenerationResult]);
+
   // Phase 4: Global keyboard shortcuts
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -652,6 +678,7 @@ export default function ChatPage() {
     setSending(true);
     setIsGenerating(false);
     setGenerationResult(null);
+    saveGenerationResult(selectedConvId, null);
     setPhases([]);
 
     const headers: Record<string, string> = { ...authHeader, "Content-Type": "application/json" };
@@ -702,7 +729,9 @@ export default function ChatPage() {
                 setSending(false);
                 if ((parsed as { workflowJson?: unknown }).workflowJson) {
                   const r = parsed as { workflowJson: Record<string, unknown>; qualityScore: number; qualityGrade: string; roundsCount: number; totalTimeMs: number; phases: PhaseProgress[] };
-                  setGenerationResult({ workflowJson: r.workflowJson, qualityScore: r.qualityScore ?? 75, qualityGrade: r.qualityGrade ?? "B", roundsCount: r.roundsCount ?? 1, totalTimeMs: r.totalTimeMs ?? 0, phases: r.phases ?? [] });
+                  const result: GenerationResult = { workflowJson: r.workflowJson, qualityScore: r.qualityScore ?? 75, qualityGrade: r.qualityGrade ?? "B", roundsCount: r.roundsCount ?? 1, totalTimeMs: r.totalTimeMs ?? 0, phases: r.phases ?? [] };
+                  setGenerationResult(result);
+                  saveGenerationResult(selectedConvId, result);
                 } else if ((parsed as { error?: string }).error) {
                   toast({ title: String((parsed as { error: string }).error), variant: "destructive" });
                   setPhases([]);
@@ -721,7 +750,7 @@ export default function ChatPage() {
       setIsGenerating(false);
       toast({ title: String(err), variant: "destructive" });
     });
-  }, [input, sending, selectedConvId, authHeader, chatMode, refetchConv, queryClient, toast, attachments, isRTL]);
+  }, [input, sending, selectedConvId, authHeader, chatMode, refetchConv, queryClient, toast, attachments, isRTL, saveGenerationResult]);
 
   useEffect(() => {
     if (selectedConvId && pendingAutoSend.current) {
