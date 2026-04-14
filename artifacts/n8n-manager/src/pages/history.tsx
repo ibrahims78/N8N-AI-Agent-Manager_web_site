@@ -46,10 +46,7 @@ export default function HistoryPage() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
 
-  const { data: convRes, isLoading } = useGetConversations({
-    request: { headers: authHeader },
-    query: { queryKey: getGetConversationsQueryKey() },
-  } as Parameters<typeof useGetConversations>[0]);
+  const { data: convRes, isLoading } = useGetConversations(undefined, {});
 
   const { data: detailRes } = useGetConversation(
     selectedId?.toString() ?? "0",

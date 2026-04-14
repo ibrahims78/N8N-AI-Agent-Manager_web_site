@@ -287,10 +287,10 @@ export default function ChatPage() {
   const [generationResult, setGenerationResult] = useState<GenerationResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const { data: convRes } = useGetConversations({
-    request: { headers: authHeader },
-    query: { queryKey: getGetConversationsQueryKey(), refetchInterval: 10000 },
-  } as Parameters<typeof useGetConversations>[0]);
+  const { data: convRes } = useGetConversations(
+    undefined,
+    { query: { refetchInterval: 10000 } },
+  );
 
   const { data: convDetail, refetch: refetchConv } = useGetConversation(
     selectedConvId?.toString() ?? "0",

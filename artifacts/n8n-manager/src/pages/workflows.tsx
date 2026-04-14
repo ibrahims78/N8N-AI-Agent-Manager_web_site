@@ -45,10 +45,10 @@ export default function WorkflowsPage() {
   const [, navigate] = useLocation();
 
   const authHeader = getAuthHeader();
-  const { data: res, isLoading } = useGetWorkflows({
-    request: { headers: authHeader },
-    query: { queryKey: getGetWorkflowsQueryKey(), refetchInterval: 30000 },
-  } as Parameters<typeof useGetWorkflows>[0]);
+  const { data: res, isLoading } = useGetWorkflows(
+    undefined,
+    { query: { refetchInterval: 30000 } },
+  );
 
   const { mutate: activate } = useActivateWorkflow({
     mutation: { onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetWorkflowsQueryKey() }) },

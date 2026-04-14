@@ -261,10 +261,7 @@ export default function TemplatesPage() {
   const N8N_ROWS = 18;
   const n8nTotalPages = Math.ceil(n8nTotal / N8N_ROWS);
 
-  const { data: res, isLoading: localLoading } = useGetTemplates({
-    request: { headers: getAuthHeader() },
-    query: { queryKey: getGetTemplatesQueryKey() },
-  } as Parameters<typeof useGetTemplates>[0]);
+  const { data: res, isLoading: localLoading } = useGetTemplates(undefined, {});
 
   const [usingTemplate, setUsingTemplate] = useState(false);
 

@@ -19,4 +19,15 @@ router.use("/templates", templatesRouter);
 router.use("/users", usersRouter);
 router.use("/settings", settingsRouter);
 
+const v1Router: IRouter = Router();
+v1Router.use("/auth", authRouter);
+v1Router.use("/workflows", workflowsRouter);
+v1Router.use("/chat", chatRouter);
+v1Router.use("/dashboard", dashboardRouter);
+v1Router.use("/templates", templatesRouter);
+v1Router.use("/users", usersRouter);
+v1Router.use("/settings", settingsRouter);
+
+router.use("/v1", v1Router);
+
 export default router;
