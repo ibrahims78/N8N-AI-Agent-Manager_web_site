@@ -173,7 +173,6 @@ router.get("/ai-insight", authenticate, async (_req: Request, res: Response): Pr
 });
 
 router.get("/top-workflows", authenticate, async (req: Request, res: Response): Promise<void> => {
-  const _period = req.query.period as string || "week";
   try {
     const workflows = await getWorkflows();
     const execBuckets: Record<string, { total: number; success: number; name: string }> = {};

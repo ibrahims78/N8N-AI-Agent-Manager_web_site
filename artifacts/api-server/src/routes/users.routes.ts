@@ -1,34 +1,13 @@
 import { Router } from "express";
-import { db, usersTable, userPermissionsTable, auditLogsTable, ALL_PERMISSIONS } from "@workspace/db";
+import { db, usersTable, userPermissionsTable, ALL_PERMISSIONS } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
 import { authenticate, requireAdmin } from "../middleware/auth.middleware";
 import { hashPassword } from "../services/auth.service";
+import { logAudit } from "../lib/auditLog";
 import { logger } from "../lib/logger";
 import type { Request, Response } from "express";
 
 const router = Router();
-
-async function logAudit(
-  userId: number,
-  action: string,
-  entityType: string,
-  entityId: number | string | null,
-  details: Record<string, unknown>,
-  req: Request
-) {
-  try {
-    await db.insert(auditLogsTable).values({
-      userId,
-      action,
-      entityType,
-      entityId: entityId !== null ? String(entityId) : null,
-      detailsJson: details,
-      ipAddress: req.ip ?? req.socket?.remoteAddress ?? null,
-    });
-  } catch (err) {
-    logger.warn({ err }, "Failed to write audit log");
-  }
-}
 
 function generatePassword(): string {
   const upper = "ABCDEFGHJKMNPQRSTUVWXYZ";

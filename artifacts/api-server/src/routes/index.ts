@@ -15,7 +15,6 @@ router.use("/auth", authRouter);
 router.use("/workflows", workflowsRouter);
 router.use("/chat", chatRouter);
 router.use("/dashboard", dashboardRouter);
-router.use("/v1/dashboard", dashboardRouter);
 router.use("/templates", templatesRouter);
 router.use("/users", usersRouter);
 router.use("/settings", settingsRouter);

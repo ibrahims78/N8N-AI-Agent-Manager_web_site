@@ -56,7 +56,10 @@ export function requirePermission(permissionKey: string) {
       const perms = await db
         .select()
         .from(userPermissionsTable)
-        .where(eq(userPermissionsTable.userId, req.user.userId));
+        .where(
+          eq(userPermissionsTable.userId, req.user.userId)
+        )
+        .limit(50);
 
       const perm = perms.find(p => p.permissionKey === permissionKey);
       if (!perm || !perm.isEnabled) {

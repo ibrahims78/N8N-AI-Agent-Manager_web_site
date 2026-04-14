@@ -81,6 +81,8 @@ router.post("/conversations", authenticate, requirePermission("use_chat"), async
 
 router.get("/conversations/:id", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   const convId = parseInt(req.params.id, 10);
+  if (isNaN(convId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid conversation ID" } }); return; }
+
   const convs = await db.select().from(conversationsTable).where(eq(conversationsTable.id, convId)).limit(1);
   const conv = convs[0];
 
@@ -100,6 +102,8 @@ router.get("/conversations/:id", authenticate, requirePermission("use_chat"), as
 
 router.delete("/conversations/:id", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   const convId = parseInt(req.params.id, 10);
+  if (isNaN(convId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid conversation ID" } }); return; }
+
   await db.delete(conversationsTable).where(eq(conversationsTable.id, convId));
   res.json({ success: true, message: "Conversation deleted" });
 });
@@ -109,6 +113,8 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
   const convId = parseInt(req.params.id, 10);
+  if (isNaN(convId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid conversation ID" } }); return; }
+
   const { content } = req.body as { content: string };
 
   if (!content) {
@@ -334,6 +340,8 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
   const convId = parseInt(req.params.id, 10);
+  if (isNaN(convId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid conversation ID" } }); return; }
+
   const { content } = req.body as { content: string; mode?: string };
 
   if (!content) {
@@ -363,7 +371,7 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
 
   let assistantContent = "";
   let modelUsed = "gpt-4o";
-  let tokensUsed: number | undefined;
+  let tokensUsed: number | null = null;
   let generationSessionId: number | undefined;
 
   const isCreateIntent = detectWorkflowCreationIntent(content);
@@ -432,7 +440,7 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
       });
 
       const workflowJson = p1Response.choices[0]?.message?.content ?? "{}";
-      tokensUsed = p1Response.usage?.total_tokens;
+      tokensUsed = p1Response.usage?.total_tokens ?? null;
 
       assistantContent = (lang === "ar"
         ? "✅ تم إنشاء الـ workflow (وضع GPT-4o فقط):\n\n"
@@ -465,7 +473,7 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
       });
 
       assistantContent = response.choices[0]?.message?.content ?? "";
-      tokensUsed = response.usage?.total_tokens;
+      tokensUsed = response.usage?.total_tokens ?? null;
       modelUsed = "gpt-4o";
     } catch (err) {
       assistantContent = lang === "ar"

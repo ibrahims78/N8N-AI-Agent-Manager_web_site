@@ -155,3 +155,20 @@ pnpm run build
 - **templates.tsx**: Added interactive 5-star rating UI, null-safe `(avgRating ?? 0).toFixed(1)`, AnimatePresence on modals, "New Template" button
 - **workflows.tsx**: Added `BookmarkPlus` "Save as Template" button with confirmation modal on all views
 - **chat.tsx**: Removed dead code (duplicate `message !== undefined` branch), added proper error handling for SSE error events
+
+## Code Fixes (v10 Comprehensive Audit — 16 Issues)
+
+### Critical Fixes
+- **vite.config.ts**: Removed broken `@assets` alias pointing to deleted `attached_assets/` folder
+- **layout/ directory**: Deleted 3 dead layout components (`AppLayout.tsx`, `Sidebar.tsx`, `Navbar.tsx`) — never used by App.tsx
+- **auth.routes.ts**: Removed unused `sql` import from drizzle-orm; added try-catch around DB query in login endpoint
+- **chat.routes.ts**: Added `isNaN()` guards for `convId` in GET, DELETE, POST `/generate`, POST `/messages` endpoints
+
+### Medium Fixes
+- **lib/auditLog.ts**: Extracted shared `logAudit()` helper — was duplicated identically in `auth.routes.ts` and `users.routes.ts`
+- **auth.routes.ts + users.routes.ts**: Both now import from `lib/auditLog.ts`
+- **routes/index.ts**: Removed duplicate `dashboardRouter` registered on both `/dashboard` AND `/v1/dashboard`
+- **chat.routes.ts**: Fixed `tokensUsed: undefined` → `tokensUsed: number | null = null` (explicit `?? null` on all assignments)
+- **dashboard.routes.ts**: Removed unused `_period` variable from `top-workflows` endpoint
+- **app.ts**: Added global Express error handler middleware (catches uncaught route errors → returns JSON)
+- **auth.middleware.ts**: Added `.limit(50)` to `requirePermission` DB query (bounded fetch instead of unbounded)

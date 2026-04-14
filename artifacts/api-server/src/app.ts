@@ -1,4 +1,4 @@
-import express, { type Express } from "express";
+import express, { type Express, type Request, type Response, type NextFunction } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
@@ -77,5 +77,11 @@ app.use("/api/chat", chatLimiter);
 app.use("/api/settings", settingsLimiter);
 
 app.use("/api", router);
+
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  const message = err instanceof Error ? err.message : "Internal server error";
+  logger.error({ err }, "Unhandled error");
+  res.status(500).json({ success: false, error: { code: "SERVER_ERROR", message } });
+});
 
 export default app;

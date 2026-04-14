@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { db, usersTable, userPermissionsTable, auditLogsTable, ALL_PERMISSIONS } from "@workspace/db";
-import { eq, sql } from "drizzle-orm";
+import { db, usersTable, userPermissionsTable } from "@workspace/db";
+import { eq } from "drizzle-orm";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -10,30 +10,11 @@ import {
   validatePasswordStrength,
 } from "../services/auth.service";
 import { authenticate } from "../middleware/auth.middleware";
+import { logAudit } from "../lib/auditLog";
 import { logger } from "../lib/logger";
 import type { Request, Response } from "express";
 
 const router = Router();
-
-async function logAudit(
-  userId: number,
-  action: string,
-  details: Record<string, unknown>,
-  req: Request
-) {
-  try {
-    await db.insert(auditLogsTable).values({
-      userId,
-      action,
-      entityType: "auth",
-      entityId: String(userId),
-      detailsJson: details,
-      ipAddress: req.ip ?? req.socket?.remoteAddress ?? null,
-    });
-  } catch (err) {
-    logger.warn({ err }, "Failed to write audit log");
-  }
-}
 
 router.post("/login", async (req: Request, res: Response): Promise<void> => {
   const { username, password } = req.body as { username: string; password: string };
@@ -42,87 +23,92 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const users = await db.select().from(usersTable).where(eq(usersTable.username, username)).limit(1);
-  const user = users[0];
+  try {
+    const users = await db.select().from(usersTable).where(eq(usersTable.username, username)).limit(1);
+    const user = users[0];
 
-  if (!user) {
-    res.status(401).json({ success: false, error: { code: "INVALID_CREDENTIALS", message: "اسم المستخدم أو كلمة المرور غير صحيحة" } });
-    return;
-  }
-
-  if (user.lockedUntil && user.lockedUntil > new Date()) {
-    const remaining = Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60000);
-    res.status(423).json({ success: false, error: { code: "ACCOUNT_LOCKED", message: `الحساب مقفل. حاول بعد ${remaining} دقيقة` } });
-    return;
-  }
-
-  if (!user.isActive) {
-    res.status(401).json({ success: false, error: { code: "ACCOUNT_DISABLED", message: "الحساب معطل. تواصل مع مدير النظام" } });
-    return;
-  }
-
-  const passwordValid = await comparePassword(password, user.passwordHash);
-  if (!passwordValid) {
-    const newAttempts = user.failedLoginAttempts + 1;
-    if (newAttempts >= 5) {
-      await db.update(usersTable).set({
-        failedLoginAttempts: newAttempts,
-        lockedUntil: new Date(Date.now() + 15 * 60 * 1000),
-      }).where(eq(usersTable.id, user.id));
-      res.status(423).json({ success: false, error: { code: "ACCOUNT_LOCKED", message: "تم قفل الحساب بسبب 5 محاولات فاشلة. حاول بعد 15 دقيقة" } });
-    } else {
-      await db.update(usersTable).set({ failedLoginAttempts: newAttempts }).where(eq(usersTable.id, user.id));
-      res.status(401).json({ success: false, error: { code: "INVALID_CREDENTIALS", message: `اسم المستخدم أو كلمة المرور غير صحيحة. ${5 - newAttempts} محاولات متبقية` } });
+    if (!user) {
+      res.status(401).json({ success: false, error: { code: "INVALID_CREDENTIALS", message: "اسم المستخدم أو كلمة المرور غير صحيحة" } });
+      return;
     }
-    return;
-  }
 
-  await db.update(usersTable).set({
-    failedLoginAttempts: 0,
-    lockedUntil: null,
-    lastLogin: new Date(),
-  }).where(eq(usersTable.id, user.id));
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      const remaining = Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60000);
+      res.status(423).json({ success: false, error: { code: "ACCOUNT_LOCKED", message: `الحساب مقفل. حاول بعد ${remaining} دقيقة` } });
+      return;
+    }
 
-  await logAudit(user.id, "LOGIN", { username: user.username, role: user.role }, req);
+    if (!user.isActive) {
+      res.status(401).json({ success: false, error: { code: "ACCOUNT_DISABLED", message: "الحساب معطل. تواصل مع مدير النظام" } });
+      return;
+    }
 
-  const permissions = await db.select().from(userPermissionsTable).where(eq(userPermissionsTable.userId, user.id));
+    const passwordValid = await comparePassword(password, user.passwordHash);
+    if (!passwordValid) {
+      const newAttempts = user.failedLoginAttempts + 1;
+      if (newAttempts >= 5) {
+        await db.update(usersTable).set({
+          failedLoginAttempts: newAttempts,
+          lockedUntil: new Date(Date.now() + 15 * 60 * 1000),
+        }).where(eq(usersTable.id, user.id));
+        res.status(423).json({ success: false, error: { code: "ACCOUNT_LOCKED", message: "تم قفل الحساب بسبب 5 محاولات فاشلة. حاول بعد 15 دقيقة" } });
+      } else {
+        await db.update(usersTable).set({ failedLoginAttempts: newAttempts }).where(eq(usersTable.id, user.id));
+        res.status(401).json({ success: false, error: { code: "INVALID_CREDENTIALS", message: `اسم المستخدم أو كلمة المرور غير صحيحة. ${5 - newAttempts} محاولات متبقية` } });
+      }
+      return;
+    }
 
-  const payload = { userId: user.id, username: user.username, role: user.role };
-  const accessToken = generateAccessToken(payload);
-  const refreshToken = generateRefreshToken(payload);
+    await db.update(usersTable).set({
+      failedLoginAttempts: 0,
+      lockedUntil: null,
+      lastLogin: new Date(),
+    }).where(eq(usersTable.id, user.id));
 
-  res.cookie("refresh_token", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-  });
+    await logAudit(user.id, "LOGIN", "auth", user.id, { username: user.username, role: user.role }, req);
 
-  const requiresOnboarding = user.role === "admin" && !user.onboardingComplete;
+    const permissions = await db.select().from(userPermissionsTable).where(eq(userPermissionsTable.userId, user.id));
 
-  res.json({
-    success: true,
-    data: {
-      accessToken,
-      user: {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-        isActive: user.isActive,
-        forcePasswordChange: user.forcePasswordChange,
-        lastLogin: user.lastLogin,
-        createdAt: user.createdAt,
-        permissions: permissions.map(p => ({ key: p.permissionKey, isEnabled: p.isEnabled })),
+    const payload = { userId: user.id, username: user.username, role: user.role };
+    const accessToken = generateAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    const requiresOnboarding = user.role === "admin" && !user.onboardingComplete;
+
+    res.json({
+      success: true,
+      data: {
+        accessToken,
+        user: {
+          id: user.id,
+          username: user.username,
+          role: user.role,
+          isActive: user.isActive,
+          forcePasswordChange: user.forcePasswordChange,
+          lastLogin: user.lastLogin,
+          createdAt: user.createdAt,
+          permissions: permissions.map(p => ({ key: p.permissionKey, isEnabled: p.isEnabled })),
+        },
+        requiresPasswordChange: user.forcePasswordChange,
+        requiresOnboarding,
       },
-      requiresPasswordChange: user.forcePasswordChange,
-      requiresOnboarding,
-    },
-  });
+    });
+  } catch (err) {
+    logger.error({ err }, "POST /auth/login failed");
+    res.status(500).json({ success: false, error: { code: "SERVER_ERROR", message: "An unexpected error occurred" } });
+  }
 });
 
 router.post("/logout", authenticate, async (req: Request, res: Response): Promise<void> => {
   if (req.user) {
-    await logAudit(req.user.userId, "LOGOUT", { username: req.user.username }, req);
+    await logAudit(req.user.userId, "LOGOUT", "auth", req.user.userId, { username: req.user.username }, req);
   }
   res.clearCookie("refresh_token");
   res.json({ success: true, message: "Logged out" });
@@ -224,7 +210,7 @@ router.post("/change-password", authenticate, async (req: Request, res: Response
     lockedUntil: null,
   }).where(eq(usersTable.id, req.user.userId));
 
-  await logAudit(req.user.userId, "CHANGE_PASSWORD", { username: user.username }, req);
+  await logAudit(req.user.userId, "CHANGE_PASSWORD", "auth", req.user.userId, { username: user.username }, req);
 
   res.json({ success: true, message: "تم تغيير كلمة المرور بنجاح" });
 });
