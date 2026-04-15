@@ -742,6 +742,7 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const pendingAutoSend = useRef<string | null>(null);
+  const pendingAnalyzeRef = useRef<{ workflowId: string; workflowName: string } | null>(null);
   const [phases, setPhases] = useState<PhaseProgress[]>([]);
   const [generationResult, setGenerationResult] = useState<GenerationResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -1140,11 +1141,8 @@ export default function ChatPage() {
 
     let convId = selectedConvId;
     if (!convId) {
-      createConv({
-        data: { title: isRTL ? `تحليل: ${workflowName}` : `Analyze: ${workflowName}` },
-        headers: authHeader,
-      });
-      pendingAutoSend.current = `__analyze__:${workflowId}:${workflowName}`;
+      pendingAnalyzeRef.current = { workflowId, workflowName };
+      createConv({ title: isRTL ? `تحليل: ${workflowName}` : `Analyze: ${workflowName}`, type: "analyze" } as Parameters<typeof createConv>[0]);
       return;
     }
 
@@ -1228,6 +1226,14 @@ export default function ChatPage() {
       toast({ title: String(err), variant: "destructive" });
     });
   }, [sending, selectedConvId, authHeader, isRTL, analyzeContext, createConv, refetchConv, queryClient, toast]);
+
+  useEffect(() => {
+    if (selectedConvId && pendingAnalyzeRef.current) {
+      const { workflowId, workflowName } = pendingAnalyzeRef.current;
+      pendingAnalyzeRef.current = null;
+      handleAnalyze(workflowId, workflowName);
+    }
+  }, [selectedConvId, handleAnalyze]);
 
   // Phase 4: Keyboard handler with sendOnEnter setting
   const handleKeyDown = (e: React.KeyboardEvent) => {
