@@ -105,6 +105,8 @@ pnpm run build
 | GET | `/api/chat/conversations` | List conversations |
 | POST | `/api/chat/conversations` | New conversation |
 | POST | `/api/chat/conversations/:id/generate` | SSE stream AI generation |
+| POST | `/api/chat/conversations/:id/analyze-workflow` | SSE stream workflow analysis (3-phase) |
+| POST | `/api/workflows/:id/apply-fix` | Apply AI-generated fix JSON to n8n |
 | DELETE | `/api/chat/conversations/:id` | Delete conversation |
 | GET | `/api/settings/n8n` | Get n8n config |
 | PUT | `/api/settings/n8n` | Save n8n config (encrypted) |
@@ -146,6 +148,7 @@ pnpm run build
 | 7 | Security (Helmet, rate limiting, AES-256) + i18n | ✅ Complete |
 | 8 | Real execution stats + PDF export + version auto-save | ✅ Complete |
 | 9 | Template rating (⭐ interactive stars) + Save workflow as template + code audit fixes | ✅ Complete |
+| 10 | Workflow Analysis feature (3-phase AI pipeline: analyze → validate → fix) | ✅ Complete |
 
 ## Code Fixes (v9 Audit)
 

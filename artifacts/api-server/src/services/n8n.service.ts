@@ -207,6 +207,32 @@ export async function getAllRecentExecutions(limit = 20): Promise<N8nExecution[]
   return body.data ?? [];
 }
 
+export async function getExecutionDetails(executionId: string): Promise<{
+  id: string;
+  status: string;
+  error?: { message?: string; node?: { name?: string }; stack?: string };
+  startedAt?: string;
+  stoppedAt?: string;
+}> {
+  try {
+    const res = await n8nFetch(`/executions/${executionId}`);
+    if (!res.ok) return { id: executionId, status: "unknown" };
+    return res.json() as Promise<{ id: string; status: string; error?: { message?: string; node?: { name?: string }; stack?: string }; startedAt?: string; stoppedAt?: string }>;
+  } catch {
+    return { id: executionId, status: "unknown" };
+  }
+}
+
+export async function getWorkflowExecutionsWithErrors(workflowId: string, limit = 15): Promise<{
+  all: N8nExecution[];
+  errorDetails: Array<{ id: string; status: string; error?: { message?: string; node?: { name?: string } }; startedAt?: string }>;
+}> {
+  const all = await getWorkflowExecutions(workflowId, limit);
+  const failedExecs = all.filter(e => e.status === "error" || e.status === "failed").slice(0, 5);
+  const errorDetails = await Promise.all(failedExecs.map(e => getExecutionDetails(e.id)));
+  return { all, errorDetails };
+}
+
 export async function importWorkflow(workflowJson: Record<string, unknown>): Promise<N8nWorkflow> {
   const workflowData = {
     name: (workflowJson.name as string) ?? "Imported Workflow",

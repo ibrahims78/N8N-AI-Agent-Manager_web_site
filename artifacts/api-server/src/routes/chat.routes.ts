@@ -4,6 +4,8 @@ import { eq, desc } from "drizzle-orm";
 import { authenticate, requirePermission } from "../middleware/auth.middleware";
 import { decryptApiKey } from "../services/encryption.service";
 import { runSequentialEngine, detectWorkflowCreationIntent } from "../services/sequentialEngine.service";
+import { runWorkflowAnalyzer } from "../services/workflowAnalyzer.service";
+import { getWorkflow, getWorkflowExecutionsWithErrors } from "../services/n8n.service";
 import { logger } from "../lib/logger";
 import type { Request, Response } from "express";
 
@@ -529,6 +531,146 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
       isWorkflowCreation: isCreateIntent,
     },
   });
+});
+
+// ─── SSE: Workflow Analysis ───────────────────────────────────────────────────
+router.post("/conversations/:id/analyze-workflow", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
+
+  const convId = parseInt(req.params.id, 10);
+  if (isNaN(convId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid conversation ID" } }); return; }
+
+  const { workflowId, userContext } = req.body as { workflowId: string; userContext?: string };
+
+  if (!workflowId) {
+    res.status(400).json({ success: false, error: { code: "MISSING_WORKFLOW_ID", message: "workflowId is required" } });
+    return;
+  }
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("X-Accel-Buffering", "no");
+  res.flushHeaders();
+
+  const sendEvent = (event: string, data: unknown) => {
+    res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    if (typeof (res as unknown as { flush?: () => void }).flush === "function") {
+      (res as unknown as { flush: () => void }).flush();
+    }
+  };
+
+  try {
+    const { openaiKey, geminiKey } = await getApiKeys();
+    if (!openaiKey) {
+      sendEvent("error", { message: "مفتاح OpenAI غير مضبوط. يرجى الذهاب للإعدادات." });
+      res.end();
+      return;
+    }
+
+    sendEvent("start", { type: "analyze" });
+    sendEvent("phase", { phase: 1, label: "GPT-4o: Analyzing workflow", labelAr: "GPT-4o: تحليل المشاكل", status: "pending" });
+    sendEvent("phase", { phase: 2, label: "Gemini: Validating analysis", labelAr: "Gemini: التحقق من التحليل", status: "pending" });
+    sendEvent("phase", { phase: 3, label: "GPT-4o: Generating fix", labelAr: "GPT-4o: إنشاء الإصلاح", status: "pending" });
+
+    let workflowJson: Record<string, unknown>;
+    try {
+      workflowJson = await getWorkflow(workflowId) as unknown as Record<string, unknown>;
+    } catch {
+      sendEvent("error", { message: "لم يتم العثور على الـ workflow في n8n. تحقق من الاتصال." });
+      res.end();
+      return;
+    }
+
+    let errorDetails: Array<{ id: string; status: string; error?: { message?: string; node?: { name?: string } }; startedAt?: string }> = [];
+    try {
+      const execData = await getWorkflowExecutionsWithErrors(workflowId, 15);
+      errorDetails = execData.errorDetails;
+    } catch {
+      logger.warn({ workflowId }, "Could not fetch execution errors — continuing without them");
+    }
+
+    const contextMsg = userContext ? `تحليل مسار العمل: ${workflowJson.name as string}\n\nملاحظة المستخدم: ${userContext}` : `تحليل مسار العمل: ${workflowJson.name as string}`;
+
+    await db.insert(messagesTable).values({
+      conversationId: convId,
+      role: "user",
+      content: contextMsg,
+    });
+
+    const prevCount = await db.select().from(messagesTable).where(eq(messagesTable.conversationId, convId));
+
+    const analyzerResult = await runWorkflowAnalyzer(
+      workflowJson,
+      errorDetails,
+      userContext ?? "",
+      {
+        openaiKey,
+        geminiKey: geminiKey ?? undefined,
+        onPhaseUpdate: (phase) => {
+          sendEvent("phase", phase);
+        },
+      },
+    );
+
+    const workflowName = workflowJson.name as string ?? "Workflow";
+    const critCount = analyzerResult.problems.filter(p => p.severity === "critical").length;
+    const highCount = analyzerResult.problems.filter(p => p.severity === "high").length;
+
+    let assistantContent = "";
+    if (analyzerResult.problems.length === 0) {
+      assistantContent = `✅ **تحليل مسار العمل: "${workflowName}"**\n\nلم يتم اكتشاف أي مشاكل! يبدو أن مسار العمل مصمم بشكل صحيح.\n\n${analyzerResult.summaryAr}`;
+    } else {
+      assistantContent = `🔍 **تحليل مسار العمل: "${workflowName}"**\n\n${analyzerResult.summaryAr}\n\n`;
+      assistantContent += `**المشاكل المكتشفة (${analyzerResult.problems.length}):**\n`;
+      if (critCount > 0) assistantContent += `🔴 حرجة: ${critCount} | `;
+      if (highCount > 0) assistantContent += `🟠 عالية: ${highCount} | `;
+      const medCount = analyzerResult.problems.filter(p => p.severity === "medium").length;
+      if (medCount > 0) assistantContent += `🟡 متوسطة: ${medCount} | `;
+      const lowCount = analyzerResult.problems.filter(p => p.severity === "low").length;
+      if (lowCount > 0) assistantContent += `🟢 منخفضة: ${lowCount}`;
+      assistantContent = assistantContent.replace(/ \| $/, "");
+      assistantContent += "\n\n";
+
+      for (const prob of analyzerResult.problems) {
+        const icon = prob.severity === "critical" ? "🔴" : prob.severity === "high" ? "🟠" : prob.severity === "medium" ? "🟡" : "🟢";
+        assistantContent += `${icon} **${prob.titleAr}**`;
+        if (prob.affectedNode) assistantContent += ` *(Node: ${prob.affectedNode})*`;
+        assistantContent += `\n${prob.descriptionAr}\n✅ *${prob.solutionAr}*\n\n`;
+      }
+
+      if (analyzerResult.fixedWorkflowJson) {
+        assistantContent += `---\n✨ **تم إنشاء نسخة مُصلَحة من الـ Workflow جاهزة للتطبيق مباشرة في n8n.**`;
+      }
+    }
+
+    const [assistantMsg] = await db.insert(messagesTable).values({
+      conversationId: convId,
+      role: "assistant",
+      content: assistantContent,
+      modelUsed: geminiKey ? "sequential-gpt4o+gemini" : "gpt-4o",
+    }).returning();
+
+    await db.update(conversationsTable)
+      .set({ messageCount: prevCount.length + 1, updatedAt: new Date(), type: "analyze" })
+      .where(eq(conversationsTable.id, convId));
+
+    sendEvent("complete", {
+      message: assistantMsg,
+      problems: analyzerResult.problems,
+      fixedWorkflowJson: analyzerResult.fixedWorkflowJson,
+      workflowId,
+      workflowName,
+      totalTimeMs: analyzerResult.totalTimeMs,
+      phases: analyzerResult.phases,
+      isAnalysis: true,
+    });
+  } catch (err) {
+    logger.error({ err }, "SSE analyze-workflow error");
+    sendEvent("error", { message: String(err) });
+  } finally {
+    res.end();
+  }
 });
 
 export { router as chatRouter };

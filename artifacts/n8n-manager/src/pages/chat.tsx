@@ -8,6 +8,7 @@ import {
   Paperclip, X, ThumbsUp, ThumbsDown, RotateCcw, Edit3,
   Search, Pin, Bot, FileText, FileJson, Image as ImageIcon,
   PanelRightOpen, PanelRightClose, Clock, Hash, Layers, Check,
+  ScanSearch, Wrench, AlertTriangle, AlertCircle, ShieldCheck, ChevronDown,
 } from "lucide-react";
 import { useGetConversations, useCreateConversation, useGetConversation, useDeleteConversation, getGetConversationsQueryKey, getGetConversationQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -61,6 +62,32 @@ interface Attachment {
   size: number;
   content?: string;
   dataUrl?: string;
+}
+
+interface WorkflowProblem {
+  title: string;
+  titleAr: string;
+  description: string;
+  descriptionAr: string;
+  severity: "critical" | "high" | "medium" | "low";
+  solution: string;
+  solutionAr: string;
+  affectedNode?: string | null;
+}
+
+interface AnalysisResult {
+  problems: WorkflowProblem[];
+  fixedWorkflowJson: Record<string, unknown> | null;
+  workflowId: string;
+  workflowName: string;
+  totalTimeMs: number;
+  phases: PhaseProgress[];
+}
+
+interface N8nWorkflowBasic {
+  id: string;
+  name: string;
+  active: boolean;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -407,6 +434,273 @@ function MessageContent({ content, isRTL, isLatest = false }: { content: string;
   );
 }
 
+// ─── AnalysisReport ───────────────────────────────────────────────────────────
+
+function SeverityBadge({ severity, isRTL }: { severity: WorkflowProblem["severity"]; isRTL: boolean }) {
+  const config = {
+    critical: { color: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300 border-red-200 dark:border-red-700", icon: <AlertCircle className="h-3 w-3" />, label: isRTL ? "حرجة" : "Critical" },
+    high: { color: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300 border-orange-200 dark:border-orange-700", icon: <AlertTriangle className="h-3 w-3" />, label: isRTL ? "عالية" : "High" },
+    medium: { color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300 border-yellow-200 dark:border-yellow-700", icon: <AlertTriangle className="h-3 w-3" />, label: isRTL ? "متوسطة" : "Medium" },
+    low: { color: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 border-blue-200 dark:border-blue-700", icon: <ShieldCheck className="h-3 w-3" />, label: isRTL ? "منخفضة" : "Low" },
+  }[severity];
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border ${config.color}`}>
+      {config.icon}{config.label}
+    </span>
+  );
+}
+
+function AnalysisReport({
+  result, isRTL, authHeader, toast,
+}: {
+  result: AnalysisResult;
+  isRTL: boolean;
+  authHeader: Record<string, string>;
+  toast: (opts: { title: string; description?: string; variant?: "default" | "destructive" }) => void;
+}) {
+  const [expanded, setExpanded] = useState<Record<number, boolean>>({});
+  const [applying, setApplying] = useState(false);
+  const [applied, setApplied] = useState(false);
+  const [showJson, setShowJson] = useState(false);
+
+  const critCount = result.problems.filter(p => p.severity === "critical").length;
+  const highCount = result.problems.filter(p => p.severity === "high").length;
+  const medCount = result.problems.filter(p => p.severity === "medium").length;
+  const lowCount = result.problems.filter(p => p.severity === "low").length;
+
+  const handleApplyFix = async () => {
+    if (!result.fixedWorkflowJson) return;
+    setApplying(true);
+    try {
+      const res = await fetch(`${API_BASE}/workflows/${result.workflowId}/apply-fix`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeader },
+        body: JSON.stringify({ workflowJson: result.fixedWorkflowJson }),
+      });
+      const data = await res.json() as { success: boolean; error?: { message?: string } };
+      if (data.success) {
+        setApplied(true);
+        toast({ title: isRTL ? "✅ تم تطبيق الإصلاح" : "✅ Fix Applied", description: isRTL ? `تم تحديث "${result.workflowName}" في n8n بنجاح` : `"${result.workflowName}" updated in n8n successfully` });
+      } else {
+        toast({ title: isRTL ? "❌ فشل التطبيق" : "❌ Apply Failed", description: data.error?.message, variant: "destructive" });
+      }
+    } catch (err) {
+      toast({ title: isRTL ? "خطأ" : "Error", description: String(err), variant: "destructive" });
+    } finally {
+      setApplying(false);
+    }
+  };
+
+  const handleCopyJson = () => {
+    if (result.fixedWorkflowJson) {
+      navigator.clipboard.writeText(JSON.stringify(result.fixedWorkflowJson, null, 2)).catch(() => { /* ignore */ });
+      toast({ title: isRTL ? "✅ تم النسخ" : "✅ Copied", description: isRTL ? "تم نسخ JSON المُصلَح" : "Fixed workflow JSON copied" });
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mt-4 rounded-xl border border-border bg-card overflow-hidden shadow-md"
+    >
+      {/* Header */}
+      <div className="bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-white">
+          <ScanSearch className="h-4 w-4" />
+          <span className="font-semibold text-sm">{isRTL ? "نتيجة تحليل الـ Workflow" : "Workflow Analysis Report"}</span>
+          <span className="text-xs text-violet-200">{result.workflowName}</span>
+        </div>
+        <div className="text-xs text-violet-200">{(result.totalTimeMs / 1000).toFixed(1)}s</div>
+      </div>
+
+      {/* Stats bar */}
+      {result.problems.length > 0 && (
+        <div className="flex gap-1 p-3 bg-muted/30 border-b border-border flex-wrap">
+          {critCount > 0 && <span className="flex items-center gap-1 text-xs font-medium text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded-full border border-red-200 dark:border-red-700"><AlertCircle className="h-3 w-3" />{critCount} {isRTL ? "حرجة" : "Critical"}</span>}
+          {highCount > 0 && <span className="flex items-center gap-1 text-xs font-medium text-orange-700 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/30 px-2 py-1 rounded-full border border-orange-200 dark:border-orange-700"><AlertTriangle className="h-3 w-3" />{highCount} {isRTL ? "عالية" : "High"}</span>}
+          {medCount > 0 && <span className="flex items-center gap-1 text-xs font-medium text-yellow-700 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 px-2 py-1 rounded-full border border-yellow-200 dark:border-yellow-700"><AlertTriangle className="h-3 w-3" />{medCount} {isRTL ? "متوسطة" : "Medium"}</span>}
+          {lowCount > 0 && <span className="flex items-center gap-1 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded-full border border-blue-200 dark:border-blue-700"><ShieldCheck className="h-3 w-3" />{lowCount} {isRTL ? "منخفضة" : "Low"}</span>}
+        </div>
+      )}
+
+      {result.problems.length === 0 && (
+        <div className="p-4 flex items-center gap-3 text-green-700 dark:text-green-400">
+          <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
+          <span className="text-sm font-medium">{isRTL ? "لم يتم اكتشاف أي مشاكل! الـ Workflow مصمم بشكل صحيح." : "No problems detected! The workflow looks healthy."}</span>
+        </div>
+      )}
+
+      {/* Problems list */}
+      {result.problems.length > 0 && (
+        <div className="divide-y divide-border">
+          {result.problems.map((prob, idx) => (
+            <div key={idx} className="p-3">
+              <button
+                onClick={() => setExpanded(prev => ({ ...prev, [idx]: !prev[idx] }))}
+                className="w-full flex items-center justify-between gap-2 text-left"
+              >
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <SeverityBadge severity={prob.severity} isRTL={isRTL} />
+                  <span className="text-sm font-medium truncate">{isRTL ? prob.titleAr : prob.title}</span>
+                  {prob.affectedNode && (
+                    <span className="hidden sm:inline text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded font-mono">
+                      {prob.affectedNode}
+                    </span>
+                  )}
+                </div>
+                <ChevronDown className={`h-4 w-4 text-muted-foreground flex-shrink-0 transition-transform ${expanded[idx] ? "rotate-180" : ""}`} />
+              </button>
+              <AnimatePresence>
+                {expanded[idx] && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                    <div className="mt-3 space-y-2 text-sm">
+                      <p className="text-muted-foreground leading-relaxed">{isRTL ? prob.descriptionAr : prob.description}</p>
+                      <div className="rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-3 flex gap-2">
+                        <Wrench className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                        <p className="text-green-800 dark:text-green-300 leading-relaxed">{isRTL ? prob.solutionAr : prob.solution}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Fix actions */}
+      {result.fixedWorkflowJson && (
+        <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/10 dark:to-emerald-900/10 border-t border-border flex flex-wrap gap-2 items-center">
+          <span className="text-xs text-green-700 dark:text-green-400 font-medium flex-1">
+            {isRTL ? "✨ نسخة مُصلَحة جاهزة للتطبيق" : "✨ Fixed version ready to apply"}
+          </span>
+          <button
+            onClick={handleCopyJson}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-background hover:bg-muted transition-colors"
+          >
+            <Copy className="h-3 w-3" />
+            {isRTL ? "نسخ JSON" : "Copy JSON"}
+          </button>
+          <button
+            onClick={() => setShowJson(v => !v)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-background hover:bg-muted transition-colors"
+          >
+            <FileJson className="h-3 w-3" />
+            {showJson ? (isRTL ? "إخفاء" : "Hide") : (isRTL ? "عرض JSON" : "View JSON")}
+          </button>
+          {!applied ? (
+            <button
+              onClick={handleApplyFix}
+              disabled={applying}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors disabled:opacity-60"
+            >
+              {applying ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wrench className="h-3 w-3" />}
+              {isRTL ? "تطبيق الإصلاح في n8n" : "Apply Fix to n8n"}
+            </button>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300">
+              <CheckCircle2 className="h-3 w-3" />{isRTL ? "تم التطبيق!" : "Applied!"}
+            </span>
+          )}
+        </div>
+      )}
+      {showJson && result.fixedWorkflowJson && (
+        <div className="border-t border-border bg-muted/30 p-3">
+          <pre className="text-xs overflow-auto max-h-64 leading-relaxed font-mono">
+            <code>{JSON.stringify(result.fixedWorkflowJson, null, 2)}</code>
+          </pre>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+// ─── WorkflowPicker modal ─────────────────────────────────────────────────────
+
+function WorkflowPickerModal({
+  open, onClose, workflows, loading, onSelect, isRTL, userContext, setUserContext,
+}: {
+  open: boolean;
+  onClose: () => void;
+  workflows: N8nWorkflowBasic[];
+  loading: boolean;
+  onSelect: (id: string, name: string) => void;
+  isRTL: boolean;
+  userContext: string;
+  setUserContext: (v: string) => void;
+}) {
+  const [search, setSearch] = useState("");
+  const filtered = workflows.filter(w => w.name.toLowerCase().includes(search.toLowerCase()));
+
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={onClose}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="bg-card rounded-2xl shadow-2xl border border-border w-full max-w-md"
+        onClick={e => e.stopPropagation()}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
+        <div className="p-4 border-b border-border flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ScanSearch className="h-5 w-5 text-violet-500" />
+            <h2 className="font-semibold text-base">{isRTL ? "تحليل مسار عمل" : "Analyze Workflow"}</h2>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><X className="h-4 w-4" /></button>
+        </div>
+
+        <div className="p-4 space-y-3">
+          <div className="relative">
+            <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder={isRTL ? "ابحث عن مسار عمل..." : "Search workflow..."}
+              className="w-full ps-9 pe-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-violet-500"
+            />
+          </div>
+
+          <div className="max-h-52 overflow-y-auto rounded-lg border border-border divide-y divide-border">
+            {loading && (
+              <div className="p-4 flex items-center justify-center gap-2 text-muted-foreground text-sm">
+                <Loader2 className="h-4 w-4 animate-spin" />{isRTL ? "جار التحميل..." : "Loading..."}
+              </div>
+            )}
+            {!loading && filtered.length === 0 && (
+              <div className="p-4 text-center text-muted-foreground text-sm">{isRTL ? "لا توجد مسارات عمل" : "No workflows found"}</div>
+            )}
+            {!loading && filtered.map(wf => (
+              <button
+                key={wf.id}
+                onClick={() => onSelect(wf.id, wf.name)}
+                className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-muted transition-colors text-start"
+              >
+                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${wf.active ? "bg-green-500" : "bg-muted-foreground"}`} />
+                <span className="text-sm flex-1 truncate font-medium">{wf.name}</span>
+                <span className="text-xs text-muted-foreground">{wf.active ? (isRTL ? "نشط" : "Active") : (isRTL ? "معطل" : "Inactive")}</span>
+              </button>
+            ))}
+          </div>
+
+          <div>
+            <label className="text-xs text-muted-foreground block mb-1">{isRTL ? "ملاحظات إضافية (اختياري)" : "Additional context (optional)"}</label>
+            <textarea
+              value={userContext}
+              onChange={e => setUserContext(e.target.value)}
+              rows={2}
+              placeholder={isRTL ? "مثال: يعطي خطأ عند تشغيله يدوياً..." : "E.g. it fails when triggered manually..."}
+              className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
+            />
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 // ─── Main ChatPage ────────────────────────────────────────────────────────────
 
 export default function ChatPage() {
@@ -486,6 +780,13 @@ export default function ChatPage() {
 
   // ── Phase 8: Context panel ──
   const [contextPanelOpen, setContextPanelOpen] = useState(false);
+
+  // ── Workflow Analysis ──
+  const [analyzePickerOpen, setAnalyzePickerOpen] = useState(false);
+  const [n8nWorkflows, setN8nWorkflows] = useState<N8nWorkflowBasic[]>([]);
+  const [loadingWorkflows, setLoadingWorkflows] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [analyzeContext, setAnalyzeContext] = useState("");
 
   // ── Data fetching ──
   const { data: convRes } = useGetConversations(
@@ -759,6 +1060,117 @@ export default function ChatPage() {
       handleSend(message);
     }
   }, [selectedConvId, handleSend]);
+
+  const openAnalyzePicker = useCallback(async () => {
+    setAnalyzePickerOpen(true);
+    if (n8nWorkflows.length === 0) {
+      setLoadingWorkflows(true);
+      try {
+        const res = await fetch(`${API_BASE}/workflows`, { headers: authHeader });
+        const data = await res.json() as { success: boolean; data?: { workflows?: N8nWorkflowBasic[] } };
+        setN8nWorkflows(data.data?.workflows ?? []);
+      } catch {
+        toast({ title: isRTL ? "تعذر تحميل قائمة الـ Workflows" : "Could not load workflows", variant: "destructive" });
+      } finally {
+        setLoadingWorkflows(false);
+      }
+    }
+  }, [n8nWorkflows.length, authHeader, isRTL, toast]);
+
+  const handleAnalyze = useCallback((workflowId: string, workflowName: string) => {
+    setAnalyzePickerOpen(false);
+    if (sending) return;
+
+    let convId = selectedConvId;
+    if (!convId) {
+      createConv({
+        data: { title: isRTL ? `تحليل: ${workflowName}` : `Analyze: ${workflowName}` },
+        headers: authHeader,
+      });
+      pendingAutoSend.current = `__analyze__:${workflowId}:${workflowName}`;
+      return;
+    }
+
+    setSending(true);
+    setIsGenerating(true);
+    setPhases([
+      { phase: 1, label: "GPT-4o: Analyzing workflow", labelAr: "GPT-4o: تحليل المشاكل", status: "pending" },
+      { phase: 2, label: "Gemini: Validating analysis", labelAr: "Gemini: التحقق من التحليل", status: "pending" },
+      { phase: 3, label: "GPT-4o: Generating fix", labelAr: "GPT-4o: إنشاء الإصلاح", status: "pending" },
+    ]);
+    setGenerationResult(null);
+    setAnalysisResult(null);
+
+    const fetchUrl = `${API_BASE}/chat/conversations/${convId}/analyze-workflow`;
+    const headers: Record<string, string> = { ...authHeader, "Content-Type": "application/json" };
+    const token = localStorage.getItem("accessToken");
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    fetch(fetchUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ workflowId, userContext: analyzeContext }),
+    }).then(async (res) => {
+      const reader = res.body?.getReader();
+      if (!reader) throw new Error("No response body");
+
+      let buffer = "";
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop() ?? "";
+
+        for (const part of parts) {
+          const lines = part.split("\n");
+          const eventLine = lines.find(l => l.startsWith("event:"));
+          const dataLine = lines.find(l => l.startsWith("data:"));
+          if (!eventLine || !dataLine) continue;
+
+          const event = eventLine.replace("event:", "").trim();
+          try {
+            const parsed = JSON.parse(dataLine.replace("data:", "").trim()) as Record<string, unknown>;
+
+            if (event === "phase") {
+              setPhases(prev => prev.map(p =>
+                p.phase === parsed.phase
+                  ? { ...p, status: parsed.status as string, durationMs: parsed.durationMs as number | undefined }
+                  : p
+              ));
+            } else if (event === "complete") {
+              setSending(false);
+              setIsGenerating(false);
+              const analysisRes: AnalysisResult = {
+                problems: (parsed.problems ?? []) as WorkflowProblem[],
+                fixedWorkflowJson: (parsed.fixedWorkflowJson ?? null) as Record<string, unknown> | null,
+                workflowId,
+                workflowName,
+                totalTimeMs: (parsed.totalTimeMs ?? 0) as number,
+                phases: (parsed.phases ?? []) as PhaseProgress[],
+              };
+              setAnalysisResult(analysisRes);
+              setAnalyzeContext("");
+              refetchConv();
+              queryClient.invalidateQueries({ queryKey: getGetConversationsQueryKey() });
+            } else if (event === "error") {
+              setSending(false);
+              setIsGenerating(false);
+              setPhases([]);
+              toast({ title: (parsed.message as string) ?? "Error", variant: "destructive" });
+            }
+          } catch { /* ignore parse errors */ }
+        }
+      }
+    }).catch((err: unknown) => {
+      setSending(false);
+      setIsGenerating(false);
+      setPhases([]);
+      toast({ title: String(err), variant: "destructive" });
+    });
+  }, [sending, selectedConvId, authHeader, isRTL, analyzeContext, createConv, refetchConv, queryClient, toast]);
 
   // Phase 4: Keyboard handler with sendOnEnter setting
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -1333,6 +1745,19 @@ export default function ChatPage() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+
+                {/* Analysis Report */}
+                <AnimatePresence>
+                  {analysisResult && !isGenerating && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="w-full max-w-2xl mx-auto px-2"
+                    >
+                      <AnalysisReport result={analysisResult} isRTL={isRTL} authHeader={authHeader} toast={toast} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </>
             )}
             <div ref={messagesEndRef} />
@@ -1453,6 +1878,15 @@ export default function ChatPage() {
             >
               <Paperclip size={16} />
             </button>
+            {/* Analyze workflow button */}
+            <button
+              onClick={openAnalyzePicker}
+              disabled={sending}
+              className="p-2.5 rounded-xl border border-violet-300 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 hover:bg-violet-100 dark:hover:bg-violet-900/40 transition-colors shrink-0 disabled:opacity-50"
+              title={isRTL ? "تحليل مسار عمل موجود" : "Analyze existing workflow"}
+            >
+              <ScanSearch size={16} />
+            </button>
             <input
               ref={fileInputRef}
               type="file"
@@ -1516,6 +1950,22 @@ export default function ChatPage() {
           </p>
         </div>
       </div>
+
+      {/* Workflow Picker Modal */}
+      <AnimatePresence>
+        {analyzePickerOpen && (
+          <WorkflowPickerModal
+            open={analyzePickerOpen}
+            onClose={() => setAnalyzePickerOpen(false)}
+            workflows={n8nWorkflows}
+            loading={loadingWorkflows}
+            onSelect={handleAnalyze}
+            isRTL={isRTL}
+            userContext={analyzeContext}
+            setUserContext={setAnalyzeContext}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

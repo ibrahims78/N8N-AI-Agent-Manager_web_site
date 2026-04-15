@@ -274,4 +274,48 @@ router.post("/import", authenticate, requirePermission("manage_workflows"), asyn
   }
 });
 
+router.post("/:id/apply-fix", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const { workflowJson } = req.body as { workflowJson: Record<string, unknown> };
+
+  if (!workflowJson || !workflowJson.nodes) {
+    res.status(400).json({ success: false, error: { code: "INVALID_WORKFLOW", message: "workflowJson with nodes is required" } });
+    return;
+  }
+
+  try {
+    const current = await getWorkflow(id);
+    const updatePayload = {
+      name: (workflowJson.name as string) ?? current.name,
+      nodes: workflowJson.nodes ?? current.nodes,
+      connections: workflowJson.connections ?? current.connections,
+      settings: workflowJson.settings ?? current.settings ?? {},
+    };
+
+    const updated = await updateWorkflow(id, updatePayload);
+
+    try {
+      const versions = await db.select().from(workflowVersionsTable)
+        .where(eq(workflowVersionsTable.workflowN8nId, id))
+        .orderBy(workflowVersionsTable.versionNumber);
+      const latestVersion = versions[versions.length - 1]?.versionNumber ?? 0;
+      await db.insert(workflowVersionsTable).values({
+        workflowN8nId: id,
+        versionNumber: latestVersion + 1,
+        workflowJson: workflowJson,
+        changeDescription: "إصلاح تلقائي بواسطة وكيل الذكاء الاصطناعي",
+        createdBy: req.user!.userId,
+      });
+    } catch {
+      logger.warn({ id }, "Could not save fix version — non-fatal");
+    }
+
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    logger.error({ err, id }, "apply-fix failed");
+    res.status(500).json({ success: false, error: { code: "FIX_ERROR", message } });
+  }
+});
+
 export { router as workflowsRouter };
