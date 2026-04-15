@@ -3,9 +3,10 @@ import { db, conversationsTable, messagesTable, systemSettingsTable, generationS
 import { eq, desc } from "drizzle-orm";
 import { authenticate, requirePermission } from "../middleware/auth.middleware";
 import { decryptApiKey } from "../services/encryption.service";
-import { runSequentialEngine, detectWorkflowCreationIntent } from "../services/sequentialEngine.service";
+import { runSequentialEngine, detectWorkflowCreationIntent, detectWorkflowModifyIntent } from "../services/sequentialEngine.service";
 import { runWorkflowAnalyzer } from "../services/workflowAnalyzer.service";
-import { getWorkflow, getWorkflowExecutionsWithErrors } from "../services/n8n.service";
+import { runWorkflowModifier, extractWorkflowNameFromMessage } from "../services/workflowModifier.service";
+import { getWorkflow, getWorkflows, updateWorkflow, getWorkflowExecutionsWithErrors } from "../services/n8n.service";
 import { logger } from "../lib/logger";
 import type { Request, Response } from "express";
 
@@ -309,6 +310,158 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
       } catch (err) {
         sendEvent("error", { message: String(err) });
       }
+
+    // ── Modify Intent: edit/fix/update an existing workflow ──────────────────
+    } else if (!isCreateIntent && detectWorkflowModifyIntent(content) && openaiKey) {
+      sendEvent("start", { type: "modify" });
+      sendEvent("phase", { phase: 1, label: "GPT-4o: Generating modification", labelAr: "GPT-4o: توليد التعديل", status: "pending" });
+      sendEvent("phase", { phase: 2, label: "Gemini 2.5 Pro: Validating changes", labelAr: "Gemini 2.5 Pro: التحقق من التعديلات", status: "pending" });
+      sendEvent("phase", { phase: 3, label: "Applying to n8n", labelAr: "تطبيق التعديل على n8n", status: "pending" });
+
+      try {
+        // Step 1: Find which workflow the user is referring to
+        let targetWorkflowId: string | null = null;
+        let targetWorkflowName: string | null = null;
+        let currentWorkflowJson: Record<string, unknown> | null = null;
+
+        try {
+          const allWorkflows = await getWorkflows();
+          if (allWorkflows.length > 0) {
+            const match = await extractWorkflowNameFromMessage(
+              content,
+              allWorkflows.map((w) => ({ id: w.id, name: w.name })),
+              openaiKey
+            );
+            if (match) {
+              targetWorkflowId = match.workflowId;
+              targetWorkflowName = match.workflowName;
+              currentWorkflowJson = await getWorkflow(targetWorkflowId) as unknown as Record<string, unknown>;
+            }
+          }
+        } catch {
+          logger.warn("Could not fetch workflows from n8n — modify will work without n8n context");
+        }
+
+        // If no n8n workflow found, ask user to clarify
+        if (!currentWorkflowJson) {
+          const clarifyMsg = lang === "ar"
+            ? `⚠️ **لم أتمكن من تحديد الـ workflow المقصود.**\n\nيرجى:\n1. التأكد من أن n8n مضبوط ومتصل في **الإعدادات**\n2. أو ذكر اسم الـ workflow بوضوح في رسالتك\n3. أو استخدام زر "تحليل وإصلاح" من صفحة الـ Workflows`
+            : `⚠️ **Could not identify which workflow to modify.**\n\nPlease:\n1. Make sure n8n is configured and connected in **Settings**\n2. Or mention the workflow name clearly in your message\n3. Or use the "Analyze & Fix" button from the Workflows page`;
+
+          const [clarifyResp] = await db.insert(messagesTable).values({
+            conversationId: convId,
+            role: "assistant",
+            content: clarifyMsg,
+            modelUsed: "system",
+          }).returning();
+
+          await db.update(conversationsTable)
+            .set({ messageCount: messageCount + 1, updatedAt: new Date() })
+            .where(eq(conversationsTable.id, convId));
+
+          sendEvent("complete", { message: clarifyResp, isWorkflowModification: false });
+          return;
+        }
+
+        // Step 2: Run the modifier
+        const modifierResult = await runWorkflowModifier(
+          currentWorkflowJson,
+          content,
+          lang,
+          {
+            openaiKey,
+            geminiKey: geminiKey ?? undefined,
+            onPhaseUpdate: (phase) => {
+              sendEvent("phase", { ...phase, phase: phase.phase });
+            },
+          }
+        );
+
+        if (!modifierResult.success || !modifierResult.modifiedWorkflowJson) {
+          sendEvent("error", {
+            message: lang === "ar"
+              ? `❌ فشل توليد التعديل: ${modifierResult.error ?? "خطأ غير معروف"}`
+              : `❌ Failed to generate modification: ${modifierResult.error ?? "Unknown error"}`,
+          });
+          return;
+        }
+
+        // Step 3: Apply to n8n
+        let appliedToN8n = false;
+        let applyError: string | null = null;
+
+        sendEvent("phase", { phase: 3, label: "Applying to n8n", labelAr: "تطبيق التعديل على n8n", status: "running" });
+
+        try {
+          const updatePayload = {
+            name: (modifierResult.modifiedWorkflowJson.name as string) ?? (currentWorkflowJson.name as string),
+            nodes: modifierResult.modifiedWorkflowJson.nodes,
+            connections: modifierResult.modifiedWorkflowJson.connections,
+            settings: modifierResult.modifiedWorkflowJson.settings ?? { executionOrder: "v1" },
+          };
+          await updateWorkflow(targetWorkflowId!, updatePayload as Record<string, unknown>);
+          appliedToN8n = true;
+          sendEvent("phase", { phase: 3, label: "Applying to n8n", labelAr: "تطبيق التعديل على n8n", status: "done", durationMs: 0 });
+        } catch (applyErr) {
+          applyError = String(applyErr);
+          sendEvent("phase", { phase: 3, label: "Applying to n8n", labelAr: "تطبيق التعديل على n8n", status: "failed", durationMs: 0 });
+          logger.warn({ applyErr }, "Could not apply modification to n8n");
+        }
+
+        // Build assistant response
+        let assistantContent = "";
+        if (lang === "ar") {
+          if (appliedToN8n) {
+            assistantContent = `✅ **تم تعديل الـ workflow "${targetWorkflowName}" وتطبيقه على n8n بنجاح!**\n\n`;
+            assistantContent += `📝 **التغييرات التي تمت:**\n${modifierResult.changesSummaryAr}\n\n`;
+            assistantContent += `الـ workflow محدّث مباشرة في n8n. يمكنك مراجعته الآن.`;
+          } else {
+            assistantContent = `⚠️ **تم توليد التعديل لكن لم يتم تطبيقه على n8n تلقائياً.**\n\n`;
+            assistantContent += `📝 **التغييرات المطلوبة:**\n${modifierResult.changesSummaryAr}\n\n`;
+            if (applyError) assistantContent += `**سبب الفشل:** ${applyError}\n\n`;
+            assistantContent += `يمكنك استيراد الـ JSON أدناه يدوياً:\n\n`;
+            assistantContent += `\`\`\`json\n${JSON.stringify(modifierResult.modifiedWorkflowJson, null, 2)}\n\`\`\``;
+          }
+        } else {
+          if (appliedToN8n) {
+            assistantContent = `✅ **Workflow "${targetWorkflowName}" successfully modified and applied to n8n!**\n\n`;
+            assistantContent += `📝 **Changes made:**\n${modifierResult.changesSummary}\n\n`;
+            assistantContent += `The workflow is now updated directly in n8n. You can review it now.`;
+          } else {
+            assistantContent = `⚠️ **Modification generated but could not be applied to n8n automatically.**\n\n`;
+            assistantContent += `📝 **Requested changes:**\n${modifierResult.changesSummary}\n\n`;
+            if (applyError) assistantContent += `**Reason:** ${applyError}\n\n`;
+            assistantContent += `You can import the JSON below manually:\n\n`;
+            assistantContent += `\`\`\`json\n${JSON.stringify(modifierResult.modifiedWorkflowJson, null, 2)}\n\`\`\``;
+          }
+        }
+
+        const [assistantMsg] = await db.insert(messagesTable).values({
+          conversationId: convId,
+          role: "assistant",
+          content: assistantContent,
+          modelUsed: geminiKey ? "modifier-gpt4o+gemini" : "modifier-gpt4o",
+        }).returning();
+
+        await db.update(conversationsTable)
+          .set({ messageCount: messageCount + 1, updatedAt: new Date(), type: "query" })
+          .where(eq(conversationsTable.id, convId));
+
+        sendEvent("complete", {
+          message: assistantMsg,
+          workflowJson: modifierResult.modifiedWorkflowJson,
+          appliedToN8n,
+          workflowId: targetWorkflowId,
+          workflowName: targetWorkflowName,
+          isWorkflowModification: true,
+          phases: modifierResult.phases,
+          totalTimeMs: modifierResult.totalTimeMs,
+        });
+      } catch (err) {
+        logger.error({ err }, "Modify workflow SSE error");
+        sendEvent("error", { message: String(err) });
+      }
+
     } else {
       sendEvent("start", { type: "chat" });
 
@@ -476,6 +629,84 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
         ? `❌ فشل إنشاء الـ workflow: ${String(err)}`
         : `❌ Workflow creation failed: ${String(err)}`;
     }
+
+  } else if (!isCreateIntent && detectWorkflowModifyIntent(content) && openaiKey) {
+    // ── Modify Intent (non-SSE) ──────────────────────────────────────────────
+    logger.info({ convId, content: content.slice(0, 50) }, "Routing to workflow modifier");
+    modelUsed = "modifier-gpt4o+gemini";
+
+    try {
+      let currentWorkflowJson: Record<string, unknown> | null = null;
+      let targetWorkflowName: string | null = null;
+      let targetWorkflowId: string | null = null;
+
+      try {
+        const allWorkflows = await getWorkflows();
+        if (allWorkflows.length > 0) {
+          const match = await extractWorkflowNameFromMessage(
+            content,
+            allWorkflows.map((w) => ({ id: w.id, name: w.name })),
+            openaiKey
+          );
+          if (match) {
+            targetWorkflowId = match.workflowId;
+            targetWorkflowName = match.workflowName;
+            currentWorkflowJson = await getWorkflow(targetWorkflowId) as unknown as Record<string, unknown>;
+          }
+        }
+      } catch {
+        logger.warn("Could not fetch workflows from n8n for modify intent");
+      }
+
+      if (!currentWorkflowJson) {
+        assistantContent = lang === "ar"
+          ? `⚠️ **لم أتمكن من تحديد الـ workflow المقصود.**\n\nيرجى:\n1. التأكد من أن n8n مضبوط ومتصل في **الإعدادات**\n2. أو ذكر اسم الـ workflow بوضوح في رسالتك\n3. أو استخدام زر "تحليل وإصلاح" من صفحة الـ Workflows`
+          : `⚠️ **Could not identify which workflow to modify.**\n\nPlease:\n1. Make sure n8n is configured and connected in **Settings**\n2. Or mention the workflow name clearly in your message\n3. Or use the "Analyze & Fix" button from the Workflows page`;
+      } else {
+        const modifierResult = await runWorkflowModifier(
+          currentWorkflowJson,
+          content,
+          lang,
+          { openaiKey, geminiKey: geminiKey ?? undefined }
+        );
+
+        if (modifierResult.success && modifierResult.modifiedWorkflowJson) {
+          let appliedToN8n = false;
+          try {
+            const updatePayload = {
+              name: (modifierResult.modifiedWorkflowJson.name as string) ?? (currentWorkflowJson.name as string),
+              nodes: modifierResult.modifiedWorkflowJson.nodes,
+              connections: modifierResult.modifiedWorkflowJson.connections,
+              settings: modifierResult.modifiedWorkflowJson.settings ?? { executionOrder: "v1" },
+            };
+            await updateWorkflow(targetWorkflowId!, updatePayload as Record<string, unknown>);
+            appliedToN8n = true;
+          } catch (applyErr) {
+            logger.warn({ applyErr }, "Could not apply modification to n8n (non-SSE)");
+          }
+
+          if (lang === "ar") {
+            assistantContent = appliedToN8n
+              ? `✅ **تم تعديل الـ workflow "${targetWorkflowName}" وتطبيقه على n8n بنجاح!**\n\n📝 **التغييرات:** ${modifierResult.changesSummaryAr}`
+              : `⚠️ **تم توليد التعديل لكن لم يُطبَّق تلقائياً على n8n.**\n\n📝 **التغييرات:** ${modifierResult.changesSummaryAr}\n\n\`\`\`json\n${JSON.stringify(modifierResult.modifiedWorkflowJson, null, 2)}\n\`\`\``;
+          } else {
+            assistantContent = appliedToN8n
+              ? `✅ **Workflow "${targetWorkflowName}" modified and applied to n8n successfully!**\n\n📝 **Changes:** ${modifierResult.changesSummary}`
+              : `⚠️ **Modification generated but not automatically applied to n8n.**\n\n📝 **Changes:** ${modifierResult.changesSummary}\n\n\`\`\`json\n${JSON.stringify(modifierResult.modifiedWorkflowJson, null, 2)}\n\`\`\``;
+          }
+        } else {
+          assistantContent = lang === "ar"
+            ? `❌ فشل توليد التعديل: ${modifierResult.error ?? "خطأ غير معروف"}`
+            : `❌ Failed to generate modification: ${modifierResult.error ?? "Unknown error"}`;
+        }
+      }
+    } catch (err) {
+      logger.error({ err }, "Modify workflow non-SSE error");
+      assistantContent = lang === "ar"
+        ? `❌ خطأ أثناء تعديل الـ workflow: ${String(err)}`
+        : `❌ Error while modifying workflow: ${String(err)}`;
+    }
+
   } else if (openaiKey) {
     const OpenAI = (await import("openai")).default;
     const openai = new OpenAI({ apiKey: openaiKey, timeout: 60000 });

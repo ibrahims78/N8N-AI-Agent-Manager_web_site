@@ -516,3 +516,32 @@ export function detectWorkflowCreationIntent(message: string): boolean {
   }
   return CREATE_KEYWORDS_EN.some((kw) => lower.includes(kw));
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Modify / Edit Intent Detection
+// ─────────────────────────────────────────────────────────────────────────────
+
+const MODIFY_KEYWORDS_AR = [
+  "عدّل", "عدل", "غيّر", "غير", "اصلح", "أصلح", "صلّح", "حدّث", "حدث",
+  "أضف", "اضف", "احذف", "حذف", "ازل", "أزل", "عدّل الـ", "عدّل ال",
+  "تعديل", "تغيير", "إصلاح", "تحديث", "إضافة", "حذف", "ادمج", "قسّم",
+  "بدّل", "بدل", "طوّر", "طور", "عدل على", "شغّل", "وقّف", "فعّل",
+];
+
+const MODIFY_KEYWORDS_EN = [
+  "modify", "edit", "update", "change", "fix", "add", "remove", "delete",
+  "adjust", "alter", "rename", "replace", "improve", "refactor", "patch",
+  "tweak", "append", "insert", "disable", "enable", "activate", "deactivate",
+  "split", "merge", "connect", "disconnect", "move node", "add node",
+  "add a step", "change the trigger", "update the workflow",
+];
+
+export function detectWorkflowModifyIntent(message: string): boolean {
+  const lower = message.toLowerCase();
+  const isArabic = /[\u0600-\u06FF]/.test(message);
+
+  if (isArabic) {
+    return MODIFY_KEYWORDS_AR.some((kw) => message.includes(kw));
+  }
+  return MODIFY_KEYWORDS_EN.some((kw) => lower.includes(kw));
+}
