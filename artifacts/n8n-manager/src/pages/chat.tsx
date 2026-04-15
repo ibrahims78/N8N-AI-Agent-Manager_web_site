@@ -724,6 +724,7 @@ export default function ChatPage() {
   const [phases, setPhases] = useState<PhaseProgress[]>([]);
   const [generationResult, setGenerationResult] = useState<GenerationResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [optimisticUserMsg, setOptimisticUserMsg] = useState<Message | null>(null);
 
   // Persist generation result per conversation in sessionStorage
   const saveGenerationResult = useCallback((convId: number | null, result: GenerationResult | null) => {
@@ -827,7 +828,10 @@ export default function ChatPage() {
 
   const conversations: Conversation[] = ((convRes as { data?: { conversations?: unknown[] } } | undefined)?.data?.conversations ?? []) as Conversation[];
   const detail = convDetail as { data?: { conversation?: Conversation; messages?: Message[] } } | undefined;
-  const messages: Message[] = detail?.data?.messages ?? [];
+  const serverMessages: Message[] = detail?.data?.messages ?? [];
+  const messages: Message[] = optimisticUserMsg
+    ? [...serverMessages, optimisticUserMsg]
+    : serverMessages;
 
   // ── Derived state ──
   const filteredConvs = conversations.filter(c =>
@@ -881,6 +885,7 @@ export default function ChatPage() {
     const saved = loadGenerationResult(selectedConvId);
     setGenerationResult(saved);
     if (!saved) setPhases([]);
+    setOptimisticUserMsg(null);
   }, [selectedConvId, loadGenerationResult]);
 
   // Phase 4: Global keyboard shortcuts
@@ -1019,6 +1024,14 @@ export default function ChatPage() {
     saveGenerationResult(selectedConvId, null);
     setPhases([]);
 
+    // ── Optimistic UI: show user message immediately ──
+    setOptimisticUserMsg({
+      id: -1,
+      role: "user",
+      content: fullContent,
+      createdAt: new Date().toISOString(),
+    });
+
     const headers: Record<string, string> = { ...authHeader, "Content-Type": "application/json" };
     const token = localStorage.getItem("accessToken");
     if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -1065,6 +1078,7 @@ export default function ChatPage() {
               } else if ((parsed as { message?: unknown }).message !== undefined) {
                 setIsGenerating(false);
                 setSending(false);
+                setOptimisticUserMsg(null);
                 if ((parsed as { workflowJson?: unknown }).workflowJson) {
                   const r = parsed as { workflowJson: Record<string, unknown>; qualityScore: number; qualityGrade: string; roundsCount: number; totalTimeMs: number; phases: PhaseProgress[] };
                   const result: GenerationResult = { workflowJson: r.workflowJson, qualityScore: r.qualityScore ?? 75, qualityGrade: r.qualityGrade ?? "B", roundsCount: r.roundsCount ?? 1, totalTimeMs: r.totalTimeMs ?? 0, phases: r.phases ?? [] };
@@ -1086,6 +1100,7 @@ export default function ChatPage() {
     }).catch((err: unknown) => {
       setSending(false);
       setIsGenerating(false);
+      setOptimisticUserMsg(null);
       toast({ title: String(err), variant: "destructive" });
     });
   }, [input, sending, selectedConvId, authHeader, chatMode, refetchConv, queryClient, toast, attachments, isRTL, saveGenerationResult, detectAnalysisIntent, openAnalyzePicker]);
