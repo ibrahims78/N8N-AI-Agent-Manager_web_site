@@ -958,10 +958,47 @@ export default function ChatPage() {
     e.target.value = "";
   };
 
+  // ── Workflow Analysis helpers (must be before handleSend) ──
+  const openAnalyzePicker = useCallback(async () => {
+    setAnalyzePickerOpen(true);
+    if (n8nWorkflows.length === 0) {
+      setLoadingWorkflows(true);
+      try {
+        const res = await fetch(`${API_BASE}/workflows`, { headers: authHeader });
+        const data = await res.json() as { success: boolean; data?: { workflows?: N8nWorkflowBasic[] } };
+        setN8nWorkflows(data.data?.workflows ?? []);
+      } catch {
+        toast({ title: isRTL ? "تعذر تحميل قائمة الـ Workflows" : "Could not load workflows", variant: "destructive" });
+      } finally {
+        setLoadingWorkflows(false);
+      }
+    }
+  }, [n8nWorkflows.length, authHeader, isRTL, toast]);
+
   // ── Send Handler ──
+  const detectAnalysisIntent = useCallback((text: string): boolean => {
+    const lower = text.toLowerCase();
+    const arabicPatterns = ["حلل", "تحليل", "افحص", "فحص", "اكتشف", "مشاكل الـ", "مشاكل ال", "ايش المشكلة", "وين المشكلة", "خطأ في", "خطأ بال"];
+    const englishPatterns = ["analyze", "analyse", "debug", "diagnose", "find issue", "check issue", "fix workflow", "what's wrong", "what is wrong", "find problem", "identify problem"];
+    return arabicPatterns.some(p => text.includes(p)) || englishPatterns.some(p => lower.includes(p));
+  }, []);
+
   const handleSend = useCallback((overrideText?: string) => {
     const text = (overrideText ?? input).trim();
     if (!text || sending || !selectedConvId) return;
+
+    // Intercept analysis intent → open picker instead
+    if (detectAnalysisIntent(text)) {
+      setInput("");
+      toast({
+        title: isRTL ? "🔍 اختر مسار العمل للتحليل" : "🔍 Select a workflow to analyze",
+        description: isRTL
+          ? "استخدم نافذة الاختيار لتحديد الـ Workflow الذي تريد تحليله"
+          : "Use the picker to select the workflow you want to analyze",
+      });
+      void openAnalyzePicker();
+      return;
+    }
 
     // Build content with attachments
     let fullContent = text;
@@ -1051,7 +1088,7 @@ export default function ChatPage() {
       setIsGenerating(false);
       toast({ title: String(err), variant: "destructive" });
     });
-  }, [input, sending, selectedConvId, authHeader, chatMode, refetchConv, queryClient, toast, attachments, isRTL, saveGenerationResult]);
+  }, [input, sending, selectedConvId, authHeader, chatMode, refetchConv, queryClient, toast, attachments, isRTL, saveGenerationResult, detectAnalysisIntent, openAnalyzePicker]);
 
   useEffect(() => {
     if (selectedConvId && pendingAutoSend.current) {
@@ -1060,22 +1097,6 @@ export default function ChatPage() {
       handleSend(message);
     }
   }, [selectedConvId, handleSend]);
-
-  const openAnalyzePicker = useCallback(async () => {
-    setAnalyzePickerOpen(true);
-    if (n8nWorkflows.length === 0) {
-      setLoadingWorkflows(true);
-      try {
-        const res = await fetch(`${API_BASE}/workflows`, { headers: authHeader });
-        const data = await res.json() as { success: boolean; data?: { workflows?: N8nWorkflowBasic[] } };
-        setN8nWorkflows(data.data?.workflows ?? []);
-      } catch {
-        toast({ title: isRTL ? "تعذر تحميل قائمة الـ Workflows" : "Could not load workflows", variant: "destructive" });
-      } finally {
-        setLoadingWorkflows(false);
-      }
-    }
-  }, [n8nWorkflows.length, authHeader, isRTL, toast]);
 
   const handleAnalyze = useCallback((workflowId: string, workflowName: string) => {
     setAnalyzePickerOpen(false);
