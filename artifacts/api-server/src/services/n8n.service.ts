@@ -189,7 +189,14 @@ export async function updateWorkflow(id: string, data: Record<string, unknown>):
     method: "PUT",
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Failed to update workflow");
+  if (!res.ok) {
+    let detail = `n8n responded with ${res.status}`;
+    try {
+      const body = await res.json() as { message?: string; error?: string };
+      detail = body.message ?? body.error ?? JSON.stringify(body);
+    } catch {}
+    throw new Error(`فشل تحديث الـ workflow في n8n: ${detail}`);
+  }
   return res.json() as Promise<N8nWorkflow>;
 }
 

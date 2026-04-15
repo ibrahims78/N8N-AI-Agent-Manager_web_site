@@ -199,7 +199,7 @@ Analyze this workflow and return the JSON report.`;
       const p2Start = Date.now();
 
       const genAI = new GoogleGenerativeAI(config.geminiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       const p2Prompt = `You are reviewing an analysis of an n8n workflow.
 

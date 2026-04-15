@@ -285,6 +285,12 @@ router.post("/:id/apply-fix", authenticate, requirePermission("manage_workflows"
 
   try {
     const current = await getWorkflow(id);
+    const wasActive = current.active;
+
+    if (wasActive) {
+      try { await deactivateWorkflow(id); } catch { /* ignore deactivation errors */ }
+    }
+
     const updatePayload = {
       name: (workflowJson.name as string) ?? current.name,
       nodes: workflowJson.nodes ?? current.nodes,
@@ -293,6 +299,10 @@ router.post("/:id/apply-fix", authenticate, requirePermission("manage_workflows"
     };
 
     const updated = await updateWorkflow(id, updatePayload);
+
+    if (wasActive) {
+      try { await activateWorkflow(id); } catch { /* ignore reactivation errors — workflow was updated */ }
+    }
 
     try {
       const versions = await db.select().from(workflowVersionsTable)
