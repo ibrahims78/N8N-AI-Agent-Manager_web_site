@@ -1,12 +1,13 @@
 /**
  * sequentialEngine.service.ts
- * The 4-Phase Sequential AI Engine for n8n Workflow Generation.
+ * The Sequential AI Engine for n8n Workflow Generation.
  *
  * Pipeline:
- *   Phase 1: GPT-4o    → Creates initial workflow JSON
- *   Phase 2: Gemini    → Reviews and scores the workflow
- *   Phase 3: GPT-4o    → Refines based on Gemini's feedback
- *   Phase 4: Gemini    → Final validation and quality gate
+ *   Phase 1A: GPT-4o    → Identifies required nodes (node analysis)
+ *   Phase 1B: GPT-4o    → Builds workflow JSON with injected node schemas
+ *   Phase 2:  Gemini    → Reviews and scores the workflow
+ *   Phase 3:  GPT-4o    → Refines based on Gemini's feedback
+ *   Phase 4:  Gemini    → Final validation and quality gate
  *
  * If Phase 4 score < threshold: up to 2 additional refinement rounds.
  */
@@ -16,6 +17,10 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { logger } from "../lib/logger";
 import {
   detectLanguage,
+  buildPhase1ASystemPrompt,
+  buildPhase1AUserPrompt,
+  buildPhase1BSystemPrompt,
+  buildPhase1BUserPrompt,
   buildPhase1SystemPrompt,
   buildPhase1UserPrompt,
   buildPhase2Prompt,
@@ -105,10 +110,30 @@ export async function runSequentialEngine(
   const notify = config.onPhaseUpdate ?? (() => undefined);
 
   const phases: PhaseProgress[] = [
-    { phase: 1, label: "GPT-4o: Creating workflow", labelAr: "GPT-4o: إنشاء الـ workflow", status: "pending" },
-    { phase: 2, label: "Gemini: Reviewing & scoring", labelAr: "Gemini: مراجعة وتقييم", status: "pending" },
-    { phase: 3, label: "GPT-4o: Refining workflow", labelAr: "GPT-4o: تحسين الـ workflow", status: "pending" },
-    { phase: 4, label: "Gemini: Final validation", labelAr: "Gemini: التحقق النهائي", status: "pending" },
+    {
+      phase: 1,
+      label: "GPT-4o: Analyzing nodes & building workflow",
+      labelAr: "GPT-4o: تحليل الـ nodes وبناء الـ workflow",
+      status: "pending",
+    },
+    {
+      phase: 2,
+      label: "Gemini 2.5 Pro: Reviewing & scoring",
+      labelAr: "Gemini 2.5 Pro: مراجعة وتقييم",
+      status: "pending",
+    },
+    {
+      phase: 3,
+      label: "GPT-4o: Refining workflow",
+      labelAr: "GPT-4o: تحسين الـ workflow",
+      status: "pending",
+    },
+    {
+      phase: 4,
+      label: "Gemini 2.5 Pro: Final validation",
+      labelAr: "Gemini 2.5 Pro: التحقق النهائي",
+      status: "pending",
+    },
   ];
 
   const result: EngineResult = {
@@ -130,37 +155,81 @@ export async function runSequentialEngine(
   const openai = new OpenAI({ apiKey: config.openaiKey, timeout: 90000 });
   const geminiAI = new GoogleGenerativeAI(config.geminiKey);
   const openaiModel = config.openaiModel ?? "gpt-4o";
-  const geminiModel = config.geminiModel ?? "gemini-1.5-flash";
+  const geminiModel = config.geminiModel ?? "gemini-2.5-pro";
 
   try {
-    // ─── PHASE 1: GPT-4o Creates Workflow ────────────────────────────────────
+    // ─── PHASE 1: GPT-4o — Two-Step Workflow Creation ─────────────────────────
     const p1Start = Date.now();
     phases[0]!.status = "running";
     notify({ ...phases[0]! });
-    logger.info({ phase: 1 }, "Sequential engine: Phase 1 starting");
+    logger.info({ phase: "1A" }, "Sequential engine: Phase 1A starting — node analysis");
 
     let phase1JsonString: string;
-    try {
-      const p1Response = await openai.chat.completions.create({
-        model: openaiModel,
-        messages: [
-          { role: "system", content: buildPhase1SystemPrompt(lang) },
-          { role: "user", content: buildPhase1UserPrompt(userRequest, lang) },
-        ],
-        max_tokens: 4000,
-        temperature: 0.3,
-        response_format: { type: "json_object" },
-      });
 
-      phase1JsonString = p1Response.choices[0]?.message?.content ?? "";
+    try {
+      // ── Step 1A: Identify required nodes ──────────────────────────────────
+      let nodeAnalysis = "";
+      try {
+        const p1aResponse = await openai.chat.completions.create({
+          model: openaiModel,
+          messages: [
+            { role: "system", content: buildPhase1ASystemPrompt() },
+            { role: "user", content: buildPhase1AUserPrompt(userRequest) },
+          ],
+          max_tokens: 500,
+          temperature: 0.1,
+          response_format: { type: "json_object" },
+        });
+        nodeAnalysis = p1aResponse.choices[0]?.message?.content ?? "";
+        logger.info({ nodeAnalysis }, "Phase 1A complete — nodes identified");
+      } catch (err) {
+        logger.warn({ err }, "Phase 1A failed — falling back to direct generation");
+      }
+
+      // ── Step 1B: Build workflow JSON with injected schemas ─────────────────
+      logger.info({ phase: "1B" }, "Sequential engine: Phase 1B starting — workflow build");
+
+      if (nodeAnalysis) {
+        const p1bResponse = await openai.chat.completions.create({
+          model: openaiModel,
+          messages: [
+            {
+              role: "system",
+              content: buildPhase1BSystemPrompt(userRequest, lang),
+            },
+            {
+              role: "user",
+              content: buildPhase1BUserPrompt(userRequest, nodeAnalysis, lang),
+            },
+          ],
+          max_tokens: 4000,
+          temperature: 0.2,
+          response_format: { type: "json_object" },
+        });
+        phase1JsonString = p1bResponse.choices[0]?.message?.content ?? "";
+      } else {
+        // Fallback: direct generation without node analysis
+        const p1FallbackResponse = await openai.chat.completions.create({
+          model: openaiModel,
+          messages: [
+            { role: "system", content: buildPhase1SystemPrompt(lang) },
+            { role: "user", content: buildPhase1UserPrompt(userRequest, lang) },
+          ],
+          max_tokens: 4000,
+          temperature: 0.3,
+          response_format: { type: "json_object" },
+        });
+        phase1JsonString = p1FallbackResponse.choices[0]?.message?.content ?? "";
+      }
     } catch (err) {
       logger.error({ err }, "Phase 1 OpenAI call failed");
       phases[0]!.status = "failed";
       notify({ ...phases[0]! });
       result.error = `Phase 1 failed: ${String(err)}`;
-      result.userMessage = lang === "ar"
-        ? "❌ فشلت المرحلة الأولى. تأكد من مفتاح OpenAI API."
-        : "❌ Phase 1 failed. Please verify your OpenAI API key.";
+      result.userMessage =
+        lang === "ar"
+          ? "❌ فشلت المرحلة الأولى. تأكد من مفتاح OpenAI API."
+          : "❌ Phase 1 failed. Please verify your OpenAI API key.";
       result.totalTimeMs = Date.now() - startTime;
       return result;
     }
@@ -178,13 +247,16 @@ export async function runSequentialEngine(
         result.phase1Result = { raw: phase1JsonString };
       }
     } else {
-      result.phase1Result = sanitizeWorkflowJson(p1Validation.parsedJson) as Record<string, unknown>;
+      result.phase1Result = sanitizeWorkflowJson(p1Validation.parsedJson) as Record<
+        string,
+        unknown
+      >;
     }
 
     const phase1JsonForReview = JSON.stringify(result.phase1Result, null, 2);
     logger.info({ nodeCount: p1Validation.nodeCount }, "Phase 1 complete");
 
-    // ─── PHASE 2: Gemini Reviews ──────────────────────────────────────────────
+    // ─── PHASE 2: Gemini 2.5 Pro Reviews ─────────────────────────────────────
     const p2Start = Date.now();
     phases[1]!.status = "running";
     notify({ ...phases[1]! });
@@ -272,10 +344,16 @@ export async function runSequentialEngine(
 
       const p3Validation = validateWorkflowJson(phase3JsonString);
       if (p3Validation.valid && p3Validation.parsedJson) {
-        result.phase3Result = sanitizeWorkflowJson(p3Validation.parsedJson) as Record<string, unknown>;
+        result.phase3Result = sanitizeWorkflowJson(p3Validation.parsedJson) as Record<
+          string,
+          unknown
+        >;
       } else {
         try {
-          result.phase3Result = JSON.parse(extractJson(phase3JsonString)) as Record<string, unknown>;
+          result.phase3Result = JSON.parse(extractJson(phase3JsonString)) as Record<
+            string,
+            unknown
+          >;
         } catch {
           result.phase3Result = result.phase1Result;
         }
@@ -290,7 +368,7 @@ export async function runSequentialEngine(
     const finalJsonForValidation = JSON.stringify(result.phase3Result, null, 2);
     logger.info("Phase 3 complete");
 
-    // ─── PHASE 4: Gemini Final Validation ────────────────────────────────────
+    // ─── PHASE 4: Gemini 2.5 Pro Final Validation ─────────────────────────────
     const p4Start = Date.now();
     phases[3]!.status = "running";
     notify({ ...phases[3]! });
@@ -301,9 +379,7 @@ export async function runSequentialEngine(
       readyForDeployment: true,
       remainingIssues: [],
       validationSummary:
-        lang === "ar"
-          ? "تم التحقق من الـ workflow بنجاح"
-          : "Workflow validated successfully",
+        lang === "ar" ? "تم التحقق من الـ workflow بنجاح" : "Workflow validated successfully",
       qualityGrade: "B",
       deploymentNotes:
         lang === "ar"
@@ -408,7 +484,7 @@ export async function runSequentialEngine(
       lang === "ar"
         ? `❌ حدث خطأ غير متوقع في محرك الذكاء الاصطناعي: ${String(err)}`
         : `❌ Unexpected error in AI engine: ${String(err)}`;
-    phases.forEach(p => {
+    phases.forEach((p) => {
       if (p.status === "running") p.status = "failed";
     });
     return result;
@@ -436,7 +512,7 @@ export function detectWorkflowCreationIntent(message: string): boolean {
   const isArabic = /[\u0600-\u06FF]/.test(message);
 
   if (isArabic) {
-    return CREATE_KEYWORDS_AR.some(kw => message.includes(kw));
+    return CREATE_KEYWORDS_AR.some((kw) => message.includes(kw));
   }
-  return CREATE_KEYWORDS_EN.some(kw => lower.includes(kw));
+  return CREATE_KEYWORDS_EN.some((kw) => lower.includes(kw));
 }
