@@ -115,41 +115,62 @@ function formatSize(bytes: number): string {
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function PhaseProgressBar({ phases, isRTL }: { phases: PhaseProgress[]; isRTL: boolean }) {
-  const phaseColors = {
-    pending: "bg-muted text-muted-foreground",
-    running: "bg-accent/20 text-accent border border-accent/40",
-    done: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-    failed: "bg-destructive/10 text-destructive",
-  };
-  const phaseIcons = {
-    pending: <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />,
-    running: <Loader2 size={12} className="animate-spin text-accent" />,
-    done: <CheckCircle2 size={12} className="text-emerald-500" />,
-    failed: <XCircle size={12} className="text-destructive" />,
-  };
   return (
-    <div className="bg-card border border-border rounded-2xl rounded-ts-sm px-4 py-3 space-y-2 max-w-[85%]">
-      <p className="text-xs font-medium text-muted-foreground mb-2">
-        {isRTL ? "جاري إنشاء الـ Workflow..." : "Generating Workflow..."}
+    <div className="bg-card border border-border rounded-2xl rounded-ts-sm px-4 py-4 max-w-[85%] shadow-sm">
+      <p className="text-xs font-semibold text-foreground mb-4 flex items-center gap-2">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
+        </span>
+        {isRTL ? "جاري معالجة الـ Workflow..." : "Processing Workflow..."}
       </p>
-      {phases.map((phase) => (
-        <motion.div
-          key={phase.phase}
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: phase.phase * 0.1 }}
-          className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs transition-all ${phaseColors[phase.status]}`}
-        >
-          {phaseIcons[phase.status]}
-          <span className="flex-1 font-medium">{isRTL ? phase.labelAr : phase.label}</span>
-          {phase.durationMs !== undefined && phase.status === "done" && (
-            <span className="text-[10px] opacity-60">{(phase.durationMs / 1000).toFixed(1)}s</span>
-          )}
-          {phase.status === "running" && (
-            <span className="text-[10px] animate-pulse">{isRTL ? "جارٍ..." : "working..."}</span>
-          )}
-        </motion.div>
-      ))}
+      <div className="relative">
+        <div className={`absolute ${isRTL ? "end-3.5" : "start-3.5"} top-3.5 bottom-3.5 w-px bg-gradient-to-b from-accent/40 via-border to-border`} />
+        <div className="space-y-3">
+          {phases.map((phase, idx) => (
+            <motion.div
+              key={phase.phase}
+              initial={{ opacity: 0, x: isRTL ? 10 : -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: idx * 0.08 }}
+              className={`flex items-center gap-3 relative ${isRTL ? "flex-row-reverse" : ""}`}
+            >
+              <div className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                phase.status === "done"
+                  ? "bg-emerald-500 shadow-md shadow-emerald-500/30"
+                  : phase.status === "running"
+                  ? "bg-gradient-to-br from-violet-500 to-indigo-500 shadow-md shadow-accent/30"
+                  : phase.status === "failed"
+                  ? "bg-destructive shadow-md shadow-destructive/30"
+                  : "bg-muted border border-border"
+              }`}>
+                {phase.status === "pending" && <span className="text-[9px] font-bold text-muted-foreground">{phase.phase}</span>}
+                {phase.status === "running" && <Loader2 size={12} className="animate-spin text-white" />}
+                {phase.status === "done" && <Check size={12} className="text-white" />}
+                {phase.status === "failed" && <XCircle size={12} className="text-white" />}
+              </div>
+              <div className={`flex-1 flex items-center justify-between gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
+                <span className={`text-xs font-medium transition-colors ${
+                  phase.status === "done" ? "text-foreground"
+                  : phase.status === "running" ? "text-accent"
+                  : phase.status === "failed" ? "text-destructive"
+                  : "text-muted-foreground"
+                }`}>
+                  {isRTL ? phase.labelAr : phase.label}
+                </span>
+                <span className="text-[10px] tabular-nums shrink-0">
+                  {phase.status === "done" && phase.durationMs !== undefined && (
+                    <span className="text-emerald-600 dark:text-emerald-400 font-medium">{(phase.durationMs / 1000).toFixed(1)}s</span>
+                  )}
+                  {phase.status === "running" && (
+                    <span className="text-accent animate-pulse">{isRTL ? "جارٍ..." : "running..."}</span>
+                  )}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -245,22 +266,22 @@ function QualityReport({ result, isRTL, onSendToN8n }: {
 // Phase 5: Improved Typing Indicator
 function TypingIndicator({ isRTL }: { isRTL: boolean }) {
   return (
-    <div className="flex items-end gap-2">
-      <div className="w-7 h-7 rounded-full bg-accent/15 flex items-center justify-center shrink-0">
-        <Bot size={14} className="text-accent" />
+    <div className="flex items-end gap-2.5">
+      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-500 flex items-center justify-center shrink-0 shadow-md shadow-violet-500/20">
+        <Bot size={16} className="text-white" />
       </div>
-      <div className="bg-card border border-border rounded-2xl rounded-ts-sm px-4 py-3 flex items-center gap-2">
+      <div className="bg-card border border-border rounded-2xl rounded-ts-sm px-4 py-3 flex items-center gap-3 shadow-sm">
         <div className="flex gap-1">
           {[0, 1, 2].map(i => (
             <motion.div
               key={i}
-              className="w-1.5 h-1.5 rounded-full bg-accent/70"
-              animate={{ scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }}
+              className="w-2 h-2 rounded-full bg-gradient-to-br from-violet-500 to-indigo-500"
+              animate={{ y: [0, -5, 0], opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 1, repeat: Infinity, delay: i * 0.18, ease: "easeInOut" }}
             />
           ))}
         </div>
-        <span className="text-xs text-muted-foreground">{isRTL ? "الوكيل يكتب..." : "Agent is typing..."}</span>
+        <span className="text-xs text-muted-foreground">{isRTL ? "الوكيل يفكر..." : "Agent is thinking..."}</span>
       </div>
     </div>
   );
@@ -1300,12 +1321,13 @@ export default function ChatPage() {
   const renderConvItem = (conv: Conversation) => {
     const isPinned = pinnedConvIds.includes(conv.id);
     const isRenaming = renamingConvId === conv.id;
-    const convTypeColor = conv.type === "create" ? "bg-emerald-500" : conv.type === "query" ? "bg-blue-500" : "bg-muted-foreground";
+    const isCreate = conv.type === "create";
+    const isSelected = selectedConvId === conv.id;
 
     return (
       <div
         key={conv.id}
-        className={`flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer mb-0.5 group transition-colors relative ${selectedConvId === conv.id ? "bg-accent/10 text-accent" : "hover:bg-muted text-foreground"}`}
+        className={`flex items-center gap-2 px-2 py-2 rounded-xl cursor-pointer mb-0.5 group transition-all relative ${isSelected ? "bg-accent/10 shadow-sm" : "hover:bg-muted"}`}
         onClick={() => {
           if (isRenaming) return;
           setSelectedConvId(conv.id);
@@ -1315,14 +1337,20 @@ export default function ChatPage() {
       >
         {sidebarCollapsed ? (
           <div className="relative group/icon mx-auto">
-            <div className={`w-2 h-2 rounded-full shrink-0 ${convTypeColor}`} />
+            <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isCreate ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" : "bg-blue-500/15 text-blue-600 dark:text-blue-400"}`}>
+              {isCreate ? <Zap size={11} /> : <MessageSquare size={11} />}
+            </div>
             <div className={`absolute ${isRTL ? "right-full me-2" : "left-full ms-2"} top-1/2 -translate-y-1/2 bg-popover border border-border rounded-lg px-2 py-1 text-xs whitespace-nowrap shadow-lg opacity-0 group-hover/icon:opacity-100 transition-opacity z-50 pointer-events-none`}>
               {conv.title}
             </div>
           </div>
         ) : (
           <>
-            <div className={`w-2 h-2 rounded-full shrink-0 ${convTypeColor}`} />
+            {/* Type icon */}
+            <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${isCreate ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" : "bg-blue-500/15 text-blue-600 dark:text-blue-400"}`}>
+              {isCreate ? <Zap size={10} /> : <MessageSquare size={10} />}
+            </div>
+
             {isRenaming ? (
               <input
                 autoFocus
@@ -1337,32 +1365,38 @@ export default function ChatPage() {
                 className="flex-1 text-xs bg-background border border-accent/50 rounded px-1.5 py-0.5 focus:outline-none"
               />
             ) : (
-              <span
-                className="text-xs truncate flex-1"
-                onDoubleClick={e => {
-                  e.stopPropagation();
-                  setRenamingConvId(conv.id);
-                  setRenameValue(conv.title);
-                }}
-              >
-                {conv.title}
-              </span>
+              <div className="flex-1 min-w-0">
+                <span
+                  className={`text-xs truncate block font-medium ${isSelected ? "text-accent" : "text-foreground"} transition-colors`}
+                  onDoubleClick={e => {
+                    e.stopPropagation();
+                    setRenamingConvId(conv.id);
+                    setRenameValue(conv.title);
+                  }}
+                >
+                  {conv.title}
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  {relativeTime(conv.updatedAt, isRTL)}
+                  {conv.messageCount > 0 && ` · ${conv.messageCount}`}
+                </span>
+              </div>
             )}
 
-            <div className={`flex items-center gap-0.5 ${isRenaming ? "hidden" : "opacity-0 group-hover:opacity-100"} transition-opacity`}>
+            <div className={`flex items-center gap-0.5 ${isRenaming ? "hidden" : "opacity-0 group-hover:opacity-100"} transition-opacity shrink-0`}>
               <button
                 onClick={e => { e.stopPropagation(); togglePin(conv.id); }}
                 className={`p-0.5 rounded hover:bg-accent/10 transition-colors ${isPinned ? "text-accent" : "text-muted-foreground"}`}
                 title={isRTL ? "تثبيت" : "Pin"}
               >
-                <Pin size={11} className={isPinned ? "fill-current" : ""} />
+                <Pin size={10} className={isPinned ? "fill-current" : ""} />
               </button>
               <button
                 onClick={e => { e.stopPropagation(); deleteConv({ id: conv.id.toString() } as Parameters<typeof deleteConv>[0]); }}
                 className="p-0.5 rounded hover:text-destructive text-muted-foreground transition-colors"
                 title={isRTL ? "حذف" : "Delete"}
               >
-                <Trash2 size={11} />
+                <Trash2 size={10} />
               </button>
             </div>
           </>
@@ -1578,25 +1612,60 @@ export default function ChatPage() {
             )}
 
             {!selectedConvId ? (
-              <div className="flex flex-col items-center justify-center h-full gap-4">
-                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-                  <MessageSquare size={24} className="text-accent" />
+              <div className="flex flex-col items-center justify-center h-full gap-6 px-4">
+                {/* Animated logo */}
+                <div className="relative">
+                  <motion.div
+                    animate={{ boxShadow: ["0 0 0 0px rgba(139,92,246,0.3)", "0 0 0 12px rgba(139,92,246,0)", "0 0 0 0px rgba(139,92,246,0)"] }}
+                    transition={{ duration: 2.5, repeat: Infinity }}
+                    className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-500 flex items-center justify-center shadow-xl shadow-violet-500/30"
+                  >
+                    <Bot size={30} className="text-white" />
+                  </motion.div>
+                  <div className="absolute -bottom-1.5 -end-1.5 w-6 h-6 rounded-full bg-emerald-500 border-2 border-background flex items-center justify-center shadow-sm">
+                    <Zap size={11} className="text-white" />
+                  </div>
                 </div>
-                <p className="text-muted-foreground text-sm">{t("chat.startNew")}</p>
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {suggestions.map((s, i) => (
-                    <button
+                <div className="text-center space-y-1">
+                  <h3 className="text-base font-bold text-foreground">
+                    {isRTL ? "مرحباً! أنا وكيل n8n AI" : "Hi! I'm your n8n AI Agent"}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {isRTL ? "أبني لك workflows احترافية بالذكاء الاصطناعي" : "I build professional workflows with AI"}
+                  </p>
+                </div>
+                {/* Quick action cards */}
+                <div className="grid grid-cols-2 gap-2 w-full max-w-xs">
+                  {[
+                    { icon: <Send size={13} />, bg: "bg-blue-500/10 text-blue-600 dark:text-blue-400", label: isRTL ? "إرسال إيميل تلقائي" : "Auto send emails", desc: isRTL ? "Gmail + شروط مخصصة" : "Gmail + conditions", type: "create" as const },
+                    { icon: <Zap size={13} />, bg: "bg-violet-500/10 text-violet-600 dark:text-violet-400", label: isRTL ? "Webhook → Slack" : "Webhook → Slack", desc: isRTL ? "استقبل وأرسل تنبيه" : "Receive & notify", type: "create" as const },
+                    { icon: <FileText size={13} />, bg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400", label: isRTL ? "تقرير أسبوعي" : "Weekly report", desc: isRTL ? "جدولة + Sheets" : "Schedule + Sheets", type: "create" as const },
+                    { icon: <Bot size={13} />, bg: "bg-orange-500/10 text-orange-600 dark:text-orange-400", label: isRTL ? "وكيل AI مخصص" : "Custom AI agent", desc: isRTL ? "GPT + APIs خارجية" : "GPT + external APIs", type: "create" as const },
+                  ].map((action, i) => (
+                    <motion.button
                       key={i}
-                      onClick={() => createConv({ title: s, type: "query" } as Parameters<typeof createConv>[0])}
-                      className="px-3 py-1.5 rounded-full border border-border text-sm text-muted-foreground hover:text-foreground hover:border-accent/50 transition-colors"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 + i * 0.07 }}
+                      onClick={() => createConv({ title: action.label, type: action.type } as Parameters<typeof createConv>[0])}
+                      className="flex flex-col gap-2 p-3 rounded-xl border border-border bg-card hover:border-accent/40 hover:bg-accent/5 hover:shadow-md transition-all text-start group"
                     >
-                      {s}
-                    </button>
+                      <div className={`w-7 h-7 rounded-lg ${action.bg} flex items-center justify-center`}>
+                        {action.icon}
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-foreground group-hover:text-accent transition-colors leading-snug">{action.label}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{action.desc}</p>
+                      </div>
+                    </motion.button>
                   ))}
                 </div>
               </div>
             ) : !messages.length && !isGenerating ? (
-              <div className="flex items-center justify-center h-full">
+              <div className="flex flex-col items-center justify-center h-full gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600/20 to-indigo-500/20 flex items-center justify-center">
+                  <MessageSquare size={18} className="text-accent" />
+                </div>
                 <p className="text-sm text-muted-foreground">
                   {isRTL ? "اكتب رسالتك لبدء المحادثة" : "Type a message to start the conversation"}
                 </p>
@@ -1621,10 +1690,10 @@ export default function ChatPage() {
                         onMouseEnter={() => setHoveredMsgId(msg.id)}
                         onMouseLeave={() => setHoveredMsgId(null)}
                       >
-                        {/* Phase 5: Avatar - Assistant (shown on left for LTR, right for RTL) */}
+                        {/* Assistant Avatar */}
                         {!isUser && (
-                          <div className="w-7 h-7 rounded-full bg-accent/15 flex items-center justify-center shrink-0">
-                            <Bot size={14} className="text-accent" />
+                          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-500 flex items-center justify-center shrink-0 shadow-md shadow-violet-500/20">
+                            <Bot size={16} className="text-white" />
                           </div>
                         )}
 
@@ -1659,8 +1728,8 @@ export default function ChatPage() {
                         ) : (
                           <div
                             className={`max-w-[75%] relative group/msg ${isUser
-                              ? "bg-accent text-white rounded-2xl rounded-te-sm"
-                              : "bg-card border border-border text-foreground rounded-2xl rounded-ts-sm"
+                              ? "bg-gradient-to-br from-violet-600 to-indigo-500 text-white rounded-2xl rounded-te-sm shadow-md shadow-violet-500/20"
+                              : "bg-card border border-border text-foreground rounded-2xl rounded-ts-sm shadow-sm"
                             } px-4 py-3 text-sm`}
                           >
                             {/* Phase 5: Model badge */}
@@ -1735,9 +1804,9 @@ export default function ChatPage() {
                           </div>
                         )}
 
-                        {/* Phase 5: User Avatar */}
+                        {/* User Avatar */}
                         {isUser && (
-                          <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center shrink-0 text-xs font-bold text-primary">
+                          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-indigo-400 flex items-center justify-center shrink-0 shadow-md shadow-accent/20 text-xs font-bold text-white">
                             {userInitial}
                           </div>
                         )}
@@ -1892,9 +1961,9 @@ export default function ChatPage() {
         {/* ── Input Area ── */}
         <div className="px-4 py-3 border-t border-border bg-card shrink-0">
 
-          {/* Phase 3: Attachment previews */}
+          {/* Attachment previews */}
           {attachments.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-2">
+            <div className="flex flex-wrap gap-2 mb-2.5">
               {attachments.map(att => (
                 <AttachmentBadge
                   key={att.id}
@@ -1905,85 +1974,77 @@ export default function ChatPage() {
             </div>
           )}
 
-          <div className="flex items-end gap-2">
-            {/* Phase 3: Attachment button */}
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="p-2.5 rounded-xl border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0"
-              title={isRTL ? "إرفاق ملف" : "Attach file"}
-            >
-              <Paperclip size={16} />
-            </button>
-            {/* Analyze workflow button */}
-            <button
-              onClick={openAnalyzePicker}
-              disabled={sending}
-              className="p-2.5 rounded-xl border border-violet-300 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 hover:bg-violet-100 dark:hover:bg-violet-900/40 transition-colors shrink-0 disabled:opacity-50"
-              title={isRTL ? "تحليل مسار عمل موجود" : "Analyze existing workflow"}
-            >
-              <ScanSearch size={16} />
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              className="hidden"
-              accept="image/*,application/json,text/plain,text/yaml,application/x-yaml,.yaml,.yml"
-              multiple
-              onChange={handleFileSelect}
+          {/* ── Super-input container ── */}
+          <div className="border border-border rounded-2xl bg-background shadow-sm focus-within:ring-2 focus-within:ring-accent/30 focus-within:border-accent/40 transition-all overflow-hidden">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={handleTextareaInput}
+              onKeyDown={handleKeyDown}
+              placeholder={selectedConvId
+                ? (isRTL ? t("chat.placeholder") : "Ask about n8n or describe a workflow to build...")
+                : (isRTL ? "← اختر محادثة أو أنشئ واحدة جديدة" : "Select or create a conversation →")}
+              rows={1}
+              className="w-full resize-none px-4 pt-3.5 pb-2 bg-transparent text-foreground text-sm focus:outline-none max-h-36 placeholder:text-muted-foreground/50"
             />
 
-            <div className="flex-1 flex flex-col">
-              <textarea
-                ref={textareaRef}
-                value={input}
-                onChange={handleTextareaInput}
-                onKeyDown={handleKeyDown}
-                placeholder={selectedConvId
-                  ? (isRTL ? t("chat.placeholder") : "Ask about n8n or request a workflow...")
-                  : (isRTL ? "← اختر محادثة أو أنشئ واحدة جديدة" : "Select or create a conversation →")}
-                rows={1}
-                className="w-full resize-none px-4 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 max-h-36 placeholder:text-muted-foreground/60"
-              />
+            <div className={`flex items-center justify-between px-3 pb-3 pt-0 gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
+              {/* Left tools */}
+              <div className={`flex items-center gap-1 ${isRTL ? "flex-row-reverse" : ""}`}>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  title={isRTL ? "إرفاق ملف" : "Attach file"}
+                >
+                  <Paperclip size={15} />
+                </button>
+                <button
+                  onClick={openAnalyzePicker}
+                  disabled={sending}
+                  className="p-1.5 rounded-lg text-violet-500 hover:text-violet-600 hover:bg-violet-500/10 transition-colors disabled:opacity-40"
+                  title={isRTL ? "تحليل مسار عمل" : "Analyze workflow"}
+                >
+                  <ScanSearch size={15} />
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  accept="image/*,application/json,text/plain,text/yaml,application/x-yaml,.yaml,.yml"
+                  multiple
+                  onChange={handleFileSelect}
+                />
+                <div className="w-px h-4 bg-border mx-0.5" />
+                <button
+                  onClick={() => setSendOnEnter(!sendOnEnter)}
+                  className={`text-[10px] px-2 py-1 rounded-lg border font-medium transition-colors ${sendOnEnter ? "border-accent/40 text-accent bg-accent/5" : "border-border text-muted-foreground hover:border-accent/30"}`}
+                  title={isRTL ? "تغيير طريقة الإرسال" : "Toggle send mode"}
+                >
+                  {sendOnEnter ? (isRTL ? "Enter ↑" : "↑ Enter") : "Ctrl+↵"}
+                </button>
+              </div>
 
-              {/* Phase 4: Input toolbar */}
-              <div className="flex items-center justify-between mt-1.5 px-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-muted-foreground">
-                    {sendOnEnter
-                      ? (isRTL ? "Enter للإرسال · Shift+Enter لسطر جديد" : "Enter to send · Shift+Enter for newline")
-                      : (isRTL ? "Ctrl+Enter للإرسال" : "Ctrl+Enter to send")}
-                  </span>
-                  <button
-                    onClick={() => setSendOnEnter(!sendOnEnter)}
-                    className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${sendOnEnter ? "border-accent/40 text-accent bg-accent/5" : "border-border text-muted-foreground"}`}
-                    title={isRTL ? "تغيير طريقة الإرسال" : "Toggle send mode"}
-                  >
-                    {sendOnEnter ? "Enter" : "Ctrl+Enter"}
-                  </button>
-                </div>
-
-                {/* Phase 4: Char counter */}
+              {/* Right: char counter + send button */}
+              <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
                 {charCount > 500 && (
                   <span className={`text-[10px] font-medium tabular-nums ${charCount >= 1900 ? "text-destructive" : charCount >= 1500 ? "text-yellow-500" : "text-muted-foreground"}`}>
                     {charCount}/2000
                   </span>
                 )}
+                <button
+                  onClick={() => handleSend()}
+                  disabled={(!input.trim() && attachments.length === 0) || sending || !selectedConvId}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-500 text-white text-xs font-medium hover:opacity-90 transition-all disabled:opacity-40 shadow-sm shadow-violet-500/20"
+                >
+                  {sending
+                    ? <Loader2 size={13} className="animate-spin" />
+                    : <Send size={13} />
+                  }
+                  {!sending && <span>{isRTL ? "إرسال" : "Send"}</span>}
+                </button>
               </div>
             </div>
-
-            <button
-              onClick={() => handleSend()}
-              disabled={(!input.trim() && attachments.length === 0) || sending || !selectedConvId}
-              className="p-2.5 rounded-xl bg-accent text-white hover:bg-accent/90 transition-colors disabled:opacity-50 shrink-0"
-            >
-              {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-            </button>
           </div>
-
-          {/* Phase 4: Keyboard shortcut hint */}
-          <p className="text-[10px] text-muted-foreground/50 text-center mt-1.5">
-            {isRTL ? "Ctrl+N محادثة جديدة · Escape للخروج من وضع التكبير" : "Ctrl+N new conversation · Escape to exit fullscreen"}
-          </p>
         </div>
       </div>
 
