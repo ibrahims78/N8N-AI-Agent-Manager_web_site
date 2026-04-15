@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useGetConversations, useCreateConversation, useGetConversation, useDeleteConversation, getGetConversationsQueryKey, getGetConversationQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { getAuthHeader, API_BASE } from "@/lib/api";
+import { getAuthHeader, apiRequest, API_BASE } from "@/lib/api";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useToast } from "@/hooks/use-toast";
@@ -991,8 +991,7 @@ export default function ChatPage() {
     if (n8nWorkflows.length === 0) {
       setLoadingWorkflows(true);
       try {
-        const res = await fetch(`${API_BASE}/workflows`, { headers: authHeader });
-        const data = await res.json() as { success: boolean; data?: { workflows?: N8nWorkflowBasic[] } };
+        const data = await apiRequest<{ success: boolean; data?: { workflows?: N8nWorkflowBasic[] } }>("/workflows");
         setN8nWorkflows(data.data?.workflows ?? []);
       } catch {
         toast({ title: isRTL ? "تعذر تحميل قائمة الـ Workflows" : "Could not load workflows", variant: "destructive" });
@@ -1000,7 +999,7 @@ export default function ChatPage() {
         setLoadingWorkflows(false);
       }
     }
-  }, [n8nWorkflows.length, authHeader, isRTL, toast]);
+  }, [n8nWorkflows.length, isRTL, toast]);
 
   // ── Send Handler ──
   const detectAnalysisIntent = useCallback((text: string): boolean => {
@@ -1157,15 +1156,26 @@ export default function ChatPage() {
     setAnalysisResult(null);
 
     const fetchUrl = `${API_BASE}/chat/conversations/${convId}/analyze-workflow`;
-    const headers: Record<string, string> = { ...authHeader, "Content-Type": "application/json" };
-    const token = localStorage.getItem("accessToken");
-    if (token) headers["Authorization"] = `Bearer ${token}`;
+    const freshAuthHeader = getAuthHeader();
+    const headers: Record<string, string> = { ...freshAuthHeader, "Content-Type": "application/json" };
 
     fetch(fetchUrl, {
       method: "POST",
       headers,
+      credentials: "include",
       body: JSON.stringify({ workflowId, userContext: analyzeContext }),
     }).then(async (res) => {
+      if (res.status === 401) {
+        setSending(false);
+        setIsGenerating(false);
+        setPhases([]);
+        toast({ title: isRTL ? "انتهت جلستك، يرجى تسجيل الدخول مجدداً" : "Session expired, please log in again", variant: "destructive" });
+        return;
+      }
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({})) as { error?: { message?: string } };
+        throw new Error(errData?.error?.message ?? `HTTP ${res.status}`);
+      }
       const reader = res.body?.getReader();
       if (!reader) throw new Error("No response body");
 
