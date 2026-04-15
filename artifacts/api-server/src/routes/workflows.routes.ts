@@ -291,11 +291,23 @@ router.post("/:id/apply-fix", authenticate, requirePermission("manage_workflows"
       try { await deactivateWorkflow(id); } catch { /* ignore deactivation errors */ }
     }
 
+    const ALLOWED_SETTINGS_KEYS = new Set([
+      "executionOrder", "saveManualExecutions", "callerPolicy", "callerIds",
+      "errorWorkflow", "timezone", "saveDataErrorExecution", "saveDataSuccessExecution",
+      "executionTimeout", "saveExecutionProgress",
+    ]);
+    const sanitizeSettings = (raw: unknown): Record<string, unknown> => {
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+      return Object.fromEntries(
+        Object.entries(raw as Record<string, unknown>).filter(([k]) => ALLOWED_SETTINGS_KEYS.has(k))
+      );
+    };
+
     const updatePayload = {
       name: (workflowJson.name as string) ?? current.name,
       nodes: workflowJson.nodes ?? current.nodes,
       connections: workflowJson.connections ?? current.connections,
-      settings: workflowJson.settings ?? current.settings ?? {},
+      settings: sanitizeSettings(workflowJson.settings ?? current.settings),
     };
 
     const updated = await updateWorkflow(id, updatePayload);

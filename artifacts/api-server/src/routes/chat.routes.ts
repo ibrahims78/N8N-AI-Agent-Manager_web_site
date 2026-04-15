@@ -12,6 +12,18 @@ import type { Request, Response } from "express";
 
 const router = Router();
 
+const ALLOWED_SETTINGS_KEYS = new Set([
+  "executionOrder", "saveManualExecutions", "callerPolicy", "callerIds",
+  "errorWorkflow", "timezone", "saveDataErrorExecution", "saveDataSuccessExecution",
+  "executionTimeout", "saveExecutionProgress",
+]);
+function sanitizeSettings(raw: unknown): Record<string, unknown> {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  return Object.fromEntries(
+    Object.entries(raw as Record<string, unknown>).filter(([k]) => ALLOWED_SETTINGS_KEYS.has(k))
+  );
+}
+
 async function getApiKeys() {
   const settings = await db.select().from(systemSettingsTable).limit(1);
   const s = settings[0];
@@ -397,7 +409,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
             name: (modifierResult.modifiedWorkflowJson.name as string) ?? (currentWorkflowJson.name as string),
             nodes: modifierResult.modifiedWorkflowJson.nodes,
             connections: modifierResult.modifiedWorkflowJson.connections,
-            settings: modifierResult.modifiedWorkflowJson.settings ?? { executionOrder: "v1" },
+            settings: sanitizeSettings(modifierResult.modifiedWorkflowJson.settings ?? currentWorkflowJson.settings),
           };
           await updateWorkflow(targetWorkflowId!, updatePayload as Record<string, unknown>);
           appliedToN8n = true;
@@ -677,7 +689,7 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
               name: (modifierResult.modifiedWorkflowJson.name as string) ?? (currentWorkflowJson.name as string),
               nodes: modifierResult.modifiedWorkflowJson.nodes,
               connections: modifierResult.modifiedWorkflowJson.connections,
-              settings: modifierResult.modifiedWorkflowJson.settings ?? { executionOrder: "v1" },
+              settings: sanitizeSettings(modifierResult.modifiedWorkflowJson.settings ?? currentWorkflowJson.settings),
             };
             await updateWorkflow(targetWorkflowId!, updatePayload as Record<string, unknown>);
             appliedToN8n = true;
