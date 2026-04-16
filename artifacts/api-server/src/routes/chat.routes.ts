@@ -506,14 +506,21 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
             try {
               const fullWf = await getWorkflow(mentionedWorkflow.id) as unknown as Record<string, unknown>;
               const nodes = (fullWf.nodes as Array<{type?: string; name?: string; parameters?: Record<string, unknown>}> | undefined) ?? [];
-              const nodesSummary = nodes.map(n =>
-                `  • [${n.type ?? "unknown"}] "${n.name ?? "unnamed"}"`
-              ).join("\n");
+              // Build a concise node summary — no raw JSON to avoid token bloat
+              const nodesSummary = nodes.map((n, i) => {
+                const paramKeys = n.parameters ? Object.keys(n.parameters).slice(0, 4).join(", ") : "";
+                return `  ${i + 1}. [${n.type ?? "unknown"}] "${n.name ?? "unnamed"}"${paramKeys ? ` — params: ${paramKeys}` : ""}`;
+              }).join("\n");
               detailedWorkflow = fullWf;
               workflowContext += `\n## Detailed Workflow: "${mentionedWorkflow.name}" (ID: ${mentionedWorkflow.id})\n`;
-              workflowContext += `Status: ${mentionedWorkflow.active ? "Active" : "Inactive"}\n`;
-              workflowContext += `Nodes (${nodes.length}):\n${nodesSummary}\n`;
-              workflowContext += `\nFull JSON:\n\`\`\`json\n${JSON.stringify(fullWf, null, 2).slice(0, 3000)}\n\`\`\`\n`;
+              workflowContext += `Status: ${mentionedWorkflow.active ? "Active ✅" : "Inactive ⏸️"}\n`;
+              workflowContext += `Total Nodes: ${nodes.length}\n`;
+              workflowContext += `Node List:\n${nodesSummary}\n`;
+              // Include connections summary
+              const connections = fullWf.connections as Record<string, unknown> | undefined;
+              if (connections) {
+                workflowContext += `\nConnections: ${Object.keys(connections).length} nodes have outgoing connections.\n`;
+              }
             } catch { /* ignore if can't fetch full details */ }
           }
         }
