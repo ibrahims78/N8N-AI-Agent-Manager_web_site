@@ -481,9 +481,54 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
       const openai = new OpenAI({ apiKey: openaiKey, timeout: 60000 });
 
       const isArabicReq = /[\u0600-\u06FF]/.test(content);
+
+      // ── Fetch n8n workflows to give GPT real context ─────────────────────
+      let workflowContext = "";
+      let detailedWorkflow: Record<string, unknown> | null = null;
+      try {
+        const workflows = await getWorkflows();
+        if (workflows.length > 0) {
+          // Build a summary list of all workflows
+          const workflowList = workflows.map(w =>
+            `- ID: ${w.id} | Name: "${w.name}" | Status: ${w.active ? "Active ✅" : "Inactive ⏸️"} | Nodes: ${w.nodes?.length ?? 0}`
+          ).join("\n");
+
+          workflowContext = `\n\n## Connected n8n Workflows (${workflows.length} total):\n${workflowList}\n`;
+
+          // If user mentions a workflow by name, fetch its full details
+          const contentLower = content.toLowerCase();
+          const mentionedWorkflow = workflows.find(w =>
+            contentLower.includes(w.name.toLowerCase()) ||
+            contentLower.includes(w.id.toLowerCase())
+          );
+
+          if (mentionedWorkflow) {
+            try {
+              const fullWf = await getWorkflow(mentionedWorkflow.id) as unknown as Record<string, unknown>;
+              const nodes = (fullWf.nodes as Array<{type?: string; name?: string; parameters?: Record<string, unknown>}> | undefined) ?? [];
+              const nodesSummary = nodes.map(n =>
+                `  • [${n.type ?? "unknown"}] "${n.name ?? "unnamed"}"`
+              ).join("\n");
+              detailedWorkflow = fullWf;
+              workflowContext += `\n## Detailed Workflow: "${mentionedWorkflow.name}" (ID: ${mentionedWorkflow.id})\n`;
+              workflowContext += `Status: ${mentionedWorkflow.active ? "Active" : "Inactive"}\n`;
+              workflowContext += `Nodes (${nodes.length}):\n${nodesSummary}\n`;
+              workflowContext += `\nFull JSON:\n\`\`\`json\n${JSON.stringify(fullWf, null, 2).slice(0, 3000)}\n\`\`\`\n`;
+            } catch { /* ignore if can't fetch full details */ }
+          }
+        }
+      } catch { /* ignore if n8n not reachable */ }
+
       const systemPrompt = isArabicReq
-        ? `أنت مساعد ذكي متخصص في n8n. تحدث بالعربية. ساعد في شرح n8n وتشخيص المشاكل وتعديل الـ workflows.`
-        : `You are an AI assistant specialized in n8n workflow management. Help with understanding, diagnosing, and modifying workflows.`;
+        ? `أنت مساعد ذكي متخصص في n8n مربوط مباشرةً بنظام n8n الخاص بالمستخدم. تحدث بالعربية دائماً.
+مهمتك: الإجابة عن أسئلة المستخدم بشكل دقيق ومفصّل بناءً على الـ workflows الفعلية المربوطة.
+إذا سأل عن workflow معين، اشرح نودات عمله وتسلسله الفعلي.
+إذا وجدت خطأ أو مشكلة، اقترح حلاً ملموساً.
+${workflowContext}`
+        : `You are an AI assistant directly connected to the user's n8n instance. Always answer based on the ACTUAL connected workflows below.
+If asked about a specific workflow, explain its real nodes, flow, and behavior.
+If you spot issues or improvements, suggest concrete changes.
+${workflowContext}`;
 
       const contextMessages = [...previousMessages]
         .reverse()
@@ -491,10 +536,10 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         .map(m => {
           // Truncate very long messages (e.g. analysis reports) to avoid polluting context
           const maxLen = 800;
-          const content = m.content.length > maxLen
+          const msgContent = m.content.length > maxLen
             ? m.content.slice(0, maxLen) + "\n...[truncated for brevity]"
             : m.content;
-          return { role: m.role as "user" | "assistant", content };
+          return { role: m.role as "user" | "assistant", content: msgContent };
         });
 
       let assistantContent = "";
@@ -502,7 +547,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         const response = await openai.chat.completions.create({
           model: "gpt-4o",
           messages: [{ role: "system", content: systemPrompt }, ...contextMessages],
-          max_tokens: 1500,
+          max_tokens: 2000,
           temperature: 0.7,
         });
         assistantContent = response.choices[0]?.message?.content ?? "";
@@ -511,6 +556,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           ? `عذراً، تعذر الاتصال بـ GPT: ${String(err)}`
           : `Sorry, could not connect to GPT: ${String(err)}`;
       }
+      void detailedWorkflow; // used in system prompt above
 
       const [assistantMsg] = await db.insert(messagesTable).values({
         conversationId: convId,
