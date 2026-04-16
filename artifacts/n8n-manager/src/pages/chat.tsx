@@ -1066,6 +1066,7 @@ export default function ChatPage() {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
+      let lastEventName = "";
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -1073,12 +1074,26 @@ export default function ChatPage() {
         const lines = buffer.split("\n");
         buffer = lines.pop() ?? "";
         for (const line of lines) {
-          if (line.startsWith("event: ")) continue;
+          if (line.startsWith("event: ")) {
+            lastEventName = line.slice(7).trim();
+            continue;
+          }
           if (line.startsWith("data: ")) {
             const eventLine = line.slice(6);
             try {
               const parsed = JSON.parse(eventLine) as Record<string, unknown>;
-              if ((parsed as { phase?: number }).phase !== undefined) {
+
+              // ── Error event ──────────────────────────────────────────────
+              if (lastEventName === "error") {
+                const errMsg = (parsed as { message?: string }).message ?? (isRTL ? "حدث خطأ غير متوقع" : "Unexpected error");
+                setSending(false);
+                setIsGenerating(false);
+                setOptimisticUserMsg(null);
+                setPhases([]);
+                toast({ title: isRTL ? `⚠️ ${errMsg}` : `⚠️ ${errMsg}`, variant: "destructive" });
+
+              // ── Phase progress ────────────────────────────────────────────
+              } else if ((parsed as { phase?: number }).phase !== undefined) {
                 const phaseData = parsed as unknown as PhaseProgress;
                 setIsGenerating(true);
                 setPhases(prev => {
@@ -1086,6 +1101,8 @@ export default function ChatPage() {
                   if (idx >= 0) { const u = [...prev]; u[idx] = phaseData; return u; }
                   return [...prev, phaseData];
                 });
+
+              // ── Start event (type announcement) ──────────────────────────
               } else if ((parsed as { type?: string }).type === "sequential" || (parsed as { type?: string }).type === "gpt-only" || (parsed as { type?: string }).type === "chat") {
                 if ((parsed as { type?: string }).type === "sequential") {
                   setPhases([
@@ -1095,24 +1112,31 @@ export default function ChatPage() {
                     { phase: 4, label: "Gemini: Final validation", labelAr: "Gemini: التحقق النهائي", status: "pending" },
                   ]);
                   setIsGenerating(true);
+                } else {
+                  // Regular chat or gpt-only: show typing indicator
+                  setIsGenerating(true);
                 }
+
+              // ── Complete event ────────────────────────────────────────────
               } else if ((parsed as { message?: unknown }).message !== undefined) {
                 setIsGenerating(false);
-                setSending(false);
-                setOptimisticUserMsg(null);
                 if ((parsed as { workflowJson?: unknown }).workflowJson) {
                   const r = parsed as { workflowJson: Record<string, unknown>; qualityScore: number; qualityGrade: string; roundsCount: number; totalTimeMs: number; phases: PhaseProgress[] };
                   const result: GenerationResult = { workflowJson: r.workflowJson, qualityScore: r.qualityScore ?? 75, qualityGrade: r.qualityGrade ?? "B", roundsCount: r.roundsCount ?? 1, totalTimeMs: r.totalTimeMs ?? 0, phases: r.phases ?? [] };
                   setGenerationResult(result);
                   saveGenerationResult(selectedConvId, result);
-                } else if ((parsed as { error?: string }).error) {
-                  toast({ title: String((parsed as { error: string }).error), variant: "destructive" });
-                  setPhases([]);
                 } else {
                   setPhases([]);
                 }
-                refetchConv();
-                queryClient.invalidateQueries({ queryKey: getGetConversationsQueryKey() });
+                // Refetch first, THEN clear the optimistic message to avoid blank flash
+                void refetchConv().then(() => {
+                  setSending(false);
+                  setOptimisticUserMsg(null);
+                }).catch(() => {
+                  setSending(false);
+                  setOptimisticUserMsg(null);
+                });
+                void queryClient.invalidateQueries({ queryKey: getGetConversationsQueryKey() });
               }
             } catch { /* ignore */ }
           }
