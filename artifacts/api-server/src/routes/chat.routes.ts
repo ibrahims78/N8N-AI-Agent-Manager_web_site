@@ -488,7 +488,14 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
       const contextMessages = [...previousMessages]
         .reverse()
         .slice(-10)
-        .map(m => ({ role: m.role as "user" | "assistant", content: m.content }));
+        .map(m => {
+          // Truncate very long messages (e.g. analysis reports) to avoid polluting context
+          const maxLen = 800;
+          const content = m.content.length > maxLen
+            ? m.content.slice(0, maxLen) + "\n...[truncated for brevity]"
+            : m.content;
+          return { role: m.role as "user" | "assistant", content };
+        });
 
       let assistantContent = "";
       try {

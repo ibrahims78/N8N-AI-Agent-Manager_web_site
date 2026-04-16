@@ -1043,6 +1043,7 @@ export default function ChatPage() {
     setIsGenerating(false);
     setGenerationResult(null);
     saveGenerationResult(selectedConvId, null);
+    setAnalysisResult(null);
     setPhases([]);
 
     // ── Optimistic UI: show user message immediately ──
