@@ -851,7 +851,10 @@ export default function ChatPage() {
   const conversations: Conversation[] = ((convRes as { data?: { conversations?: unknown[] } } | undefined)?.data?.conversations ?? []) as Conversation[];
   const detail = convDetail as { data?: { conversation?: Conversation; messages?: Message[] } } | undefined;
   const serverMessages: Message[] = detail?.data?.messages ?? [];
-  const messages: Message[] = optimisticUserMsg
+  // Don't show the optimistic message if the real one already arrived from the server
+  const serverAlreadyHasOptimistic = optimisticUserMsg !== null &&
+    serverMessages.some(m => m.role === "user" && m.content === optimisticUserMsg.content);
+  const messages: Message[] = (optimisticUserMsg && !serverAlreadyHasOptimistic)
     ? [...serverMessages, optimisticUserMsg]
     : serverMessages;
 
