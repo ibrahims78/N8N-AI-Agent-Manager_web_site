@@ -9,6 +9,7 @@ import {
   Search, Pin, Bot, FileText, FileJson, Image as ImageIcon,
   PanelRightOpen, PanelRightClose, Clock, Hash, Layers, Check,
   ScanSearch, Wrench, AlertTriangle, AlertCircle, ShieldCheck, ChevronDown,
+  CornerDownLeft,
 } from "lucide-react";
 import { useGetConversations, useCreateConversation, useGetConversation, useDeleteConversation, getGetConversationsQueryKey, getGetConversationQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -1785,8 +1786,8 @@ export default function ChatPage() {
 
                             {/* Message content */}
                             {!isUser
-                              ? <MessageContent content={msg.content} isRTL={isRTL} isLatest={msg.id === lastAssistantId} />
-                              : <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                              ? <div className="select-text cursor-text"><MessageContent content={msg.content} isRTL={isRTL} isLatest={msg.id === lastAssistantId} /></div>
+                              : <p className="whitespace-pre-wrap leading-relaxed select-text cursor-text">{msg.content}</p>
                             }
 
                             {/* Phase 5: Timestamp on hover */}
@@ -1805,6 +1806,20 @@ export default function ChatPage() {
                                   exit={{ opacity: 0 }}
                                   className={`absolute top-full mt-1 ${isUser ? (isRTL ? "start-0" : "end-0") : (isRTL ? "end-0" : "start-0")} flex items-center gap-1 bg-card border border-border rounded-lg px-1.5 py-1 shadow-sm z-10`}
                                 >
+                                  {/* Copy to input button — for all messages */}
+                                  <button
+                                    onClick={() => {
+                                      const textToCopy = msg.content.replace(/```json[\s\S]*?```/g, "").trim();
+                                      setInput(textToCopy || msg.content);
+                                      const textarea = document.querySelector("textarea");
+                                      textarea?.focus();
+                                    }}
+                                    className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                                    title={isRTL ? "نقل إلى خانة الكتابة" : "Copy to input"}
+                                  >
+                                    <CornerDownLeft size={12} />
+                                  </button>
+
                                   {!isUser && (
                                     <>
                                       <button
