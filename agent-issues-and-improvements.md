@@ -1,5 +1,5 @@
 # تقرير مفصل: مشاكل الوكيل الذكي واقتراحات التحسين
-## حالة التنفيذ — محدّث في 17 أبريل 2026
+## حالة التنفيذ — محدّث في 17 أبريل 2026 (FIX 5.1 مكتمل)
 
 ---
 
@@ -43,6 +43,7 @@
 | 34 | **FIX 4.3 — Node Schemas: 30+ نوع إضافي** | ✅ مُنجز |
 | 35 | **FIX 4.4 — Token/Cost Tracking عبر جميع المراحل** | ✅ مُنجز |
 | 36 | **FIX 4.5 — Input Sanitization (Prompt Injection Defense)** | ✅ مُنجز |
+| 37 | **FIX 5.1 — Tool Calling Architecture (Agentic Engine)** | ✅ مُنجز |
 
 ---
 
@@ -1266,3 +1267,170 @@ const content = sanitized.safe;  // هذا ما يُرسل للـ LLM
 ---
 
 *آخر تحديث: 17 أبريل 2026 — تقييم شامل + مقارنة مع Replit Agent + خطط مرحلية + الأولوية 4 مكتملة*
+
+---
+
+## FIX 5.1 — Tool Calling Architecture (Agentic Engine) — 17 أبريل 2026
+
+### ملخص التنفيذ
+
+تم تحويل الوكيل من pipeline ثابت (Phase 1A → 1B → 2 → 3 → 4) إلى **نظام Agentic حقيقي** حيث يستدعي GPT-4o أدوات حقيقية ويرى نتائجها قبل بناء أي workflow.
+
+**حالة البناء:** ✅ صفر أخطاء TypeScript  
+**حالة السيرفر:** ✅ يعمل على port 8080  
+**الملفات الجديدة:** 2 ملف جديد، 2 ملف محدّث  
+
+---
+
+### المعمارية الجديدة
+
+```
+قبل FIX 5.1 (Pipeline ثابت):
+┌────────────┐  ┌────────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
+│ Phase 1A   │→ │ Phase 1B   │→ │ Phase 2  │→ │ Phase 3  │→ │ Phase 4  │
+│ Node IDs   │  │ Build JSON │  │ Gemini   │  │ Refine   │  │ Validate │
+│ (GPT-4o)   │  │ (GPT-4o)   │  │ Review   │  │ (GPT-4o) │  │ (Gemini) │
+└────────────┘  └────────────┘  └──────────┘  └──────────┘  └──────────┘
+
+بعد FIX 5.1 (Agentic Loop):
+┌──────────────────────────────────────────────────────────────────┐
+│  GPT-4o + 6 أدوات (حلقة ذكية — حتى 10 جولات)                   │
+│                                                                  │
+│  جولة 1: search_node_types("slack") → نتيجة                     │
+│  جولة 2: get_node_schema("slack") → schema دقيق                 │
+│  جولة 2: get_node_schema("webhook") → schema دقيق               │
+│  جولة 3: list_available_workflows() → context موجود             │
+│  جولة 4: [بناء workflow JSON باستخدام schemas الحقيقية]          │
+│  جولة 5: validate_workflow_json(result) → ✅ صالح                │
+│  → إجابة نهائية: workflow JSON                                   │
+│                                          ↓                       │
+│  Gemini 2.5 Pro Review (اختياري — نفس Phase 2+3 السابق)         │
+│  GPT-4o Refinement إذا الدرجة < 75                               │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### الملفات المنشأة والمعدّلة
+
+#### 1. `agentTools.ts` (جديد — 450 سطر)
+
+يُعرّف 6 أدوات كاملة مع تعريف OpenAI + منفّذ:
+
+| الأداة | الوصف | الاستخدام |
+|--------|--------|-----------|
+| `get_node_schema` | Schema دقيق لأي node | قبل استخدام أي node |
+| `search_node_types` | بحث fuzzy في كل الـ nodes | اكتشاف ما هو متاح |
+| `list_available_workflows` | قائمة الـ workflows في n8n | تجنب التكرار |
+| `get_workflow_details` | JSON كامل لـ workflow معين | فهم سياق موجود |
+| `validate_workflow_json` | التحقق من صلاحية الـ JSON | قبل الإجابة النهائية |
+| `get_execution_errors` | أخطاء تشغيل workflow | تشخيص المشاكل |
+
+**تدرّج البحث في `get_node_schema`:**
+1. مطابقة مباشرة للمفتاح (e.g. `n8n-nodes-base.slack`)
+2. `KEYWORD_LOOKUP` — جدول 45+ اسم مختصر (slug → full type key)
+3. `getRelevantSchemas()` — يستخدم KEYWORD_NODE_MAP الكامل مع الأسماء العربية
+4. Fuzzy match على كل مفاتيح NODE_SCHEMAS
+5. اقتراح بدائل من description/category
+
+#### 2. `agenticEngine.service.ts` (جديد — 350 سطر)
+
+المحرك الأساسي الجديد:
+
+```typescript
+export async function runAgenticEngine(
+  userRequest: string,
+  config: AgenticEngineConfig
+): Promise<AgenticEngineResult>
+```
+
+**خصائص الحلقة:**
+- حد أقصى 10 جولات (قابل للتعديل حتى 15)
+- Timeout: 120 ثانية عبر OpenAI client
+- تجميع توكنز عبر كل الجولات + الـ refinement
+- SSE callbacks: `onToolCall`, `onToolResult`, `onIterationDone`, `onGeminiPhase`
+- Gemini review بعد انتهاء الحلقة (نفس منطق Phase 2+3)
+- GPT-4o refinement إذا درجة Gemini < 75
+- إجابة نهائية بالعربية أو الإنجليزية حسب لغة الطلب
+
+**System Prompt الجديد:**
+يُلزم GPT-4o باتباع 4 خطوات مُرتّبة:
+1. الاستكشاف (`search_node_types` + `list_available_workflows`)
+2. الحصول على schemas (`get_node_schema` لكل node)
+3. بناء الـ JSON
+4. التحقق (`validate_workflow_json`) ← قبل الإجابة
+
+#### 3. `chat.routes.ts` (محدّث)
+
+**PATH A** أصبح يستخدم الـ agenticEngine بدلاً من sequentialEngine:
+
+```typescript
+// قبل:
+const engineResult = await runSequentialEngine(content, {
+  onPhaseUpdate: ..., onPhase1BStream: ..., ...
+});
+
+// بعد:
+const agentResult = await runAgenticEngine(content, {
+  onToolCall: (ev) => sendEvent("agent_tool_call", {...}),
+  onToolResult: (ev) => sendEvent("agent_tool_result", {...}),
+  onIterationDone: (ev) => sendEvent("agent_iteration", {...}),
+  onGeminiPhase: (phase, score) => sendEvent("agent_review", {...}),
+});
+```
+
+**أحداث SSE الجديدة:**
+
+| الحدث | البيانات | الوقت |
+|--------|---------|-------|
+| `start` | `{type: "agentic", engine: "tool-calling"}` | أول شيء |
+| `agent_tool_call` | `{iteration, tool, args}` | قبل تنفيذ كل أداة |
+| `agent_tool_result` | `{iteration, tool, durationMs, success}` | بعد كل أداة |
+| `agent_iteration` | `{iteration, toolCalls, totalTools, durationMs}` | نهاية كل جولة |
+| `agent_review` | `{phase: "start"/"done", score}` | مرحلة Gemini |
+| `complete` | `{workflowJson, qualityScore, iterations, toolCallLog, tokenUsage}` | النهاية |
+
+---
+
+### مقارنة المعمارية
+
+| المعيار | Sequential Engine (قبل) | Agentic Engine (بعد) |
+|---------|------------------------|---------------------|
+| كيفية معرفة الـ schemas | Phase 1A يخمّن node IDs، Phase 1B يُطبّق | يسأل عبر `get_node_schema` ويرى الجواب |
+| دقة الـ schemas | مُحتملة (يمكن التخمين الخاطئ) | **مضمونة** (من الـ schema الحقيقي) |
+| معرفة الـ workflows الموجودة | تُمرّر كـ context نصي فقط | يستدعي `list_available_workflows` ويرى البيانات |
+| التحقق من الـ JSON | بعد التوليد (خارجياً) | **أثناء التوليد** (`validate_workflow_json` + self-correct) |
+| تكيّف مع الأخطاء | إعادة محاولة عمياء | يرى الخطأ ويُصلحه بذكاء |
+| عدد المراحل | 4 مراحل ثابتة | 1-10 جولات ديناميكية حسب التعقيد |
+| مرئية للمستخدم | phase 1/2/3/4 updates | كل tool call يظهر فوراً |
+
+---
+
+### بنية التوكنز الجديدة
+
+```typescript
+tokenUsage: {
+  agentLoopPromptTokens: number,      // توكنز جولات الـ agent
+  agentLoopCompletionTokens: number,
+  refinementPromptTokens: number,     // توكنز GPT-4o refinement
+  refinementCompletionTokens: number,
+  totalOpenaiPromptTokens: number,    // الإجمالي
+  totalOpenaiCompletionTokens: number,
+  totalOpenaiTokens: number,
+  estimatedCostUsd: number,           // GPT-4o: $2.50/1M input, $10/1M output
+}
+```
+
+---
+
+### ملاحظات تقنية مهمة
+
+1. **PATH A2 (GPT-4o بدون Gemini)** — لم يتغير، يستخدم ما زال نظام Phase 1A+1B كـ fallback
+2. **Sequential Engine** — ما زال موجوداً في الكود، يُستخدم في PATH A2 وقد يُعاد تفعيله كـ fallback
+3. **Tool calls لا تستهلك توكنز Gemini** — كلها GPT-4o فقط في الحلقة
+4. **Gemini review** — يُشغَّل مرة واحدة بعد اكتمال الحلقة (ليس في كل جولة)
+5. **حماية من الحلقات اللانهائية** — hard cap عند 10 جولات (max 15 إذا عُدِّل في الكود)
+
+---
+
+*آخر تحديث: 17 أبريل 2026 — FIX 5.1 Tool Calling Architecture مكتمل ✅*

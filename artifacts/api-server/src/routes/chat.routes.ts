@@ -4,6 +4,8 @@ import { eq, desc, sql } from "drizzle-orm";
 import { authenticate, requirePermission } from "../middleware/auth.middleware";
 import { decryptApiKey } from "../services/encryption.service";
 import { runSequentialEngine, type ConversationTurn } from "../services/sequentialEngine.service";
+// FIX 5.1: Tool Calling Architecture — agenticEngine replaces sequential engine for PATH A
+import { runAgenticEngine } from "../services/agenticEngine.service";
 import { runWorkflowAnalyzer } from "../services/workflowAnalyzer.service";
 import { runWorkflowModifier } from "../services/workflowModifier.service";
 import { updateWorkflow, getWorkflowExecutionsWithErrors } from "../services/n8n.service";
@@ -242,70 +244,100 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
     logger.info({ intent, confidence: intentResult.confidence, hint: workflowNameHint }, "Intent detected");
 
     // ══════════════════════════════════════════════════════════════════════
-    // PATH A: CREATE WORKFLOW
+    // PATH A: CREATE — FIX 5.1 Agentic Engine (GPT-4o Tool Calling + Gemini)
+    //
+    // The agenticEngine replaces the static Phase 1A→1B pipeline.
+    // GPT-4o now dynamically:
+    //   1. Calls get_node_schema for each node it needs
+    //   2. Calls list_available_workflows to avoid duplication
+    //   3. Calls validate_workflow_json before finalising
+    //   4. Self-corrects if validation finds errors
+    // Gemini 2.5 Pro reviews the result and triggers refinement if needed.
     // ══════════════════════════════════════════════════════════════════════
     if (intent === "create" && geminiKey) {
-      sendEvent("start", { type: "sequential", rounds: 3 });
+      sendEvent("start", { type: "agentic", engine: "tool-calling" });
 
-      // [أ1] Build n8n context string from already-fetched workflows list
+      // Build n8n context string (list of existing workflow names)
       const n8nContextStr = availableWorkflows.length > 0
         ? availableWorkflows.slice(0, 20).map(w =>
             `- "${w.name}" (${w.active ? "active" : "inactive"})`
           ).join("\n")
         : undefined;
 
-      // FIX 3.4: build conversation history to pass session context to the engine.
-      // Reverse the previousMessages array (fetched DESC) to chronological order,
-      // exclude the current user message (already inserted above), and convert to
-      // ConversationTurn format. Limit to last 6 turns to stay within token budget.
+      // Build conversation history (chronological, max 6 turns)
       const conversationHistory: ConversationTurn[] = previousMessages
         .slice()
         .reverse()
-        .filter((m) => m.content !== content)  // exclude the message just sent
-        .slice(-12)  // at most 12 rows = 6 turns
+        .filter((m) => m.content !== content)
+        .slice(-12)
         .map((m) => ({
           role: m.role as "user" | "assistant",
           content: m.content,
         }));
 
-      const engineResult = await runSequentialEngine(content, {
+      // FIX 5.1: Run the agentic engine
+      const agentResult = await runAgenticEngine(content, {
         openaiKey,
         geminiKey,
-        maxRefinementRounds: 2,
-        qualityThreshold: 80,
-        // [ب] Send live phase updates with label + durationMs to frontend via SSE
-        onPhaseUpdate: (phase) => sendEvent("phase", phase),
-        // [أ1] Inject existing workflows context into Phase 1B
+        maxIterations: 10,
+        qualityThreshold: 75,
         n8nContext: n8nContextStr,
-        // BUG 6 FIX: raised from 3 → 5 to cover common 4-5 node workflows
-        // (e.g. Trigger → Condition → Action1 → Action2 → Response)
-        simpleWorkflowNodeThreshold: 5,
-        // FIX 3.4: pass last 6 turns so Phase 1B knows what was discussed before
         conversationHistory,
-        // FIX 4.1: Stream Phase 1B JSON generation so the user sees live progress
-        // instead of waiting silently for 20-40 seconds during the longest phase.
-        onPhase1BStream: (chunk) => sendEvent("phase1b_stream", { chunk }),
+
+        // SSE: each tool call the agent makes
+        onToolCall: (ev) =>
+          sendEvent("agent_tool_call", {
+            iteration: ev.iteration,
+            tool: ev.toolName,
+            args: ev.args,
+          }),
+
+        // SSE: tool execution result
+        onToolResult: (ev) =>
+          sendEvent("agent_tool_result", {
+            iteration: ev.iteration,
+            tool: ev.toolName,
+            durationMs: ev.durationMs,
+            success: ev.success,
+          }),
+
+        // SSE: iteration complete summary
+        onIterationDone: (ev) =>
+          sendEvent("agent_iteration", {
+            iteration: ev.iteration,
+            toolCalls: ev.toolCallsInIteration,
+            totalTools: ev.totalToolCallsSoFar,
+            durationMs: ev.durationMs,
+          }),
+
+        // SSE: Gemini review phase
+        onGeminiPhase: (phase, score) =>
+          sendEvent("agent_review", { phase, score }),
       });
 
-      let assistantContent = engineResult.userMessage;
-      if (engineResult.success && engineResult.workflowJson) {
-        assistantContent += `\n\n\`\`\`json\n${JSON.stringify(engineResult.workflowJson, null, 2)}\n\`\`\``;
+      let assistantContent = agentResult.userMessage;
+      if (agentResult.success && agentResult.workflowJson) {
+        assistantContent += `\n\n\`\`\`json\n${JSON.stringify(agentResult.workflowJson, null, 2)}\n\`\`\``;
         try {
           await db.insert(generationSessionsTable).values({
             conversationId: convId,
             userRequest: content,
-            phase1Result: engineResult.phase1Result as Record<string, unknown>,
-            phase2Feedback: engineResult.phase2Feedback ?? "",
-            phase3Result: engineResult.phase3Result as Record<string, unknown>,
-            phase4Approved: engineResult.phase4Approved,
-            roundsCount: engineResult.roundsCount,
-            totalTimeMs: engineResult.totalTimeMs,
-            finalWorkflowJson: engineResult.workflowJson as Record<string, unknown>,
-            qualityScore: engineResult.qualityScore,
-            qualityReport: JSON.stringify({ grade: engineResult.qualityGrade, phases: engineResult.phases }),
+            phase1Result: agentResult.workflowJson,
+            phase2Feedback: agentResult.geminiReview ?? "",
+            phase3Result: agentResult.workflowJson,
+            phase4Approved: agentResult.qualityScore >= 75,
+            roundsCount: agentResult.iterations,
+            totalTimeMs: agentResult.totalTimeMs,
+            finalWorkflowJson: agentResult.workflowJson,
+            qualityScore: agentResult.qualityScore,
+            qualityReport: JSON.stringify({
+              grade: agentResult.qualityGrade,
+              engine: "agentic-tool-calling",
+              toolCalls: agentResult.toolCallLog.length,
+            }),
           });
         } catch (err) {
-          logger.error({ err }, "Failed to save generation session");
+          logger.error({ err }, "Failed to save agentic generation session");
         }
       }
 
@@ -313,7 +345,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         conversationId: convId,
         role: "assistant",
         content: assistantContent,
-        modelUsed: "sequential-gpt4o+gemini",
+        modelUsed: "agentic-gpt4o-tool-calling+gemini",
       }).returning();
 
       await db.update(conversationsTable)
@@ -322,15 +354,16 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
 
       sendEvent("complete", {
         message: assistantMsg,
-        workflowJson: engineResult.workflowJson,
-        qualityScore: engineResult.qualityScore,
-        qualityGrade: engineResult.qualityGrade,
-        roundsCount: engineResult.roundsCount,
-        totalTimeMs: engineResult.totalTimeMs,
-        phases: engineResult.phases,
+        workflowJson: agentResult.workflowJson,
+        qualityScore: agentResult.qualityScore,
+        qualityGrade: agentResult.qualityGrade,
+        iterations: agentResult.iterations,
+        toolCallLog: agentResult.toolCallLog,
+        totalTimeMs: agentResult.totalTimeMs,
         isWorkflowCreation: true,
-        // FIX 4.4: expose token usage so the frontend can show cost estimates
-        tokenUsage: engineResult.tokenUsage,
+        engine: "agentic",
+        // FIX 4.4: token usage summary
+        tokenUsage: agentResult.tokenUsage,
       });
 
     // ══════════════════════════════════════════════════════════════════════
