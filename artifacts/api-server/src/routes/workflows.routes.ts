@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db, workflowVersionsTable } from "@workspace/db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { authenticate, requirePermission } from "../middleware/auth.middleware";
 import {
   getWorkflows,
@@ -199,14 +199,17 @@ router.post("/:id/restore/:versionId", authenticate, requirePermission("manage_w
 
     await updateWorkflow(id, version.workflowJson as Record<string, unknown>);
 
-    const nextVersion = await db
-      .select()
+    // FIX 3.3: Use MAX(versionNumber)+1 instead of COUNT+1 to avoid race condition
+    const maxVerResult = await db
+      .select({
+        maxVer: sql<number>`COALESCE(MAX(${workflowVersionsTable.versionNumber}), 0)`,
+      })
       .from(workflowVersionsTable)
       .where(eq(workflowVersionsTable.workflowN8nId, id));
 
     await db.insert(workflowVersionsTable).values({
       workflowN8nId: id,
-      versionNumber: nextVersion.length + 1,
+      versionNumber: (maxVerResult[0]?.maxVer ?? 0) + 1,
       workflowJson: version.workflowJson,
       changeDescription: `استعادة الإصدار ${version.versionNumber}`,
       createdBy: req.user!.userId,

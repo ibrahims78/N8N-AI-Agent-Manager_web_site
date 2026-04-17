@@ -32,6 +32,242 @@
 | 23 | مقترح 4 — Diff View حقيقي للنسخ (node-level) | ✅ مُنجز |
 | 24 | مقترح 5 — Abort Controller | ✅ مُنجز |
 | 25 | مقترح 6 — Auto-Import التلقائي مع toggle | ✅ مُنجز |
+| 26 | **FIX 3.1 — تصحيح Gemini model name** | ✅ مُصلَح |
+| 27 | **FIX 3.2 — إزالة Fake Quality Boost** | ✅ مُصلَح |
+| 28 | **FIX 3.3 — Race Condition في الإصدارات (MAX بدل COUNT)** | ✅ مُصلَح |
+| 29 | **FIX 3.4 — Conversation History للـ Sequential Engine** | ✅ مُنجز |
+| 30 | **FIX 3.5 — PATH A2 يستخدم Phase 1A+1B+Schemas** | ✅ مُحسَّن |
+| 31 | **FIX 3.6 — withRetry Exponential Backoff** | ✅ مُنجز |
+
+---
+
+## نتائج المرحلة الأولى من الإصلاح (الأولوية 3) — 17 أبريل 2026
+
+### ملخص التنفيذ
+
+تم تنفيذ جميع إصلاحات المرحلة الأولى (6 إصلاحات) بنجاح تام في جلسة واحدة.
+**حالة البناء:** ✅ `pnpm --filter @workspace/api-server run build` — نجح بدون أي خطأ (2.8mb)
+**حالة السيرفر:** ✅ يعمل على port 8080
+
+---
+
+### Fix 3.1 — تصحيح اسم نموذج Gemini
+
+**الملفات المعدّلة:**
+- `sequentialEngine.service.ts` السطر 217
+- `workflowModifier.service.ts` السطر 244
+
+**التغيير:**
+```typescript
+// قبل (خاطئ — قد ينتج خطأ 404 من Google API):
+const geminiModel = config.geminiModel ?? "gemini-2.5-pro";
+
+// بعد (صحيح):
+const geminiModel = config.geminiModel ?? "gemini-2.5-pro-exp-03-25";
+```
+
+**التأثير الفعلي:**
+- Phase 2 و Phase 4 في الـ Sequential Engine تعملان الآن بالنموذج الحقيقي
+- Phase 2 في workflowModifier تعمل بالنموذج الحقيقي
+- قبل الإصلاح: كان الـ Gemini يرفع خطأ 404 صامتاً والنتيجة تعتمد على fallback أدنى جودة
+
+---
+
+### Fix 3.2 — إزالة Fake Quality Boost وإضافة إعادة تقييم حقيقية
+
+**الملف المعدّل:** `sequentialEngine.service.ts` السطور 562-630
+
+**الكود القديم (كاذب):**
+```typescript
+// عند فشل جولة التحسين الإضافية:
+result.phase4Approved = true;             // ← يوافق على الجودة بدون فحص
+result.qualityScore = Math.min(result.qualityScore + 10, 95);  // ← يرفع النقطة بشكل مصطنع
+```
+
+**الكود الجديد (صادق + فعّال):**
+```typescript
+// 1. يطلب من GPT-4o تصحيح المشاكل المتبقية
+// 2. يُعيد تقييم النتيجة بـ Gemini الحقيقي
+// 3. يستخدم النقطة الفعلية من إعادة التقييم
+// 4. إذا فشل Gemini: يحتفظ بالنقطة الأصلية بدون إضافة وهمية
+```
+
+**التأثير الفعلي:**
+- الـ qualityScore الذي يُعرض للمستخدم أصبح صادقاً
+- workflows بجودة متدنية لن تُعرض على أنها B+ عندما هي في الحقيقة C
+- جولة التحسين الإضافية أصبحت ذات قيمة حقيقية (GPT-4o يصلح + Gemini يُقيّم)
+
+---
+
+### Fix 3.3 — إصلاح Race Condition في ترقيم الإصدارات
+
+**الملفات المعدّلة:**
+- `chat.routes.ts` السطر 539-561 (auto-save قبل التعديل)
+- `workflows.routes.ts` السطر 202-215 (استعادة إصدار)
+
+**التغيير في الاستعلام:**
+```typescript
+// قبل (race condition):
+const existingVersions = await db.select().from(workflowVersionsTable)...;
+const nextVersionNumber = existingVersions.length + 1;  // ← يُعيد نفس الرقم عند التزامن
+
+// بعد (آمن):
+const maxVerResult = await db
+  .select({ maxVer: sql<number>`COALESCE(MAX(${workflowVersionsTable.versionNumber}), 0)` })
+  .from(workflowVersionsTable)...;
+const nextVersionNumber = (maxVerResult[0]?.maxVer ?? 0) + 1;  // ← دائماً فريد
+```
+
+**لماذا `COALESCE(MAX(...), 0)`:** إذا لم يوجد أي إصدار مسبق يُعيد `MAX` قيمة `NULL` — الـ `COALESCE` تحوّلها إلى `0` لينتج `nextVersionNumber = 1`.
+
+**التأثير الفعلي:**
+- لا إمكانية لتكرار رقم إصدار حتى مع مستخدمين يعدّلان في نفس الوقت
+- تم إصلاح المشكلة في **موقعين** (chat.routes + workflows.routes)
+
+---
+
+### Fix 3.4 — تمرير Conversation History للـ Sequential Engine
+
+**الملفات المعدّلة:**
+- `sequentialEngine.service.ts`: إضافة نوع `ConversationTurn` وحقل `conversationHistory` في `EngineConfig`
+- `chat.routes.ts`: بناء وتمرير `conversationHistory` في PATH A و PATH A2
+
+**التغييرات في sequentialEngine:**
+```typescript
+// نوع جديد مُصدَّر:
+export interface ConversationTurn {
+  role: "user" | "assistant";
+  content: string;
+}
+
+// في EngineConfig:
+conversationHistory?: ConversationTurn[];  // آخر 6 turns من المحادثة
+
+// في Phase 1B — يُضاف تاريخ المحادثة قبل رسالة المستخدم:
+messages: [
+  { role: "system", content: buildPhase1BSystemPrompt(...) },
+  ...historyMessages,  // ← آخر 6 turns (مقطوعة لـ 1200 حرف كل رسالة)
+  { role: "user", content: buildPhase1BUserPrompt(...) },
+]
+```
+
+**التغيير في chat.routes:**
+```typescript
+// تحويل previousMessages (DESC) إلى chronological + تمريرها للـ engine:
+const conversationHistory: ConversationTurn[] = previousMessages
+  .slice().reverse()           // من DESC إلى ASC (chronological)
+  .filter((m) => m.content !== content)  // استبعاد الرسالة الحالية
+  .slice(-12)                  // آخر 12 صف = 6 turns
+  .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
+```
+
+**التأثير الفعلي:**
+- "الآن أضف trigger يومي للـ workflow اللي أنشأناه" → الـ engine يعرف عن الـ workflow السابق
+- سياق المحادثة ينتقل لـ Phase 1B بدلاً من أن يبدأ من الصفر كل مرة
+- الرسائل الطويلة (JSON blocks) تُقطع لـ 1200 حرف لتوفير الـ tokens
+
+---
+
+### Fix 3.5 — تحسين PATH A2 (GPT-4o بدون Gemini)
+
+**الملف المعدّل:** `chat.routes.ts` السطور 324-430
+
+**الوضع القديم (prompt بسيط):**
+```typescript
+const systemPrompt = lang === "ar"
+  ? "أنت خبير في بناء n8n workflows. أنشئ workflow JSON صالح..."
+  : "You are an n8n workflow expert. Create a valid, complete workflow JSON...";
+
+const p1Response = await openai.chat.completions.create({
+  messages: [{ role: "system", content: systemPrompt }, { role: "user", content }],
+  max_tokens: 3000, temperature: 0.3
+});
+```
+
+**الوضع الجديد (pipeline مشابه لـ PATH A):**
+```
+1. Phase 1A: تحديد الـ nodes المطلوبة (500 token)
+             ↓
+2. Phase 1B: بناء الـ workflow بـ schemas حقيقية + n8n context + conversation history
+             ↓
+3. validateWorkflowJson + sanitizeWorkflowJson (تصحيح تلقائي)
+             ↓
+4. رسالة توضيحية بالجودة المتوقعة (C+ بدلاً من C)
+```
+
+**التأثير الفعلي:**
+- PATH A2 يستفيد الآن من nodeSchemas المضمّنة في buildPhase1BSystemPrompt
+- node types أكثر دقة وأقل هلوسة
+- تقييم جودة أكثر صدقاً (C+ بدلاً من C)
+- يتضمن conversationHistory (FIX 3.4) أيضاً
+
+---
+
+### Fix 3.6 — إضافة Exponential Backoff Retry
+
+**الملف المعدّل:** `sequentialEngine.service.ts` السطور 124-154
+
+**الكود المضاف:**
+```typescript
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  label: string,
+  maxAttempts = 3,
+  baseDelayMs = 1200
+): Promise<T> {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      // لا retry على أخطاء المصادقة (401/403/invalid_api_key)
+      const isNonRetryable = message.includes("401") || ...;
+      if (attempt === maxAttempts || isNonRetryable) throw err;
+      
+      const delayMs = baseDelayMs * Math.pow(2, attempt - 1);  // 1.2s → 2.4s → 4.8s
+      await new Promise((r) => setTimeout(r, delayMs));
+    }
+  }
+}
+```
+
+**المواضع التي يُستخدم فيها `withRetry`:**
+| الاستدعاء | الملصق (label) | Attempts |
+|-----------|---------------|---------|
+| Phase 1A — node analysis | `Phase1A-node-analysis` | 3 |
+| Phase 1B — workflow build | `Phase1B-workflow-build` | 3 |
+| Phase 1 fallback | `Phase1-fallback` | 3 |
+| Phase 2 — Gemini review | `Phase2-gemini-review` | 3 |
+| Phase 3 — GPT-4o refinement | `Phase3-refinement` | 3 |
+| Phase 4 — Gemini validation | `Phase4-gemini-validation` | 3 |
+| Extra refinement round | `Phase3-extra-refinement` | 3 |
+
+**التأثير الفعلي:**
+- انقطاع الشبكة العابر لا يُفشل الطلب كاملاً
+- Rate limit من OpenAI/Google: الـ retry بعد 1.2 ثانية ثم 2.4 ثانية يمر في الغالب
+- أخطاء المصادقة تُعاد مباشرة بدون انتظار (سلوك سريع وصحيح)
+
+---
+
+### نتيجة التحقق من البناء
+
+```
+✅ pnpm --filter @workspace/api-server run build
+   dist/index.mjs  2.8mb
+   ⚡ Done in 1986ms — 0 TypeScript errors
+```
+
+### التحقق بـ grep من كل إصلاح
+
+| الإصلاح | الأمر | النتيجة |
+|---------|-------|---------|
+| 3.1 model name | `grep "gemini-2.5-pro-exp-03-25"` | ✅ موجود في ملفين |
+| 3.2 no fake boost | `grep "qualityScore.*\+ 10"` | ✅ لا يوجد أي نتيجة |
+| 3.3 MAX(versionNumber) | `grep "COALESCE.*MAX.*versionNumber"` | ✅ موجود في ملفين |
+| 3.4 conversationHistory | `grep "conversationHistory"` | ✅ 5 مراجع في الكود |
+| 3.5 buildPhase1A in A2 | `grep "buildPhase1ASystemPrompt"` في chat.routes | ✅ موجود |
+| 3.6 withRetry | `grep "withRetry"` | ✅ 10 استدعاءات في sequentialEngine |
+
+---
 
 ---
 

@@ -40,6 +40,12 @@ import {
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** A single turn of conversation history to pass context to the engine. */
+export interface ConversationTurn {
+  role: "user" | "assistant";
+  content: string;
+}
+
 export interface EngineConfig {
   openaiKey: string;
   geminiKey: string;
@@ -52,6 +58,12 @@ export interface EngineConfig {
   n8nContext?: string;
   /** [أ2] Node count threshold below which smart-gate may skip Phase 3+4 */
   simpleWorkflowNodeThreshold?: number;
+  /**
+   * [FIX 3.4] Last N turns of the conversation (user + assistant) so Phase 1B
+   * is aware of previously created or discussed workflows in this session.
+   * Pass at most 6 turns (12 messages) to keep the prompt concise.
+   */
+  conversationHistory?: ConversationTurn[];
 }
 
 export interface PhaseProgress {
@@ -97,6 +109,48 @@ interface GeminiValidationReport {
   validationSummary?: string;
   qualityGrade?: string;
   deploymentNotes?: string;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FIX 3.6: Exponential Backoff Retry Helper
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Retries an async function with exponential backoff.
+ * - maxAttempts: total tries (including the first)
+ * - baseDelayMs: initial wait (doubles each retry)
+ * - Skips retry for non-retryable errors (e.g. invalid API key)
+ */
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  label: string,
+  maxAttempts = 3,
+  baseDelayMs = 1200
+): Promise<T> {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      // Do not retry on auth/permission errors — they won't recover
+      const isNonRetryable =
+        message.includes("401") ||
+        message.includes("403") ||
+        message.includes("invalid_api_key") ||
+        message.includes("API key");
+
+      if (attempt === maxAttempts || isNonRetryable) {
+        logger.error({ attempt, label, err }, "withRetry exhausted");
+        throw err;
+      }
+
+      const delayMs = baseDelayMs * Math.pow(2, attempt - 1);
+      logger.warn({ attempt, maxAttempts, delayMs, label }, "withRetry: retrying after delay");
+      await new Promise((r) => setTimeout(r, delayMs));
+    }
+  }
+  // TypeScript unreachable — loop always throws or returns
+  throw new Error("withRetry: unreachable");
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -159,9 +213,14 @@ export async function runSequentialEngine(
   const openai = new OpenAI({ apiKey: config.openaiKey, timeout: 90000 });
   const geminiAI = new GoogleGenerativeAI(config.geminiKey);
   const openaiModel = config.openaiModel ?? "gpt-4o";
-  const geminiModel = config.geminiModel ?? "gemini-2.5-pro";
+  // FIX 3.1: use the correct experimental model name that matches the label "Gemini 2.5 Pro"
+  const geminiModel = config.geminiModel ?? "gemini-2.5-pro-exp-03-25";
   const n8nContext = config.n8nContext;
   const simpleNodeThreshold = config.simpleWorkflowNodeThreshold ?? 3;
+
+  // FIX 3.4: Conversation history — last N turns for Phase 1B context
+  // Trim to last 6 turns max so the prompt stays within token budget
+  const conversationHistory = (config.conversationHistory ?? []).slice(-6);
 
   try {
     // ─── PHASE 1: GPT-4o — Two-Step Workflow Creation ─────────────────────────
@@ -173,59 +232,84 @@ export async function runSequentialEngine(
     let phase1JsonString: string;
 
     try {
-      // ── Step 1A: Identify required nodes ──────────────────────────────────
+      // ── Step 1A: Identify required nodes (with retry) ──────────────────────
       let nodeAnalysis = "";
       try {
-        const p1aResponse = await openai.chat.completions.create({
-          model: openaiModel,
-          messages: [
-            { role: "system", content: buildPhase1ASystemPrompt() },
-            { role: "user", content: buildPhase1AUserPrompt(userRequest) },
-          ],
-          max_tokens: 500,
-          temperature: 0.1,
-          response_format: { type: "json_object" },
-        });
+        const p1aResponse = await withRetry(
+          () => openai.chat.completions.create({
+            model: openaiModel,
+            messages: [
+              { role: "system", content: buildPhase1ASystemPrompt() },
+              { role: "user", content: buildPhase1AUserPrompt(userRequest) },
+            ],
+            max_tokens: 500,
+            temperature: 0.1,
+            response_format: { type: "json_object" },
+          }),
+          "Phase1A-node-analysis"
+        );
         nodeAnalysis = p1aResponse.choices[0]?.message?.content ?? "";
         logger.info({ nodeAnalysis }, "Phase 1A complete — nodes identified");
       } catch (err) {
         logger.warn({ err }, "Phase 1A failed — falling back to direct generation");
       }
 
-      // ── Step 1B: Build workflow JSON with injected schemas ─────────────────
+      // ── Step 1B: Build workflow JSON with injected schemas + conversation history ──
       logger.info({ phase: "1B" }, "Sequential engine: Phase 1B starting — workflow build");
 
       if (nodeAnalysis) {
-        const p1bResponse = await openai.chat.completions.create({
-          model: openaiModel,
-          messages: [
-            {
-              role: "system",
-              content: buildPhase1BSystemPrompt(userRequest, lang),
-            },
-            {
-              role: "user",
-              // [أ1] Pass n8nContext so Phase 1B is aware of existing workflows
-              content: buildPhase1BUserPrompt(userRequest, nodeAnalysis, lang, n8nContext),
-            },
-          ],
-          max_tokens: 4000,
-          temperature: 0.2,
-          response_format: { type: "json_object" },
-        });
+        // FIX 3.4: inject conversation history turns before the final user message
+        // so the model knows what was discussed/created in this session
+        const historyMessages: Array<{ role: "user" | "assistant"; content: string }> =
+          conversationHistory.length > 0
+            ? conversationHistory.map((t) => ({
+                role: t.role,
+                // Truncate very long assistant messages (e.g. workflow JSON blocks)
+                content:
+                  t.content.length > 1500
+                    ? t.content.slice(0, 1200) + "\n...[truncated for context]..."
+                    : t.content,
+              }))
+            : [];
+
+        const p1bResponse = await withRetry(
+          () => openai.chat.completions.create({
+            model: openaiModel,
+            messages: [
+              {
+                role: "system",
+                content: buildPhase1BSystemPrompt(userRequest, lang),
+              },
+              // Inject prior conversation turns so the engine has session context
+              ...historyMessages,
+              {
+                role: "user",
+                // [أ1] Pass n8nContext so Phase 1B is aware of existing workflows
+                content: buildPhase1BUserPrompt(userRequest, nodeAnalysis, lang, n8nContext),
+              },
+            ],
+            max_tokens: 4000,
+            temperature: 0.2,
+            response_format: { type: "json_object" },
+          }),
+          "Phase1B-workflow-build"
+        );
         phase1JsonString = p1bResponse.choices[0]?.message?.content ?? "";
       } else {
         // Fallback: direct generation without node analysis
-        const p1FallbackResponse = await openai.chat.completions.create({
-          model: openaiModel,
-          messages: [
-            { role: "system", content: buildPhase1SystemPrompt(lang) },
-            { role: "user", content: buildPhase1UserPrompt(userRequest, lang) },
-          ],
-          max_tokens: 4000,
-          temperature: 0.3,
-          response_format: { type: "json_object" },
-        });
+        const p1FallbackResponse = await withRetry(
+          () => openai.chat.completions.create({
+            model: openaiModel,
+            messages: [
+              { role: "system", content: buildPhase1SystemPrompt(lang) },
+              { role: "user", content: buildPhase1UserPrompt(userRequest, lang) },
+            ],
+            max_tokens: 4000,
+            temperature: 0.3,
+            response_format: { type: "json_object" },
+          }),
+          "Phase1-fallback"
+        );
         phase1JsonString = p1FallbackResponse.choices[0]?.message?.content ?? "";
       }
     } catch (err) {
@@ -286,7 +370,10 @@ export async function runSequentialEngine(
       });
 
       const p2Prompt = buildPhase2Prompt(userRequest, phase1JsonForReview, lang);
-      const p2Response = await geminiReviewModel.generateContent(p2Prompt);
+      const p2Response = await withRetry(
+        () => geminiReviewModel.generateContent(p2Prompt),
+        "Phase2-gemini-review"
+      );
       const p2Text = p2Response.response.text();
 
       const p2JsonString = extractJson(p2Text);
@@ -367,24 +454,27 @@ export async function runSequentialEngine(
       notify({ ...phases[2]! });
     } else {
       try {
-        const p3Response = await openai.chat.completions.create({
-          model: openaiModel,
-          messages: [
-            { role: "system", content: buildPhase3SystemPrompt(lang) },
-            {
-              role: "user",
-              content: buildPhase3UserPrompt(
-                userRequest,
-                phase1JsonForReview,
-                result.phase2Feedback,
-                lang
-              ),
-            },
-          ],
-          max_tokens: 4000,
-          temperature: 0.2,
-          response_format: { type: "json_object" },
-        });
+        const p3Response = await withRetry(
+          () => openai.chat.completions.create({
+            model: openaiModel,
+            messages: [
+              { role: "system", content: buildPhase3SystemPrompt(lang) },
+              {
+                role: "user",
+                content: buildPhase3UserPrompt(
+                  userRequest,
+                  phase1JsonForReview,
+                  result.phase2Feedback,
+                  lang
+                ),
+              },
+            ],
+            max_tokens: 4000,
+            temperature: 0.2,
+            response_format: { type: "json_object" },
+          }),
+          "Phase3-refinement"
+        );
 
         phase3JsonString = p3Response.choices[0]?.message?.content ?? phase1JsonForReview;
       } catch (err) {
@@ -444,7 +534,10 @@ export async function runSequentialEngine(
       });
 
       const p4Prompt = buildPhase4Prompt(userRequest, finalJsonForValidation, lang);
-      const p4Response = await geminiValidateModel.generateContent(p4Prompt);
+      const p4Response = await withRetry(
+        () => geminiValidateModel.generateContent(p4Prompt),
+        "Phase4-gemini-validation"
+      );
       const p4Text = p4Response.response.text();
 
       const p4JsonString = extractJson(p4Text);
@@ -465,39 +558,68 @@ export async function runSequentialEngine(
     phases[3]!.durationMs = Date.now() - p4Start;
     notify({ ...phases[3]! });
 
-    // ─── Additional Refinement Round if Below Threshold ───────────────────────
+    // ─── FIX 3.2: Honest additional refinement round ──────────────────────────
+    // Previously: blindly added +10 to qualityScore without re-evaluation (fake boost).
+    // Now: actually run another GPT-4o refinement AND re-validate with Gemini if possible.
     if (!result.phase4Approved && result.qualityScore < threshold && maxRounds > 1) {
-      logger.info({ score: result.qualityScore }, "Quality below threshold, running additional refinement");
+      logger.info({ score: result.qualityScore }, "[FIX 3.2] Quality below threshold — running HONEST extra refinement");
       roundsCount++;
 
       try {
-        const extraReview = `Quality score was ${result.qualityScore}. Remaining issues: ${(validationReport.remainingIssues ?? []).join(", ")}`;
-        const extraRefineResponse = await openai.chat.completions.create({
-          model: openaiModel,
-          messages: [
-            { role: "system", content: buildPhase3SystemPrompt(lang) },
-            {
-              role: "user",
-              content: buildPhase3UserPrompt(
-                userRequest,
-                finalJsonForValidation,
-                extraReview,
-                lang
-              ),
-            },
-          ],
-          max_tokens: 4000,
-          temperature: 0.15,
-          response_format: { type: "json_object" },
-        });
+        const extraReview = `Quality score was ${result.qualityScore}/100. These issues remain: ${(validationReport.remainingIssues ?? []).join("; ")}. Fix ALL of them.`;
+        const extraRefineResponse = await withRetry(
+          () => openai.chat.completions.create({
+            model: openaiModel,
+            messages: [
+              { role: "system", content: buildPhase3SystemPrompt(lang) },
+              {
+                role: "user",
+                content: buildPhase3UserPrompt(
+                  userRequest,
+                  finalJsonForValidation,
+                  extraReview,
+                  lang
+                ),
+              },
+            ],
+            max_tokens: 4000,
+            temperature: 0.15,
+            response_format: { type: "json_object" },
+          }),
+          "Phase3-extra-refinement"
+        );
 
         const extraJson = extraRefineResponse.choices[0]?.message?.content ?? finalJsonForValidation;
+        let extraParsed: Record<string, unknown> | null = null;
         try {
-          result.phase3Result = JSON.parse(extractJson(extraJson)) as Record<string, unknown>;
-          result.phase4Approved = true;
-          result.qualityScore = Math.min(result.qualityScore + 10, 95);
+          extraParsed = JSON.parse(extractJson(extraJson)) as Record<string, unknown>;
         } catch {
-          // Keep previous result
+          // Keep previous result if parse fails
+        }
+
+        if (extraParsed) {
+          result.phase3Result = extraParsed;
+
+          // Re-validate with Gemini instead of blindly adding +10
+          try {
+            const geminiRevalidateModel = geminiAI.getGenerativeModel({
+              model: geminiModel,
+              generationConfig: { temperature: 0.1, maxOutputTokens: 1000 },
+            });
+            const revalidatePrompt = buildPhase4Prompt(userRequest, JSON.stringify(extraParsed, null, 2), lang);
+            const revalidateResponse = await geminiRevalidateModel.generateContent(revalidatePrompt);
+            const revalidateText = revalidateResponse.response.text();
+            const revalidated = JSON.parse(extractJson(revalidateText)) as GeminiValidationReport;
+
+            // Use the REAL re-validated score — no artificial boost
+            result.qualityScore = revalidated.finalScore ?? result.qualityScore;
+            result.qualityGrade = revalidated.qualityGrade ?? result.qualityGrade;
+            result.phase4Approved = revalidated.readyForDeployment ?? false;
+            logger.info({ newScore: result.qualityScore }, "[FIX 3.2] Re-validation complete — using real score");
+          } catch (revalidateErr) {
+            logger.warn({ err: revalidateErr }, "[FIX 3.2] Re-validation failed — keeping original score (no fake boost)");
+            // Do NOT add +10. Keep original score — honest reporting.
+          }
         }
       } catch (err) {
         logger.warn({ err }, "Extra refinement round failed");

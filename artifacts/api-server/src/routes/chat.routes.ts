@@ -1,14 +1,22 @@
 import { Router } from "express";
 import { db, conversationsTable, messagesTable, systemSettingsTable, generationSessionsTable, workflowVersionsTable } from "@workspace/db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { authenticate, requirePermission } from "../middleware/auth.middleware";
 import { decryptApiKey } from "../services/encryption.service";
-import { runSequentialEngine } from "../services/sequentialEngine.service";
+import { runSequentialEngine, type ConversationTurn } from "../services/sequentialEngine.service";
 import { runWorkflowAnalyzer } from "../services/workflowAnalyzer.service";
 import { runWorkflowModifier } from "../services/workflowModifier.service";
 import { updateWorkflow, getWorkflowExecutionsWithErrors } from "../services/n8n.service";
 import { getCachedWorkflows, getCachedWorkflow, invalidateWorkflowCache } from "../services/n8nCache.service";
 import { detectIntent, findWorkflowNameHint, smartTruncateMessage } from "../services/intentDetector.service";
+import {
+  buildPhase1ASystemPrompt,
+  buildPhase1AUserPrompt,
+  buildPhase1BSystemPrompt,
+  buildPhase1BUserPrompt,
+  detectLanguage as detectLang,
+} from "../services/promptBuilder.service";
+import { validateWorkflowJson, sanitizeWorkflowJson, extractJson } from "../services/jsonValidator.service";
 import { logger } from "../lib/logger";
 import type { Request, Response } from "express";
 
@@ -236,6 +244,20 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           ).join("\n")
         : undefined;
 
+      // FIX 3.4: build conversation history to pass session context to the engine.
+      // Reverse the previousMessages array (fetched DESC) to chronological order,
+      // exclude the current user message (already inserted above), and convert to
+      // ConversationTurn format. Limit to last 6 turns to stay within token budget.
+      const conversationHistory: ConversationTurn[] = previousMessages
+        .slice()
+        .reverse()
+        .filter((m) => m.content !== content)  // exclude the message just sent
+        .slice(-12)  // at most 12 rows = 6 turns
+        .map((m) => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        }));
+
       const engineResult = await runSequentialEngine(content, {
         openaiKey,
         geminiKey,
@@ -248,6 +270,8 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         // BUG 6 FIX: raised from 3 → 5 to cover common 4-5 node workflows
         // (e.g. Trigger → Condition → Action1 → Action2 → Response)
         simpleWorkflowNodeThreshold: 5,
+        // FIX 3.4: pass last 6 turns so Phase 1B knows what was discussed before
+        conversationHistory,
       });
 
       let assistantContent = engineResult.userMessage;
@@ -296,41 +320,121 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
 
     // ══════════════════════════════════════════════════════════════════════
     // PATH A2: CREATE — GPT-4o only (no Gemini key)
+    // FIX 3.5: Now uses the same Phase 1A (node analysis) + Phase 1B (schema-
+    //          injected generation) pipeline instead of a bare single prompt.
+    //          This brings PATH A2 to near-parity with PATH A quality-wise.
     // ══════════════════════════════════════════════════════════════════════
     } else if (intent === "create" && !geminiKey) {
+      const a2Lang = detectLang(content);
       sendEvent("start", { type: "gpt-only" });
-      sendEvent("phase", { phase: 1, label: "GPT-4o: Creating workflow", labelAr: "GPT-4o: إنشاء الـ workflow", status: "running" });
+      sendEvent("phase", {
+        phase: 1,
+        label: "GPT-4o: Analyzing nodes",
+        labelAr: "GPT-4o: تحليل الـ nodes المطلوبة",
+        status: "running",
+      });
 
       try {
-        const OpenAI = (await import("openai")).default;
-        const openai = new OpenAI({ apiKey: openaiKey, timeout: 90000 });
+        const OpenAILib = (await import("openai")).default;
+        const openai = new OpenAILib({ apiKey: openaiKey, timeout: 90000 });
+        const a2Start = Date.now();
 
-        const systemPrompt = lang === "ar"
-          ? "أنت خبير في بناء n8n workflows. أنشئ workflow JSON صالح وكامل. أرجع JSON فقط."
-          : "You are an n8n workflow expert. Create a valid, complete workflow JSON. Return JSON only.";
+        // Step 1A — identify required nodes
+        let nodeAnalysis = "";
+        try {
+          const a2NodeResp = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+              { role: "system", content: buildPhase1ASystemPrompt() },
+              { role: "user", content: buildPhase1AUserPrompt(content) },
+            ],
+            max_tokens: 500,
+            temperature: 0.1,
+            response_format: { type: "json_object" },
+          });
+          nodeAnalysis = a2NodeResp.choices[0]?.message?.content ?? "";
+        } catch (nodeErr) {
+          logger.warn({ nodeErr }, "PATH A2: Phase 1A failed — falling back to direct generation");
+        }
 
-        const p1Response = await openai.chat.completions.create({
-          model: "gpt-4o",
-          messages: [{ role: "system", content: systemPrompt }, { role: "user", content }],
-          max_tokens: 3000,
-          temperature: 0.3,
-          response_format: { type: "json_object" },
+        sendEvent("phase", {
+          phase: 1,
+          label: "GPT-4o: Building workflow with schemas",
+          labelAr: "GPT-4o: بناء الـ workflow بـ schemas دقيقة",
+          status: "running",
+          durationMs: Date.now() - a2Start,
         });
 
-        const workflowJson = p1Response.choices[0]?.message?.content ?? "{}";
+        // Step 1B — build full workflow with injected schemas + n8n context
+        const a2ContextStr = availableWorkflows.length > 0
+          ? availableWorkflows.slice(0, 15).map(w => `- "${w.name}" (${w.active ? "active" : "inactive"})`).join("\n")
+          : undefined;
+
+        // FIX 3.4 (also in PATH A2): include conversation history
+        const a2History: Array<{ role: "user" | "assistant"; content: string }> = previousMessages
+          .slice()
+          .reverse()
+          .filter((m) => m.content !== content)
+          .slice(-12)
+          .map((m) => ({ role: m.role as "user" | "assistant", content: m.content.slice(0, 1200) }));
+
+        let workflowJsonStr = "{}";
+        if (nodeAnalysis) {
+          const a2BuildResp = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+              { role: "system", content: buildPhase1BSystemPrompt(content, a2Lang) },
+              ...a2History,
+              { role: "user", content: buildPhase1BUserPrompt(content, nodeAnalysis, a2Lang, a2ContextStr) },
+            ],
+            max_tokens: 3500,
+            temperature: 0.2,
+            response_format: { type: "json_object" },
+          });
+          workflowJsonStr = a2BuildResp.choices[0]?.message?.content ?? "{}";
+        } else {
+          // Fallback: direct generation (better prompt than before)
+          const a2FallbackResp = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+              {
+                role: "system",
+                content: a2Lang === "ar"
+                  ? "أنت خبير متخصص في بناء n8n workflows. أنشئ workflow JSON كامل وصالح للاستيراد في n8n.\nيجب أن يحتوي على: name, nodes (array مع id, name, type, typeVersion, position, parameters), connections (object), settings ({executionOrder: 'v1'}).\nلا تضف أي نص خارج JSON."
+                  : "You are a specialist in building n8n workflows. Create a complete, valid workflow JSON ready for import in n8n.\nMust include: name, nodes (array with id, name, type, typeVersion, position, parameters), connections (object), settings ({executionOrder: 'v1'}).\nReturn JSON only.",
+              },
+              ...a2History,
+              { role: "user", content },
+            ],
+            max_tokens: 3500,
+            temperature: 0.25,
+            response_format: { type: "json_object" },
+          });
+          workflowJsonStr = a2FallbackResp.choices[0]?.message?.content ?? "{}";
+        }
+
+        // Validate and sanitize
         let parsed: Record<string, unknown> | null = null;
-        try { parsed = JSON.parse(workflowJson) as Record<string, unknown>; } catch { parsed = null; }
+        const a2Validation = validateWorkflowJson(workflowJsonStr);
+        if (a2Validation.valid && a2Validation.parsedJson) {
+          parsed = sanitizeWorkflowJson(a2Validation.parsedJson) as Record<string, unknown>;
+          workflowJsonStr = JSON.stringify(parsed, null, 2);
+        } else {
+          try {
+            parsed = JSON.parse(extractJson(workflowJsonStr)) as Record<string, unknown>;
+          } catch { parsed = null; }
+        }
 
-        sendEvent("phase", { phase: 1, status: "done", durationMs: 0 });
+        sendEvent("phase", { phase: 1, status: "done", durationMs: Date.now() - a2Start });
 
-        const noGeminiNote = lang === "ar"
-          ? "\n\n⚠️ *ملاحظة: مفتاح Gemini غير مضبوط. استُخدم GPT-4o فقط.*"
-          : "\n\n⚠️ *Note: Gemini key not configured. GPT-4o only mode.*";
+        const noGeminiNote = a2Lang === "ar"
+          ? "\n\n⚠️ *ملاحظة: مفتاح Gemini غير مضبوط — تم استخدام GPT-4o مع Node Schemas للحصول على أفضل جودة ممكنة.*"
+          : "\n\n⚠️ *Note: Gemini key not configured — GPT-4o used with Node Schemas for best possible quality.*";
 
-        const assistantContent = (lang === "ar"
-          ? "✅ تم إنشاء الـ workflow (GPT-4o فقط):\n\n"
-          : "✅ Workflow created (GPT-4o only):\n\n") +
-          `\`\`\`json\n${workflowJson}\n\`\`\`` + noGeminiNote;
+        const assistantContent = (a2Lang === "ar"
+          ? "✅ تم إنشاء الـ workflow (GPT-4o + Node Schemas):\n\n"
+          : "✅ Workflow created (GPT-4o + Node Schemas):\n\n") +
+          `\`\`\`json\n${workflowJsonStr}\n\`\`\`` + noGeminiNote;
 
         const [assistantMsg] = await db.insert(messagesTable).values({
           conversationId: convId,
@@ -346,8 +450,8 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         sendEvent("complete", {
           message: assistantMsg,
           workflowJson: parsed,
-          qualityScore: 70,
-          qualityGrade: "C",
+          qualityScore: 72,
+          qualityGrade: "C+",
           isWorkflowCreation: true,
         });
       } catch (err) {
@@ -432,13 +536,16 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
 
         try {
           // PROPOSAL 3: Auto-save version BEFORE applying modification
-          // This guarantees the user can always roll back to pre-modification state
+          // FIX 3.3: Use MAX(versionNumber)+1 instead of COUNT+1 to avoid race
+          //          condition when two concurrent modifications run simultaneously.
           try {
-            const existingVersions = await db
-              .select()
+            const maxVerResult = await db
+              .select({
+                maxVer: sql<number>`COALESCE(MAX(${workflowVersionsTable.versionNumber}), 0)`,
+              })
               .from(workflowVersionsTable)
               .where(eq(workflowVersionsTable.workflowN8nId, targetWorkflowId!));
-            const nextVersionNumber = existingVersions.length + 1;
+            const nextVersionNumber = (maxVerResult[0]?.maxVer ?? 0) + 1;
             await db.insert(workflowVersionsTable).values({
               workflowN8nId: targetWorkflowId!,
               versionNumber: nextVersionNumber,

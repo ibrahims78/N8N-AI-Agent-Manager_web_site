@@ -239,8 +239,9 @@ export async function runWorkflowModifier(
   if (config.geminiKey && modifiedJson) {
     try {
       const genAI = new GoogleGenerativeAI(config.geminiKey);
+      // FIX 3.1: use correct Gemini 2.5 Pro experimental model name
       const geminiModel = genAI.getGenerativeModel({
-        model: "gemini-2.5-pro",
+        model: "gemini-2.5-pro-exp-03-25",
         generationConfig: { temperature: 0.1, maxOutputTokens: 500 },
       });
 
