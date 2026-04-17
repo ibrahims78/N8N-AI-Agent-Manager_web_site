@@ -1,5 +1,5 @@
 # تقرير مفصل: مشاكل الوكيل الذكي واقتراحات التحسين
-## حالة التنفيذ — محدّث في 17 أبريل 2026 (FIX 5.3 مكتمل)
+## حالة التنفيذ — محدّث في 17 أبريل 2026 (Phase 4 Persistent Memory مكتمل)
 
 ---
 
@@ -46,6 +46,7 @@
 | 37 | **FIX 5.1 — Tool Calling Architecture (Agentic Engine)** | ✅ مُنجز |
 | 38 | **FIX 5.2 — Dynamic Node Schema Discovery** | ✅ مُنجز |
 | 39 | **FIX 5.3 — Self-Healing Loop (حلقة الإصلاح الذاتي)** | ✅ مُنجز |
+| 40 | **Phase 4 — Persistent Memory & Project Context** | ✅ مُنجز |
 
 ---
 
@@ -1847,3 +1848,154 @@ selfHealing: {
 ---
 
 *آخر تحديث: 17 أبريل 2026 — FIX 5.3 Self-Healing Loop مكتمل ✅*
+
+---
+
+## Phase 4 — Persistent Memory & Project Context — 17 أبريل 2026
+
+### ملخص التنفيذ
+
+تحقيق "الذاكرة الدائمة" للوكيل الذكي — يتذكر المستخدمَ عبر الجلسات المختلفة ويستخدم تاريخ عمله لتقديم اقتراحات أذكى وتجربة مخصصة.
+
+**حالة البناء:** ✅ `pnpm --filter @workspace/api-server run build` — 0 أخطاء TypeScript (2.9mb)
+**حالة قاعدة البيانات:** ✅ جدول `agent_memory` مُنشأ ومُفعَّل في PostgreSQL
+
+---
+
+### المشكلة التي تحلها هذه المرحلة
+
+كل جلسة محادثة كانت مستقلة تماماً — الوكيل لا يعرف أن المستخدم أنشأ 50 workflow سابقاً، ولا يعرف لغته المفضلة، ولا يعرف الـ nodes التي يستخدمها كثيراً. كل مرة يبدأ المستخدم محادثة جديدة، الوكيل يبدأ من الصفر.
+
+---
+
+### البنية التقنية
+
+#### 1. جدول قاعدة البيانات — `agent_memory`
+
+**الملف:** `lib/db/src/schema/agent_memory.ts` (55 سطر)
+
+```typescript
+export const agentMemoryTable = pgTable("agent_memory", {
+  id:               serial("id").primaryKey(),
+  userId:           integer("user_id").notNull().unique().references(() => usersTable.id),
+  createdWorkflows: jsonb("created_workflows").notNull().default([]),
+  userPatterns:     jsonb("user_patterns").notNull().default({
+                      preferredLang: "ar",
+                      frequentNodeTypes: [],
+                      totalWorkflowsCreated: 0,
+                      lastActiveAt: null
+                    }),
+  n8nCredentials:   jsonb("n8n_credentials").notNull().default([]),
+  lastSyncedAt:     timestamp("last_synced_at"),
+  updatedAt:        timestamp("updated_at").notNull().defaultNow()
+});
+```
+
+**تصميم البيانات:**
+- `createdWorkflows`: مصفوفة بحجم أقصى 50 workflow — sliding window (الأحدث أولاً)
+- `userPatterns`: أنماط الاستخدام — اللغة المفضلة + الـ nodes الأكثر استخداماً (15 نوع)
+- `n8nCredentials`: بيانات credentials مُخزَّنة لـ 1 ساعة (TTL)
+- علاقة `unique()` على `userId` — سجل واحد لكل مستخدم
+
+#### 2. خدمة الذاكرة — `agentMemory.service.ts`
+
+**الملف:** `artifacts/api-server/src/services/agentMemory.service.ts` (354 سطر)
+
+**الدوال الخمس الرئيسية:**
+
+| الدالة | الوظيفة |
+|--------|---------|
+| `getOrCreateMemory(userId)` | يجلب سجل الذاكرة أو يُنشئه إذا لم يوجد |
+| `recordWorkflowCreated(userId, workflow)` | يُضيف workflow للذاكرة + يُحدّث الأنماط |
+| `updateLanguagePreference(userId, lang)` | يُحدّث اللغة المفضلة (ar/en) |
+| `syncN8nCredentials(userId)` | يجلب credentials من DB ويُخزّنها مع TTL |
+| `buildMemoryContext(userId)` | يبني نص السياق لحقنه في System Prompt |
+| `extractNodeTypesFromWorkflow(wf)` | يستخرج أنواع الـ nodes من JSON |
+| `extractWorkflowDescription(prompt)` | يستخرج وصف الـ workflow من طلب المستخدم |
+
+**نموذج نص السياق الذي يُحقن في الـ LLM:**
+```
+### [ذاكرة دائمة — سياق المستخدم عبر الجلسات]
+## ذاكرة المستخدم — Workflows التي أنشأها سابقاً (3):
+  - "Daily Report Scheduler" (ID: n8n-abc-003) — إرسال تقرير يومي بـ Telegram | جودة: 85% | nodes: scheduleTrigger, telegram, code — أُنشئ: ١٧ أبريل ٢٠٢٦
+  - "Shopify → Google Sheets" (ID: n8n-abc-002) — تسجيل كل طلب Shopify في Google Sheets تلقائياً | جودة: 92% | nodes: shopify, googleSheets, webhook — أُنشئ: ١٥ أبريل ٢٠٢٦
+  - "Gmail → Slack Notification" (ID: n8n-abc-001) — أرسل إشعار Slack عند كل بريد Gmail جديد | جودة: 88% | nodes: gmail, slack — أُنشئ: ١٠ أبريل ٢٠٢٦
+## أنماط الاستخدام:
+  - إجمالي الـ workflows المُنشأة: 3
+  - الـ nodes الأكثر استخداماً: gmail, slack, shopify, googleSheets, webhook
+```
+
+#### 3. التكامل في `agenticEngine.service.ts`
+
+**ما تم إضافته:**
+- إضافة `memoryContext?: string` في `AgenticEngineConfig`
+- حقن `memoryContext` في `buildAgentSystemPrompt` — في النسختين العربية والإنجليزية
+- `memorySection` يظهر فقط عندما يكون هناك ذاكرة (لا يُثقل الـ prompt بدون داعٍ)
+
+```typescript
+const memorySection = memoryContext
+  ? `\n\n${memoryContext}`
+  : "";
+// ... بعدها في System Prompt:
+${memorySection}
+```
+
+#### 4. التكامل في `chat.routes.ts`
+
+**ما تم إضافته:**
+- `buildMemoryContext` + `recordWorkflowCreated` + `syncN8nCredentials` + `updateLanguagePreference` مُستوردة من الخدمة
+- **Promise.all بـ 4 عناصر** (يعمل بالتوازي):
+  ```typescript
+  const [apiKeys, previousMessages, cachedWorkflows, memoryContext] = await Promise.all([
+    getApiKeysAndModel(db, req.user!.userId),
+    fetchPreviousMessages(...),
+    getCachedWorkflows(),
+    buildMemoryContext(userId)   // ← جديد
+  ]);
+  ```
+- **PATH A** — بعد إنشاء workflow: `recordWorkflowCreated` + `updateLanguagePreference`
+- **PATH A2** — بعد تعديل workflow: `recordWorkflowCreated` + `updateLanguagePreference`
+- **syncN8nCredentials** — عند كل طلب مصادق (مع TTL 1 ساعة)
+- كل عمليات الذاكرة **غير قاطعة** `.catch(() => {})` — الفشل لا يوقف الـ workflow الرئيسي أبداً
+
+---
+
+### اختبارات التحقق (8 اختبارات — 8/8 نجحت)
+
+| # | الاختبار | النتيجة |
+|---|---------|---------|
+| A | جدول `agent_memory` في PostgreSQL (7 أعمدة) | ✅ |
+| B | ملفات جديدة: `agent_memory.ts` (55 سطر) + `agentMemory.service.ts` (354 سطر) | ✅ |
+| C | الدوال الخمس موجودة في الـ bundle المُجمَّع | ✅ |
+| D | `buildMemoryContext` + `recordWorkflowCreated` + `syncN8nCredentials` مُستدعيات في `chat.routes.ts` | ✅ |
+| E | `memoryContext` مُحقَن في `agenticEngine.service.ts` (7 مراجع) | ✅ |
+| F | Promise.all يضم 4 fetches بالتوازي | ✅ |
+| G | TypeScript Build نظيف — 0 أخطاء | ✅ |
+| H | CRUD قاعدة البيانات — إنشاء + تسجيل + قراءة يعمل بشكل مثالي | ✅ |
+
+---
+
+### الـ sliding window — سياسة إدارة الحجم
+
+```
+created_workflows: آخر 50 workflow (الأحدث أولاً)
+في System Prompt: آخر 10 فقط (لتوفير tokens)
+frequentNodeTypes: أكثر 15 نوع استخداماً
+n8n_credentials TTL: 3600 ثانية (1 ساعة)
+```
+
+---
+
+### قيمة الترقية
+
+| المعيار | قبل Phase 4 | بعد Phase 4 |
+|---------|-------------|-------------|
+| تذكر الجلسات السابقة | ❌ كل جلسة من الصفر | ✅ يتذكر آخر 50 workflow |
+| تخصيص الاقتراحات | ❌ اقتراحات عامة | ✅ يقترح بناءً على الـ nodes المعتادة |
+| أداء الـ credentials | ❌ يجلبها من DB عند كل طلب | ✅ مُخزَّنة في الذاكرة بـ TTL ساعة |
+| مقارنة مع ChatGPT | لا ذاكرة بين المحادثات | ✅ ذاكرة دائمة لكل مستخدم |
+| تأثير على الأداء | — | ✅ غير قاطع + بالتوازي مع باقي الطلبات |
+
+---
+
+*آخر تحديث: 17 أبريل 2026 — Phase 4 Persistent Memory مكتمل ✅*

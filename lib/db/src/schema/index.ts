@@ -7,3 +7,4 @@ export * from "./workflow_versions";
 export * from "./generation_sessions";
 export * from "./templates";
 export * from "./audit_logs";
+export * from "./agent_memory";

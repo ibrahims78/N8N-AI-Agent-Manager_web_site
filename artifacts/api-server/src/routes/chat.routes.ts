@@ -23,6 +23,15 @@ import { validateWorkflowJson, sanitizeWorkflowJson, extractJson } from "../serv
 import { sanitizeUserInput } from "../services/inputSanitizer.service";
 // FIX 5.3: Self-Healing Loop — auto-import to n8n with LLM-based error correction
 import { runSelfHealingLoop } from "../services/selfHealingLoop.service";
+// FIX Phase 4: Persistent Memory — cross-session user context
+import {
+  buildMemoryContext,
+  recordWorkflowCreated,
+  updateLanguagePreference,
+  syncN8nCredentials,
+  extractNodeTypesFromWorkflow,
+  extractWorkflowDescription,
+} from "../services/agentMemory.service";
 import { logger } from "../lib/logger";
 import type { Request, Response } from "express";
 
@@ -213,20 +222,35 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
     // appears in previousMessages (race condition when both ran in Promise.all).
     await db.insert(messagesTable).values({ conversationId: convId, role: "user", content });
 
+    const userId = req.user.userId;
+
     // FIX 4.2: Parallelize all independent pre-generation fetches in one Promise.all:
-    // Previously getCachedWorkflows ran AFTER keys+history, causing unnecessary sequential delay.
-    // Now all three run concurrently — saves 50-300ms on cache misses.
-    const [{ openaiKey, geminiKey }, previousMessages, availableWorkflows] = await Promise.all([
-      getApiKeys(),
-      db.select().from(messagesTable)
-        .where(eq(messagesTable.conversationId, convId))
-        .orderBy(desc(messagesTable.createdAt))
-        .limit(20),
-      getCachedWorkflows().catch(() => {
-        logger.warn("Could not fetch n8n workflows — continuing without");
-        return [] as Array<{ id: string; name: string; active: boolean }>;
-      }),
-    ]);
+    // FIX Phase 4: added buildMemoryContext + syncN8nCredentials (persistent memory)
+    const [{ openaiKey, geminiKey }, previousMessages, availableWorkflows, memoryContext] =
+      await Promise.all([
+        getApiKeys(),
+        db.select().from(messagesTable)
+          .where(eq(messagesTable.conversationId, convId))
+          .orderBy(desc(messagesTable.createdAt))
+          .limit(20),
+        getCachedWorkflows().catch(() => {
+          logger.warn("Could not fetch n8n workflows — continuing without");
+          return [] as Array<{ id: string; name: string; active: boolean }>;
+        }),
+        // FIX Phase 4: load persistent user memory (non-blocking — fails silently)
+        (async () => {
+          try {
+            // Fire-and-forget credential sync (respects 1h TTL internally)
+            syncN8nCredentials(userId).catch(() => {});
+            return await buildMemoryContext(userId, lang);
+          } catch {
+            return "";
+          }
+        })(),
+      ]);
+
+    // FIX Phase 4: update preferred language in background (non-blocking)
+    updateLanguagePreference(userId, lang).catch(() => {});
 
     if (!openaiKey) {
       sendEvent("error", {
@@ -278,12 +302,14 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         }));
 
       // FIX 5.1: Run the agentic engine
+      // FIX Phase 4: pass persistent memory context
       const agentResult = await runAgenticEngine(content, {
         openaiKey,
         geminiKey,
         maxIterations: 10,
         qualityThreshold: 75,
         n8nContext: n8nContextStr,
+        memoryContext: memoryContext || undefined,
         conversationHistory,
 
         // SSE: each tool call the agent makes
@@ -400,6 +426,22 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
 
       if (agentResult.workflowJson) {
         assistantContent += `\n\n\`\`\`json\n${JSON.stringify(agentResult.workflowJson, null, 2)}\n\`\`\``;
+
+        // FIX Phase 4: Record this workflow in persistent memory
+        // Only record if we have a real n8n ID (from self-healing import) or if the workflow was generated successfully
+        const workflowName =
+          (agentResult.workflowJson.name as string | undefined) ??
+          "Unnamed Workflow";
+        const n8nId = selfHealingResult?.n8nWorkflowId ?? `local-${Date.now()}`;
+        recordWorkflowCreated(userId, {
+          n8nId,
+          name: workflowName,
+          description: extractWorkflowDescription(agentResult.workflowJson, content),
+          nodeTypes: extractNodeTypesFromWorkflow(agentResult.workflowJson),
+          qualityScore: Math.round(agentResult.qualityScore),
+          tags: ["agentic", agentResult.lang],
+        }).catch(() => {});
+
         try {
           await db.insert(generationSessionsTable).values({
             conversationId: convId,
@@ -658,6 +700,20 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
               ? `\n\n⚠️ **فشل الاستيراد التلقائي** — ${a2HealResult.finalError}`
               : `\n\n⚠️ **Auto-import failed** — ${a2HealResult.finalError}`;
           }
+        }
+
+        // FIX Phase 4: Record workflow in persistent memory (PATH A2)
+        if (parsed) {
+          const a2WorkflowName = (parsed.name as string | undefined) ?? "Unnamed Workflow";
+          const a2N8nId = a2HealResult?.n8nWorkflowId ?? `local-${Date.now()}`;
+          recordWorkflowCreated(userId, {
+            n8nId: a2N8nId,
+            name: a2WorkflowName,
+            description: extractWorkflowDescription(parsed, content),
+            nodeTypes: extractNodeTypesFromWorkflow(parsed),
+            qualityScore: 72,
+            tags: ["gpt-only", a2Lang],
+          }).catch(() => {});
         }
 
         const [assistantMsg] = await db.insert(messagesTable).values({

@@ -56,6 +56,8 @@ export interface AgenticEngineConfig {
   geminiModel?: string;
   /** Existing n8n workflows context string to inject into system prompt */
   n8nContext?: string;
+  /** FIX Phase 4: Persistent memory context (cross-session user history) */
+  memoryContext?: string;
   /** Past conversation turns for multi-turn context (max 6 turns) */
   conversationHistory?: ConversationTurn[];
   /** SSE callbacks for live frontend updates */
@@ -116,11 +118,20 @@ export interface AgenticEngineResult {
 // System Prompt
 // ─────────────────────────────────────────────────────────────────────────────
 
-function buildAgentSystemPrompt(lang: Language, n8nContext?: string): string {
+function buildAgentSystemPrompt(
+  lang: Language,
+  n8nContext?: string,
+  memoryContext?: string
+): string {
   const contextSection = n8nContext
     ? lang === "ar"
       ? `\n\n## سياق n8n الحالي:\n${n8nContext}`
       : `\n\n## Current n8n Context:\n${n8nContext}`
+    : "";
+
+  // FIX Phase 4: inject persistent memory into system prompt
+  const memorySection = memoryContext
+    ? `\n\n${memoryContext}`
     : "";
 
   if (lang === "ar") {
@@ -159,7 +170,7 @@ function buildAgentSystemPrompt(lang: Language, n8nContext?: string): string {
 - \`settings\`: \`{"executionOrder": "v1"}\`
 
 ## القاعدة الذهبية:
-لا تخمّن أي schema أو type أو typeVersion — استخدم get_node_schema دائماً.${contextSection}`;
+لا تخمّن أي schema أو type أو typeVersion — استخدم get_node_schema دائماً.${contextSection}${memorySection}`;
   }
 
   return `You are an expert n8n workflow building agent using Tool Calling architecture.
@@ -197,7 +208,7 @@ Must include:
 - \`settings\`: \`{"executionOrder": "v1"}\`
 
 ## Golden Rule:
-Never guess any schema, type, or typeVersion — always use get_node_schema.${contextSection}`;
+Never guess any schema, type, or typeVersion — always use get_node_schema.${contextSection}${memorySection}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -371,7 +382,8 @@ export async function runAgenticEngine(
   const toolCallLog: Array<{ tool: string; args: Record<string, unknown>; durationMs: number }> = [];
 
   // ── Build initial messages ──────────────────────────────────────────────────
-  const systemPrompt = buildAgentSystemPrompt(lang, config.n8nContext);
+  // FIX Phase 4: include persistent memory context in system prompt
+  const systemPrompt = buildAgentSystemPrompt(lang, config.n8nContext, config.memoryContext);
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
     { role: "system", content: systemPrompt },
   ];
