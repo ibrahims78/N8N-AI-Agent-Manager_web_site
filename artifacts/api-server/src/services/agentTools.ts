@@ -21,6 +21,10 @@ import { NODE_SCHEMAS, getRelevantSchemas } from "./nodeSchemas";
 import { validateWorkflowJson } from "./jsonValidator.service";
 import { getCachedWorkflows, getCachedWorkflow } from "./n8nCache.service";
 import { getWorkflowExecutionsWithErrors } from "./n8n.service";
+import {
+  getDynamicNodeSchema,
+  searchDynamicNodeTypes,
+} from "./dynamicNodeSchema.service";
 import { logger } from "../lib/logger";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -236,10 +240,10 @@ export async function executeToolCall(
 
     switch (toolName) {
       case "get_node_schema":
-        result = executeGetNodeSchema(String(args.node_type ?? ""));
+        result = await executeGetNodeSchema(String(args.node_type ?? ""));
         break;
       case "search_node_types":
-        result = executeSearchNodeTypes(String(args.query ?? ""));
+        result = await executeSearchNodeTypes(String(args.query ?? ""));
         break;
       case "list_available_workflows":
         result = await executeListWorkflows();
@@ -270,23 +274,83 @@ export async function executeToolCall(
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tool 1: get_node_schema
+// FIX 5.2: Now uses Dynamic Node Schema Discovery with static fallback
 // ─────────────────────────────────────────────────────────────────────────────
 
-function executeGetNodeSchema(nodeType: string): unknown {
+async function executeGetNodeSchema(nodeType: string): Promise<unknown> {
   if (!nodeType.trim()) {
     return { found: false, message: "node_type is required." };
   }
 
-  // 1. Exact key match
-  if (NODE_SCHEMAS[nodeType]) {
-    return { found: true, schema: NODE_SCHEMAS[nodeType] };
+  const normalized = nodeType.toLowerCase().trim();
+
+  // ── FIX 5.2: Try dynamic lookup first ─────────────────────────────────────
+  try {
+    const dynamic = await getDynamicNodeSchema(nodeType);
+    if (dynamic.found && dynamic.node) {
+      const node = dynamic.node;
+      // If we have a curated static schema, return its full detail
+      if (node.hasStaticSchema && node.staticSchema) {
+        return {
+          found: true,
+          source: dynamic.source,
+          installedInN8n: dynamic.source === "n8n-api",
+          resolvedAs: node.type,
+          schema: node.staticSchema,
+          alternatives: dynamic.alternatives,
+          nodeInfo: {
+            displayName: node.displayName,
+            version: node.version,
+            credentialTypes: node.credentialTypes,
+            category: node.category,
+          },
+        };
+      }
+      // Dynamic-only node (no curated schema) — return what n8n told us
+      return {
+        found: true,
+        source: dynamic.source,
+        installedInN8n: dynamic.source === "n8n-api",
+        resolvedAs: node.type,
+        schema: {
+          type: node.type,
+          typeVersion: node.version,
+          credentials: node.credentialTypes.reduce<Record<string, string>>(
+            (acc, ct) => { acc[ct] = ct; return acc; },
+            {}
+          ),
+          defaultParameters: {},
+          description: node.description,
+          category: node.category,
+        },
+        alternatives: dynamic.alternatives,
+        note: "Schema inferred from n8n API — curated static schema not available for this node.",
+        nodeInfo: {
+          displayName: node.displayName,
+          version: node.version,
+          credentialTypes: node.credentialTypes,
+          category: node.category,
+        },
+      };
+    }
+  } catch (err) {
+    logger.debug(
+      { err: err instanceof Error ? err.message : String(err), nodeType },
+      "FIX 5.2: Dynamic schema lookup failed, falling back to static"
+    );
   }
 
-  // 2. KEYWORD_LOOKUP resolution (fast O(1) path for common aliases)
-  const normalized = nodeType.toLowerCase().trim();
+  // ── Static fallback chain (FIX 5.1 logic preserved) ────────────────────────
+
+  // 1. Exact key match
+  if (NODE_SCHEMAS[nodeType]) {
+    return { found: true, source: "static", schema: NODE_SCHEMAS[nodeType] };
+  }
+
+  // 2. KEYWORD_LOOKUP resolution
   const mappedKey = KEYWORD_LOOKUP[normalized];
   if (mappedKey && NODE_SCHEMAS[mappedKey]) {
-    return { found: true, resolvedAs: mappedKey, schema: NODE_SCHEMAS[mappedKey] };
+    return { found: true, source: "static", resolvedAs: mappedKey, schema: NODE_SCHEMAS[mappedKey] };
   }
 
   // 3. getRelevantSchemas — uses full KEYWORD_NODE_MAP + Arabic aliases
@@ -297,6 +361,7 @@ function executeGetNodeSchema(nodeType: string): unknown {
     if (schemaEntry) {
       return {
         found: true,
+        source: "static",
         resolvedVia: "keyword-map",
         schema: schemaEntry[1],
         alternatives: relevant.slice(1, 4).map((s) => s.type),
@@ -304,15 +369,15 @@ function executeGetNodeSchema(nodeType: string): unknown {
     }
   }
 
-  // 4. Fuzzy: any schema key whose key string contains the search term
+  // 4. Fuzzy key match
   const matchKey = Object.keys(NODE_SCHEMAS).find((k) =>
     k.toLowerCase().includes(normalized)
   );
   if (matchKey) {
-    return { found: true, resolvedAs: matchKey, schema: NODE_SCHEMAS[matchKey] };
+    return { found: true, source: "static", resolvedAs: matchKey, schema: NODE_SCHEMAS[matchKey] };
   }
 
-  // 5. Suggest alternatives from description/category
+  // 5. Suggest alternatives
   const suggestions = Object.keys(NODE_SCHEMAS)
     .filter((k) => {
       const s = NODE_SCHEMAS[k];
@@ -333,17 +398,44 @@ function executeGetNodeSchema(nodeType: string): unknown {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tool 2: search_node_types
+// FIX 5.2: Now searches ALL nodes installed in n8n, not just static schemas
 // ─────────────────────────────────────────────────────────────────────────────
 
-function executeSearchNodeTypes(query: string): unknown {
+async function executeSearchNodeTypes(query: string): Promise<unknown> {
   const q = query.toLowerCase().trim();
   if (!q) return { query, count: 0, results: [] };
 
-  // Use getRelevantSchemas (which internally uses the full KEYWORD_NODE_MAP)
+  // ── FIX 5.2: Use dynamic search across all installed n8n nodes ────────────
+  try {
+    const dynamic = await searchDynamicNodeTypes(query);
+    if (dynamic.totalInstalled > 0) {
+      // Also check KEYWORD_LOOKUP aliases for the agent's convenience
+      const aliases = Object.entries(KEYWORD_LOOKUP)
+        .filter(([kw]) => kw.includes(q))
+        .map(([kw, target]) => ({ alias: kw, resolves_to: target }))
+        .slice(0, 10);
+
+      return {
+        query,
+        source: dynamic.source,
+        totalInstalled: dynamic.totalInstalled,
+        count: dynamic.count,
+        results: dynamic.results,
+        keywordAliases: aliases,
+        hint: dynamic.hint,
+      };
+    }
+  } catch (err) {
+    logger.debug(
+      { err: err instanceof Error ? err.message : String(err) },
+      "FIX 5.2: Dynamic search failed, falling back to static"
+    );
+  }
+
+  // ── Static fallback (FIX 5.1 logic preserved) ────────────────────────────
   const relevant = getRelevantSchemas(query);
   const relevantKeys = new Set(relevant.map((s) => s.type));
 
-  // Also do direct key/description/category match for full coverage
   const results: Array<{ key: string; description: string; category: string; relevant: boolean }> = [];
 
   for (const [key, schema] of Object.entries(NODE_SCHEMAS)) {
@@ -362,10 +454,8 @@ function executeSearchNodeTypes(query: string): unknown {
     }
   }
 
-  // Sort: keyword-matched (relevant=true) first
   results.sort((a, b) => (b.relevant ? 1 : 0) - (a.relevant ? 1 : 0));
 
-  // Also check KEYWORD_LOOKUP aliases
   const aliases = Object.entries(KEYWORD_LOOKUP)
     .filter(([kw]) => kw.includes(q))
     .map(([kw, target]) => ({ alias: kw, resolves_to: target }))
@@ -373,13 +463,15 @@ function executeSearchNodeTypes(query: string): unknown {
 
   return {
     query,
+    source: "static",
+    totalInstalled: Object.keys(NODE_SCHEMAS).length,
     count: results.length,
     results: results.slice(0, 15),
     keywordAliases: aliases,
     hint:
       results.length === 0
         ? "No matching nodes found. Try a broader search term."
-        : `Found ${results.length} node(s). Use get_node_schema to get the full schema.`,
+        : `Found ${results.length} node(s) in static schemas. Use get_node_schema to get the full schema.`,
   };
 }
 

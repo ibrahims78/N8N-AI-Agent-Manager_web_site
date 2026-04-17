@@ -4,6 +4,12 @@ import { eq } from "drizzle-orm";
 import { authenticate, requireAdmin } from "../middleware/auth.middleware";
 import { encryptApiKey, decryptApiKey } from "../services/encryption.service";
 import { testN8nConnection } from "../services/n8n.service";
+import {
+  getCachedN8nNodeTypes,
+  getDynamicSchemaSummary,
+  invalidateDynamicNodeCache,
+  searchDynamicNodeTypes,
+} from "../services/dynamicNodeSchema.service";
 import type { Request, Response } from "express";
 
 const router = Router();
@@ -58,6 +64,9 @@ router.put("/n8n", authenticate, requireAdmin, async (req: Request, res: Respons
       n8nApiKeyIv: iv,
     });
   }
+
+  // FIX 5.2: Invalidate dynamic node type cache when n8n settings change
+  invalidateDynamicNodeCache();
 
   res.json({ success: true, message: "N8N settings saved" });
 });
@@ -257,6 +266,110 @@ router.post("/onboarding-complete", authenticate, requireAdmin, async (req: Requ
   await db.update(usersTable).set({ onboardingComplete: true }).where(eq(usersTable.id, req.user.userId));
 
   res.json({ success: true, message: "Onboarding complete" });
+});
+
+// ─── FIX 5.2: Dynamic Node Schema Discovery Endpoints ────────────────────────
+
+/**
+ * GET /api/settings/node-types
+ * Returns all node types installed in the connected n8n instance (1h cache).
+ * Falls back to static schemas if n8n is unavailable.
+ */
+router.get("/node-types", authenticate, async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const result = await getCachedN8nNodeTypes();
+    res.json({
+      success: true,
+      data: {
+        source: result.source,
+        fetchedAt: result.fetchedAt,
+        n8nUrl: result.n8nUrl,
+        totalNodes: result.nodes.length,
+        nodes: result.nodes.map((n) => ({
+          type: n.type,
+          displayName: n.displayName,
+          description: n.description,
+          version: n.version,
+          category: n.category,
+          credentialTypes: n.credentialTypes,
+          hasStaticSchema: n.hasStaticSchema,
+          aliases: n.aliases,
+        })),
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: { code: "NODE_TYPES_ERROR", message: String(err) },
+    });
+  }
+});
+
+/**
+ * GET /api/settings/node-types/summary
+ * Returns cache statistics and breakdown by category.
+ */
+router.get("/node-types/summary", authenticate, async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const summary = await getDynamicSchemaSummary();
+    res.json({ success: true, data: summary });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: { code: "SUMMARY_ERROR", message: String(err) },
+    });
+  }
+});
+
+/**
+ * GET /api/settings/node-types/search?q=slack
+ * Searches installed node types by keyword.
+ */
+router.get("/node-types/search", authenticate, async (req: Request, res: Response): Promise<void> => {
+  const q = String(req.query.q ?? "").trim();
+  if (!q) {
+    res.status(400).json({
+      success: false,
+      error: { code: "MISSING_QUERY", message: "Query parameter 'q' is required" },
+    });
+    return;
+  }
+  try {
+    const result = await searchDynamicNodeTypes(q);
+    res.json({ success: true, data: result });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: { code: "SEARCH_ERROR", message: String(err) },
+    });
+  }
+});
+
+/**
+ * POST /api/settings/node-types/refresh
+ * Admin-only: Force a fresh fetch from n8n, bypassing the 1h cache.
+ */
+router.post("/node-types/refresh", authenticate, requireAdmin, async (_req: Request, res: Response): Promise<void> => {
+  try {
+    invalidateDynamicNodeCache();
+    const result = await getCachedN8nNodeTypes(true);
+    res.json({
+      success: true,
+      data: {
+        source: result.source,
+        totalNodes: result.nodes.length,
+        fetchedAt: result.fetchedAt,
+        message: result.source === "n8n-api"
+          ? `تم تحديث قائمة الـ nodes: ${result.nodes.length} node مثبتة في n8n`
+          : `تم استخدام الـ schemas الثابتة: ${result.nodes.length} node (n8n غير متصل)`,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: { code: "REFRESH_ERROR", message: String(err) },
+    });
+  }
 });
 
 // ─── Danger Zone ─────────────────────────────────────────────────────────────

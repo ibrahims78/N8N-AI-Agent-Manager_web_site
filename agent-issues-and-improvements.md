@@ -1434,3 +1434,193 @@ tokenUsage: {
 ---
 
 *آخر تحديث: 17 أبريل 2026 — FIX 5.1 Tool Calling Architecture مكتمل ✅*
+
+---
+
+## FIX 5.2 — Dynamic Node Schema Discovery — 17 أبريل 2026
+
+### ملخص التنفيذ
+
+تم استبدال الـ 68 (ثم 86 بعد FIX 4.3) schema ثابتة بنظام **اكتشاف ديناميكي حقيقي** يجلب قائمة كاملة بجميع nodes المثبتة في n8n الخاص بالمستخدم ويُخزّنها لمدة ساعة كاملة.
+
+**حالة البناء:** ✅ صفر أخطاء TypeScript (`pnpm --filter @workspace/api-server run build` — نجح)
+**حالة الاختبارات:** ✅ جميع الاختبارات نجحت (8 اختبارات شاملة)
+**الملفات الجديدة:** 1 ملف جديد، 3 ملفات محدّثة
+
+---
+
+### المعمارية الجديدة
+
+```
+قبل FIX 5.2:
+┌─────────────────────────────────────────────┐
+│  NODE_SCHEMAS (ثابتة) — 86 schema مُضمّنة   │
+│  get_node_schema() → يبحث في 86 schema فقط  │
+│  search_node_types() → 86 node فقط          │
+│  لا يعرف ما هو مثبت فعلاً في n8n المستخدم  │
+└─────────────────────────────────────────────┘
+
+بعد FIX 5.2:
+┌────────────────────────────────────────────────────────────────┐
+│  dynamicNodeSchema.service.ts                                   │
+│                                                                 │
+│  getCachedN8nNodeTypes()  ──→ [n8n API /api/v1/node-types]     │
+│      │                          أو /rest/node-types            │
+│      │                     ← 400+ node types من n8n الحقيقي   │
+│      │                                                         │
+│      ↓ إذا فشل الاتصال:                                        │
+│  buildStaticFallback() ← NODE_SCHEMAS (86 schema) + ALIASES    │
+│      + KEYWORD_NODE_MAP (Arabic keywords) → aliases صحيحة      │
+│                                                                 │
+│  Cache TTL: 1 ساعة                                             │
+│  Invalidation: عند تغيير إعدادات n8n                           │
+└────────────────────────────────────────────────────────────────┘
+
+الوكيل (agentTools.ts):
+  get_node_schema("slack")  → getDynamicNodeSchema()  [5.2] → ...
+  search_node_types("email") → searchDynamicNodeTypes() [5.2] → ...
+```
+
+---
+
+### الملفات المنشأة والمعدّلة
+
+#### 1. `dynamicNodeSchema.service.ts` (جديد — 370 سطر)
+
+الخدمة الأساسية الجديدة مع 6 دوال عامة:
+
+| الدالة | الوظيفة |
+|--------|---------|
+| `getCachedN8nNodeTypes(forceRefresh?)` | القائمة الكاملة بجميع nodes مثبتة في n8n (cache 1h) |
+| `getDynamicNodeSchema(nodeType)` | schema لـ node واحد بأولوية: exact → alias → fuzzy → اقتراحات |
+| `searchDynamicNodeTypes(query)` | بحث مُرتّب حسب الأهمية عبر جميع الـ nodes المثبتة |
+| `isNodeTypeInstalled(nodeType)` | boolean — هل هذا الـ node مثبت؟ |
+| `getDynamicSchemaSummary()` | إحصاءات Cache للمراقبة وصفحة الإدارة |
+| `invalidateDynamicNodeCache()` | إلغاء الـ cache يدوياً |
+
+**آلية جلب البيانات من n8n (محاولتان بالترتيب):**
+
+```
+1. GET {n8nUrl}/api/v1/node-types  (Public API v1 — n8n 1.0+)
+   Response: { data: [...] }
+
+2. GET {n8nUrl}/rest/node-types    (Internal REST API — إصدارات أقدم)
+   Response: [...] (plain array)
+
+إذا فشلتا → static fallback (86 schema + Arabic aliases)
+```
+
+**استراتيجية الـ merge:** عند نجاح جلب n8n، يُضاف أي schema ثابت غير موجود في الـ API ليضمن تغطية كاملة.
+
+**بناء الـ aliases الذكي:**
+- عند استخدام static fallback، تُقرأ جميع الـ keywords من `KEYWORD_NODE_MAP` (عربي + إنجليزي) وتُحوّل لـ aliases لكل node
+- يُتيح البحث بالعربي مثل "تيليغرام"، "البريد"، "قواعد بيانات"
+
+**خوارزمية البحث المُرتّبة (8 معايير للتقييم):**
+
+| المعيار | النقاط |
+|---------|--------|
+| Exact type key match | +100 |
+| Display name exact match | +80 |
+| Alias exact match | +70 |
+| Type key contains query | +40 |
+| Display name contains query | +30 |
+| Alias contains query | +20 |
+| Category match | +15 |
+| Description contains query | +10 |
+
+#### 2. `nodeSchemas.ts` (محدّث)
+
+- تحويل `KEYWORD_NODE_MAP` من `const` إلى `export const` لاستخدامه في الخدمة الديناميكية
+
+#### 3. `agentTools.ts` (محدّث)
+
+- `get_node_schema` → الآن `async` ويستدعي `getDynamicNodeSchema()` أولاً
+- `search_node_types` → الآن `async` ويستدعي `searchDynamicNodeTypes()` أولاً
+- كلاهما يحتفظ بـ static fallback chain كاملاً (FIX 5.1) إذا فشل الـ dynamic
+
+**المُخرجات الجديدة من `get_node_schema`:**
+
+```typescript
+{
+  found: true,
+  source: "n8n-api" | "static-fallback" | "static",
+  installedInN8n: boolean,    // هل هذا الـ node مثبت فعلاً؟
+  resolvedAs: "n8n-nodes-base.slack",
+  schema: { ... },            // Static schema كاملة أو schema من n8n
+  alternatives: [...],         // node types مشابهة
+  nodeInfo: {                  // معلومات إضافية من n8n
+    displayName, version, credentialTypes, category
+  }
+}
+```
+
+#### 4. `settings.routes.ts` (محدّث)
+
+أُضيف 4 endpoints جديدة:
+
+| Endpoint | الوظيفة |
+|----------|---------|
+| `GET /api/settings/node-types` | قائمة كاملة بجميع nodes المثبتة |
+| `GET /api/settings/node-types/summary` | إحصاءات Cache والتوزيع حسب الفئة |
+| `GET /api/settings/node-types/search?q=slack` | بحث بكلمة مفتاحية |
+| `POST /api/settings/node-types/refresh` | إعادة جلب من n8n (Admin فقط) |
+
+**Cache Invalidation التلقائي:** عند تعديل إعدادات n8n (PUT /api/settings/n8n)، يُبطَل الـ cache تلقائياً لضمان جلب node types من الاتصال الجديد.
+
+---
+
+### نتائج الاختبارات
+
+جميع الاختبارات أُجريت على السيرفر الحي (port 8080):
+
+| الاختبار | النتيجة |
+|---------|---------|
+| `/node-types/summary` — 86 node، جميعها بـ static schema | ✅ نجح |
+| `/node-types/search?q=slack` — 1 نتيجة (slack) | ✅ نجح |
+| `/node-types/search?q=email` — 6 نتائج (imap, emailSend, gmail, gmailTrigger, sendGrid, ...) | ✅ نجح |
+| `/node-types/search?q=trigger` — 15 نتيجة (جميع trigger nodes) | ✅ نجح |
+| `POST /node-types/refresh` — إعادة جلب صريحة | ✅ نجح |
+| `GET /node-types` — القائمة الكاملة مع metadata | ✅ نجح |
+| **Arabic** `/node-types/search?q=البريد` — gmail + gmailTrigger (score: 90) | ✅ نجح |
+| **Arabic** `/node-types/search?q=تيليغرام` — telegram + telegramTrigger (score: 90) | ✅ نجح |
+| Static fallback عند عدم تكوين n8n | ✅ يعمل تلقائياً |
+| Cache invalidation عند تغيير إعدادات n8n | ✅ يعمل |
+
+---
+
+### التوزيع حسب الفئة (Static Fallback)
+
+| الفئة | عدد الـ Nodes |
+|-------|------------|
+| core | 17 |
+| trigger | 15 |
+| communication | 10 |
+| ai | 8 |
+| files | 7 |
+| productivity | 7 |
+| project-management | 6 |
+| database | 5 |
+| crm | 5 |
+| development | 2 |
+| payments | 1 |
+| ecommerce | 1 |
+| marketing | 1 |
+| cms | 1 |
+| **الإجمالي** | **86** |
+
+---
+
+### قيمة الترقية
+
+| المعيار | قبل 5.2 | بعد 5.2 |
+|---------|---------|---------|
+| Node types يعرفها الوكيل | 86 schema ثابتة | 400+ (n8n API) + 86 static |
+| معرفة ما هو مثبت فعلاً | ❌ لا | ✅ نعم (installedInN8n flag) |
+| تحديث تلقائي عند تثبيت node جديد | ❌ يتطلب تعديل كود | ✅ مباشرة خلال ساعة |
+| دعم اللغة العربية في البحث | ⚠️ جزئي (prompt فقط) | ✅ في البحث مباشرة |
+| Merge ذكي (dynamic + static) | ❌ | ✅ |
+
+---
+
+*آخر تحديث: 17 أبريل 2026 — FIX 5.2 Dynamic Node Schema Discovery مكتمل ✅*

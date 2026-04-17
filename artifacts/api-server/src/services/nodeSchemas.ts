@@ -1105,7 +1105,7 @@ export const NODE_SCHEMAS: Record<string, NodeSchema> = {
 // Keyword → Node mapping for intent-based schema selection
 // ─────────────────────────────────────────────────────────────────────────────
 
-const KEYWORD_NODE_MAP: Array<{ keywords: string[]; nodes: string[] }> = [
+export const KEYWORD_NODE_MAP: Array<{ keywords: string[]; nodes: string[] }> = [
   {
     keywords: ["gmail", "email", "بريد", "إيميل", "ايميل"],
     nodes: ["n8n-nodes-base.gmail", "n8n-nodes-base.gmailTrigger"],
