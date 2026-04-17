@@ -12,3 +12,9 @@ id = "5DP6AwsY9rs3efd_itjBV"
 uri = "file://agent-mechanism-documentation.md"
 type = "text"
 title = "آلية عمل الوكيل الذكي — توثيق تفصيلي شامل"
+
+[[outputs]]
+id = "BvIo0UhIoFAkgEyftpC3z"
+uri = "file://agent-issues-and-improvements.md"
+type = "text"
+title = "تقرير مشاكل الوكيل واقتراحات التحسين"
