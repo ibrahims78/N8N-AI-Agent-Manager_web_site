@@ -1083,6 +1083,19 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           return;
         }
 
+        // [ISSUE-5] Build conversation history so GPT-4o in PATH B has session context
+        const modifyHistory: Array<{ role: "user" | "assistant"; content: string }> = previousMessages
+          .slice()
+          .reverse()
+          .filter((m) => m.content !== content)
+          .slice(-12)
+          .map((m) => ({
+            role: m.role as "user" | "assistant",
+            content: m.content.length > 1500
+              ? m.content.slice(0, 1200) + "\n...[truncated]..."
+              : m.content,
+          }));
+
         const modifierResult = await runWorkflowModifier(
           currentWorkflowJson,
           content,
@@ -1090,6 +1103,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           {
             openaiKey,
             geminiKey: geminiKey ?? undefined,
+            conversationHistory: modifyHistory,
             onPhaseUpdate: (phase) => sendEvent("phase", { ...phase, phase: phase.phase }),
           }
         );
@@ -1334,7 +1348,15 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
   const { intent } = intentResult;
 
   if (intent === "create" && openaiKey && geminiKey) {
-    const engineResult = await runSequentialEngine(content, { openaiKey, geminiKey, maxRefinementRounds: 2, qualityThreshold: 80 });
+    const engineResult = await runSequentialEngine(content, {
+      openaiKey,
+      geminiKey,
+      maxRefinementRounds: 2,
+      qualityThreshold: 80,
+      // [ISSUE-6] stream Gemini phases to avoid silent wait
+      onPhase2Stream: (chunk) => res.write(`data: ${JSON.stringify({ type: "stream", text: chunk })}\n\n`),
+      onPhase4Stream: (chunk) => res.write(`data: ${JSON.stringify({ type: "stream", text: chunk })}\n\n`),
+    });
     assistantContent = engineResult.userMessage;
     modelUsed = "sequential-gpt4o+gemini";
     if (engineResult.success) {

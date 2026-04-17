@@ -1,5 +1,5 @@
 # تقرير مفصل: مشاكل الوكيل الذكي واقتراحات التحسين
-## حالة التنفيذ — محدّث في 17 أبريل 2026 (Phase 6 Multi-Turn Workflow Builder مكتمل — جميع المراحل منجزة ✅)
+## حالة التنفيذ — محدّث في 17 أبريل 2026 (ISSUE-5 + ISSUE-6 + ISSUE-7 مكتملة — جميع 45 بنداً منجزة ✅)
 
 ---
 
@@ -49,6 +49,9 @@
 | 40 | **Phase 4 — Persistent Memory & Project Context** | ✅ مُنجز |
 | 41 | **Phase 5 — n8n Workflow Testing Integration** | ✅ مُنجز |
 | 42 | **Phase 6 — Multi-Turn Workflow Builder** | ✅ مُنجز |
+| 43 | **ISSUE-5 — Conversation History لـ PATH B (workflowModifier)** | ✅ مُنجز |
+| 44 | **ISSUE-6 — Gemini Streaming في Phase 2 و Phase 4** | ✅ مُنجز |
+| 45 | **ISSUE-7 — Gemini بدلاً من GPT-4o في Phase 3 (تصحيح متقاطع)** | ✅ مُنجز |
 
 ---
 

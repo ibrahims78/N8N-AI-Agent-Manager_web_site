@@ -18,6 +18,12 @@ export interface ModifierConfig {
   openaiKey: string;
   geminiKey?: string;
   onPhaseUpdate?: (phase: ModifierPhase) => void;
+  /**
+   * [ISSUE-5] Last N turns of the conversation so GPT-4o in Phase 1 is aware
+   * of what was previously discussed or created in this session.
+   * Pass at most 6 turns (12 messages).
+   */
+  conversationHistory?: Array<{ role: "user" | "assistant"; content: string }>;
 }
 
 export interface ModifierPhase {
@@ -175,6 +181,16 @@ export async function runWorkflowModifier(
   const openai = new OpenAI({ apiKey: config.openaiKey, timeout: 90000 });
   const currentJsonString = JSON.stringify(currentWorkflowJson, null, 2);
 
+  // [ISSUE-5] Build conversation history messages (max 6 turns, truncate long content)
+  const historyMessages: Array<{ role: "user" | "assistant"; content: string }> =
+    (config.conversationHistory ?? []).slice(-6).map((t) => ({
+      role: t.role,
+      content:
+        t.content.length > 1500
+          ? t.content.slice(0, 1200) + "\n...[truncated for context]..."
+          : t.content,
+    }));
+
   // ── Phase 1: GPT-4o generates modified workflow ────────────────────────────
   const p1Start = Date.now();
   phases[0]!.status = "running";
@@ -187,6 +203,8 @@ export async function runWorkflowModifier(
       model: "gpt-4o",
       messages: [
         { role: "system", content: buildModifierSystemPrompt(lang) },
+        // [ISSUE-5] inject prior conversation turns so GPT-4o has session context
+        ...historyMessages,
         {
           role: "user",
           content: buildModifierUserPrompt(currentJsonString, userRequest, lang),

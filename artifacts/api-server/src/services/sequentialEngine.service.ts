@@ -70,6 +70,16 @@ export interface EngineConfig {
    * display live progress instead of waiting silently for 20-40 seconds.
    */
   onPhase1BStream?: (chunk: string) => void;
+  /**
+   * [ISSUE-6] Streaming callback for Phase 2 (Gemini review).
+   * Eliminates the silent 10-20 second wait during Gemini's review phase.
+   */
+  onPhase2Stream?: (chunk: string) => void;
+  /**
+   * [ISSUE-6] Streaming callback for Phase 4 (Gemini final validation).
+   * Eliminates the silent 10-20 second wait during Gemini's validation phase.
+   */
+  onPhase4Stream?: (chunk: string) => void;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -274,6 +284,8 @@ export async function runSequentialEngine(
   const n8nContext = config.n8nContext;
   const simpleNodeThreshold = config.simpleWorkflowNodeThreshold ?? 3;
   const onPhase1BStream = config.onPhase1BStream;
+  const onPhase2Stream = config.onPhase2Stream;
+  const onPhase4Stream = config.onPhase4Stream;
 
   // FIX 3.4: Conversation history — last N turns for Phase 1B context
   // Trim to last 6 turns max so the prompt stays within token budget
@@ -473,11 +485,28 @@ export async function runSequentialEngine(
       });
 
       const p2Prompt = buildPhase2Prompt(userRequest, phase1JsonForReview, lang);
-      const p2Response = await withRetry(
-        () => geminiReviewModel.generateContent(p2Prompt),
-        "Phase2-gemini-review"
-      );
-      const p2Text = p2Response.response.text();
+
+      // [ISSUE-6] Use streaming for Phase 2 to eliminate silent 10-20s wait
+      let p2Text = "";
+      if (onPhase2Stream) {
+        const p2Stream = await withRetry(
+          () => geminiReviewModel.generateContentStream(p2Prompt),
+          "Phase2-gemini-review-stream"
+        );
+        for await (const chunk of p2Stream.stream) {
+          const delta = chunk.text();
+          if (delta) {
+            p2Text += delta;
+            onPhase2Stream(delta);
+          }
+        }
+      } else {
+        const p2Response = await withRetry(
+          () => geminiReviewModel.generateContent(p2Prompt),
+          "Phase2-gemini-review"
+        );
+        p2Text = p2Response.response.text();
+      }
 
       const p2JsonString = extractJson(p2Text);
       try {
@@ -540,11 +569,24 @@ export async function runSequentialEngine(
       return result;
     }
 
-    // ─── PHASE 3: GPT-4o Refines ─────────────────────────────────────────────
+    // ─── PHASE 3: Gemini 2.5 Pro Refines (ISSUE-7: cross-model correction) ───
+    // Previously: GPT-4o was correcting its own output (same model bias).
+    // Now: Gemini fixes what GPT-4o built — a truly different perspective.
+    // Falls back to GPT-4o only when geminiKey is unavailable.
     const p3Start = Date.now();
     phases[2]!.status = "running";
+
+    // [ISSUE-7] Update label dynamically based on which model will do Phase 3
+    const p3UseGemini = !!config.geminiKey;
+    phases[2]!.label = p3UseGemini
+      ? "Gemini 2.5 Pro: Refining workflow (cross-model)"
+      : "GPT-4o: Refining workflow";
+    phases[2]!.labelAr = p3UseGemini
+      ? "Gemini 2.5 Pro: تحسين الـ workflow (تصحيح متقاطع)"
+      : "GPT-4o: تحسين الـ workflow";
+
     notify({ ...phases[2]! });
-    logger.info({ phase: 3 }, "Sequential engine: Phase 3 starting");
+    logger.info({ phase: 3, model: p3UseGemini ? geminiModel : openaiModel }, "Sequential engine: Phase 3 starting");
 
     let phase3JsonString: string = phase1JsonForReview;
     let roundsCount = 1;
@@ -557,34 +599,51 @@ export async function runSequentialEngine(
       notify({ ...phases[2]! });
     } else {
       try {
-        const p3Response = await withRetry(
-          () => openai.chat.completions.create({
-            model: openaiModel,
-            messages: [
-              { role: "system", content: buildPhase3SystemPrompt(lang) },
-              {
-                role: "user",
-                content: buildPhase3UserPrompt(
-                  userRequest,
-                  phase1JsonForReview,
-                  result.phase2Feedback,
-                  lang
-                ),
-              },
-            ],
-            max_tokens: 4000,
-            temperature: 0.2,
-            response_format: { type: "json_object" },
-          }),
-          "Phase3-refinement"
-        );
+        if (p3UseGemini) {
+          // [ISSUE-7] Use Gemini for Phase 3 — different model than Phase 1 (GPT-4o)
+          const geminiRefineModel = geminiAI.getGenerativeModel({
+            model: geminiModel,
+            generationConfig: { temperature: 0.2, maxOutputTokens: 4000 },
+          });
+          const p3GeminiPrompt = `${buildPhase3SystemPrompt(lang)}\n\n${buildPhase3UserPrompt(userRequest, phase1JsonForReview, result.phase2Feedback, lang)}\n\nReturn ONLY the corrected workflow JSON with no extra text.`;
 
-        phase3JsonString = p3Response.choices[0]?.message?.content ?? phase1JsonForReview;
-        // FIX 4.4: capture Phase 3 token usage
-        tokenRaw.p3Prompt = p3Response.usage?.prompt_tokens ?? 0;
-        tokenRaw.p3Completion = p3Response.usage?.completion_tokens ?? 0;
+          const p3GeminiResponse = await withRetry(
+            () => geminiRefineModel.generateContent(p3GeminiPrompt),
+            "Phase3-gemini-refinement"
+          );
+          phase3JsonString = p3GeminiResponse.response.text();
+          logger.info("Phase 3 complete — Gemini cross-model refinement");
+        } else {
+          // Fallback: GPT-4o (when no Gemini key)
+          const p3Response = await withRetry(
+            () => openai.chat.completions.create({
+              model: openaiModel,
+              messages: [
+                { role: "system", content: buildPhase3SystemPrompt(lang) },
+                {
+                  role: "user",
+                  content: buildPhase3UserPrompt(
+                    userRequest,
+                    phase1JsonForReview,
+                    result.phase2Feedback,
+                    lang
+                  ),
+                },
+              ],
+              max_tokens: 4000,
+              temperature: 0.2,
+              response_format: { type: "json_object" },
+            }),
+            "Phase3-refinement"
+          );
+
+          phase3JsonString = p3Response.choices[0]?.message?.content ?? phase1JsonForReview;
+          // FIX 4.4: capture Phase 3 token usage (only when using GPT-4o)
+          tokenRaw.p3Prompt = p3Response.usage?.prompt_tokens ?? 0;
+          tokenRaw.p3Completion = p3Response.usage?.completion_tokens ?? 0;
+        }
       } catch (err) {
-        logger.warn({ err }, "Phase 3 OpenAI call failed — using Phase 1 result");
+        logger.warn({ err }, "Phase 3 call failed — using Phase 1 result");
         phase3JsonString = phase1JsonForReview;
       }
 
@@ -640,11 +699,28 @@ export async function runSequentialEngine(
       });
 
       const p4Prompt = buildPhase4Prompt(userRequest, finalJsonForValidation, lang);
-      const p4Response = await withRetry(
-        () => geminiValidateModel.generateContent(p4Prompt),
-        "Phase4-gemini-validation"
-      );
-      const p4Text = p4Response.response.text();
+
+      // [ISSUE-6] Use streaming for Phase 4 to eliminate silent 10-20s wait
+      let p4Text = "";
+      if (onPhase4Stream) {
+        const p4Stream = await withRetry(
+          () => geminiValidateModel.generateContentStream(p4Prompt),
+          "Phase4-gemini-validation-stream"
+        );
+        for await (const chunk of p4Stream.stream) {
+          const delta = chunk.text();
+          if (delta) {
+            p4Text += delta;
+            onPhase4Stream(delta);
+          }
+        }
+      } else {
+        const p4Response = await withRetry(
+          () => geminiValidateModel.generateContent(p4Prompt),
+          "Phase4-gemini-validation"
+        );
+        p4Text = p4Response.response.text();
+      }
 
       const p4JsonString = extractJson(p4Text);
       try {
