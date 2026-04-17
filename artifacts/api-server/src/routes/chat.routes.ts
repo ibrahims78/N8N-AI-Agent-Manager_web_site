@@ -27,17 +27,29 @@ function sanitizeSettings(raw: unknown): Record<string, unknown> {
 }
 
 // ─── [ج1] Session Memory: extract workflow names created in this conversation ──
+// BUG 2 FIX: target root-level workflow "name" from JSON code blocks only,
+//             not every "name" field (which includes node names like "Gmail Trigger")
 function buildSessionSummary(messages: Array<{ role: string; content: string }>): string {
   const createdWorkflows: string[] = [];
   for (const m of messages) {
     if (m.role !== "assistant") continue;
-    const nameMatches = m.content.match(/"name"\s*:\s*"([^"]{3,80})"/g);
-    if (nameMatches) {
-      for (const match of nameMatches) {
-        const extracted = match.replace(/"name"\s*:\s*"/, "").replace(/"$/, "").trim();
-        if (extracted && !createdWorkflows.includes(extracted)) {
-          createdWorkflows.push(extracted);
+    // Look for ```json ... ``` code blocks that contain workflow JSON
+    const codeBlockRegex = /```json\n([\s\S]*?)\n```/g;
+    let match: RegExpExecArray | null;
+    while ((match = codeBlockRegex.exec(m.content)) !== null) {
+      try {
+        const parsed = JSON.parse(match[1]!) as { name?: string; nodes?: unknown[] };
+        // Only accept if it has both a "name" string AND a "nodes" array — confirms it's a workflow
+        if (
+          typeof parsed.name === "string" &&
+          parsed.name.length > 2 &&
+          Array.isArray(parsed.nodes) &&
+          !createdWorkflows.includes(parsed.name)
+        ) {
+          createdWorkflows.push(parsed.name);
         }
+      } catch {
+        // Not valid JSON — skip
       }
     }
   }
@@ -173,9 +185,12 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
   });
 
   try {
-    // ── Save user message & get API keys in parallel ──────────────────────
-    const [, { openaiKey, geminiKey }, previousMessages] = await Promise.all([
-      db.insert(messagesTable).values({ conversationId: convId, role: "user", content }),
+    // BUG 3 FIX: INSERT must complete before SELECT to guarantee the user's message
+    // appears in previousMessages (race condition when both ran in Promise.all).
+    await db.insert(messagesTable).values({ conversationId: convId, role: "user", content });
+
+    // Now fetch keys and history in parallel — INSERT is already committed
+    const [{ openaiKey, geminiKey }, previousMessages] = await Promise.all([
       getApiKeys(),
       db.select().from(messagesTable)
         .where(eq(messagesTable.conversationId, convId))
@@ -230,8 +245,9 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         onPhaseUpdate: (phase) => sendEvent("phase", phase),
         // [أ1] Inject existing workflows context into Phase 1B
         n8nContext: n8nContextStr,
-        // [أ2] Threshold for smart gate (skip Phase 3+4 if simple + high quality)
-        simpleWorkflowNodeThreshold: 3,
+        // BUG 6 FIX: raised from 3 → 5 to cover common 4-5 node workflows
+        // (e.g. Trigger → Condition → Action1 → Action2 → Response)
+        simpleWorkflowNodeThreshold: 5,
       });
 
       let assistantContent = engineResult.userMessage;

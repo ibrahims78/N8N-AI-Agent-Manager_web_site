@@ -14,6 +14,8 @@ import {
   getWorkflowExecutions,
   getAllRecentExecutions,
 } from "../services/n8n.service";
+// BUG 7 FIX: invalidate cache on every mutation so next query reflects reality
+import { invalidateWorkflowCache } from "../services/n8nCache.service";
 import { logger } from "../lib/logger";
 import type { Request, Response } from "express";
 
@@ -89,6 +91,7 @@ router.post("/", authenticate, requirePermission("manage_workflows"), async (req
       settings: { executionOrder: "v1" },
       active: false,
     });
+    invalidateWorkflowCache(); // BUG 7 FIX: new workflow added → bust list cache
     res.json({ success: true, data: result });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
@@ -134,6 +137,7 @@ router.get("/:id", authenticate, requirePermission("view_workflows"), async (req
 router.post("/:id/activate", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
   try {
     await activateWorkflow(req.params.id);
+    invalidateWorkflowCache(req.params.id); // BUG 7 FIX: active status changed
     res.json({ success: true, message: "Workflow activated" });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: "N8N_ERROR", message: String(err) } });
@@ -143,6 +147,7 @@ router.post("/:id/activate", authenticate, requirePermission("manage_workflows")
 router.post("/:id/deactivate", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
   try {
     await deactivateWorkflow(req.params.id);
+    invalidateWorkflowCache(req.params.id); // BUG 7 FIX: active status changed
     res.json({ success: true, message: "Workflow deactivated" });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: "N8N_ERROR", message: String(err) } });
@@ -152,6 +157,7 @@ router.post("/:id/deactivate", authenticate, requirePermission("manage_workflows
 router.delete("/:id", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
   try {
     await deleteWorkflow(req.params.id);
+    invalidateWorkflowCache(req.params.id); // BUG 7 FIX: workflow removed → bust all caches
     res.json({ success: true, message: "Workflow deleted" });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: "N8N_ERROR", message: String(err) } });
@@ -243,6 +249,9 @@ router.post("/import", authenticate, requirePermission("manage_workflows"), asyn
 
   try {
     const result = await importWorkflow(workflowJson);
+
+    // BUG 7 FIX: workflow imported to n8n → bust list cache immediately
+    invalidateWorkflowCache();
 
     // Auto-save version 1 for the newly created workflow
     if (result.id) {

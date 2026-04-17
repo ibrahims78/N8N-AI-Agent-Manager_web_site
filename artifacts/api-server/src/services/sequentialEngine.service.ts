@@ -316,18 +316,17 @@ export async function runSequentialEngine(
     if (p2Score >= 85 && nodeCount <= simpleNodeThreshold) {
       logger.info({ score: p2Score, nodeCount }, "[أ2] Smart gate triggered — skipping Phase 3+4 (simple workflow, quality OK)");
 
-      const skippedLabel = lang === "ar" ? "تم التخطي (الجودة ممتازة ✅)" : "Skipped (quality OK ✅)";
-
+      // BUG 1 FIX: always keep label in English, labelAr in Arabic — never mix
       phases[2]!.status = "done";
       phases[2]!.durationMs = 0;
-      phases[2]!.label = skippedLabel;
-      phases[2]!.labelAr = skippedLabel;
+      phases[2]!.label = "Skipped (quality OK ✅)";
+      phases[2]!.labelAr = "تم التخطي (الجودة ممتازة ✅)";
       notify({ ...phases[2]! });
 
       phases[3]!.status = "done";
       phases[3]!.durationMs = 0;
-      phases[3]!.label = skippedLabel;
-      phases[3]!.labelAr = skippedLabel;
+      phases[3]!.label = "Skipped (quality OK ✅)";
+      phases[3]!.labelAr = "تم التخطي (الجودة ممتازة ✅)";
       notify({ ...phases[3]! });
 
       result.phase3Result = result.phase1Result;
@@ -338,13 +337,15 @@ export async function runSequentialEngine(
       result.workflowJson = result.phase1Result;
       result.totalTimeMs = Date.now() - startTime;
       result.success = true;
+      // BUG 5 FIX: pass wasGated=true so message shows 3 phases, not 5
       result.userMessage = buildSuccessMessage(
         userRequest,
         result.qualityGrade,
         result.qualityScore,
         lang === "ar" ? "تم التحقق تلقائياً — الـ workflow بسيط وجودته ممتازة" : "Auto-validated — simple workflow with excellent quality",
         lang === "ar" ? "الـ workflow جاهز للاستيراد في n8n" : "Workflow is ready for import in n8n",
-        lang
+        lang,
+        true // wasGated
       );
       return result;
     }

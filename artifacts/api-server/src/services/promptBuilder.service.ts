@@ -438,15 +438,29 @@ Perform a comprehensive final validation and return the result in JSON format on
 // Helper: Build user-facing response after engine completes
 // ─────────────────────────────────────────────────────────────────────────────
 
+// BUG 5 FIX: wasGated=true → show 3-step summary (smart gate skipped Phase 3+4)
 export function buildSuccessMessage(
   userRequest: string,
   qualityGrade: string,
   finalScore: number,
   validationSummary: string,
   deploymentNotes: string,
-  lang: Language
+  lang: Language,
+  wasGated = false
 ): string {
   if (lang === "ar") {
+    const stepsBlock = wasGated
+      ? `🔄 **عملية الإنشاء المكتملة (3 مراحل):**
+1. 🔵 GPT-4o حلّل الـ nodes المطلوبة وأنشأ الـ workflow
+2. 🟣 Gemini 2.5 Pro راجع وقيّم — نتيجة ممتازة ⚡
+3. ⚡ Phase 3+4 تم تخطيهما تلقائياً (جودة ≥ 85، workflow بسيط)`
+      : `🔄 **عملية الإنشاء التسلسلية المكتملة (5 مراحل):**
+1. 🔵 GPT-4o حلّل الـ nodes المطلوبة
+2. 🔵 GPT-4o أنشأ الـ workflow بمواصفات دقيقة
+3. 🟣 Gemini 2.5 Pro راجع وقيّم
+4. 🔵 GPT-4o حسّن بناءً على التقرير
+5. 🟣 Gemini 2.5 Pro تحقق من الجودة النهائية`;
+
     return `✅ **تم إنشاء الـ workflow بنجاح!**
 
 📊 **نتيجة الجودة:** ${qualityGrade} (${finalScore}/100)
@@ -458,15 +472,22 @@ ${validationSummary}
 ${deploymentNotes}
 
 ---
-🔄 **عملية الإنشاء التسلسلية المكتملة:**
-1. 🔵 GPT-4o حلّل الـ nodes المطلوبة
-2. 🔵 GPT-4o أنشأ الـ workflow بمواصفات دقيقة
-3. 🟣 Gemini 2.5 Pro راجع وقيّم
-4. 🔵 GPT-4o حسّن بناءً على التقرير
-5. 🟣 Gemini 2.5 Pro تحقق من الجودة النهائية
+${stepsBlock}
 
 الـ workflow جاهز للاستيراد في n8n. هل تريد تعديلاً إضافياً؟`;
   }
+
+  const stepsBlock = wasGated
+    ? `🔄 **Completed Creation Process (3 phases):**
+1. 🔵 GPT-4o analyzed nodes & built workflow
+2. 🟣 Gemini 2.5 Pro reviewed & scored — excellent result ⚡
+3. ⚡ Phases 3+4 skipped automatically (quality ≥ 85, simple workflow)`
+    : `🔄 **Completed Sequential Creation Process (5 phases):**
+1. 🔵 GPT-4o analyzed required nodes
+2. 🔵 GPT-4o built workflow with exact specifications
+3. 🟣 Gemini 2.5 Pro reviewed and scored
+4. 🔵 GPT-4o refined based on the report
+5. 🟣 Gemini 2.5 Pro validated final quality`;
 
   return `✅ **Workflow created successfully!**
 
@@ -479,12 +500,7 @@ ${validationSummary}
 ${deploymentNotes}
 
 ---
-🔄 **Completed Sequential Creation Process:**
-1. 🔵 GPT-4o analyzed required nodes
-2. 🔵 GPT-4o built workflow with exact specifications
-3. 🟣 Gemini 2.5 Pro reviewed and scored
-4. 🔵 GPT-4o refined based on the report
-5. 🟣 Gemini 2.5 Pro validated final quality
+${stepsBlock}
 
 The workflow is ready for import in n8n. Would you like any additional changes?`;
 }
