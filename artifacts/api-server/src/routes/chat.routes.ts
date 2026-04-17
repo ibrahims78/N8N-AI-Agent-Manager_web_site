@@ -26,6 +26,25 @@ function sanitizeSettings(raw: unknown): Record<string, unknown> {
   );
 }
 
+// ─── [ج1] Session Memory: extract workflow names created in this conversation ──
+function buildSessionSummary(messages: Array<{ role: string; content: string }>): string {
+  const createdWorkflows: string[] = [];
+  for (const m of messages) {
+    if (m.role !== "assistant") continue;
+    const nameMatches = m.content.match(/"name"\s*:\s*"([^"]{3,80})"/g);
+    if (nameMatches) {
+      for (const match of nameMatches) {
+        const extracted = match.replace(/"name"\s*:\s*"/, "").replace(/"$/, "").trim();
+        if (extracted && !createdWorkflows.includes(extracted)) {
+          createdWorkflows.push(extracted);
+        }
+      }
+    }
+  }
+  if (createdWorkflows.length === 0) return "";
+  return `\n\n[ملاحظة: في هذه المحادثة تم إنشاء/تعديل الـ workflows التالية: ${createdWorkflows.slice(0, 5).join("، ")}]`;
+}
+
 async function getApiKeys() {
   const settings = await db.select().from(systemSettingsTable).limit(1);
   const s = settings[0];
@@ -195,12 +214,24 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
     if (intent === "create" && geminiKey) {
       sendEvent("start", { type: "sequential", rounds: 3 });
 
+      // [أ1] Build n8n context string from already-fetched workflows list
+      const n8nContextStr = availableWorkflows.length > 0
+        ? availableWorkflows.slice(0, 20).map(w =>
+            `- "${w.name}" (${w.active ? "active" : "inactive"})`
+          ).join("\n")
+        : undefined;
+
       const engineResult = await runSequentialEngine(content, {
         openaiKey,
         geminiKey,
         maxRefinementRounds: 2,
         qualityThreshold: 80,
+        // [ب] Send live phase updates with label + durationMs to frontend via SSE
         onPhaseUpdate: (phase) => sendEvent("phase", phase),
+        // [أ1] Inject existing workflows context into Phase 1B
+        n8nContext: n8nContextStr,
+        // [أ2] Threshold for smart gate (skip Phase 3+4 if simple + high quality)
+        simpleWorkflowNodeThreshold: 3,
       });
 
       let assistantContent = engineResult.userMessage;
@@ -481,14 +512,17 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         logger.warn("Could not build n8n context for chat — continuing without");
       }
 
+      // [ج1] Build session memory summary from previous messages
+      const sessionSummary = buildSessionSummary(previousMessages.map(m => ({ role: m.role, content: m.content })));
+
       const systemPrompt = isArabic
         ? `أنت مساعد ذكي متخصص في n8n مربوط مباشرةً بنظام n8n الخاص بالمستخدم. تحدث بالعربية دائماً.
 مهمتك: الإجابة عن أسئلة المستخدم بشكل دقيق ومفصّل بناءً على الـ workflows الفعلية المربوطة.
 إذا سأل عن workflow معين، اشرح نودات عمله وتسلسله الفعلي.
-إذا وجدت خطأ أو مشكلة، اقترح حلاً ملموساً.${workflowContext}`
+إذا وجدت خطأ أو مشكلة، اقترح حلاً ملموساً.${workflowContext}${sessionSummary}`
         : `You are an AI assistant directly connected to the user's n8n instance. Always answer based on the ACTUAL connected workflows below.
 If asked about a specific workflow, explain its real nodes, flow, and behavior.
-If you spot issues or improvements, suggest concrete changes.${workflowContext}`;
+If you spot issues or improvements, suggest concrete changes.${workflowContext}${sessionSummary}`;
 
       // ── Build conversation context with smart truncation ──────────────
       const contextMessages = [...previousMessages]

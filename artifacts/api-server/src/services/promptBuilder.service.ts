@@ -145,15 +145,22 @@ ${rules}`;
 export function buildPhase1BUserPrompt(
   userRequest: string,
   nodeAnalysis: string,
-  lang: Language
+  lang: Language,
+  n8nContext?: string
 ): string {
+  const contextBlock = n8nContext
+    ? lang === "ar"
+      ? `\n\nالـ Workflows الموجودة حالياً في n8n (تجنب التكرار):\n${n8nContext}`
+      : `\n\nExisting workflows in n8n (avoid duplication):\n${n8nContext}`
+    : "";
+
   if (lang === "ar") {
     return `أنشئ n8n workflow كامل وصالح للطلب التالي:
 
 "${userRequest}"
 
 تحليل الـ nodes المطلوبة:
-${nodeAnalysis}
+${nodeAnalysis}${contextBlock}
 
 استخدم مواصفات الـ nodes الواردة في الـ system prompt بالضبط. أرجع JSON فقط.`;
   }
@@ -163,7 +170,7 @@ ${nodeAnalysis}
 "${userRequest}"
 
 Required nodes analysis:
-${nodeAnalysis}
+${nodeAnalysis}${contextBlock}
 
 Use the exact node specifications provided in the system prompt. Return JSON only.`;
 }

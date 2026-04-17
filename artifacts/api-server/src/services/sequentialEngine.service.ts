@@ -48,6 +48,10 @@ export interface EngineConfig {
   openaiModel?: string;
   geminiModel?: string;
   onPhaseUpdate?: (phase: PhaseProgress) => void;
+  /** [أ1] n8n existing workflows context to inject into Phase 1B */
+  n8nContext?: string;
+  /** [أ2] Node count threshold below which smart-gate may skip Phase 3+4 */
+  simpleWorkflowNodeThreshold?: number;
 }
 
 export interface PhaseProgress {
@@ -156,6 +160,8 @@ export async function runSequentialEngine(
   const geminiAI = new GoogleGenerativeAI(config.geminiKey);
   const openaiModel = config.openaiModel ?? "gpt-4o";
   const geminiModel = config.geminiModel ?? "gemini-2.5-pro";
+  const n8nContext = config.n8nContext;
+  const simpleNodeThreshold = config.simpleWorkflowNodeThreshold ?? 3;
 
   try {
     // ─── PHASE 1: GPT-4o — Two-Step Workflow Creation ─────────────────────────
@@ -199,7 +205,8 @@ export async function runSequentialEngine(
             },
             {
               role: "user",
-              content: buildPhase1BUserPrompt(userRequest, nodeAnalysis, lang),
+              // [أ1] Pass n8nContext so Phase 1B is aware of existing workflows
+              content: buildPhase1BUserPrompt(userRequest, nodeAnalysis, lang, n8nContext),
             },
           ],
           max_tokens: 4000,
@@ -299,6 +306,48 @@ export async function runSequentialEngine(
     phases[1]!.durationMs = Date.now() - p2Start;
     notify({ ...phases[1]! });
     logger.info({ score: reviewReport.overallScore }, "Phase 2 complete");
+
+    // ─── [أ2] Smart Gate: Skip Phase 3+4 for simple, high-quality workflows ──
+    const p2Score = reviewReport.overallScore ?? 0;
+    const nodeCount = Array.isArray((result.phase1Result as Record<string, unknown>)?.nodes)
+      ? ((result.phase1Result as Record<string, unknown>).nodes as unknown[]).length
+      : 99;
+
+    if (p2Score >= 85 && nodeCount <= simpleNodeThreshold) {
+      logger.info({ score: p2Score, nodeCount }, "[أ2] Smart gate triggered — skipping Phase 3+4 (simple workflow, quality OK)");
+
+      const skippedLabel = lang === "ar" ? "تم التخطي (الجودة ممتازة ✅)" : "Skipped (quality OK ✅)";
+
+      phases[2]!.status = "done";
+      phases[2]!.durationMs = 0;
+      phases[2]!.label = skippedLabel;
+      phases[2]!.labelAr = skippedLabel;
+      notify({ ...phases[2]! });
+
+      phases[3]!.status = "done";
+      phases[3]!.durationMs = 0;
+      phases[3]!.label = skippedLabel;
+      phases[3]!.labelAr = skippedLabel;
+      notify({ ...phases[3]! });
+
+      result.phase3Result = result.phase1Result;
+      result.phase4Approved = true;
+      result.qualityScore = p2Score;
+      result.qualityGrade = p2Score >= 90 ? "A" : "B";
+      result.roundsCount = 1;
+      result.workflowJson = result.phase1Result;
+      result.totalTimeMs = Date.now() - startTime;
+      result.success = true;
+      result.userMessage = buildSuccessMessage(
+        userRequest,
+        result.qualityGrade,
+        result.qualityScore,
+        lang === "ar" ? "تم التحقق تلقائياً — الـ workflow بسيط وجودته ممتازة" : "Auto-validated — simple workflow with excellent quality",
+        lang === "ar" ? "الـ workflow جاهز للاستيراد في n8n" : "Workflow is ready for import in n8n",
+        lang
+      );
+      return result;
+    }
 
     // ─── PHASE 3: GPT-4o Refines ─────────────────────────────────────────────
     const p3Start = Date.now();

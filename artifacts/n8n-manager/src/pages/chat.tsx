@@ -136,38 +136,53 @@ function PhaseProgressBar({ phases, isRTL }: { phases: PhaseProgress[]; isRTL: b
               transition={{ delay: idx * 0.08 }}
               className={`flex items-center gap-3 relative ${isRTL ? "flex-row-reverse" : ""}`}
             >
-              <div className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
-                phase.status === "done"
-                  ? "bg-emerald-500 shadow-md shadow-emerald-500/30"
-                  : phase.status === "running"
-                  ? "bg-gradient-to-br from-violet-500 to-indigo-500 shadow-md shadow-accent/30"
-                  : phase.status === "failed"
-                  ? "bg-destructive shadow-md shadow-destructive/30"
-                  : "bg-muted border border-border"
-              }`}>
-                {phase.status === "pending" && <span className="text-[9px] font-bold text-muted-foreground">{phase.phase}</span>}
-                {phase.status === "running" && <Loader2 size={12} className="animate-spin text-white" />}
-                {phase.status === "done" && <Check size={12} className="text-white" />}
-                {phase.status === "failed" && <XCircle size={12} className="text-white" />}
-              </div>
-              <div className={`flex-1 flex items-center justify-between gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
-                <span className={`text-xs font-medium transition-colors ${
-                  phase.status === "done" ? "text-foreground"
-                  : phase.status === "running" ? "text-accent"
-                  : phase.status === "failed" ? "text-destructive"
-                  : "text-muted-foreground"
-                }`}>
-                  {isRTL ? phase.labelAr : phase.label}
-                </span>
-                <span className="text-[10px] tabular-nums shrink-0">
-                  {phase.status === "done" && phase.durationMs !== undefined && (
-                    <span className="text-emerald-600 dark:text-emerald-400 font-medium">{(phase.durationMs / 1000).toFixed(1)}s</span>
-                  )}
-                  {phase.status === "running" && (
-                    <span className="text-accent animate-pulse">{isRTL ? "جارٍ..." : "running..."}</span>
-                  )}
-                </span>
-              </div>
+              {(() => {
+                const isSkipped = phase.status === "done" && phase.durationMs === 0 &&
+                  (phase.label.includes("Skipped") || phase.labelAr.includes("تم التخطي"));
+                return (
+                  <>
+                    <div className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                      isSkipped
+                        ? "bg-sky-400 shadow-md shadow-sky-400/30"
+                        : phase.status === "done"
+                        ? "bg-emerald-500 shadow-md shadow-emerald-500/30"
+                        : phase.status === "running"
+                        ? "bg-gradient-to-br from-violet-500 to-indigo-500 shadow-md shadow-accent/30"
+                        : phase.status === "failed"
+                        ? "bg-destructive shadow-md shadow-destructive/30"
+                        : "bg-muted border border-border"
+                    }`}>
+                      {phase.status === "pending" && <span className="text-[9px] font-bold text-muted-foreground">{phase.phase}</span>}
+                      {phase.status === "running" && <Loader2 size={12} className="animate-spin text-white" />}
+                      {phase.status === "done" && !isSkipped && <Check size={12} className="text-white" />}
+                      {isSkipped && <Zap size={12} className="text-white" />}
+                      {phase.status === "failed" && <XCircle size={12} className="text-white" />}
+                    </div>
+                    <div className={`flex-1 flex items-center justify-between gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
+                      <span className={`text-xs font-medium transition-colors ${
+                        isSkipped ? "text-sky-500 dark:text-sky-400"
+                        : phase.status === "done" ? "text-foreground"
+                        : phase.status === "running" ? "text-accent"
+                        : phase.status === "failed" ? "text-destructive"
+                        : "text-muted-foreground"
+                      }`}>
+                        {isRTL ? phase.labelAr : phase.label}
+                      </span>
+                      <span className="text-[10px] tabular-nums shrink-0">
+                        {phase.status === "done" && !isSkipped && phase.durationMs !== undefined && phase.durationMs > 0 && (
+                          <span className="text-emerald-600 dark:text-emerald-400 font-medium">{(phase.durationMs / 1000).toFixed(1)}s</span>
+                        )}
+                        {isSkipped && (
+                          <span className="text-sky-500 dark:text-sky-400 font-medium">⚡ {isRTL ? "متخطى" : "skipped"}</span>
+                        )}
+                        {phase.status === "running" && (
+                          <span className="text-accent animate-pulse">{isRTL ? "جارٍ..." : "running..."}</span>
+                        )}
+                      </span>
+                    </div>
+                  </>
+                );
+              })()}
             </motion.div>
           ))}
         </div>
