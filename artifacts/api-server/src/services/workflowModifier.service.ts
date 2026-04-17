@@ -123,74 +123,10 @@ Respond ONLY with a JSON object:
 }`;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Workflow Name Extractor (uses GPT to understand which workflow user means)
-// ─────────────────────────────────────────────────────────────────────────────
-
-export async function extractWorkflowNameFromMessage(
-  message: string,
-  availableWorkflows: Array<{ id: string; name: string }>,
-  openaiKey: string
-): Promise<{ workflowId: string; workflowName: string } | null> {
-  if (availableWorkflows.length === 0) return null;
-
-  const openai = new OpenAI({ apiKey: openaiKey, timeout: 20000 });
-
-  const workflowList = availableWorkflows
-    .map((w) => `- ID: ${w.id} | Name: "${w.name}"`)
-    .join("\n");
-
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: `You help identify which n8n workflow a user is referring to. Given a user message and a list of available workflows, return the best matching workflow ID. If no workflow is clearly referenced, return null.
-
-Return ONLY a JSON object: { "workflowId": "<id or null>", "confidence": "high|medium|low" }`,
-        },
-        {
-          role: "user",
-          content: `User message: "${message}"
-
-Available workflows:
-${workflowList}
-
-Which workflow is the user referring to? Return the ID or null if unclear.`,
-        },
-      ],
-      max_tokens: 100,
-      temperature: 0,
-      response_format: { type: "json_object" },
-    });
-
-    const raw = response.choices[0]?.message?.content ?? "{}";
-    const parsed = JSON.parse(raw) as { workflowId?: string | null; confidence?: string };
-
-    if (parsed.workflowId && parsed.workflowId !== "null") {
-      const found = availableWorkflows.find((w) => w.id === parsed.workflowId);
-      if (found) return { workflowId: found.id, workflowName: found.name };
-    }
-
-    // If GPT couldn't match by ID, try simple name matching as fallback
-    const lowerMessage = message.toLowerCase();
-    const nameMatch = availableWorkflows.find((w) =>
-      lowerMessage.includes(w.name.toLowerCase())
-    );
-    if (nameMatch) return { workflowId: nameMatch.id, workflowName: nameMatch.name };
-
-    // If only one workflow exists, assume that's what they mean
-    if (availableWorkflows.length === 1) {
-      return { workflowId: availableWorkflows[0]!.id, workflowName: availableWorkflows[0]!.name };
-    }
-
-    return null;
-  } catch (err) {
-    logger.warn({ err }, "extractWorkflowNameFromMessage failed");
-    return null;
-  }
-}
+// DEAD CODE REMOVED: extractWorkflowNameFromMessage was superseded by
+// detectIntent + findWorkflowNameHint in intentDetector.service.ts (gpt-4o-mini,
+// cheaper and already integrated into chat.routes.ts). The function was never
+// imported by any route — removing avoids confusion and wasted gpt-4o tokens.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Main Modifier

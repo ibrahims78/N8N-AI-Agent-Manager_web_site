@@ -103,7 +103,7 @@ export async function runWorkflowAnalyzer(
   const startTime = Date.now();
   const phases: AnalysisPhase[] = [
     { phase: 1, label: "GPT-4o: Analyzing workflow", labelAr: "GPT-4o: تحليل المشاكل", status: "pending" },
-    { phase: 2, label: "Gemini: Validating analysis", labelAr: "Gemini: التحقق من التحليل", status: "pending" },
+    { phase: 2, label: "Gemini 2.5 Pro: Validating analysis", labelAr: "Gemini 2.5 Pro: التحقق من التحليل", status: "pending" },
     { phase: 3, label: "GPT-4o: Generating fix", labelAr: "GPT-4o: إنشاء الإصلاح", status: "pending" },
   ];
 
@@ -198,8 +198,9 @@ Analyze this workflow and return the JSON report.`;
       updatePhase(2, "running");
       const p2Start = Date.now();
 
+      // BUG 4 FIX: label says "Gemini 2.5 Pro" — use the actual 2.5 Pro model instead of gemini-1.5-flash
       const genAI = new GoogleGenerativeAI(config.geminiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro-exp-03-25" });
 
       const p2Prompt = `You are reviewing an analysis of an n8n workflow.
 

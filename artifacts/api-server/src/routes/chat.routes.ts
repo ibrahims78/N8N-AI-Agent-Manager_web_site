@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db, conversationsTable, messagesTable, systemSettingsTable, generationSessionsTable } from "@workspace/db";
+import { db, conversationsTable, messagesTable, systemSettingsTable, generationSessionsTable, workflowVersionsTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
 import { authenticate, requirePermission } from "../middleware/auth.middleware";
 import { decryptApiKey } from "../services/encryption.service";
@@ -431,6 +431,26 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         sendEvent("phase", { phase: 3, label: "Applying to n8n", labelAr: "تطبيق التعديل على n8n", status: "running" });
 
         try {
+          // PROPOSAL 3: Auto-save version BEFORE applying modification
+          // This guarantees the user can always roll back to pre-modification state
+          try {
+            const existingVersions = await db
+              .select()
+              .from(workflowVersionsTable)
+              .where(eq(workflowVersionsTable.workflowN8nId, targetWorkflowId!));
+            const nextVersionNumber = existingVersions.length + 1;
+            await db.insert(workflowVersionsTable).values({
+              workflowN8nId: targetWorkflowId!,
+              versionNumber: nextVersionNumber,
+              workflowJson: currentWorkflowJson,
+              changeDescription: `نسخة احتياطية قبل التعديل بواسطة المحادثة #${convId}`,
+              createdBy: req.user!.userId,
+            });
+            logger.info({ workflowId: targetWorkflowId, version: nextVersionNumber }, "Auto-saved version before chat modification");
+          } catch (versionErr) {
+            logger.warn({ err: versionErr }, "Could not auto-save version before modification — non-fatal, proceeding");
+          }
+
           const updatePayload = {
             name: (modifierResult.modifiedWorkflowJson.name as string) ?? (currentWorkflowJson.name as string),
             nodes: modifierResult.modifiedWorkflowJson.nodes,

@@ -5,7 +5,7 @@ import { useParams, Link } from "wouter";
 import {
   ArrowRight, Play, Pause, CheckCircle2, XCircle, Clock,
   GitBranch, RotateCcw, ExternalLink, ChevronLeft, MessageSquare,
-  AlertTriangle, Code2,
+  AlertTriangle, Code2, Plus, Minus, Edit3,
 } from "lucide-react";
 import { useAppStore } from "@/stores/useAppStore";
 import { getAuthHeader, apiRequest, API_BASE } from "@/lib/api";
@@ -37,6 +37,99 @@ interface Version {
   changeDescription: string;
   createdAt: string;
   workflowJson: unknown;
+}
+
+// PROPOSAL 4: Proper node-level diff between a saved version and the current workflow
+function NodeDiff({
+  versionNodes,
+  currentNodes,
+  isRTL,
+}: {
+  versionNodes: Array<{ id: string; name: string; type: string }>;
+  currentNodes: Array<{ id: string; name: string; type: string }> | undefined;
+  isRTL: boolean;
+}) {
+  const current = currentNodes ?? [];
+
+  const versionIds = new Set(versionNodes.map(n => n.id));
+  const currentIds = new Set(current.map(n => n.id));
+
+  const added = current.filter(n => !versionIds.has(n.id));
+  const removed = versionNodes.filter(n => !currentIds.has(n.id));
+  const changed = versionNodes.filter(n => {
+    if (!currentIds.has(n.id)) return false;
+    const curr = current.find(c => c.id === n.id)!;
+    return curr.name !== n.name || curr.type !== n.type;
+  });
+  const unchanged = versionNodes.filter(n => {
+    if (!currentIds.has(n.id)) return false;
+    const curr = current.find(c => c.id === n.id)!;
+    return curr.name === n.name && curr.type === n.type;
+  });
+
+  if (added.length === 0 && removed.length === 0 && changed.length === 0) {
+    return (
+      <div className="mt-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-xs text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+        <CheckCircle2 size={13} />
+        {isRTL ? "لا توجد تغييرات في الـ Nodes بين هذا الإصدار والحالي" : "No node-level differences between this version and current"}
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-3 space-y-2">
+      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
+        {isRTL ? "الفرق عن الوضع الحالي" : "Diff vs current workflow"}
+      </p>
+
+      {removed.length > 0 && (
+        <div className="space-y-1">
+          {removed.map(n => (
+            <div key={n.id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+              <Minus size={11} className="text-red-500 shrink-0" />
+              <span className="text-xs text-red-700 dark:text-red-400 font-medium truncate">{n.name}</span>
+              <span className="text-[9px] text-red-400/70 ms-auto shrink-0">{n.type.split(".").pop()}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {added.length > 0 && (
+        <div className="space-y-1">
+          {added.map(n => (
+            <div key={n.id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+              <Plus size={11} className="text-emerald-500 shrink-0" />
+              <span className="text-xs text-emerald-700 dark:text-emerald-400 font-medium truncate">{n.name}</span>
+              <span className="text-[9px] text-emerald-400/70 ms-auto shrink-0">{n.type.split(".").pop()}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {changed.length > 0 && (
+        <div className="space-y-1">
+          {changed.map(n => {
+            const curr = current.find(c => c.id === n.id)!;
+            return (
+              <div key={n.id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
+                <Edit3 size={11} className="text-yellow-600 shrink-0" />
+                <span className="text-xs text-yellow-700 dark:text-yellow-400 font-medium truncate">
+                  {n.name} → {curr.name !== n.name ? curr.name : n.name}
+                </span>
+                <span className="text-[9px] text-yellow-400/70 ms-auto shrink-0">{isRTL ? "تغيير" : "modified"}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {unchanged.length > 0 && (
+        <p className="text-[10px] text-muted-foreground">
+          {isRTL ? `+ ${unchanged.length} node${unchanged.length !== 1 ? "s" : ""} بدون تغيير` : `+ ${unchanged.length} node${unchanged.length !== 1 ? "s" : ""} unchanged`}
+        </p>
+      )}
+    </div>
+  );
 }
 
 function NodePreview({ nodes }: { nodes: Workflow["nodes"] }) {
@@ -344,9 +437,22 @@ export default function WorkflowDetailPage() {
                             exit={{ height: 0, opacity: 0 }}
                             className="overflow-hidden"
                           >
-                            <pre className="mt-3 p-3 bg-muted rounded-lg text-xs font-mono overflow-auto max-h-48 text-foreground whitespace-pre-wrap">
-                              {JSON.stringify(ver.workflowJson, null, 2)}
-                            </pre>
+                            {/* PROPOSAL 4: Node-level diff instead of raw JSON dump */}
+                            <NodeDiff
+                              versionNodes={
+                                (ver.workflowJson as { nodes?: Array<{ id: string; name: string; type: string }> } | null)?.nodes ?? []
+                              }
+                              currentNodes={workflow?.nodes}
+                              isRTL={isRTL}
+                            />
+                            <details className="mt-2">
+                              <summary className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-none">
+                                {isRTL ? "عرض JSON الكامل" : "Show full JSON"}
+                              </summary>
+                              <pre className="mt-2 p-3 bg-muted rounded-lg text-[10px] font-mono overflow-auto max-h-40 text-foreground whitespace-pre-wrap">
+                                {JSON.stringify(ver.workflowJson, null, 2)}
+                              </pre>
+                            </details>
                           </motion.div>
                         )}
                       </AnimatePresence>

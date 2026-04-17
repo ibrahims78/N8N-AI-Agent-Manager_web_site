@@ -766,6 +766,14 @@ export default function ChatPage() {
   const [streamingContent, setStreamingContent] = useState("");
   const streamCompletedRef = useRef(false);
 
+  // PROPOSAL 5: AbortController ref — cancels the in-progress SSE stream
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // PROPOSAL 6: Auto-Import toggle — persisted in localStorage
+  const [autoImport, setAutoImport] = useState<boolean>(() => {
+    try { return localStorage.getItem("chat_auto_import") === "true"; } catch { return false; }
+  });
+
   // Persist generation result per conversation in sessionStorage
   const saveGenerationResult = useCallback((convId: number | null, result: GenerationResult | null) => {
     if (!convId) return;
@@ -1083,10 +1091,15 @@ export default function ChatPage() {
 
     const activeConvId = selectedConvId;
 
+    // PROPOSAL 5: Create a fresh AbortController for this request
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     fetch(`${API_BASE}/chat/conversations/${activeConvId}/generate`, {
       method: "POST",
       headers,
       body: JSON.stringify({ content: fullContent, mode: chatMode }),
+      signal: controller.signal,
     }).then(async (response) => {
       if (!response.ok || !response.body) throw new Error("Network error");
       const reader = response.body.getReader();
@@ -1171,6 +1184,24 @@ export default function ChatPage() {
                   };
                   setGenerationResult(result);
                   saveGenerationResult(activeConvId, result);
+
+                  // PROPOSAL 6: Auto-Import — if enabled, push to n8n immediately after generation
+                  if (localStorage.getItem("chat_auto_import") === "true" && r.workflowJson) {
+                    const importHeaders: Record<string, string> = { ...authHeader, "Content-Type": "application/json" };
+                    const t2 = localStorage.getItem("accessToken");
+                    if (t2) importHeaders["Authorization"] = `Bearer ${t2}`;
+                    fetch(`${API_BASE}/workflows/import`, {
+                      method: "POST",
+                      headers: importHeaders,
+                      body: JSON.stringify({ workflowJson: r.workflowJson }),
+                    }).then(async (importRes) => {
+                      const importData = await importRes.json() as { success: boolean; error?: { message: string } };
+                      if (importData.success) {
+                        toast({ title: isRTL ? "⚡ تم الاستيراد التلقائي إلى n8n!" : "⚡ Auto-imported to n8n!" });
+                        queryClient.invalidateQueries({ queryKey: ["workflows"] });
+                      }
+                    }).catch(() => { /* non-fatal — user can still import manually */ });
+                  }
                 } else {
                   setPhases([]);
                 }
@@ -1202,7 +1233,14 @@ export default function ChatPage() {
       setSending(false);
       setIsGenerating(false);
       setOptimisticUserMsg(null);
-      toast({ title: String(err), variant: "destructive" });
+      setPhases([]);
+      // PROPOSAL 5: AbortError means the user cancelled — show a calm notice, not an error toast
+      if (err instanceof Error && err.name === "AbortError") {
+        toast({ title: isRTL ? "⏹ تم إلغاء الطلب" : "⏹ Request cancelled" });
+        void refetchConv();
+      } else {
+        toast({ title: String(err), variant: "destructive" });
+      }
     });
   }, [input, sending, selectedConvId, authHeader, chatMode, refetchConv, queryClient, toast, attachments, isRTL, saveGenerationResult, detectAnalysisIntent, openAnalyzePicker]);
 
@@ -2154,14 +2192,41 @@ export default function ChatPage() {
                 >
                   {sendOnEnter ? (isRTL ? "Enter ↑" : "↑ Enter") : "Ctrl+↵"}
                 </button>
+                {/* PROPOSAL 6: Auto-Import toggle */}
+                <button
+                  onClick={() => {
+                    const next = !autoImport;
+                    setAutoImport(next);
+                    try { localStorage.setItem("chat_auto_import", String(next)); } catch { /* ignore */ }
+                    toast({ title: next ? (isRTL ? "⚡ الاستيراد التلقائي مُفعَّل" : "⚡ Auto-import enabled") : (isRTL ? "الاستيراد التلقائي مُعطَّل" : "Auto-import disabled") });
+                  }}
+                  className={`text-[10px] px-2 py-1 rounded-lg border font-medium transition-colors flex items-center gap-1 ${autoImport ? "border-emerald-400/50 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5" : "border-border text-muted-foreground hover:border-emerald-400/30"}`}
+                  title={isRTL ? "تفعيل/تعطيل الاستيراد التلقائي إلى n8n" : "Toggle auto-import to n8n after generation"}
+                >
+                  <Zap size={10} />
+                  {isRTL ? "استيراد تلقائي" : "Auto-import"}
+                </button>
               </div>
 
-              {/* Right: char counter + send button */}
+              {/* Right: char counter + stop/send button */}
               <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
-                {charCount > 500 && (
+                {charCount > 500 && !sending && (
                   <span className={`text-[10px] font-medium tabular-nums ${charCount >= 1900 ? "text-destructive" : charCount >= 1500 ? "text-yellow-500" : "text-muted-foreground"}`}>
                     {charCount}/2000
                   </span>
+                )}
+                {/* PROPOSAL 5: Stop button — visible while generating, triggers AbortController */}
+                {sending && (
+                  <button
+                    onClick={() => {
+                      abortControllerRef.current?.abort();
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-destructive/50 text-destructive text-xs font-medium hover:bg-destructive/10 transition-all"
+                    title={isRTL ? "إلغاء الطلب الجاري" : "Cancel current request"}
+                  >
+                    <XCircle size={13} />
+                    <span>{isRTL ? "إلغاء" : "Stop"}</span>
+                  </button>
                 )}
                 <button
                   onClick={() => handleSend()}

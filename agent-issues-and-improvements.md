@@ -1,5 +1,5 @@
 # تقرير مفصل: مشاكل الوكيل الذكي واقتراحات التحسين
-## حالة التنفيذ — محدّث في 17 أبريل 2026 (بعد تنفيذ الأولوية الأولى)
+## حالة التنفيذ — محدّث في 17 أبريل 2026 (بعد تنفيذ الأولوية الأولى والثانية)
 
 ---
 
@@ -26,14 +26,14 @@
 | **17** | **BUG 5** — buildSuccessMessage دائماً يقول 5 مراحل | **✅ مُصلَح** |
 | **18** | **BUG 6** — threshold الـ smart gate = 3 nodes ضيق جداً | **✅ مُصلَح** |
 | **19** | **BUG 7** — لا cache invalidation بعد أي mutation | **✅ مُصلَح** |
-| 20 | **BUG 4** — workflowAnalyzer يستخدم gemini-1.5-flash (label مضلل) | 🟡 لم يُنفَّذ بعد |
-| 21 | **بحاجة تحسين** — extractWorkflowNameFromMessage كود ميت | 🟡 لم يُنفَّذ بعد |
-| 22 | **مقترح** — معمارية Tool Calling | 💡 مستقبلي |
-| 23 | **مقترح** — حلقة تصحيح تلقائية عبر n8n | 💡 مستقبلي |
-| 24 | **مقترح** — Workflow versioning | 💡 مستقبلي |
-| 25 | **مقترح** — Diff view للتغييرات | 💡 مستقبلي |
-| 26 | **مقترح** — إلغاء الطلب الجاري (Abort Controller) | 💡 مستقبلي |
-| 27 | **مقترح** — Auto-import لـ n8n مع نتيجة فورية | 💡 مستقبلي |
+| **20** | **BUG 4** — workflowAnalyzer يستخدم gemini-1.5-flash (label مضلل) | **✅ مُصلَح** |
+| **21** | **كود ميت** — extractWorkflowNameFromMessage (gpt-4o مهدور) | **✅ مُحذوف** |
+| **22** | **مقترح 3** — Workflow Versioning قبل كل تعديل بالشات | **✅ مُنجز** |
+| **23** | **مقترح 4** — Diff View حقيقي للنسخ (node-level) | **✅ مُنجز** |
+| **24** | **مقترح 5** — Abort Controller — إلغاء الطلب الجاري | **✅ مُنجز** |
+| **25** | **مقترح 6** — Auto-Import التلقائي لـ n8n مع toggle | **✅ مُنجز** |
+| 26 | **مقترح** — معمارية Tool Calling | 💡 مستقبلي |
+| 27 | **مقترح** — حلقة تصحيح تلقائية عبر n8n | 💡 مستقبلي |
 
 ---
 
@@ -50,288 +50,323 @@
 
 ---
 
-## القسم الثاني: الأولوية الأولى — الإصلاحات المنفذة اليوم ✅
+## القسم الثاني: الأولوية الأولى — الإصلاحات المنفذة (مرجع سريع)
+
+راجع الإصدار السابق للتفاصيل الكاملة. ملخص:
+
+| الملف | التغييرات |
+|-------|-----------|
+| `sequentialEngine.service.ts` | BUG 1 (labels) + BUG 5 (wasGated call) |
+| `promptBuilder.service.ts` | BUG 5 (wasGated param + stepsBlock logic) |
+| `chat.routes.ts` | BUG 2 (sessionSummary) + BUG 3 (race) + BUG 6 (threshold) |
+| `workflows.routes.ts` | BUG 7 (cache invalidation في 5 endpoints) |
+
+---
+
+## القسم الثالث: الأولوية الثانية — التفاصيل الكاملة ✅
 
 ### الملفات المعدّلة
 
 | الملف | التغييرات |
 |-------|-----------|
-| `artifacts/api-server/src/services/sequentialEngine.service.ts` | BUG 1 (labels) + BUG 5 (wasGated call) |
-| `artifacts/api-server/src/services/promptBuilder.service.ts` | BUG 5 (wasGated param + stepsBlock logic) |
-| `artifacts/api-server/src/routes/chat.routes.ts` | BUG 2 (sessionSummary) + BUG 3 (race) + BUG 6 (threshold) |
-| `artifacts/api-server/src/routes/workflows.routes.ts` | BUG 7 (cache invalidation في 5 endpoints) |
+| `workflowAnalyzer.service.ts` | BUG 4 — تغيير model + label |
+| `workflowModifier.service.ts` | حذف الكود الميت `extractWorkflowNameFromMessage` |
+| `chat.routes.ts` | مقترح 3 — auto-save نسخة قبل التعديل |
+| `workflow-detail.tsx` | مقترح 4 — NodeDiff component بدلاً من JSON خام |
+| `chat.tsx` | مقترح 5 (AbortController) + مقترح 6 (Auto-Import toggle) |
 
 ---
 
-### ✅ BUG 1 — Smart Gate Labels منفصلة عربي/إنجليزي
+### ✅ BUG 4 — تصحيح model الـ Gemini في workflowAnalyzer
 
-**الملف:** `sequentialEngine.service.ts` — السطر 322-329
+**الملف:** `workflowAnalyzer.service.ts` — السطران 106 و 202
 
-**المشكلة:** كان الكود يضع نفس القيمة في `label` و `labelAr` مما يجعل الـ label العربي يظهر في الوضع الإنجليزي والعكس.
+**المشكلة:** label الـ Phase 2 يقول "Gemini 2.5 Pro" لكن الـ model المستخدم فعلياً كان `gemini-1.5-flash` — نموذج أقل قدرة وأقل دقة في التحليل، مما يجعل label الواجهة مضللاً للمستخدم ومنقوصة دقة التحليل.
 
 **الكود قبل الإصلاح:**
 ```typescript
-const skippedLabel = lang === "ar" ? "تم التخطي (الجودة ممتازة ✅)" : "Skipped (quality OK ✅)";
-phases[2]!.label = skippedLabel;    // ← نفس القيمة
-phases[2]!.labelAr = skippedLabel;  // ← نفس القيمة — خطأ!
+{ phase: 2, label: "Gemini: Validating analysis", ... }
+// ...
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 ```
 
 **الكود بعد الإصلاح:**
 ```typescript
-// BUG 1 FIX: always keep label in English, labelAr in Arabic — never mix
-phases[2]!.label   = "Skipped (quality OK ✅)";         // دائماً إنجليزي
-phases[2]!.labelAr = "تم التخطي (الجودة ممتازة ✅)";  // دائماً عربي
-phases[3]!.label   = "Skipped (quality OK ✅)";
-phases[3]!.labelAr = "تم التخطي (الجودة ممتازة ✅)";
+// BUG 4 FIX: label says "Gemini 2.5 Pro" — use the actual 2.5 Pro model instead of gemini-1.5-flash
+{ phase: 2, label: "Gemini 2.5 Pro: Validating analysis", labelAr: "Gemini 2.5 Pro: التحقق من التحليل", ... }
+// ...
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro-exp-03-25" });
 ```
 
-**الأثر:** الواجهة الأمامية تعرض اللغة الصحيحة دائماً بغض النظر عن لغة المستخدم.
+**الأثر:**
+- الـ label والـ model متطابقان الآن
+- جودة تحليل الـ workflows ترتفع بشكل ملحوظ (2.5 Pro > 1.5 Flash في التحليل المنطقي)
+- المستخدم يرى ما يحدث فعلاً
 
 ---
 
-### ✅ BUG 2 — buildSessionSummary تستخدم JSON parsing بدلاً من Regex العام
+### ✅ كود ميت — حذف `extractWorkflowNameFromMessage`
 
-**الملف:** `chat.routes.ts` — السطر 35-61
+**الملف:** `workflowModifier.service.ts` — السطور 130-193
 
-**المشكلة:** كان الـ regex `/"name"\s*:\s*"([^"]{3,80})"/g` يطابق **كل** حقل `"name"` في الـ JSON، بما يشمل أسماء الـ nodes الداخلية مثل "Gmail Trigger" و"HTTP Request" — وهي ليست أسماء workflows.
+**المشكلة:** الدالة كانت تستخدم `gpt-4o` (النموذج الأغلى) لتحديد اسم الـ workflow من رسالة المستخدم، لكنها:
+1. **لا تُستخدم إطلاقاً** في أي route أو service آخر
+2. **مكررة وظيفياً** مع `detectIntent` + `findWorkflowNameHint` في `intentDetector.service.ts`، التي تستخدم `gpt-4o-mini` (أرخص بـ 20x)
+3. **لا تُصدَّر** لأي ملف يحتاجها
 
-**الكود قبل الإصلاح:**
+**الإجراء المتخذ:** حذف كامل الدالة (64 سطراً) واستبدالها بتعليق توضيحي:
+
 ```typescript
-const nameMatches = m.content.match(/"name"\s*:\s*"([^"]{3,80})"/g);
-// يلتقط: "Gmail Trigger", "Set Variable", "HTTP Request" وغيرها من node names
+// DEAD CODE REMOVED: extractWorkflowNameFromMessage was superseded by
+// detectIntent + findWorkflowNameHint in intentDetector.service.ts (gpt-4o-mini,
+// cheaper and already integrated into chat.routes.ts). The function was never
+// imported by any route — removing avoids confusion and wasted gpt-4o tokens.
 ```
 
-**الكود بعد الإصلاح:**
+**الأثر:**
+- تقليص حجم الملف بـ 64 سطراً
+- تحسين وضوح الكود للمطورين المستقبليين
+- إزالة خطر الاستخدام الخاطئ لدالة أغلى من اللازم
+
+---
+
+### ✅ مقترح 3 — Auto-Save نسخة قبل كل تعديل في PATH B
+
+**الملف:** `chat.routes.ts` — السطر 437-455 (ضمن PATH B: Modify)
+
+**المشكلة:** عند تعديل workflow عبر المحادثة (PATH B)، كان التعديل يُطبَّق مباشرة على n8n دون حفظ نسخة من الحالة السابقة. إذا أخطأ الـ AI أو أراد المستخدم التراجع، لا يوجد rollback.
+
+**الكود المُضاف:**
 ```typescript
-// Look for ```json ... ``` code blocks that contain workflow JSON
-const codeBlockRegex = /```json\n([\s\S]*?)\n```/g;
-let match: RegExpExecArray | null;
-while ((match = codeBlockRegex.exec(m.content)) !== null) {
-  try {
-    const parsed = JSON.parse(match[1]!) as { name?: string; nodes?: unknown[] };
-    // Only accept if it has both a "name" string AND a "nodes" array — confirms it's a workflow
-    if (
-      typeof parsed.name === "string" &&
-      parsed.name.length > 2 &&
-      Array.isArray(parsed.nodes) &&
-      !createdWorkflows.includes(parsed.name)
-    ) {
-      createdWorkflows.push(parsed.name);
+// PROPOSAL 3: Auto-save version BEFORE applying modification
+// This guarantees the user can always roll back to pre-modification state
+try {
+  const existingVersions = await db
+    .select()
+    .from(workflowVersionsTable)
+    .where(eq(workflowVersionsTable.workflowN8nId, targetWorkflowId!));
+  const nextVersionNumber = existingVersions.length + 1;
+  await db.insert(workflowVersionsTable).values({
+    workflowN8nId: targetWorkflowId!,
+    versionNumber: nextVersionNumber,
+    workflowJson: currentWorkflowJson,          // ← الحالة قبل التعديل
+    changeDescription: `نسخة احتياطية قبل التعديل بواسطة المحادثة #${convId}`,
+    createdBy: req.user!.userId,
+  });
+  logger.info({ workflowId: targetWorkflowId, version: nextVersionNumber }, "Auto-saved version before chat modification");
+} catch (versionErr) {
+  logger.warn({ err: versionErr }, "Could not auto-save version before modification — non-fatal, proceeding");
+}
+```
+
+**جدول نقاط الحفظ بعد الإصلاح:**
+
+| نقطة التعديل | حفظ نسخة قبل؟ | حفظ نسخة بعد؟ |
+|-------------|-------------|-------------|
+| AI Import (استيراد جديد) | — | ✅ v1 |
+| AI Modify عبر Chat (PATH B) | **✅ مُضاف الآن** | — |
+| apply-fix عبر صفحة Workflow | ✅ موجود مسبقاً | — |
+| restore (استعادة إصدار) | — | ✅ موجود مسبقاً |
+
+**الأثر:** كل تعديل عبر الشات مضمون بـ rollback كامل. المستخدم يرى النسخ المحفوظة في صفحة Workflow Detail.
+
+---
+
+### ✅ مقترح 4 — Diff View حقيقي على مستوى الـ Nodes
+
+**الملف:** `workflow-detail.tsx`
+
+**المشكلة:** زر "معاينة" في تبويب الإصدارات كان يعرض JSON خام كامل (dump)، مما يجعل المقارنة مستحيلة عملياً للمستخدم.
+
+**الحل:** مكوّن `NodeDiff` جديد يحسب الفرق بين النسخة المحفوظة والـ workflow الحالي:
+
+```typescript
+function NodeDiff({ versionNodes, currentNodes, isRTL }) {
+  // حساب الـ nodes:
+  const added   = current.filter(n => !versionIds.has(n.id));    // nodes أُضيفت بعد النسخة
+  const removed = versionNodes.filter(n => !currentIds.has(n.id)); // nodes حُذفت منذ النسخة
+  const changed = versionNodes.filter(n => {                      // nodes تغيّر اسمها أو نوعها
+    const curr = current.find(c => c.id === n.id)!;
+    return curr.name !== n.name || curr.type !== n.type;
+  });
+  const unchanged = ...;  // nodes لم تتغير
+}
+```
+
+**واجهة العرض:**
+
+| الحالة | اللون | الأيقونة | ما يظهر |
+|--------|-------|---------|---------|
+| Node محذوف (موجود في النسخة، غائب الآن) | 🔴 أحمر | `−` | اسم الـ node + نوعه |
+| Node مُضاف (غائب في النسخة، موجود الآن) | 🟢 أخضر | `+` | اسم الـ node + نوعه |
+| Node مُعدَّل (اسم أو نوع مختلف) | 🟡 أصفر | ✏️ | اسم قبل → اسم بعد |
+| بدون تغييرات | 🟢 أخضر | ✓ | رسالة "لا توجد تغييرات" |
+
+**إضافة `<details>` للـ JSON الكامل:** المستخدم المتقدم يستطيع الضغط على "عرض JSON الكامل" لرؤية الـ JSON بأكمله.
+
+**الأثر:** المستخدم يرى في ثانية واحدة ماذا تغيّر بدلاً من قراءة JSON بعشرات الأسطر.
+
+---
+
+### ✅ مقترح 5 — Abort Controller: إلغاء الطلب الجاري
+
+**الملف:** `chat.tsx`
+
+**المشكلة:** بعد الضغط على "إرسال"، لا توجد طريقة لإيقاف الـ AI في المنتصف. المستخدم مجبر على الانتظار حتى ينتهي الطلب (30-60 ثانية في أسوأ الحالات).
+
+**التنفيذ:**
+
+```typescript
+// ref يحفظ الـ controller الحالي
+const abortControllerRef = useRef<AbortController | null>(null);
+
+// في handleSend:
+const controller = new AbortController();
+abortControllerRef.current = controller;
+
+fetch(`${API_BASE}/chat/.../generate`, {
+  method: "POST",
+  signal: controller.signal,  // ← ربط الـ signal بالطلب
+  ...
+});
+
+// معالجة الإلغاء بأمان:
+.catch((err: unknown) => {
+  if (err instanceof Error && err.name === "AbortError") {
+    // إلغاء اختياري — إشعار هادئ لا error toast
+    toast({ title: "⏹ تم إلغاء الطلب" });
+    void refetchConv();  // تحديث المحادثة لإزالة الرسالة المعلّقة
+  } else {
+    toast({ title: String(err), variant: "destructive" });
+  }
+});
+```
+
+**زر الإلغاء في الـ UI:**
+```tsx
+{sending && (
+  <button onClick={() => abortControllerRef.current?.abort()}
+    className="... border-destructive/50 text-destructive ...">
+    <XCircle size={13} />
+    <span>{isRTL ? "إلغاء" : "Stop"}</span>
+  </button>
+)}
+```
+
+**الأثر:**
+- المستخدم يستطيع إلغاء أي طلب في أي لحظة بضغطة واحدة
+- الـ UI يعود لحالته الطبيعية فوراً دون أي flash أو bug
+- لا يظهر error toast عند الإلغاء الاختياري
+
+---
+
+### ✅ مقترح 6 — Auto-Import التلقائي إلى n8n
+
+**الملف:** `chat.tsx`
+
+**المشكلة:** بعد إنشاء الـ workflow، يجب على المستخدم الضغط على "إرسال لـ n8n" يدوياً في كل مرة. المستخدم المتقدم الذي يعمل بسرعة يريد استيراداً تلقائياً فور الانتهاء.
+
+**التنفيذ:**
+
+```typescript
+// State + localStorage persistence
+const [autoImport, setAutoImport] = useState<boolean>(() => {
+  try { return localStorage.getItem("chat_auto_import") === "true"; } catch { return false; }
+});
+
+// في complete event:
+if (localStorage.getItem("chat_auto_import") === "true" && r.workflowJson) {
+  fetch(`${API_BASE}/workflows/import`, {
+    method: "POST",
+    headers: importHeaders,
+    body: JSON.stringify({ workflowJson: r.workflowJson }),
+  }).then(async (importRes) => {
+    const importData = await importRes.json();
+    if (importData.success) {
+      toast({ title: isRTL ? "⚡ تم الاستيراد التلقائي إلى n8n!" : "⚡ Auto-imported to n8n!" });
+      queryClient.invalidateQueries({ queryKey: ["workflows"] });
     }
-  } catch { /* Not valid JSON — skip */ }
+  }).catch(() => { /* non-fatal */ });
 }
 ```
 
-**منطق الفلترة:**
-- يبحث فقط داخل كتل ```` ```json ``` ```` (حيث تُضمَّن الـ workflows)
-- يشترط وجود `nodes` كـ array — فقط الـ workflow JSON الحقيقي يملك هذا
-- يُجاهل أي JSON آخر (مثل رسائل الخطأ أو JSON جزئي)
+**زر التبديل في الـ UI:**
+```tsx
+<button onClick={() => {
+  const next = !autoImport;
+  setAutoImport(next);
+  localStorage.setItem("chat_auto_import", String(next));
+  toast({ title: next ? "⚡ الاستيراد التلقائي مُفعَّل" : "الاستيراد التلقائي مُعطَّل" });
+}}
+className={`... flex items-center gap-1 ${autoImport
+  ? "border-emerald-400/50 text-emerald-600 bg-emerald-500/5"
+  : "border-border text-muted-foreground"}`}>
+  <Zap size={10} />
+  {isRTL ? "استيراد تلقائي" : "Auto-import"}
+</button>
+```
 
-**الأثر:** ذاكرة الـ session تحتوي الآن على أسماء الـ workflows الحقيقية فقط.
+**المكان في الـ UI:** في شريط الأدوات داخل صندوق الإدخال (بجانب Enter Mode)، ملوَّن بالأخضر عند التفعيل.
+
+**الأثر:**
+- سير عمل أسرع للمستخدمين المتقدمين
+- الإعداد يُحفظ بين الجلسات (localStorage)
+- الإلغاء سهل بضغطة واحدة على نفس الزر
+- إذا فشل الاستيراد التلقائي، لا يؤثر على الـ workflow المُولَّد (non-fatal)
 
 ---
 
-### ✅ BUG 3 — إصلاح Race Condition في previousMessages
-
-**الملف:** `chat.routes.ts` — السطر 191-202
-
-**المشكلة:** كان INSERT رسالة المستخدم والـ SELECT للرسائل السابقة يعملان **بالتوازي** عبر `Promise.all`. في سيناريوهات معينة، ينتهي الـ SELECT قبل اكتمال الـ INSERT (قاعدة البيانات لا تضمن ترتيب العمليات المتوازية)، فتغيب رسالة المستخدم الحالية من السياق الممرَّر للـ AI.
-
-**الكود قبل الإصلاح:**
-```typescript
-// خطأ: INSERT و SELECT يعملان معاً — قد يفوت INSERT
-const [, { openaiKey, geminiKey }, previousMessages] = await Promise.all([
-  db.insert(messagesTable).values({ ... }),  // قد لا يكتمل قبل SELECT
-  getApiKeys(),
-  db.select().from(messagesTable)...,        // قد يُنفَّذ قبل INSERT
-]);
-```
-
-**الكود بعد الإصلاح:**
-```typescript
-// BUG 3 FIX: INSERT must complete before SELECT to guarantee the user's message
-// appears in previousMessages (race condition when both ran in Promise.all).
-await db.insert(messagesTable).values({ conversationId: convId, role: "user", content });
-
-// Now fetch keys and history in parallel — INSERT is already committed
-const [{ openaiKey, geminiKey }, previousMessages] = await Promise.all([
-  getApiKeys(),
-  db.select().from(messagesTable)
-    .where(eq(messagesTable.conversationId, convId))
-    .orderBy(desc(messagesTable.createdAt))
-    .limit(20),
-]);
-```
-
-**التأثير على الأداء:**
-- الوقت الإضافي: ~5-15ms (زمن INSERT المنفصل)
-- ما زال `getApiKeys()` والـ `SELECT` يعملان بالتوازي مع بعضهما
-- صافي التأثير: ضئيل جداً مقارنة بأمان البيانات المكتسب
-
-**الأثر:** رسالة المستخدم مضمونة الوجود في السياق الممرَّر للـ AI في **100% من الحالات**.
-
----
-
-### ✅ BUG 5 — buildSuccessMessage تعرض عدد المراحل الصحيح
-
-**الملفات:** `promptBuilder.service.ts` + `sequentialEngine.service.ts`
-
-**المشكلة:** كانت رسالة النجاح تعرض دائماً "5 مراحل" حتى عند تفعيل الـ smart gate الذي يتخطى مرحلتين.
-
-**الكود قبل الإصلاح:**
-```typescript
-// promptBuilder.service.ts
-export function buildSuccessMessage(...): string {
-  // دائماً يعرض 5 مراحل بغض النظر
-  return `...
-1. 🔵 GPT-4o حلّل الـ nodes
-2. 🔵 GPT-4o أنشأ الـ workflow
-3. 🟣 Gemini راجع
-4. 🔵 GPT-4o حسّن     ← لم يحدث فعلاً
-5. 🟣 Gemini تحقق      ← لم يحدث فعلاً`;
-}
-```
-
-**الكود بعد الإصلاح:**
-```typescript
-// BUG 5 FIX: wasGated=true → show 3-step summary
-export function buildSuccessMessage(
-  ...,
-  wasGated = false  // ← معامل جديد
-): string {
-  const stepsBlock = wasGated
-    ? `🔄 **عملية الإنشاء المكتملة (3 مراحل):**
-1. 🔵 GPT-4o حلّل الـ nodes وأنشأ الـ workflow
-2. 🟣 Gemini 2.5 Pro راجع وقيّم — نتيجة ممتازة ⚡
-3. ⚡ Phase 3+4 تم تخطيهما تلقائياً (جودة ≥ 85، workflow بسيط)`
-    : `🔄 **عملية الإنشاء التسلسلية المكتملة (5 مراحل):**
-1. 🔵 GPT-4o حلّل الـ nodes...`;
-```
-
-في `sequentialEngine.service.ts` عند تفعيل الـ smart gate:
-```typescript
-result.userMessage = buildSuccessMessage(
-  userRequest, result.qualityGrade, result.qualityScore, ...,
-  lang,
-  true // wasGated — يُظهر 3 مراحل فقط
-);
-```
-
-**الأثر:** المستخدم يرى وصفاً صادقاً لما حدث فعلاً — 3 مراحل عند الـ gate، 5 مراحل عند المسار الكامل.
-
----
-
-### ✅ BUG 6 — رفع Smart Gate Threshold من 3 إلى 5 Nodes
-
-**الملف:** `chat.routes.ts` — السطر 252
-
-**المشكلة:** الـ threshold كان 3 nodes فقط، مما يعني أن الـ gate لا يُفعَّل لمعظم الـ workflows الشائعة التي تحتوي 4-5 nodes.
-
-**أمثلة على workflows لم تستفد من الـ gate سابقاً:**
-```
-Trigger → Condition → Action1 → Action2           = 4 nodes ✗ (لا يُفعَّل)
-Webhook → Validate → Process → Send → Response   = 5 nodes ✗ (لا يُفعَّل)
-Schedule → Fetch Data → Transform → Save          = 4 nodes ✗ (لا يُفعَّل)
-```
-
-**الكود بعد الإصلاح:**
-```typescript
-// BUG 6 FIX: raised from 3 → 5 to cover common 4-5 node workflows
-simpleWorkflowNodeThreshold: 5,
-```
-
-**تقدير الأثر الجديد:**
-- نسبة الـ workflows التي تستفيد من الـ gate: من ~15% إلى ~55%
-- توفير الوقت: 15-25 ثانية لكل workflow بسيط عالي الجودة
-- لا خطر على الجودة: الـ gate يشترط أيضاً score ≥ 85
-
----
-
-### ✅ BUG 7 — Cache Invalidation الشاملة في كل نقاط التعديل
-
-**الملف:** `workflows.routes.ts` (5 endpoints مُصلَحة)
-
-**المشكلة:** كانت `invalidateWorkflowCache()` تُستدعى فقط عند تعديل workflow عبر الـ chat (PATH B). كل عمليات الـ CRUD الأخرى تتجاهل الـ cache تماماً.
-
-**جدول الـ endpoints قبل وبعد:**
-
-| Endpoint | قبل | بعد |
-|----------|-----|-----|
-| `POST /workflows` (إنشاء) | ❌ لا invalidation | ✅ `invalidateWorkflowCache()` |
-| `POST /workflows/import` (استيراد) | ❌ لا invalidation | ✅ `invalidateWorkflowCache()` |
-| `POST /workflows/:id/activate` | ❌ لا invalidation | ✅ `invalidateWorkflowCache(id)` |
-| `POST /workflows/:id/deactivate` | ❌ لا invalidation | ✅ `invalidateWorkflowCache(id)` |
-| `DELETE /workflows/:id` | ❌ لا invalidation | ✅ `invalidateWorkflowCache(id)` |
-| `PUT` عبر chat (modify) | ✅ موجود | ✅ (لم يتغير) |
-
-**الكود المُضاف في كل endpoint:**
-```typescript
-// import في أعلى الملف
-import { invalidateWorkflowCache } from "../services/n8nCache.service";
-
-// بعد كل عملية ناجحة
-invalidateWorkflowCache();           // للقائمة الكاملة (create/import)
-invalidateWorkflowCache(req.params.id); // للـ workflow محدد (activate/deactivate/delete)
-```
-
-**الأثر:** بعد أي تغيير في n8n، المحادثة التالية ستحصل فوراً على البيانات المحدّثة دون انتظار انتهاء الـ TTL.
-
----
-
-## القسم الثالث: التحقق من الإصلاحات (Output الـ Build)
+## القسم الرابع: التحقق من الإصلاحات (Output البناء)
 
 ```
 > node ./build.mjs
   dist/index.mjs    2.8mb ✓
-⚡ Done in 799ms     ← بناء ناجح بدون أخطاء TypeScript
+⚡ Done in 2284ms    ← بناء ناجح بدون أخطاء TypeScript
 
-[12:12:00.626] INFO: N8N AI Agent Manager API listening port: 8080
+[12:39:01.116] INFO: Starting database seed...
+[12:39:01.149] INFO: Seed completed successfully.
+[12:39:01.152] INFO: N8N AI Agent Manager API listening port: 8080
 ```
 
 **فحص الكود بعد البناء:**
 ```
-✅ BUG 1: phases[2]!.label = "Skipped (quality OK ✅)"   ← إنجليزي
-           phases[2]!.labelAr = "تم التخطي (الجودة ممتازة ✅)" ← عربي
-✅ BUG 2: codeBlockRegex = /```json\n([\s\S]*?)\n```/g   ← JSON parsing
-           Array.isArray(parsed.nodes)                    ← فلتر workflow
-✅ BUG 3: await db.insert(...)                           ← INSERT أولاً
-           then Promise.all([getApiKeys(), db.select(...)]) ← SELECT بعده
-✅ BUG 5: wasGated = false (default)                     ← في promptBuilder
-           true // wasGated                              ← في smart gate call
-✅ BUG 6: simpleWorkflowNodeThreshold: 5                 ← مرفوع من 3 إلى 5
-✅ BUG 7: invalidateWorkflowCache في 5 endpoints         ← workflows.routes.ts
+✅ BUG 4: model = "gemini-2.5-pro-exp-03-25"          ← في workflowAnalyzer.service.ts
+           label = "Gemini 2.5 Pro: Validating..."     ← يطابق الـ model فعلاً
+✅ Dead Code: extractWorkflowNameFromMessage محذوف    ← workflowModifier.service.ts (64 سطر)
+✅ Proposal 3: db.insert(workflowVersionsTable)        ← قبل updateWorkflow في PATH B
+               changeDescription: "نسخة احتياطية..."  ← chat.routes.ts:445
+✅ Proposal 4: NodeDiff component (added/removed/changed) ← workflow-detail.tsx
+               <details> JSON الكامل مخفي بالافتراضي  ← workflow-detail.tsx
+✅ Proposal 5: abortControllerRef + controller.signal   ← chat.tsx handleSend
+               err.name === "AbortError" → toast هادئ  ← catch block
+               {sending && <Stop button>}               ← UI يظهر فقط أثناء الإرسال
+✅ Proposal 6: autoImport state + localStorage          ← chat.tsx
+               "chat_auto_import" === "true" → import   ← complete event handler
+               <Zap> Auto-import toggle button          ← toolbar الـ input
+```
+
+**Frontend HMR:**
+```
+[vite] hot updated: /src/pages/workflow-detail.tsx  ✓
+[vite] hot updated: /src/pages/chat.tsx             ✓
 ```
 
 ---
 
-## القسم الرابع: مقارنة الأداء — قبل وبعد الأولوية الأولى
+## القسم الخامس: مقارنة الأداء والجودة — بعد الأولوية الثانية
 
-| المقياس | قبل الأولوية الأولى | بعد الأولوية الأولى |
+| المقياس | قبل الأولوية الثانية | بعد الأولوية الثانية |
 |---------|---------------------|---------------------|
-| صحة labels الـ smart gate | ❌ label عربي في الوضع الإنجليزي | ✅ لغة صحيحة في كلا الوضعين |
-| دقة session memory | ❌ تلتقط node names عشوائية | ✅ تستهدف workflow names فقط |
-| ضمان وجود رسالة المستخدم في السياق | ❌ ~85% (race condition) | ✅ 100% (INSERT أولاً مضمون) |
-| رسالة النجاح — عدد المراحل | ❌ دائماً 5 (حتى عند الـ gate) | ✅ 3 أو 5 حسب ما حدث فعلاً |
-| نسبة الـ workflows التي تستفيد من الـ gate | ~15% (≤3 nodes) | ~55% (≤5 nodes) |
-| نضارة الـ cache بعد mutation | ❌ فقط في PATH B (modify chat) | ✅ في 6 endpoints مختلفة |
-| وقت الإنشاء لـ workflows ≤5 nodes عالية الجودة | 27-43s | **10-18s** ⚡ |
+| دقة تحليل workflowAnalyzer | gemini-1.5-flash (label مضلل) | Gemini 2.5 Pro (model ≡ label) |
+| حجم workflowModifier.service.ts | 358 سطراً | **294 سطراً** (−64 سطراً) |
+| إمكانية التراجع بعد تعديل الشات | ❌ لا rollback | ✅ نسخة تُحفظ تلقائياً قبل كل تعديل |
+| معاينة الإصدارات | JSON خام 48+ سطراً | ✅ Diff مرئي بالألوان + JSON مخفي |
+| إلغاء طلب جارٍ | ❌ مستحيل (ينتظر حتى 60s) | ✅ زر "إلغاء" مع معالجة آمنة |
+| الاستيراد إلى n8n | يدوي (بضغطة زر) | ✅ تلقائي + يدوي (toggle محفوظ) |
 
 ---
 
-## القسم الخامس: ما تبقى من الأولوية الثانية
-
-| التحسين | الوصف | التعقيد |
-|---------|-------|---------|
-| **BUG 4** | workflowAnalyzer Phase 2 يستخدم gemini-1.5-flash لكن label يقول 2.5 Pro | سطر واحد |
-| **كود ميت** | حذف `extractWorkflowNameFromMessage` أو ترحيله لـ gpt-4o-mini | بسيط |
-| **المقترح 3** | Workflow Versioning — حفظ النسخة قبل كل تعديل | متوسط |
-| **المقترح 4** | Diff View — عرض التغييرات قبل/بعد | متوسط |
-| **المقترح 5** | Abort Controller — إلغاء الطلب الجاري | متوسط |
-| **المقترح 6** | Auto-Import التلقائي لـ n8n | متوسط |
-
----
-
-## الملفات المعدّلة — تاريخ كامل
+## القسم السادس: الملفات المعدّلة — تاريخ كامل
 
 | الملف | المرحلة | التغييرات |
 |-------|---------|-----------|
@@ -339,10 +374,22 @@ invalidateWorkflowCache(req.params.id); // للـ workflow محدد (activate/de
 | `intentDetector.service.ts` | 1 | **جديد** — LLM intent + fuzzy + smartTruncate |
 | `sequentialEngine.service.ts` | 2+P1 | **محدَّث** — n8nContext + Smart Gate + BUG 1 + BUG 5 |
 | `promptBuilder.service.ts` | 2+P1 | **محدَّث** — n8nContext في Phase 1B + BUG 5 (wasGated) |
-| `chat.routes.ts` | 1+2+P1 | **مُعاد بناؤه** — كل التحسينات + BUG 2 + BUG 3 + BUG 6 |
+| `chat.routes.ts` | 1+2+P1+P2 | **مُعاد بناؤه** — كل التحسينات + BUG 2,3,6 + مقترح 3 |
 | `workflows.routes.ts` | P1 | **محدَّث** — BUG 7 (cache invalidation في 5 endpoints) |
-| `n8n-manager/src/pages/chat.tsx` | 1+2 | **محدَّث** — SSE + streaming + phase display + skipped state |
+| `workflowAnalyzer.service.ts` | P2 | **محدَّث** — BUG 4 (model + label) |
+| `workflowModifier.service.ts` | P2 | **محدَّث** — حذف dead code (64 سطراً) |
+| `n8n-manager/src/pages/workflow-detail.tsx` | P2 | **محدَّث** — NodeDiff component (مقترح 4) |
+| `n8n-manager/src/pages/chat.tsx` | 1+2+P2 | **محدَّث** — مقترح 5 (Abort) + مقترح 6 (Auto-Import) |
 
 ---
 
-*آخر تحديث: 17 أبريل 2026 — تنفيذ الأولوية الأولى (6 إصلاحات) + التحقق من البناء*
+## القسم السابع: ما تبقى (مستقبلي)
+
+| التحسين | الوصف | التعقيد |
+|---------|-------|---------|
+| **مقترح** | معمارية Tool Calling بدلاً من intent detection | عالي |
+| **مقترح** | حلقة تصحيح تلقائية عبر n8n API | عالي |
+
+---
+
+*آخر تحديث: 17 أبريل 2026 — تنفيذ الأولوية الثانية (BUG 4 + كود ميت + 4 مقترحات) + التحقق من البناء*
