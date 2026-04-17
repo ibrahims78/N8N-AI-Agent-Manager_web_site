@@ -25,6 +25,14 @@ import { sanitizeUserInput } from "../services/inputSanitizer.service";
 import { runSelfHealingLoop } from "../services/selfHealingLoop.service";
 // Phase 5: n8n Workflow Testing Integration — live test execution after import
 import { runWorkflowTestLoop } from "../services/workflowTestRunner.service";
+// Phase 6: Multi-Turn Workflow Builder — clarification before building vague requests
+import {
+  needsClarification,
+  generateClarificationQuestions,
+  detectClarificationResponse,
+  buildEnrichedRequest,
+  formatClarificationMessage,
+} from "../services/clarificationDetector.service";
 // FIX Phase 4: Persistent Memory — cross-session user context
 import {
   buildMemoryContext,
@@ -268,8 +276,115 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
 
     // ── LLM-based intent detection ─────────────────────────────────────────
     const intentResult = await detectIntent(content, availableWorkflows.map(w => w.name), openaiKey);
-    const { intent, workflowNameHint } = intentResult;
+    let { intent, workflowNameHint } = intentResult;
     logger.info({ intent, confidence: intentResult.confidence, hint: workflowNameHint }, "Intent detected");
+
+    // ══════════════════════════════════════════════════════════════════════
+    // PHASE 6: Multi-Turn Workflow Builder — Clarification Gate
+    //
+    // Before routing to PATH A or A2, intercept CREATE intents that are
+    // too vague to build from. Ask targeted questions, then on the follow-up
+    // turn merge the answers into a rich request and proceed normally.
+    // ══════════════════════════════════════════════════════════════════════
+    if (intent === "create") {
+      // ── Step 1: Check if this is a FOLLOW-UP answer to clarification questions ──
+      const allPrevMessages = previousMessages.slice().reverse(); // chronological
+      const clarificationCtx = detectClarificationResponse(allPrevMessages);
+
+      if (clarificationCtx) {
+        // User is answering our clarification questions — enrich the request
+        const enriched = buildEnrichedRequest(
+          clarificationCtx.originalRequest,
+          content,
+          clarificationCtx.questionsAsked,
+          lang
+        );
+        logger.info(
+          {
+            originalRequest: clarificationCtx.originalRequest.slice(0, 80),
+            questionsCount: clarificationCtx.questionsAsked.length,
+            enrichedLength: enriched.length,
+          },
+          "Phase 6: clarification response detected — enriching request and proceeding to build"
+        );
+        sendEvent("clarification_fulfilled", {
+          originalRequest: clarificationCtx.originalRequest,
+          message:
+            lang === "ar"
+              ? "✅ شكراً على التوضيحات! أبدأ الآن في بناء الـ workflow المفصّل..."
+              : "✅ Thanks for the details! Building your detailed workflow now...",
+        });
+        // Swap the request content with the enriched version for the build pipeline
+        // We patch `content` in the closure by using a local variable for the rest of the route
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (req as any).__enrichedContent = enriched;
+
+      } else {
+        // ── Step 2: Check if this CREATE request is too vague ──────────────
+        sendEvent("thinking", {
+          message:
+            lang === "ar"
+              ? "🔍 أحلّل مدى اكتمال الطلب..."
+              : "🔍 Checking if I have enough detail to build...",
+        });
+
+        const clarificationCheck = await needsClarification(content, lang, openaiKey);
+        logger.info(
+          { needed: clarificationCheck.needed, missing: clarificationCheck.missingInfo },
+          "Phase 6: clarification check result"
+        );
+
+        if (clarificationCheck.needed && clarificationCheck.confidence !== "low") {
+          // Request is too vague — ask clarifying questions and return early
+          const cq = await generateClarificationQuestions(
+            content,
+            clarificationCheck.missingInfo,
+            lang,
+            openaiKey
+          );
+
+          const clarificationMessage = formatClarificationMessage(cq, lang);
+
+          // Save the clarification message as an assistant message in DB
+          const [assistantMsg] = await db.insert(messagesTable).values({
+            conversationId: convId,
+            role: "assistant",
+            content: clarificationMessage,
+            modelUsed: "phase6-clarification",
+          }).returning();
+
+          await db.update(conversationsTable)
+            .set({ messageCount: messageCount + 1, updatedAt: new Date() })
+            .where(eq(conversationsTable.id, convId));
+
+          sendEvent("clarification_needed", {
+            intro: cq.intro,
+            questions: cq.questions,
+            missingInfo: clarificationCheck.missingInfo,
+            message: assistantMsg,
+          });
+
+          sendEvent("complete", {
+            message: assistantMsg,
+            isClarification: true,
+            workflowJson: null,
+          });
+
+          logger.info(
+            { questionsCount: cq.questions.length, missingInfo: clarificationCheck.missingInfo },
+            "Phase 6: clarification questions sent — waiting for user response"
+          );
+
+          res.end();
+          return;
+        }
+        // else: request is clear enough — fall through to PATH A / A2
+      }
+    }
+
+    // Resolve the final content: enriched if we had a clarification response, original otherwise
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const finalContent: string = (req as any).__enrichedContent ?? content;
 
     // ══════════════════════════════════════════════════════════════════════
     // PATH A: CREATE — FIX 5.1 Agentic Engine (GPT-4o Tool Calling + Gemini)
@@ -305,7 +420,8 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
 
       // FIX 5.1: Run the agentic engine
       // FIX Phase 4: pass persistent memory context
-      const agentResult = await runAgenticEngine(content, {
+      // Phase 6: use finalContent (may be enriched from clarification Q&A)
+      const agentResult = await runAgenticEngine(finalContent, {
         openaiKey,
         geminiKey,
         maxIterations: 10,
@@ -508,7 +624,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         recordWorkflowCreated(userId, {
           n8nId,
           name: workflowName,
-          description: extractWorkflowDescription(agentResult.workflowJson, content),
+          description: extractWorkflowDescription(agentResult.workflowJson, finalContent),
           nodeTypes: extractNodeTypesFromWorkflow(agentResult.workflowJson),
           qualityScore: Math.round(agentResult.qualityScore),
           tags: ["agentic", agentResult.lang],
@@ -517,7 +633,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         try {
           await db.insert(generationSessionsTable).values({
             conversationId: convId,
-            userRequest: content,
+            userRequest: finalContent,
             phase1Result: agentResult.workflowJson,
             phase2Feedback: agentResult.geminiReview ?? "",
             phase3Result: agentResult.workflowJson,
@@ -628,7 +744,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
             model: "gpt-4o",
             messages: [
               { role: "system", content: buildPhase1ASystemPrompt() },
-              { role: "user", content: buildPhase1AUserPrompt(content) },
+              { role: "user", content: buildPhase1AUserPrompt(finalContent) },
             ],
             max_tokens: 500,
             temperature: 0.1,
@@ -668,9 +784,9 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           const a2Stream = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
-              { role: "system", content: buildPhase1BSystemPrompt(content, a2Lang) },
+              { role: "system", content: buildPhase1BSystemPrompt(finalContent, a2Lang) },
               ...a2History,
-              { role: "user", content: buildPhase1BUserPrompt(content, nodeAnalysis, a2Lang, a2ContextStr) },
+              { role: "user", content: buildPhase1BUserPrompt(finalContent, nodeAnalysis, a2Lang, a2ContextStr) },
             ],
             max_tokens: 3500,
             temperature: 0.2,
@@ -861,7 +977,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           recordWorkflowCreated(userId, {
             n8nId: a2N8nId,
             name: a2WorkflowName,
-            description: extractWorkflowDescription(parsed, content),
+            description: extractWorkflowDescription(parsed, finalContent),
             nodeTypes: extractNodeTypesFromWorkflow(parsed),
             qualityScore: 72,
             tags: ["gpt-only", a2Lang],

@@ -1,5 +1,5 @@
 # تقرير مفصل: مشاكل الوكيل الذكي واقتراحات التحسين
-## حالة التنفيذ — محدّث في 17 أبريل 2026 (Phase 5 n8n Workflow Testing Integration مكتمل)
+## حالة التنفيذ — محدّث في 17 أبريل 2026 (Phase 6 Multi-Turn Workflow Builder مكتمل — جميع المراحل منجزة ✅)
 
 ---
 
@@ -48,6 +48,7 @@
 | 39 | **FIX 5.3 — Self-Healing Loop (حلقة الإصلاح الذاتي)** | ✅ مُنجز |
 | 40 | **Phase 4 — Persistent Memory & Project Context** | ✅ مُنجز |
 | 41 | **Phase 5 — n8n Workflow Testing Integration** | ✅ مُنجز |
+| 42 | **Phase 6 — Multi-Turn Workflow Builder** | ✅ مُنجز |
 
 ---
 
@@ -2269,3 +2270,254 @@ qualityReport: JSON.stringify({
 ---
 
 *آخر تحديث: 17 أبريل 2026 — المرحلة الخامسة n8n Workflow Testing Integration مكتملة ✅*
+
+---
+
+## نتائج المرحلة السادسة: Multi-Turn Workflow Builder — 17 أبريل 2026
+
+### ملخص التنفيذ
+
+تم تنفيذ المرحلة السادسة بالكامل: الوكيل الآن يكتشف تلقائياً متى يكون طلب المستخدم غامضاً غير قابل للبناء مباشرة، ويسأل أسئلة توضيحية مستهدفة، ثم يدمج الإجابات في طلب غني ومفصّل ويبني الـ workflow.
+
+**حالة البناء:** ✅ `pnpm --filter @workspace/api-server run build` — نجح بدون أي خطأ (3.0mb)
+**حالة الاختبارات:** ✅ 17/17 اختبار وحدة نجح (0 فشل)
+**حالة السيرفر:** ✅ يعمل على port 8080 — health check: `{"status":"ok","db":"connected"}`
+
+---
+
+### المشكلة التي حلّتها هذه المرحلة
+
+**قبل Phase 6:**
+```
+المستخدم: "أنشئ workflow للمبيعات"
+الوكيل:   [يبني workflow عشوائي بناءً على تخمين ما يريده المستخدم]
+النتيجة:  workflow لا يطابق احتياج المستخدم الحقيقي
+```
+
+**بعد Phase 6:**
+```
+المستخدم: "أنشئ workflow للمبيعات"
+الوكيل:   يكتشف أن الطلب غامض → يسأل 2-4 أسئلة مستهدفة:
+          1. ما مصدر بيانات المبيعات؟ (Shopify / WooCommerce / Salla / يدوي)
+          2. ما الهدف النهائي؟ (إشعار Slack / تقرير / تحديث Google Sheets)
+          3. ما تكرار التشغيل؟ (فوري عند كل بيع / يومي / أسبوعي)
+
+المستخدم: "من Shopify، إشعار Slack عند كل بيع + تحديث Google Sheets"
+الوكيل:   ✅ يدمج الطلبين → يبني workflow دقيق ومفصّل
+          [Shopify Trigger → Slack Message + Google Sheets Update]
+```
+
+---
+
+### المكونات المُنشأة
+
+#### ملف جديد: `clarificationDetector.service.ts`
+
+**5 functions رئيسية:**
+
+| الدالة | الغرض | المدخلات | المخرجات |
+|--------|--------|---------|---------|
+| `needsClarification()` | يقرر هل الطلب يحتاج توضيح | message, lang, openaiKey | `{ needed, missingInfo, confidence, reasoning }` |
+| `generateClarificationQuestions()` | يولّد 2-4 أسئلة مستهدفة | message, missingInfo, lang, openaiKey | `{ intro, questions, marker }` |
+| `detectClarificationResponse()` | يكتشف إن كان المستخدم يجاوب على أسئلة | previousMessages[] | `ClarificationContext \| null` |
+| `buildEnrichedRequest()` | يدمج الطلب الأصلي + الإجابات | originalRequest, userAnswers, questionsAsked, lang | enriched string |
+| `formatClarificationMessage()` | يُنسّق الأسئلة كـ markdown مع marker خفي | ClarificationQuestions, lang | formatted string |
+
+#### التعديلات في `chat.routes.ts`
+
+```typescript
+// PHASE 6: يُضاف بين intent detection وPATH A/A2
+
+if (intent === "create") {
+  // Step 1: هل المستخدم يجاوب على أسئلة توضيحية سابقة؟
+  const clarificationCtx = detectClarificationResponse(allPrevMessages);
+  if (clarificationCtx) {
+    const enriched = buildEnrichedRequest(originalRequest, content, questionsAsked, lang);
+    sendEvent("clarification_fulfilled", { ... });
+    req.__enrichedContent = enriched;
+  } else {
+    // Step 2: هل الطلب الجديد غامض؟
+    const check = await needsClarification(content, lang, openaiKey);
+    if (check.needed && check.confidence !== "low") {
+      const cq = await generateClarificationQuestions(content, check.missingInfo, lang, openaiKey);
+      // حفظ الأسئلة في DB وإرسالها عبر SSE
+      sendEvent("clarification_needed", { questions: cq.questions, ... });
+      sendEvent("complete", { isClarification: true, workflowJson: null });
+      return; // ← إيقاف هنا — ننتظر إجابة المستخدم
+    }
+  }
+}
+
+// الطلب واضح أو مُثرّى → استخدم finalContent في PATH A/A2
+const finalContent = req.__enrichedContent ?? content;
+```
+
+---
+
+### تقنية الـ Marker الخفي
+
+الفكرة الأساسية لربط المحادثة عبر turn متعددة:
+
+```
+رسالة الأسئلة (مرئية للمستخدم):
+  ممتاز! أحتاج بعض التوضيحات:
+
+  1. ما مصدر البيانات؟
+  2. ما الوجهة؟
+
+  _يمكنك الإجابة على كل الأسئلة في رسالة واحدة وسأبني الـ workflow مباشرة._
+
+  <!-- CLARIFICATION_REQUEST:2YW5zaMYV29ya2Zsb3cg2YTYtdmK2Ko= -->
+                              ↑↑↑ base64 للطلب الأصلي ↑↑↑
+```
+
+- الـ marker غير مرئي في واجهة المستخدم (HTML comment)
+- يُخزَّن الطلب الأصلي داخله بترميز base64
+- عند الرد التالي، `detectClarificationResponse` يفكّ الترميز ويسترجع الطلب الأصلي
+- لا حاجة لتغيير schema قاعدة البيانات — المعلومات مُدمجة في النص نفسه
+
+---
+
+### منطق القرار الذكي
+
+```
+طلب المستخدم (CREATE intent)
+          ↓
+  هل في المحادثة السابقة أسئلة توضيحية؟
+          │
+         YES → استرجع الطلب الأصلي من الـ marker
+          │   → ادمج مع الإجابات (buildEnrichedRequest)
+          │   → SSE: clarification_fulfilled
+          │   → تابع لـ PATH A/A2 بالطلب المُثرّى
+          │
+         NO ↓
+  هل الطلب ≥ 40 كلمة؟
+          │
+         YES → الطلب مفصّل كفاية → تابع مباشرة
+          │
+         NO ↓
+  GPT-4o-mini: هل ينقصه trigger/action/destination/...؟
+          │
+   needed=false → تابع مباشرة لـ PATH A/A2
+          │
+   needed=true, confidence≠low:
+          ↓
+  GPT-4o-mini: ولّد 2-4 أسئلة مستهدفة
+          ↓
+  SSE: clarification_needed { intro, questions }
+  SSE: complete { isClarification: true }
+  → حفظ في DB مع marker خفي
+  → انتظر رد المستخدم
+```
+
+---
+
+### أحداث SSE الجديدة
+
+| الحدث | متى يُرسَل | البيانات |
+|-------|-----------|---------|
+| `clarification_needed` | عند اكتشاف طلب غامض | `{ intro, questions[], missingInfo[], message }` |
+| `clarification_fulfilled` | عند اكتشاف إجابة على الأسئلة | `{ originalRequest, message }` |
+
+---
+
+### نتائج اختبارات الوحدة
+
+```
+=== Test 1: detectClarificationResponse — basic ===
+  ✅ result is not null
+  ✅ originalRequest recovered
+  ✅ questionsAsked has 2 questions
+  ✅ first question correct
+
+=== Test 2: Normal conversation — returns null ===
+  ✅ returns null for normal conversation
+
+=== Test 3: Empty messages ===
+  ✅ returns null for empty
+
+=== Test 4: buildEnrichedRequest ===
+  ✅ contains original request
+  ✅ contains user answers
+  ✅ contains questions context
+  ✅ contains agent instructions
+
+=== Test 5: Marker round-trip ===
+  ✅ round-trip: "Hello World"
+  ✅ round-trip: "أنشئ workflow للمبيع"
+  ✅ round-trip: "test with special ch"
+
+=== Test 6: Multi-turn conversation ===
+  ✅ detects in multi-turn
+  ✅ recovers correct originalRequest
+  ✅ extracts 2 questions
+
+=== Test 7: Only last assistant message checked ===
+  ✅ returns null when last assistant is normal (not clarification)
+
+════════════════════════════════════════
+Phase 6 Unit Tests: 17 passed, 0 failed
+Status: ✅ ALL PASSED
+```
+
+---
+
+### التحقق من التكامل
+
+```bash
+# TypeScript Build
+✅ pnpm --filter @workspace/api-server run build
+   → 0 أخطاء — 3.0mb
+
+# Bundle References
+✅ grep "CLARIFICATION_REQUEST|clarification_needed|..." dist/index.mjs
+   → 12 references — كل الرموز موجودة
+
+# Server Health
+✅ curl http://localhost:8080/api/health
+   → {"status":"ok","db":"connected"}
+```
+
+---
+
+### الحالات التي يتعامل معها النظام
+
+| السيناريو | السلوك |
+|-----------|--------|
+| طلب غامض جداً (< 40 كلمة، ينقصه trigger وaction) | يسأل 2-4 أسئلة ← يُوقف البناء ← ينتظر |
+| طلب واضح (≥ 40 كلمة أو يحدد trigger + action) | يبني مباشرة بدون أسئلة |
+| إجابة على الأسئلة التوضيحية | يكتشف تلقائياً ← يدمج ← يبني |
+| فشل LLM في فحص الغموض | يبني مباشرة (fail-open — لا يوقف المستخدم) |
+| محادثة عادية بعد محادثة فيها أسئلة | يتجاهل الـ marker القديم — يعالج الطلب الجديد بشكل مستقل |
+| طلب طويل مفصّل (fast path: ≥ 40 كلمة) | يتخطى فحص GPT-4o-mini للسرعة والتوفير |
+
+---
+
+### قيمة الترقية
+
+| المعيار | قبل Phase 6 | بعد Phase 6 |
+|---------|-------------|-------------|
+| جودة الـ workflow عند الطلب الغامض | ❌ تخمين — جودة منخفضة | ✅ بيانات حقيقية — دقيق ومفصّل |
+| تجربة المستخدم | ❌ يحصل على شيء لا يريده | ✅ يشعر أن الوكيل يفهمه |
+| مقارنة مع ChatGPT | يبني مباشرة مهما كان الغموض | ✅ نفس مبدأ "tell me more" في Claude/GPT-4 |
+| تكلفة API | GPT-4o على كل طلب | ✅ GPT-4o-mini للفحص (3× أرخص) |
+| Graceful degradation | N/A | ✅ fail-open عند فشل LLM |
+| تأثير على PATH A/A2 | N/A | ✅ لا تأثير على الطلبات الواضحة |
+
+---
+
+### الملفات المُعدّلة
+
+| الملف | نوع التعديل | التفاصيل |
+|-------|------------|---------|
+| `services/clarificationDetector.service.ts` | ✅ جديد | 5 functions — 360 سطر |
+| `routes/chat.routes.ts` | ✅ معدّل | إضافة 80+ سطر بين intent detection وPATH A |
+| `routes/chat.routes.ts` | ✅ معدّل | `runAgenticEngine(finalContent, ...)` بدل content |
+| `routes/chat.routes.ts` | ✅ معدّل | `buildPhase1AUserPrompt(finalContent)` في PATH A2 |
+| `routes/chat.routes.ts` | ✅ معدّل | `buildPhase1BUserPrompt(finalContent, ...)` في PATH A2 |
+| `routes/chat.routes.ts` | ✅ معدّل | `userRequest: finalContent` في generationSessionsTable |
+| `routes/chat.routes.ts` | ✅ معدّل | `extractWorkflowDescription(..., finalContent)` في PATH A وA2 |
+
+---
+
+*آخر تحديث: 17 أبريل 2026 — جميع المراحل (1→6) منجزة بالكامل ✅*
