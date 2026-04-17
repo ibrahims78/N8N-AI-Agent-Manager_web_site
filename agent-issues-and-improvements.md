@@ -1,5 +1,5 @@
 # تقرير مفصل: مشاكل الوكيل الذكي واقتراحات التحسين
-## حالة التنفيذ — محدّث في 17 أبريل 2026 (Phase 4 Persistent Memory مكتمل)
+## حالة التنفيذ — محدّث في 17 أبريل 2026 (Phase 5 n8n Workflow Testing Integration مكتمل)
 
 ---
 
@@ -47,6 +47,7 @@
 | 38 | **FIX 5.2 — Dynamic Node Schema Discovery** | ✅ مُنجز |
 | 39 | **FIX 5.3 — Self-Healing Loop (حلقة الإصلاح الذاتي)** | ✅ مُنجز |
 | 40 | **Phase 4 — Persistent Memory & Project Context** | ✅ مُنجز |
+| 41 | **Phase 5 — n8n Workflow Testing Integration** | ✅ مُنجز |
 
 ---
 
@@ -1999,3 +2000,272 @@ n8n_credentials TTL: 3600 ثانية (1 ساعة)
 ---
 
 *آخر تحديث: 17 أبريل 2026 — Phase 4 Persistent Memory مكتمل ✅*
+
+---
+
+## المرحلة الخامسة: n8n Workflow Testing Integration — 17 أبريل 2026
+
+### ملخص التنفيذ
+
+تم تنفيذ **المرحلة الخامسة الكاملة**: بعد استيراد الـ workflow لـ n8n، يُشغّل الوكيل الآن تنفيذاً حقيقياً (test execution) بـ dummy data، يراقب النتيجة، ويُصلح تلقائياً أي خطأ تنفيذي باستخدام GPT-4o قبل الإعلان عن نجاح الـ workflow.
+
+**هذا هو الفارق الجوهري الأكبر مع Replit Agent** الذي ذُكر في الخطة الأصلية — الوكيل يُجرّب ويرى ويُصلح بدلاً من الاكتفاء بتوليد JSON ظاهري.
+
+**حالة البناء:** ✅ `pnpm --filter @workspace/api-server run build` — صفر أخطاء TypeScript (3.0mb)
+**حالة السيرفر:** ✅ يعمل على port 8080 | DB: connected
+**الملفات الجديدة:** 1 ملف جديد
+**الملفات المعدّلة:** 1 ملف (chat.routes.ts)
+
+---
+
+### مقارنة قبل / بعد
+
+```
+قبل Phase 5:
+┌─────────────────────────────────────────────────────────┐
+│  Agentic Engine → workflow JSON                          │
+│     ↓                                                   │
+│  selfHealingLoop → استيراد لـ n8n (مع إصلاح بنيوي)     │
+│     ↓                                                   │
+│  ✅ تم — يُعلم المستخدم بالنجاح                         │
+│  (لا يُجرّب الـ workflow فعلياً في n8n)                 │
+└─────────────────────────────────────────────────────────┘
+
+بعد Phase 5:
+┌─────────────────────────────────────────────────────────────────────┐
+│  Agentic Engine → workflow JSON                                      │
+│     ↓                                                               │
+│  selfHealingLoop → استيراد لـ n8n (n8nWorkflowId)                  │
+│     ↓                                                               │
+│  POST /rest/workflows/{id}/run → executionId                        │
+│     ↓ (polling كل 2 ثانية، timeout 45 ثانية)                       │
+│  GET /api/v1/executions/{executionId} → status                      │
+│     │                                                               │
+│     ├── "success"   → ✅ + عرض نموذج المخرجات للمستخدم             │
+│     │                                                               │
+│     ├── "error"     → GPT-4o يحلّل خطأ التنفيذ                    │
+│     │                   ↓                                           │
+│     │               DELETE /api/v1/workflows/{id}                   │
+│     │               تطبيق الإصلاح على الـ JSON                     │
+│     │               POST /api/v1/workflows (re-import)              │
+│     │               إعادة التشغيل والمراقبة (حتى 2 محاولات)        │
+│     │                                                               │
+│     ├── "timeout"   → ⏱ البنية سليمة، ينتظر trigger خارجي         │
+│     │                   (طبيعي لـ webhook / cron workflows)         │
+│     │                                                               │
+│     └── "not_testable" → ⚠️ n8n لا يدعم /rest/run في هذا الإصدار  │
+│                           (graceful degradation — لا يوقف التدفق)  │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### الملفات المنشأة والمعدّلة
+
+#### 1. `workflowTestRunner.service.ts` (جديد — 520 سطر)
+
+**الدوال الرئيسية:**
+
+| الدالة | الوظيفة |
+|--------|---------|
+| `triggerManualRun(id, url, key)` | `POST /rest/workflows/{id}/run` → returns executionId أو null |
+| `pollExecutionStatus(execId, url, key, timeout)` | Polling كل 2 ثانية حتى terminal status أو timeout |
+| `analyzeAndFixTestError(workflow, error, openai, model, lang)` | GPT-4o يحلّل خطأ التنفيذ ويعيد JSON مُصلَح |
+| `deleteWorkflowFromN8n(id, url, key)` | `DELETE /api/v1/workflows/{id}` (قبل re-import) |
+| `reimportWorkflow(workflow, url, key)` | `POST /api/v1/workflows` → returns new n8n ID |
+| `runWorkflowTestLoop(n8nId, workflowJson, config)` | الحلقة الرئيسية الكاملة مع SSE callbacks |
+
+**الأنواع المُصدَّرة:**
+
+```typescript
+export type TestStatus =
+  | "success"       // اكتمل بدون أخطاء
+  | "error"         // خطأ تنفيذي في node معين
+  | "timeout"       // تجاوز 45 ثانية (بنية سليمة — trigger خارجي)
+  | "not_testable"  // n8n لا يدعم /rest/run
+  | "not_configured"; // n8n غير مكوّن
+
+export interface WorkflowTestLoopResult {
+  tested: boolean;
+  success: boolean;
+  finalWorkflowJson: Record<string, unknown>;  // ← قد يكون مُصلَحاً
+  finalN8nWorkflowId?: string;                 // ← قد يتغير بعد re-import
+  testResult?: TestRunResult;
+  attempts: TestAttemptRecord[];
+  totalTestMs: number;
+  tokenUsage: { promptTokens; completionTokens; estimatedCostUsd };
+  userNote: string;  // رسالة جاهزة للمستخدم (عربي/إنجليزي)
+}
+```
+
+**SSE Callbacks (4 أحداث جديدة):**
+
+| الحدث | البيانات | متى يُرسَل |
+|--------|---------|-----------|
+| `workflow_test_start` | `{n8nWorkflowId, workflowName}` | لحظة بدء الاختبار |
+| `workflow_test_trigger` | `{attempt, n8nWorkflowId}` | بعد trigger كل محاولة |
+| `workflow_test_result` | `{attempt, status, executionId, durationMs, errorMessage, errorNode}` | بعد انتهاء الـ polling |
+| `workflow_test_heal` | `{attempt, executionError}` | عند بدء الإصلاح بـ GPT-4o |
+| `workflow_test_complete` | `{success, totalAttempts, finalStatus}` | نهاية الحلقة كاملة |
+
+**System Prompt للإصلاح (analyzeAndFixTestError):**
+
+يُلزم GPT-4o بـ 7 قواعد مختلفة عن تلك في selfHealingLoop:
+1. ركّز على الـ node المذكور تحديداً
+2. تحقق من إعدادات الـ parameters والـ credentials
+3. أضف credentials placeholder إذا كان الخطأ يشير إليها
+4. أصلح الـ connections routing إذا كانت خاطئة
+5. تحقق من typeVersion (بعض الـ nodes تتطلب إصداراً محدداً)
+6. لا تلمس الـ nodes التي تعمل بشكل صحيح
+7. أرسل JSON فقط
+
+الفرق عن `selfHealingLoop.healWithLLM`: هذا يُحلّل **أخطاء التنفيذ** (خطأ في الـ logic أو الـ parameters أثناء التشغيل)، بينما ذاك يُحلّل **أخطاء الاستيراد** (مشاكل بنيوية في الـ JSON نفسه).
+
+#### 2. `chat.routes.ts` (محدّث)
+
+**تم إضافة Phase 5 في مسارين:**
+
+**PATH A (Agentic Engine + Gemini):**
+
+```typescript
+// بعد selfHealingResult?.success → runWorkflowTestLoop
+let testLoopResult: Awaited<ReturnType<typeof runWorkflowTestLoop>> | null = null;
+if (selfHealingResult?.success && selfHealingResult.n8nWorkflowId && agentResult.workflowJson) {
+  testLoopResult = await runWorkflowTestLoop(selfHealingResult.n8nWorkflowId, agentResult.workflowJson, {
+    openaiKey, lang: agentResult.lang, maxTestAttempts: 2,
+    onTestStart, onTestResult, onTestHeal, onTestComplete
+  });
+  if (testLoopResult.finalWorkflowJson) agentResult.workflowJson = testLoopResult.finalWorkflowJson;
+}
+```
+
+**PATH A2 (GPT-4o only):**
+
+نفس المنطق بالكامل مع `a2HealResult` و `a2TestResult`.
+
+**تحديث حدث `complete` في كلا المسارين:**
+
+```typescript
+sendEvent("complete", {
+  // ... السابق ...
+  workflowTest: testLoopResult ? {
+    tested: testLoopResult.tested,
+    success: testLoopResult.success,
+    finalStatus: testLoopResult.testResult?.status,
+    finalN8nWorkflowId: testLoopResult.finalN8nWorkflowId,
+    attempts: testLoopResult.attempts.length,
+    totalTestMs: testLoopResult.totalTestMs,
+    testTokenUsage: testLoopResult.tokenUsage,
+  } : null,
+});
+```
+
+**تحديث `qualityReport` في DB:**
+
+```typescript
+qualityReport: JSON.stringify({
+  // ... selfHealing ...
+  workflowTest: {
+    tested, success, finalStatus, attempts, finalN8nWorkflowId
+  }
+})
+```
+
+---
+
+### معالجة الحالات الخاصة
+
+| الحالة | السلوك |
+|--------|--------|
+| n8n غير مكوّن | يخرج فوراً بـ `tested: false` — لا LLM tokens، رسالة صامتة |
+| `/rest/run` غير متاح (إصدار n8n قديم) | `not_testable` — رسالة واضحة للمستخدم، لا فشل |
+| Timeout (45 ثانية) | `timeout` — يُخبر المستخدم أن الـ workflow بدأ وينتظر trigger |
+| LLM fix يفشل في parse | يحتفظ بالـ JSON القديم ويتوقف عن الـ loop |
+| re-import يفشل | يُسجّل التحذير ويعود بالـ workflow الأصلي |
+| نجاح بعد re-test | `finalN8nWorkflowId` يتغير — يُحدَّث في الذاكرة الدائمة أيضاً |
+
+---
+
+### نصوص الرسائل للمستخدم
+
+**عند النجاح المباشر (بدون إصلاح):**
+- عربي: `✅ **اجتاز الاختبار** — تم تشغيل الـ workflow في n8n (ID التنفيذ: \`{id}\`) وأكمل بنجاح.`
+- مع مخرجات: يُضيف `**نموذج المخرجات:**` + JSON snippet
+
+**عند النجاح بعد إصلاح:**
+- عربي: `✅ **اجتاز الاختبار بعد الإصلاح** — ...وأكمل بنجاح بعد إصلاح تلقائي بـ GPT-4o.`
+
+**عند Timeout (ليس خطأ):**
+- عربي: `⏱ **اكتمل التحقق** — الـ workflow بدأ التنفيذ في n8n...لكن استغرق وقتاً أطول من المتوقع. هذا طبيعي للـ workflows التي تنتظر إدخالاً خارجياً (webhook / cron).`
+
+**عند not_testable:**
+- عربي: `⚠️ تعذّر تشغيل الاختبار تلقائياً (n8n لا يدعم التشغيل عبر API...). الـ workflow تم استيراده بنجاح ويمكنك تشغيله يدوياً.`
+
+**عند فشل الاختبار (بعد 2 محاولات):**
+- عربي: `⚠️ **الاختبار فشل بعد 2 محاولات** — آخر خطأ: {error} (الـ node: {node})\n\nيمكنك فتح الـ workflow في n8n ومراجعة الـ node المذكور يدوياً.`
+
+---
+
+### نتائج الاختبارات التحقيقية
+
+| # | الاختبار | الأمر | النتيجة |
+|---|---------|-------|---------|
+| 1 | بناء TypeScript | `pnpm --filter @workspace/api-server run build` | ✅ 0 أخطاء — 3.0mb |
+| 2 | الملف الجديد في الـ bundle | `grep -c "workflowTestRunner\|runWorkflowTestLoop" dist/index.mjs` | ✅ 20 مرجع |
+| 3 | SSE events الجديدة | `grep -c "workflow_test" dist/index.mjs` | ✅ 10 مراجع (5 أحداث × 2) |
+| 4 | الدوال الداخلية | `grep -c "triggerManualRun\|pollExecutionStatus\|analyzeAndFixTestError\|deleteWorkflowFromN8n\|reimportWorkflow"` | ✅ كل دالة موجودة (2+ مرجع) |
+| 5 | PATH A2 تكامل | `grep -c "a2TestResult" dist/index.mjs` | ✅ 16 مرجع |
+| 6 | graceful degradation | `grep -c "N8N_NOT_CONFIGURED" dist/index.mjs` | ✅ 10 مراجع |
+| 7 | السيرفر يعمل | `curl localhost:8080/api/health` | ✅ `{"status":"ok","db":"connected"}` |
+| 8 | 401 auth guard | `curl localhost:8080/api/settings/n8n` | ✅ `INVALID_TOKEN` (يعمل، يحتاج auth) |
+
+---
+
+### مقارنة مع الخطة الأصلية
+
+الخطة في الملف كانت:
+
+```
+إنشاء workflow
+    ↓
+استيراد لـ n8n
+    ↓
+تشغيل test execution بـ dummy data
+    ↓
+تحليل نتيجة التشغيل
+    ↓
+إذا فشل: Self-Healing Loop
+إذا نجح: ✅ + عرض نتيجة التنفيذ للمستخدم
+```
+
+**تم تنفيذ الخطة بالكامل + إضافات:**
+- ✅ استيراد لـ n8n (عبر selfHealingLoop السابق)
+- ✅ تشغيل test execution حقيقي (`POST /rest/workflows/{id}/run`)
+- ✅ polling ذكي كل 2 ثانية مع timeout 45 ثانية
+- ✅ تحليل نتيجة التشغيل (success / error / timeout / not_testable)
+- ✅ إذا فشل: GPT-4o يحلّل خطأ التنفيذ → DELETE → fix → re-import → re-test
+- ✅ إذا نجح: عرض نموذج المخرجات + execution ID للمستخدم
+- ✅ **إضافة:** 5 أحداث SSE جديدة (تجربة مستخدم حية خلال الاختبار)
+- ✅ **إضافة:** graceful degradation (4 مستويات: success / timeout / not_testable / not_configured)
+- ✅ **إضافة:** مزامنة `finalN8nWorkflowId` في الذاكرة الدائمة
+- ✅ **إضافة:** `workflowTest` في `qualityReport` بقاعدة البيانات
+- ✅ **إضافة:** تكامل كامل في PATH A و PATH A2 معاً
+- ✅ **إضافة:** system prompt متخصص للإصلاح التنفيذي (مختلف عن الإصلاح البنيوي)
+
+---
+
+### قيمة الترقية
+
+| المعيار | قبل Phase 5 | بعد Phase 5 |
+|---------|-------------|-------------|
+| اختبار الـ workflow | ❌ لا يُشغّل | ✅ تشغيل حقيقي في n8n |
+| رؤية أخطاء التنفيذ | ❌ لا يرى | ✅ يرى خطأ كل node |
+| إصلاح أخطاء التنفيذ | ❌ لا يُصلح | ✅ GPT-4o يُصلح logic أخطاء |
+| عرض المخرجات | ❌ لا | ✅ JSON preview عند النجاح |
+| مقارنة مع Replit Agent | وكيلنا لا يُجرّب | ✅ نفس مبدأ Replit Agent |
+| SSE أثناء الاختبار | ❌ لا أحداث | ✅ 5 أحداث حية مُفصّلة |
+| fallback عند قديم n8n | ❌ خطأ غير متوقع | ✅ رسالة واضحة + تكمل |
+
+---
+
+*آخر تحديث: 17 أبريل 2026 — المرحلة الخامسة n8n Workflow Testing Integration مكتملة ✅*

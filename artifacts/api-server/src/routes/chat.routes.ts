@@ -23,6 +23,8 @@ import { validateWorkflowJson, sanitizeWorkflowJson, extractJson } from "../serv
 import { sanitizeUserInput } from "../services/inputSanitizer.service";
 // FIX 5.3: Self-Healing Loop — auto-import to n8n with LLM-based error correction
 import { runSelfHealingLoop } from "../services/selfHealingLoop.service";
+// Phase 5: n8n Workflow Testing Integration — live test execution after import
+import { runWorkflowTestLoop } from "../services/workflowTestRunner.service";
 // FIX Phase 4: Persistent Memory — cross-session user context
 import {
   buildMemoryContext,
@@ -400,6 +402,72 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         }
       }
 
+      // ── Phase 5: n8n Workflow Testing Integration ────────────────────────
+      // Only runs when self-healing succeeded (i.e., we have a live n8n workflow ID).
+      // Triggers a real test execution, polls the result, and auto-fixes on failure.
+      let testLoopResult: Awaited<ReturnType<typeof runWorkflowTestLoop>> | null = null;
+      if (selfHealingResult?.success && selfHealingResult.n8nWorkflowId && agentResult.workflowJson) {
+        try {
+          sendEvent("workflow_test_start", {
+            n8nWorkflowId: selfHealingResult.n8nWorkflowId,
+            workflowName: (agentResult.workflowJson.name as string | undefined) ?? "Workflow",
+          });
+
+          testLoopResult = await runWorkflowTestLoop(
+            selfHealingResult.n8nWorkflowId,
+            agentResult.workflowJson,
+            {
+              openaiKey,
+              lang: agentResult.lang,
+              maxTestAttempts: 2,
+
+              onTestStart: (ev) => sendEvent("workflow_test_trigger", {
+                attempt: ev.attempt,
+                n8nWorkflowId: ev.n8nWorkflowId,
+              }),
+
+              onTestResult: (ev) => sendEvent("workflow_test_result", {
+                attempt: ev.attempt,
+                status: ev.status,
+                executionId: ev.executionId,
+                durationMs: ev.durationMs,
+                errorMessage: ev.errorMessage,
+                errorNode: ev.errorNode,
+              }),
+
+              onTestHeal: (ev) => sendEvent("workflow_test_heal", {
+                attempt: ev.attempt,
+                executionError: ev.executionError,
+              }),
+
+              onTestComplete: (ev) => sendEvent("workflow_test_complete", {
+                success: ev.success,
+                totalAttempts: ev.totalAttempts,
+                finalStatus: ev.finalStatus,
+              }),
+            }
+          );
+
+          // If the test loop improved the workflow or changed the n8n ID, sync back
+          if (testLoopResult.finalWorkflowJson) {
+            agentResult.workflowJson = testLoopResult.finalWorkflowJson;
+          }
+
+          logger.info(
+            {
+              tested: testLoopResult.tested,
+              testSuccess: testLoopResult.success,
+              finalN8nId: testLoopResult.finalN8nWorkflowId,
+              testAttempts: testLoopResult.attempts.length,
+              testMs: testLoopResult.totalTestMs,
+            },
+            "Phase 5: Workflow test loop completed"
+          );
+        } catch (testErr) {
+          logger.warn({ testErr }, "Phase 5: Test loop threw unexpectedly — continuing without test result");
+        }
+      }
+
       let assistantContent = agentResult.userMessage;
 
       // Append self-healing status to the assistant message
@@ -424,15 +492,19 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         }
       }
 
+      // Append Phase 5 test result note
+      if (testLoopResult?.tested) {
+        assistantContent += testLoopResult.userNote;
+      }
+
       if (agentResult.workflowJson) {
         assistantContent += `\n\n\`\`\`json\n${JSON.stringify(agentResult.workflowJson, null, 2)}\n\`\`\``;
 
         // FIX Phase 4: Record this workflow in persistent memory
-        // Only record if we have a real n8n ID (from self-healing import) or if the workflow was generated successfully
         const workflowName =
           (agentResult.workflowJson.name as string | undefined) ??
           "Unnamed Workflow";
-        const n8nId = selfHealingResult?.n8nWorkflowId ?? `local-${Date.now()}`;
+        const n8nId = testLoopResult?.finalN8nWorkflowId ?? selfHealingResult?.n8nWorkflowId ?? `local-${Date.now()}`;
         recordWorkflowCreated(userId, {
           n8nId,
           name: workflowName,
@@ -463,6 +535,15 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
                     success: selfHealingResult.success,
                     attempts: selfHealingResult.attempts.length,
                     n8nWorkflowId: selfHealingResult.n8nWorkflowId,
+                  }
+                : null,
+              workflowTest: testLoopResult
+                ? {
+                    tested: testLoopResult.tested,
+                    success: testLoopResult.success,
+                    finalStatus: testLoopResult.testResult?.status,
+                    attempts: testLoopResult.attempts.length,
+                    finalN8nWorkflowId: testLoopResult.finalN8nWorkflowId,
                   }
                 : null,
             }),
@@ -503,6 +584,18 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
               attempts: selfHealingResult.attempts.length,
               totalHealingMs: selfHealingResult.totalHealingMs,
               healTokenUsage: selfHealingResult.tokenUsage,
+            }
+          : null,
+        // Phase 5: workflow test result summary
+        workflowTest: testLoopResult
+          ? {
+              tested: testLoopResult.tested,
+              success: testLoopResult.success,
+              finalStatus: testLoopResult.testResult?.status,
+              finalN8nWorkflowId: testLoopResult.finalN8nWorkflowId,
+              attempts: testLoopResult.attempts.length,
+              totalTestMs: testLoopResult.totalTestMs,
+              testTokenUsage: testLoopResult.tokenUsage,
             }
           : null,
       });
@@ -676,6 +769,60 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           }
         }
 
+        // ── Phase 5: n8n Workflow Testing Integration (PATH A2) ─────────────
+        let a2TestResult: Awaited<ReturnType<typeof runWorkflowTestLoop>> | null = null;
+        if (a2HealResult?.success && a2HealResult.n8nWorkflowId && parsed) {
+          try {
+            sendEvent("workflow_test_start", {
+              n8nWorkflowId: a2HealResult.n8nWorkflowId,
+              workflowName: (parsed.name as string | undefined) ?? "Workflow",
+            });
+
+            a2TestResult = await runWorkflowTestLoop(
+              a2HealResult.n8nWorkflowId,
+              parsed,
+              {
+                openaiKey,
+                lang: a2Lang,
+                maxTestAttempts: 2,
+                onTestStart: (ev) => sendEvent("workflow_test_trigger", {
+                  attempt: ev.attempt,
+                  n8nWorkflowId: ev.n8nWorkflowId,
+                }),
+                onTestResult: (ev) => sendEvent("workflow_test_result", {
+                  attempt: ev.attempt,
+                  status: ev.status,
+                  executionId: ev.executionId,
+                  durationMs: ev.durationMs,
+                  errorMessage: ev.errorMessage,
+                  errorNode: ev.errorNode,
+                }),
+                onTestHeal: (ev) => sendEvent("workflow_test_heal", {
+                  attempt: ev.attempt,
+                  executionError: ev.executionError,
+                }),
+                onTestComplete: (ev) => sendEvent("workflow_test_complete", {
+                  success: ev.success,
+                  totalAttempts: ev.totalAttempts,
+                  finalStatus: ev.finalStatus,
+                }),
+              }
+            );
+
+            if (a2TestResult.finalWorkflowJson) {
+              parsed = a2TestResult.finalWorkflowJson;
+              workflowJsonStr = JSON.stringify(parsed, null, 2);
+            }
+
+            logger.info(
+              { tested: a2TestResult.tested, testSuccess: a2TestResult.success },
+              "Phase 5 (PATH A2): Workflow test loop completed"
+            );
+          } catch (testErr) {
+            logger.warn({ testErr }, "Phase 5 (PATH A2): Test loop threw — continuing without test result");
+          }
+        }
+
         const noGeminiNote = a2Lang === "ar"
           ? "\n\n⚠️ *ملاحظة: مفتاح Gemini غير مضبوط — تم استخدام GPT-4o مع Node Schemas للحصول على أفضل جودة ممكنة.*"
           : "\n\n⚠️ *Note: Gemini key not configured — GPT-4o used with Node Schemas for best possible quality.*";
@@ -702,10 +849,15 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           }
         }
 
+        // Append Phase 5 test result note
+        if (a2TestResult?.tested) {
+          a2AssistantContent += a2TestResult.userNote;
+        }
+
         // FIX Phase 4: Record workflow in persistent memory (PATH A2)
         if (parsed) {
           const a2WorkflowName = (parsed.name as string | undefined) ?? "Unnamed Workflow";
-          const a2N8nId = a2HealResult?.n8nWorkflowId ?? `local-${Date.now()}`;
+          const a2N8nId = a2TestResult?.finalN8nWorkflowId ?? a2HealResult?.n8nWorkflowId ?? `local-${Date.now()}`;
           recordWorkflowCreated(userId, {
             n8nId: a2N8nId,
             name: a2WorkflowName,
@@ -745,6 +897,18 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
                 n8nWorkflowId: a2HealResult.n8nWorkflowId,
                 attempts: a2HealResult.attempts.length,
                 totalHealingMs: a2HealResult.totalHealingMs,
+              }
+            : null,
+          // Phase 5: workflow test result summary
+          workflowTest: a2TestResult
+            ? {
+                tested: a2TestResult.tested,
+                success: a2TestResult.success,
+                finalStatus: a2TestResult.testResult?.status,
+                finalN8nWorkflowId: a2TestResult.finalN8nWorkflowId,
+                attempts: a2TestResult.attempts.length,
+                totalTestMs: a2TestResult.totalTestMs,
+                testTokenUsage: a2TestResult.tokenUsage,
               }
             : null,
         });
