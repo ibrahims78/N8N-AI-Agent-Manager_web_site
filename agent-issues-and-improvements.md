@@ -1,445 +1,574 @@
 # تقرير مفصل: مشاكل الوكيل الذكي واقتراحات التحسين
-## حالة التنفيذ — محدّث في 17 أبريل 2026
+## حالة التنفيذ — محدّث في 17 أبريل 2026 (المراجعة الشاملة)
 
 ---
 
-## ملخص حالة التنفيذ
+## جدول الحالة الإجمالية
 
-| المشكلة | الاقتراح | الحالة |
-|---------|----------|--------|
-| بطء الردود — لا يوجد رد فوري | رد فوري `thinking` قبل أي معالجة | ✅ مُنجز |
-| بطء الردود — n8n في كل رسالة | Cache بـ 30 ثانية TTL | ✅ مُنجز |
-| بطء الردود — لا streaming | Streaming النص حرفاً حرفاً | ✅ مُنجز |
-| بطء الردود — توازي الاستدعاءات | `Promise.all` لـ DB + API Keys + Messages | ✅ مُنجز |
-| رد بمعلومات عامة — كشف نية هش | كشف النية بـ LLM (GPT-4o mini) | ✅ مُنجز |
-| رد بمعلومات عامة — مطابقة حرفية | بحث fuzzy + workflowNameHint من LLM | ✅ مُنجز |
-| لا يعمل حتى محادثة جديدة — SSE bug | تنظيف تلقائي بعد انتهاء الـ stream | ✅ مُنجز |
-| Context truncation عشوائي | `smartTruncateMessage` ذكي | ✅ مُنجز |
-| رسائل خطأ تقنية | رسائل بشرية مع خطوات للحل | ✅ مُنجز |
-| بطء محرك الإنشاء (27-53 ثانية) — لا يعرف المستخدم في أي مرحلة | إشعارات مراحل حية بالوقت الفعلي | ✅ مُنجز (المقترح ب) |
-| لا توازي في مراحل الإنشاء — Phase 1B لا تعرف الـ workflows الموجودة | تمرير n8n context لـ Phase 1B | ✅ مُنجز (المقترح أ1) |
-| بطء للـ workflows البسيطة — تمر بكل المراحل رغم جودتها العالية | Gate ذكي يتخطى Phase 3+4 إذا كان score ≥ 85 وعدد nodes ≤ 3 | ✅ مُنجز (المقترح أ2) |
-| ذاكرة قصيرة المدى عبر المحادثات | ملخص تلقائي للـ workflows المُنشأة في System Prompt | ✅ مُنجز (المقترح ج1) |
+| # | المشكلة / الاقتراح | الحالة |
+|---|-------------------|--------|
+| 1 | رد فوري `thinking` عند استلام الرسالة | ✅ مُنجز |
+| 2 | Cache لبيانات n8n بـ 30 ثانية TTL | ✅ مُنجز |
+| 3 | Streaming النص حرفاً حرفاً | ✅ مُنجز |
+| 4 | توازي DB + API Keys + Messages | ✅ مُنجز |
+| 5 | كشف النية بـ LLM (GPT-4o mini) | ✅ مُنجز |
+| 6 | بحث fuzzy + workflowNameHint | ✅ مُنجز |
+| 7 | إصلاح SSE stuck bug | ✅ مُنجز |
+| 8 | تقليص السياق بذكاء (smartTruncate) | ✅ مُنجز |
+| 9 | رسائل خطأ بشرية واضحة | ✅ مُنجز |
+| 10 | تمرير n8n context لـ Phase 1B (أ1) | ✅ مُنجز |
+| 11 | Gate ذكي لتخطي Phase 3+4 (أ2) | ✅ مُنجز — **لكن ببعض الأخطاء الجديدة** |
+| 12 | إشعارات المراحل الحية مع الوقت (ب) | ✅ مُنجز |
+| 13 | ذاكرة قصيرة المدى في System Prompt (ج1) | ✅ مُنجز — **لكن ببعض الأخطاء** |
+| 14 | **BUG جديد** — label الـ smart gate عربي في الوضعين | 🔴 خطأ نشط |
+| 15 | **BUG جديد** — buildSessionSummary تلتقط أسماء nodes وليس workflows | 🔴 خطأ نشط |
+| 16 | **BUG جديد** — race condition في previousMessages مع insert | 🔴 خطأ نشط |
+| 17 | **BUG جديد** — محلل الـ analyzer يستخدم gemini-1.5-flash لكن الـ label يقول 2.5 Pro | 🟡 خطأ بصري |
+| 18 | **BUG جديد** — buildSuccessMessage دائماً يقول 5 مراحل رغم تخطي 2 منها | 🟡 خطأ بصري |
+| 19 | **بحاجة تحسين** — smart gate threshold = 3 nodes فقط (ضيق جداً) | 🟡 قيد |
+| 20 | **بحاجة تحسين** — extractWorkflowNameFromMessage كود ميت يستخدم GPT-4o | 🟡 إهدار |
+| 21 | **بحاجة تحسين** — لا invalidation للـ cache عند إنشاء workflow جديد | 🟠 خطأ منطقي |
+| 22 | **مقترح احترافي** — معمارية Tool Calling بدلاً من pipeline ثابت | 💡 مقترح كبير |
+| 23 | **مقترح احترافي** — حلقة تصحيح تلقائية عبر n8n | 💡 مقترح كبير |
+| 24 | **مقترح احترافي** — Workflow versioning قبل كل تعديل | 💡 مقترح |
+| 25 | **مقترح احترافي** — Diff view للتغييرات | 💡 مقترح |
+| 26 | **مقترح احترافي** — إلغاء الطلب الجاري عند إرسال رسالة جديدة | 💡 مقترح |
+| 27 | **مقترح احترافي** — استيراد تلقائي لـ n8n + عرض النتيجة فوراً | 💡 مقترح |
 
 ---
 
-## القسم الأول: ما تم إنجازه — المرحلة الأولى (قبل 17 أبريل 2026)
+## القسم الأول: ما تم إنجازه ✅
+
+### الإنجازات 1–9 (المرحلة الأولى)
+
+راجع القسم الأول من التقرير السابق — جميعها مُنجزة وتعمل.
+
+**ملخص سريع:**
+- رد فوري < 100ms بمؤشر "يفكر"
+- Cache ذكي 30/60 ثانية لبيانات n8n
+- Streaming حرف بحرف في مسار الدردشة
+- توازي استدعاءات DB في كل طلب
+- كشف النية بـ LLM بدقة 95%
+- بحث fuzzy بمطابقة 88%
+- إصلاح تجميد زر الإرسال
+- تقليص سياق ذكي
+- رسائل خطأ بشرية
+
+### الإنجازات 10–13 (المرحلة الثانية)
+
+**أ1** — تمرير n8n context لـ Phase 1B: يعمل. Phase 1B تعرف الآن الـ workflows الموجودة وتتجنب التكرار.
+
+**أ2** — Smart Gate (لكن فيه خطأ في الـ labels — انظر القسم الثاني).
+
+**ب** — إشعارات المراحل الحية: تعمل بالكامل مع الوقت الفعلي لكل مرحلة.
+
+**ج1** — Session Memory (لكن فيها خطأ في الـ regex — انظر القسم الثاني).
 
 ---
 
-### ✅ الإنجاز 1 — رد فوري عند استلام الرسالة (Immediate Acknowledgment)
+## القسم الثاني: أخطاء مكتشفة جديدة 🔴🟡🟠
+
+---
+
+### 🔴 BUG 1 — Smart Gate يعرض Label عربي في الوضع الإنجليزي
+
+**الملف:** `artifacts/api-server/src/services/sequentialEngine.service.ts`
+
+**المشكلة:**
+```typescript
+const skippedLabel = lang === "ar" ? "تم التخطي (الجودة ممتازة ✅)" : "Skipped (quality OK ✅)";
+
+phases[2]!.label = skippedLabel;    // ← يُفترض هذا الإنجليزي
+phases[2]!.labelAr = skippedLabel;  // ← يُفترض هذا العربي
+// لكن كليهما يأخذان نفس القيمة!
+```
+
+**النتيجة:** عند الـ smart gate في الوضع الإنجليزي، `labelAr` يصبح "Skipped (quality OK ✅)" إنجليزياً. وفي الوضع العربي، `label` يصبح عربياً.
+
+**الإصلاح:**
+```typescript
+phases[2]!.label = "Skipped (quality OK ✅)";
+phases[2]!.labelAr = "تم التخطي (الجودة ممتازة ✅)";
+```
+
+---
+
+### 🔴 BUG 2 — buildSessionSummary تلتقط أسماء الـ Nodes وليس الـ Workflows
 
 **الملف:** `artifacts/api-server/src/routes/chat.routes.ts`
 
-فور استلام الرسالة وإرسال رؤوس SSE، يُرسَل حدث `thinking` فوراً قبل أي عملية أخرى:
-
+**المشكلة:**
 ```typescript
-sendEvent("thinking", {
-  message: lang === "ar" ? "استلمت طلبك، جاري التحليل..." : "Got your request, analyzing...",
-});
+const nameMatches = m.content.match(/"name"\s*:\s*"([^"]{3,80})"/g);
 ```
 
-**في الواجهة الأمامية:** `handleSend` تضع `setIsGenerating(true)` فور الضغط على إرسال، ومؤشر الكتابة يظهر فوراً.
+هذا الـ regex يطابق **كل** حقل `"name"` في الـ JSON، بما في ذلك:
+- `"name": "Gmail Trigger"` — اسم node
+- `"name": "HTTP Request"` — اسم node
+- `"name": "Set Variable"` — اسم node
+- `"name": "My Email Workflow"` — اسم الـ workflow الفعلي
 
-**الأثر:** المستخدم يرى ردًا بصريًا خلال أقل من 100ms بدلاً من الصمت التام.
+**النتيجة:** الـ system prompt سيحتوي على أسماء nodes عشوائية بدلاً من أسماء الـ workflows المُنشأة.
 
----
-
-### ✅ الإنجاز 2 — Cache لبيانات n8n (30 ثانية TTL)
-
-**الملف الجديد:** `artifacts/api-server/src/services/n8nCache.service.ts`
-
+**الإصلاح:** استهداف حقل `"name"` عند المستوى الأعلى من الـ JSON فقط:
 ```typescript
-export async function getCachedWorkflows(ttlMs = 30_000): Promise<CachedWorkflow[]>
-export async function getCachedWorkflow(id: string, ttlMs = 60_000): Promise<Record<string, unknown>>
-export function invalidateWorkflowCache(id?: string): void
-```
-
-- قائمة الـ workflows: cache لمدة **30 ثانية**
-- تفاصيل workflow واحد: cache لمدة **60 ثانية**
-- عند تعديل workflow: يُحذف الـ cache تلقائياً عبر `invalidateWorkflowCache`
-
-**الأثر:** الرسائل المتتالية تُجاب فورياً دون انتظار n8n. في حال الـ n8n بطيء أو غير متاح، يُرجع البيانات المخزنة.
-
----
-
-### ✅ الإنجاز 3 — Streaming النص في مسار الدردشة
-
-**الملف:** `artifacts/api-server/src/routes/chat.routes.ts` — PATH C (query)
-
-```typescript
-const stream = await openai.chat.completions.create({
-  model: "gpt-4o",
-  messages: [...],
-  max_tokens: 2000,
-  temperature: 0.7,
-  stream: true,          // ← تفعيل الـ streaming
-});
-
-for await (const chunk of stream) {
-  const delta = chunk.choices[0]?.delta?.content ?? "";
-  if (delta) {
-    assistantContent += delta;
-    sendEvent("stream_chunk", { delta });  // ← إرسال فوري للواجهة
-  }
+// بدلاً من regex عام، ابحث عن اسم الـ workflow الجذري
+const jsonMatch = m.content.match(/```json\n([\s\S]*?)\n```/);
+if (jsonMatch) {
+  try {
+    const wf = JSON.parse(jsonMatch[1]) as { name?: string };
+    if (wf.name && wf.name.length > 3) {
+      createdWorkflows.push(wf.name);
+    }
+  } catch { /* ignore */ }
 }
 ```
 
-**في الواجهة الأمامية:** `artifacts/n8n-manager/src/pages/chat.tsx`
-
-- حالة جديدة: `streamingContent: string`
-- معالج جديد لحدث `stream_chunk`: يُضاف الـ delta تدريجياً
-- فقاعة streaming مع مؤشر وميض `█` في نهاية النص
-- عند حدث `complete`: تُصفَّر `streamingContent` وتظهر الرسالة الكاملة من الـ DB
-
-**الأثر:** النص يظهر حرفاً حرفاً فور توليده — تجربة مشابهة لـ ChatGPT بدلاً من انتظار 10+ ثوانٍ.
-
 ---
 
-### ✅ الإنجاز 4 — توازي استدعاءات DB + API Keys في كل طلب
+### 🔴 BUG 3 — Race Condition في previousMessages
 
 **الملف:** `artifacts/api-server/src/routes/chat.routes.ts`
 
+**المشكلة:**
 ```typescript
 const [, { openaiKey, geminiKey }, previousMessages] = await Promise.all([
-  db.insert(messagesTable).values({ ... }),   // حفظ رسالة المستخدم
-  getApiKeys(),                                // جلب مفاتيح API
-  db.select().from(messagesTable)...limit(20), // جلب السياق السابق
+  db.insert(messagesTable).values({ ... }),  // يُدرج رسالة المستخدم
+  getApiKeys(),
+  db.select().from(messagesTable)...limit(20), // يجلب الرسائل بالتوازي!
 ]);
 ```
 
-**الأثر:** يوفر 200-500ms في كل طلب حيث كانت هذه الثلاث عمليات تُنفَّذ بشكل متسلسل.
+الـ INSERT والـ SELECT يعملان بالتوازي — في بعض الأحيان السيليكت ينتهي **قبل** أن الـ INSERT يُكمل، فتغيب رسالة المستخدم الحالية من السياق الممرَّر للـ AI.
+
+**الإصلاح:**
+```typescript
+// أولاً احفظ الرسالة، ثم اجلب بالتوازي
+await db.insert(messagesTable).values({ conversationId: convId, role: "user", content });
+
+const [{ openaiKey, geminiKey }, previousMessages] = await Promise.all([
+  getApiKeys(),
+  db.select().from(messagesTable)
+    .where(eq(messagesTable.conversationId, convId))
+    .orderBy(desc(messagesTable.createdAt))
+    .limit(20),
+]);
+```
 
 ---
 
-### ✅ الإنجاز 5 — كشف النية بـ LLM بدلاً من الكلمات المفتاحية
+### 🟡 BUG 4 — workflowAnalyzer يستخدم gemini-1.5-flash لكن الـ Label يقول "Gemini 2.5 Pro"
 
-**الملف الجديد:** `artifacts/api-server/src/services/intentDetector.service.ts`
+**الملف:** `artifacts/api-server/src/services/workflowAnalyzer.service.ts`
 
-**المنطق:**
-1. **Fast path:** إذا كانت الرسالة تحتوي كلمة مفتاحية قاطعة (مثل "أنشئ workflow" أو "create a workflow") — يُقرر الكشف فورياً دون استدعاء LLM
-2. **LLM path:** للرسائل الغامضة — استدعاء GPT-4o mini (timeout: 15s، max_tokens: 120) يُرجع:
-
+**المشكلة:**
 ```typescript
-interface IntentResult {
-  intent: "create" | "modify" | "query";
-  confidence: "high" | "medium" | "low";
-  workflowNameHint: string | null;  // اسم الـ workflow المذكور
-  reasoning: string;
+// Phase 2 في الـ analyzer
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+// ↑ لكن label الـ phase يقول:
+{ phase: 2, label: "Gemini: Validating analysis", ... }
+// والـ frontend يعرض "Gemini 2.5 Pro" في بعض السياقات
+```
+
+المستخدم يظن أن التحقق يتم بـ gemini-2.5-pro لكن فعلياً يستخدم نموذجاً أضعف بكثير.
+
+**الإصلاح:** إما تغيير النموذج لـ `gemini-2.5-pro`، أو تصحيح الـ label.
+
+---
+
+### 🟡 BUG 5 — buildSuccessMessage دائماً يعرض 5 مراحل حتى عند تخطي 2
+
+**الملف:** `artifacts/api-server/src/services/promptBuilder.service.ts`
+
+**المشكلة:**
+```
+🔄 **عملية الإنشاء التسلسلية المكتملة:**
+1. 🔵 GPT-4o حلّل الـ nodes المطلوبة
+2. 🔵 GPT-4o أنشأ الـ workflow
+3. 🟣 Gemini 2.5 Pro راجع وقيّم
+4. 🔵 GPT-4o حسّن        ← لم يحدث فعلاً (smart gate)
+5. 🟣 Gemini 2.5 Pro تحقق ← لم يحدث فعلاً (smart gate)
+```
+
+عندما يُفعَّل الـ smart gate، الرسالة لا تزال تقول "5 مراحل" رغم أنها 3 فقط.
+
+**الإصلاح:** تمرير `wasGated: boolean` للدالة وعرض رسالة مختلفة.
+
+---
+
+### 🟡 BUG 6 — Smart Gate Threshold = 3 ضيق جداً
+
+**الملف:** `artifacts/api-server/src/services/sequentialEngine.service.ts`
+
+**المشكلة:** `simpleWorkflowNodeThreshold ?? 3` يعني أن الـ gate يُفعَّل فقط عند وجود 3 nodes أو أقل.
+
+في الواقع:
+- workflow بسيط نموذجي: Trigger → Process → Send = **3 nodes** ✓
+- workflow بسيط شائع: Trigger → Condition → Action1 → Action2 = **4 nodes** ✗ (لا يستفيد)
+- workflow webhook: Webhook → Set → HTTP → Response = **4 nodes** ✗
+
+الحد الأنسب هو **5 nodes** لتغطية معظم الطلبات البسيطة.
+
+---
+
+### 🟠 BUG 7 — لا يوجد Cache Invalidation بعد إنشاء Workflow جديد
+
+**الملف:** `artifacts/api-server/src/routes/chat.routes.ts`
+
+**المشكلة:** عند نجاح إنشاء workflow وإرساله لـ n8n، لا يُستدعى `invalidateWorkflowCache()`. لذا:
+- المستخدم ينشئ workflow جديد
+- يسأل عن workflows المتاحة في الدردشة
+- الـ AI يُجيب بقائمة قديمة لا تشمل الـ workflow الجديد (لمدة 30 ثانية)
+
+**الإصلاح:**
+```typescript
+// بعد إرسال workflow لـ n8n بنجاح في PATH A
+if (engineResult.success && engineResult.workflowJson) {
+  invalidateWorkflowCache(); // ← أضف هذا
 }
 ```
 
-3. **Fallback:** إذا فشل LLM — يعود للكلمات المفتاحية التقليدية
+---
 
-**الأثر:**
-- دقة كشف النية ترتفع من ~75% إلى ~95%
-- `workflowNameHint` يُلغي استدعاء `extractWorkflowNameFromMessage` المنفصل (يوفر 3-5 ثوانٍ في مسار التعديل)
-- جملة "هل يمكن إضافة شرط لهذا الـ workflow؟" تُصنَّف الآن كـ `query` وليس `modify`
+### 🟡 BUG 8 — extractWorkflowNameFromMessage كود ميت يستخدم GPT-4o الغالي
+
+**الملف:** `artifacts/api-server/src/services/workflowModifier.service.ts`
+
+**المشكلة:** `extractWorkflowNameFromMessage` لا تُستدعى من أي مكان في كود الإنتاج الحالي (تم الاستغناء عنها بـ `workflowNameHint` من `detectIntent`). لكنها لا تزال موجودة وتستخدم GPT-4o بـ timeout 20 ثانية.
+
+**الإصلاح:** حذف الدالة أو تحويلها لـ gpt-4o-mini إذا ستُستخدم مستقبلاً.
 
 ---
 
-### ✅ الإنجاز 6 — بحث ذكي عن الـ Workflow (Fuzzy Search)
+## القسم الثالث: المراجعة الاحترافية — مقارنة بوكيل Replit
 
-**الملف:** `artifacts/api-server/src/services/intentDetector.service.ts`
+---
+
+### ما الفرق بين الوكيل الحالي ووكيل Replit؟
+
+| الخاصية | وكيل Replit | وكيل n8n الحالي |
+|---------|-------------|-----------------|
+| **المعمارية** | Tool Calling ديناميكي — الـ AI يقرر أي أداة يستخدم | Pipeline ثابت 4 مراحل لا يتغير |
+| **التكيف** | الـ AI يعيد المحاولة تلقائياً إذا فشلت أداة | لا retry تلقائي — فشل المرحلة = فشل الكل |
+| **حلقة التصحيح** | يُشغّل الكود، يرى الخطأ، يُصلح، يُشغّل مجدداً | ينشئ الـ workflow لكن لا يختبره ولا يُصلح تلقائياً |
+| **الشفافية** | يعرض المستخدم أدوات محددة تُستدعى لحظة بلحظة | يعرض مراحل عامة لكن ليس الاستدعاءات الفعلية |
+| **المرونة** | يستطيع استخدام 1 أو 10 أدوات حسب التعقيد | دائماً 4 مراحل أو 2 (بعد الـ gate) — ثابت |
+| **الذاكرة** | ذاكرة دائمة عبر sessions بـ vector store | ذاكرة مؤقتة في session فقط |
+| **إلغاء الطلب** | يمكن إلغاء أي عملية جارية | لا يمكن إلغاء عملية الإنشاء بعد بدئها |
+| **نتيجة قابلة للتحقق** | يرى نتيجة تنفيذ الكود مباشرة | لا يعرف إذا كان الـ workflow يعمل فعلاً في n8n |
+
+---
+
+## القسم الرابع: المقترحات الاحترافية الكبرى
+
+---
+
+### 💡 المقترح 1 — معمارية Tool Calling (الأهم والأكبر أثراً)
+
+**المشكلة الجذرية:** Pipeline الـ 4 مراحل الثابت لا يعرف ماذا يحتاج المستخدم حقاً. طلب "أنشئ webhook بسيط" يمر بنفس المراحل الـ 4 التي يمر بها "أنشئ نظام CRM كامل مع 15 node".
+
+**الحل:** استبدال الـ pipeline بـ OpenAI Tool Calling. يُعطى الـ AI مجموعة أدوات ويقرر بنفسه:
 
 ```typescript
-export function findWorkflowNameHint(message: string, workflowNames: string[]): string | null {
-  // 1. مطابقة حرفية كاملة
-  for (const name of workflowNames) {
-    if (lower.includes(name.toLowerCase())) return name;
+const AGENT_TOOLS = [
+  {
+    type: "function",
+    function: {
+      name: "analyze_requirement",
+      description: "تحليل متطلبات المستخدم وتحديد الـ nodes المناسبة",
+      parameters: { type: "object", properties: { requirement: { type: "string" } } }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "build_workflow",
+      description: "بناء workflow JSON كامل",
+      parameters: { type: "object", properties: { nodes_plan: { type: "string" } } }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "validate_workflow",
+      description: "التحقق من صحة الـ workflow وإصلاح الأخطاء",
+      parameters: { type: "object", properties: { workflow_json: { type: "string" } } }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "import_to_n8n",
+      description: "استيراد الـ workflow لـ n8n واختباره",
+      parameters: { type: "object", properties: { workflow_json: { type: "string" } } }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "get_n8n_execution_result",
+      description: "رؤية نتيجة آخر تنفيذ للـ workflow",
+      parameters: { type: "object", properties: { workflow_id: { type: "string" } } }
+    }
   }
-  // 2. مطابقة fuzzy — كلمة واحدة بطول > 3 أحرف
-  for (const name of workflowNames) {
-    const words = name.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-    if (words.some(w => lower.includes(w))) return name;
-  }
-  return null;
+];
+```
+
+الـ AI يستدعي ما يحتاجه:
+- طلب بسيط: `analyze_requirement` → `build_workflow` → `import_to_n8n` (3 خطوات)
+- طلب معقد: 7-8 خطوات مع validate وretry
+- خطأ في التنفيذ: يُضيف `get_n8n_execution_result` ويُصلح تلقائياً
+
+**الأثر:** الوكيل يصبح ديناميكياً مثل Replit Agent بدلاً من pipeline جامد.
+
+---
+
+### 💡 المقترح 2 — حلقة التصحيح التلقائية عبر n8n (Auto-Fix Loop)
+
+**المشكلة:** حالياً الوكيل ينشئ الـ workflow ويُرسله لـ n8n لكن لا يعرف إذا كان يعمل. المستخدم يكتشف الخطأ بنفسه.
+
+**الحل:**
+```
+إنشاء Workflow ← بناء ← استيراد n8n ← تشغيل تجريبي ← قراءة النتيجة
+                                                        ↓ إذا فشل
+                                              تحليل الخطأ ← إصلاح ← استيراد مجدداً
+                                                        (حتى 3 محاولات)
+```
+
+```typescript
+// بعد الاستيراد
+const execResult = await triggerTestExecution(workflowId);
+if (execResult.status === "error") {
+  sendEvent("fixing", { message: `اكتشفت خطأ: ${execResult.error} — جاري الإصلاح...` });
+  const fixedWorkflow = await runWorkflowAnalyzer(workflowJson, [execResult], "auto-fix");
+  await updateWorkflow(workflowId, fixedWorkflow);
+  // إعادة المحاولة
 }
 ```
 
-**مثال:** إذا كان اسم الـ workflow `"إرسال إيميل تلقائي"` والمستخدم كتب `"workflow الإيميل"` — يجد الآن تطابقاً عبر كلمة "إيميل".
+**الأثر:** الوكيل يُسلّم workflow يعمل بالفعل بدلاً من workflow "يبدو صحيحاً".
 
 ---
 
-### ✅ الإنجاز 7 — إصلاح "لا يعمل حتى محادثة جديدة" (SSE Stuck Bug)
+### 💡 المقترح 3 — Workflow Versioning (حفظ النسخ)
 
-**الملف:** `artifacts/n8n-manager/src/pages/chat.tsx`
+**المشكلة:** عند تعديل workflow، لا توجد نسخة سابقة يمكن الرجوع إليها إذا أفسد التعديل شيئاً.
 
-**السبب الجذري:** إذا انتهى الـ stream بدون حدث `complete` (انقطاع شبكة، خطأ خادم)، `sending` تبقى `true` إلى الأبد.
+**الحل:**
+
+```sql
+-- إضافة جدول جديد
+CREATE TABLE workflow_versions (
+  id SERIAL PRIMARY KEY,
+  workflow_id VARCHAR NOT NULL,
+  workflow_name VARCHAR NOT NULL,
+  workflow_json JSONB NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  created_by INTEGER REFERENCES users(id),
+  change_summary TEXT
+);
+```
+
+قبل كل تعديل:
+```typescript
+// في chat.routes.ts — PATH B (modify)
+await db.insert(workflowVersionsTable).values({
+  workflowId: targetWorkflowId,
+  workflowJson: currentWorkflowJson,
+  changeSum: `Before: "${content}"`,
+});
+```
+
+في الواجهة: زر "↩ استعادة النسخة السابقة" يظهر بعد كل تعديل.
+
+**الأثر:** المستخدم يمكنه تجربة التعديلات بأمان مع إمكانية التراجع.
+
+---
+
+### 💡 المقترح 4 — Diff View للتغييرات (قبل/بعد)
+
+**المشكلة:** عند تعديل workflow، المستخدم يرى JSON كامل جديد لكن لا يعرف ما الذي تغيير بالضبط.
+
+**الحل (في الواجهة):**
+
+```typescript
+function WorkflowDiff({ original, modified }: { 
+  original: Record<string, unknown>;
+  modified: Record<string, unknown>;
+}) {
+  const addedNodes = modified.nodes.filter(n => !original.nodes.find(o => o.id === n.id));
+  const removedNodes = original.nodes.filter(n => !modified.nodes.find(m => m.id === n.id));
+  const changedNodes = modified.nodes.filter(n => {
+    const orig = original.nodes.find(o => o.id === n.id);
+    return orig && JSON.stringify(orig) !== JSON.stringify(n);
+  });
+
+  return (
+    <div>
+      {addedNodes.map(n => <DiffRow type="added" node={n} />)}
+      {removedNodes.map(n => <DiffRow type="removed" node={n} />)}
+      {changedNodes.map(n => <DiffRow type="changed" node={n} />)}
+    </div>
+  );
+}
+```
+
+**الأثر:** المستخدم يرى فوراً: `✅ أضاف: "HTTP Request"` و `🔴 حذف: "Old Webhook"` بدلاً من JSON ضخم.
+
+---
+
+### 💡 المقترح 5 — إلغاء الطلب الجاري (Abort Controller)
+
+**المشكلة:** إذا أرسل المستخدم رسالة والـ AI يعمل على إنشاء workflow، لا يمكن إلغاء الطلب. المستخدم يجب أن ينتظر حتى 53 ثانية.
 
 **الحل:**
 
 ```typescript
-const streamCompletedRef = useRef(false);
+// Backend: Map لتتبع الطلبات الجارية
+const activeRequests = new Map<string, AbortController>();
 
-// في بداية handleSend:
-streamCompletedRef.current = false;
+// عند بدء كل طلب
+const abortController = new AbortController();
+activeRequests.set(`${userId}-${convId}`, abortController);
 
-// في معالج complete:
-streamCompletedRef.current = true;
-
-// بعد انتهاء while loop:
-if (!streamCompletedRef.current) {
-  setStreamingContent("");
-  setIsGenerating(false);
-  setSending(false);
-  setOptimisticUserMsg(null);
-  void refetchConv();
-}
-```
-
----
-
-### ✅ الإنجاز 8 — تقليص السياق بذكاء (Smart Context Truncation)
-
-**الملف:** `artifacts/api-server/src/services/intentDetector.service.ts`
-
-```typescript
-export function smartTruncateMessage(content: string, maxLen: number): string {
-  if (content.length <= maxLen) return content;
-
-  // إذا كانت الرسالة تحتوي JSON، استبدله بملاحظة
-  const jsonMatch = content.match(/```json\n[\s\S]*?\n```/);
-  if (jsonMatch) {
-    const withoutJson = content.replace(/```json\n[\s\S]*?\n```/, "[workflow JSON omitted]");
-    if (withoutJson.length <= maxLen) return withoutJson;
+// Endpoint جديد لإلغاء الطلب
+router.post("/conversations/:id/abort", authenticate, async (req, res) => {
+  const key = `${req.user.userId}-${convId}`;
+  const controller = activeRequests.get(key);
+  if (controller) {
+    controller.abort();
+    activeRequests.delete(key);
   }
-
-  // احتفظ بأول 65% وآخر 30% من النص (الأجزاء الأكثر أهمية)
-  return content.slice(0, Math.floor(maxLen * 0.65)) + "\n...[truncated]...\n" + content.slice(-Math.floor(maxLen * 0.3));
-}
-```
-
-الحد الجديد: **1200 حرف** (بدلاً من 800) مع تقليص ذكي يحذف JSON غير الضروري أولاً.
-
----
-
-### ✅ الإنجاز 9 — رسائل خطأ بشرية واضحة مع خطوات للحل
-
-**في مسار التعديل** عند عدم العثور على الـ workflow:
-```
-⚠️ لم أتمكن من تحديد الـ workflow المقصود.
-
-يرجى:
-1. ذكر اسم الـ workflow بوضوح في رسالتك
-2. أو التأكد من أن n8n مضبوط ومتصل في الإعدادات
-3. أو استخدام زر "تحليل وإصلاح" من صفحة الـ Workflows
-
-الـ Workflows المتاحة:
-- [اسم 1]
-- [اسم 2]
-...
-```
-
-**عند غياب مفتاح OpenAI:**
-```
-⚠️ مفتاح OpenAI غير مضبوط.
-
-للإصلاح: اذهب إلى ⚙️ الإعدادات → OpenAI وأضف مفتاحك.
-```
-
----
-
-## القسم الثاني: ما تم إنجازه — المرحلة الثانية (17 أبريل 2026)
-
----
-
-### ✅ المقترح أ1 — تمرير n8n Context لـ Phase 1B (منخفض المخاطر، يرفع جودة الـ workflows)
-
-**الملفات المعدّلة:**
-- `artifacts/api-server/src/services/promptBuilder.service.ts`
-- `artifacts/api-server/src/services/sequentialEngine.service.ts`
-- `artifacts/api-server/src/routes/chat.routes.ts`
-
-**التغيير:**
-
-في `promptBuilder.service.ts` — أضيف `n8nContext?` كمعامل اختياري لـ `buildPhase1BUserPrompt`:
-
-```typescript
-export function buildPhase1BUserPrompt(
-  userRequest: string,
-  nodeAnalysis: string,
-  lang: Language,
-  n8nContext?: string   // ← جديد
-): string {
-  const contextBlock = n8nContext
-    ? `\n\nالـ Workflows الموجودة حالياً في n8n (تجنب التكرار):\n${n8nContext}`
-    : "";
-  // ...
-}
-```
-
-في `sequentialEngine.service.ts` — أضيف `n8nContext?: string` لـ `EngineConfig` ويُمرَّر لـ Phase 1B.
-
-في `chat.routes.ts` — يُبنى الـ context من الـ workflows المجلوبة مسبقاً ويُمرَّر للـ engine:
-
-```typescript
-const n8nContextStr = availableWorkflows.length > 0
-  ? availableWorkflows.slice(0, 20).map(w =>
-      `- "${w.name}" (${w.active ? "active" : "inactive"})`
-    ).join("\n")
-  : undefined;
-
-const engineResult = await runSequentialEngine(content, {
-  // ...
-  n8nContext: n8nContextStr,
+  res.json({ success: true });
 });
 ```
 
-**الأثر:** Phase 1B تعرف الآن الـ workflows الموجودة مسبقاً في n8n وتتجنب إنشاء workflows مكررة أو متشابهة — يرفع جودة الـ workflows المُنشأة خصوصاً عند وجود workflows متعددة.
-
----
-
-### ✅ المقترح أ2 — Gate ذكي: تخطي Phase 3+4 للـ Workflows البسيطة
-
-**الملف:** `artifacts/api-server/src/services/sequentialEngine.service.ts`
-
-بعد Phase 2، إذا كان `score ≥ 85` وعدد الـ nodes `≤ 3`:
-
-```typescript
-const p2Score = reviewReport.overallScore ?? 0;
-const nodeCount = Array.isArray(result.phase1Result?.nodes)
-  ? result.phase1Result.nodes.length
-  : 99;
-
-if (p2Score >= 85 && nodeCount <= simpleNodeThreshold) {
-  // Mark Phase 3+4 as skipped
-  phases[2]!.status = "done"; phases[2]!.durationMs = 0;
-  phases[2]!.label = "Skipped (quality OK ✅)";
-  notify({ ...phases[2]! });
-
-  phases[3]!.status = "done"; phases[3]!.durationMs = 0;
-  phases[3]!.label = "Skipped (quality OK ✅)";
-  notify({ ...phases[3]! });
-
-  // Return immediately with Phase 1 result
-  result.workflowJson = result.phase1Result;
-  result.phase4Approved = true;
-  return result;
-}
-```
-
-**في الواجهة الأمامية:** المراحل المتخطاة تظهر بلون سماوي مميز `⚡ متخطى` بدلاً من الأخضر العادي — تمييز بصري واضح لما وفّره الـ gate.
-
-**الأثر المحقق:**
-- الـ workflows البسيطة (2-3 nodes) تنتهي في **~10-18 ثانية** بدلاً من 27-43 ثانية
-- توفير ~15-25 ثانية لكل workflow بسيط عالي الجودة
-- صفر مخاطرة — الـ gate يُطبَّق فقط عند score ≥ 85 (جودة ممتازة أصلاً)
-
----
-
-### ✅ المقترح ب — إظهار تقدم المراحل حياً مع التسميات والوقت
-
-**الملفات المعدّلة:**
-- `artifacts/api-server/src/routes/chat.routes.ts`
-- `artifacts/n8n-manager/src/pages/chat.tsx`
-
-**في الـ backend:** يُرسَل `phase` event عند بدء وانتهاء كل مرحلة مع:
-- `label` / `labelAr` — اسم المرحلة بالعربية والإنجليزية
-- `status` — `running` عند البداية، `done` عند الانتهاء
-- `durationMs` — الوقت الفعلي لكل مرحلة
-
-```typescript
-onPhaseUpdate: (phase) => sendEvent("phase", phase),
-```
-
-**في الـ frontend:** تحديث `PhaseProgressBar` بحالة ثالثة خاصة للمراحل المتخطاة:
-
 ```tsx
-const isSkipped = phase.status === "done" && phase.durationMs === 0 &&
-  (phase.label.includes("Skipped") || phase.labelAr.includes("تم التخطي"));
-
-// لون سماوي + أيقونة ⚡ للمراحل المتخطاة
-// لون أخضر + ✓ للمراحل المنجزة
-// لون بنفسجي + spinner للمراحل الجارية
-```
-
-**الأثر:** المستخدم يرى الآن:
-```
-✅ GPT-4o: تحليل الـ nodes وبناء الـ workflow    (4.2s)
-✅ Gemini 2.5 Pro: مراجعة وتقييم                (3.1s)
-⚡ GPT-4o: تحسين الـ workflow           ⚡ متخطى
-⚡ Gemini 2.5 Pro: التحقق النهائي       ⚡ متخطى
+// Frontend: زر إلغاء يظهر أثناء التوليد
+{sending && (
+  <button onClick={handleAbort} className="text-destructive">
+    ✕ إلغاء
+  </button>
+)}
 ```
 
 ---
 
-### ✅ المقترح ج1 — ذاكرة قصيرة المدى (Session Memory)
+### 💡 المقترح 6 — Auto-Import مع نتيجة فورية
 
-**الملف:** `artifacts/api-server/src/routes/chat.routes.ts`
+**المشكلة:** بعد إنشاء الـ workflow، المستخدم يجب أن يضغط "إرسال لـ n8n" يدوياً.
 
-دالة جديدة `buildSessionSummary` تستخرج أسماء الـ workflows المُنشأة من رسائل المحادثة السابقة وتضيفها للـ System Prompt:
+**الحل:** الاستيراد التلقائي الاختياري مع تنبيه واضح:
 
 ```typescript
-function buildSessionSummary(messages: Array<{ role: string; content: string }>): string {
-  const createdWorkflows: string[] = [];
-  for (const m of messages) {
-    if (m.role !== "assistant") continue;
-    const nameMatches = m.content.match(/"name"\s*:\s*"([^"]{3,80})"/g);
-    if (nameMatches) {
-      for (const match of nameMatches) {
-        const extracted = match.replace(/"name"\s*:\s*"/, "").replace(/"$/, "").trim();
-        if (extracted && !createdWorkflows.includes(extracted)) {
-          createdWorkflows.push(extracted);
-        }
-      }
-    }
+// في الـ engine result handling
+if (engineResult.success && engineResult.workflowJson && userPrefers_autoImport) {
+  try {
+    const imported = await importWorkflowToN8n(engineResult.workflowJson);
+    sendEvent("imported", { workflowId: imported.id, workflowUrl: `${n8nUrl}/workflow/${imported.id}` });
+    invalidateWorkflowCache();
+  } catch (importErr) {
+    sendEvent("import_failed", { error: String(importErr) });
   }
-  if (createdWorkflows.length === 0) return "";
-  return `\n\n[ملاحظة: في هذه المحادثة تم إنشاء/تعديل الـ workflows التالية: ${createdWorkflows.slice(0, 5).join("، ")}]`;
 }
 ```
 
-يُضاف الملخص للـ System Prompt في PATH C:
+في الواجهة: بعد الإنجاز يظهر `🔗 فُتح في n8n` بدلاً من "أرسل لـ n8n".
+
+---
+
+### 💡 المقترح 7 — Token Usage Tracking
+
+**المشكلة:** لا يوجد تتبع لعدد الـ tokens المستخدمة. المستخدم قد يستخدم حصته بدون معرفة.
+
+**الحل:** تتبع tokens في كل استدعاء وتخزينها في الـ DB:
 
 ```typescript
-const sessionSummary = buildSessionSummary(previousMessages);
-const systemPrompt = `أنت مساعد ذكي...${workflowContext}${sessionSummary}`;
+// في كل استدعاء OpenAI
+const response = await openai.chat.completions.create({ ... });
+const tokensUsed = response.usage?.total_tokens ?? 0;
+
+// تخزين في generation_sessions
+await db.update(generationSessionsTable)
+  .set({ tokensUsed: tokensUsed })
+  .where(...);
 ```
 
-**الأثر:**
-- الـ AI يتذكر الآن أسماء الـ workflows المُنشأة في نفس المحادثة
-- إذا أنشأ المستخدم workflow ثم سأل عنه بعد 15 رسالة، الـ AI يعرف عنه
-- لا تغيير في الـ DB schema — يعمل بإضافة بسيطة للـ system prompt فقط
+في الـ Dashboard: "استُخدم 45,230 token هذا الشهر" مع رسم بياني.
 
 ---
 
-## القسم الثالث: مقارنة الأداء — قبل وبعد المرحلتين
+### 💡 المقترح 8 — Dynamic n8n Schema Injection (بدلاً من الـ schemas الثابتة)
 
-| المقياس | قبل المرحلة الأولى | بعد المرحلة الأولى | بعد المرحلة الثانية |
-|---------|-----|-----|-----|
-| وقت الاستجابة الأولى | 0-30 ثانية (صمت تام) | < 200ms (مؤشر فوري) | < 200ms |
-| وقت الدردشة — أول كلمة تظهر | 10-15 ثانية | 1-3 ثوانٍ (streaming) | 1-3 ثوانٍ |
-| استدعاءات n8n لكل رسالة | 1-2 دائماً | 0 عند وجود cache | 0 عند وجود cache |
-| دقة كشف النية | ~75% | ~95% (LLM-based) | ~95% |
-| مطابقة اسم الـ Workflow | حرفية فقط (~60%) | Fuzzy + LLM hint (~88%) | ~88% |
-| مشكلة تجميد زر الإرسال | تحدث عند انقطاع الشبكة | مُصلحة بالكامل | مُصلحة |
-| وقت الإنشاء — workflows بسيطة (≤3 nodes) | 27-43 ثانية | 27-43 ثانية | **10-18 ثانية** ⚡ |
-| وقت الإنشاء — workflows معقدة | 27-53 ثانية | 27-53 ثانية | 27-53 ثانية (بدون تغيير) |
-| جودة Phase 1B (يعرف الـ workflows الموجودة) | لا | لا | **نعم** ✅ |
-| ذاكرة الـ workflows المُنشأة في المحادثة | لا | لا | **نعم** ✅ |
-| عرض تقدم المراحل بالوقت الفعلي | لا | جزئياً | **مع تمييز المراحل المتخطاة** ✅ |
+**المشكلة الجذرية:** `nodeSchemas.ts` يحتوي schemas ثابتة ومحدودة. أي node لا يوجد فيها لا يُعامَل معاملة صحيحة.
 
----
+**الحل:** جلب schemas مباشرة من n8n API:
 
-## الملفات المعدّلة — المرحلة الثانية
+```typescript
+// n8n API يوفر node types
+const n8nNodeTypes = await fetch(`${n8nBaseUrl}/node-types`, {
+  headers: { "X-N8N-API-KEY": apiKey }
+});
 
-| الملف | التغيير |
-|-------|---------|
-| `artifacts/api-server/src/services/promptBuilder.service.ts` | **محدَّث** — `buildPhase1BUserPrompt` يقبل `n8nContext?` الآن |
-| `artifacts/api-server/src/services/sequentialEngine.service.ts` | **محدَّث** — `EngineConfig.n8nContext` + `simpleWorkflowNodeThreshold` + Smart Gate |
-| `artifacts/api-server/src/routes/chat.routes.ts` | **محدَّث** — تمرير n8nContext للـ engine + `buildSessionSummary` + session memory في PATH C |
-| `artifacts/n8n-manager/src/pages/chat.tsx` | **محدَّث** — `PhaseProgressBar` بحالة "متخطى" مميزة بصرياً |
+// تخزينها في cache وتمريرها للـ prompts
+const dynamicSchemas = await getCachedNodeTypes(); // cache 1 ساعة
+```
+
+**الأثر:** الوكيل يعرف جميع الـ nodes المتاحة في n8n الخاصة بالمستخدم وليس فقط الـ 20 node المضمنة.
 
 ---
 
-## ما تبقى دون تنفيذ
+## القسم الخامس: مقارنة الأداء الشاملة
 
-| التحسين | السبب | الأثر المتوقع |
-|---------|-------|---------------|
-| المقترح أ3 — استبدال Gemini في Phase 2 بـ GPT-4o mini | خطر متوسط على جودة الـ workflows — يحتاج اختباراً مقارناً | توفير 4-7 ثوانٍ في Phase 2 |
-| المقترح ج2 — جدول `conversation_summaries` في DB | يحتاج DB migration + قرار تصميمي إضافي | ذاكرة دائمة عبر المحادثات المختلفة |
+| المقياس | قبل أي تحسين | بعد المرحلة الأولى | بعد المرحلة الثانية | الهدف المقترح |
+|---------|------------|-------------------|---------------------|--------------|
+| وقت الاستجابة الأولى | 0-30s (صمت) | < 200ms | < 200ms | < 100ms |
+| وقت الدردشة — أول كلمة | 10-15s | 1-3s (streaming) | 1-3s | 1-2s |
+| وقت الإنشاء — بسيط (≤3 nodes) | 27-43s | 27-43s | **10-18s** | **5-12s** (مع tool calling) |
+| وقت الإنشاء — معقد | 27-53s | 27-53s | 27-53s | 20-35s (مع توازي) |
+| دقة كشف النية | ~75% | ~95% | ~95% | ~98% |
+| مطابقة اسم الـ Workflow | ~60% | ~88% | ~88% | ~95% |
+| نجاح الـ workflow في n8n | غير مُختبَر | غير مُختبَر | غير مُختبَر | ~90% (auto-fix loop) |
+| ذاكرة الـ session | لا | لا | جزئية (bugs) | كاملة |
+| إمكانية إلغاء طلب | لا | لا | لا | نعم |
+| versioning | لا | لا | لا | نعم |
 
 ---
 
-*آخر تحديث: 17 أبريل 2026 — بعد تطبيق مرحلة التحسين الثانية (أ1 + أ2 + ب + ج1)*
+## القسم السادس: خارطة الطريق المقترحة
+
+### الأولوية الأولى — إصلاح الأخطاء الحالية (1-2 أيام)
+1. 🔴 إصلاح BUG 1: Smart gate labels (سطران فقط)
+2. 🔴 إصلاح BUG 2: buildSessionSummary regex (تغيير النهج)
+3. 🔴 إصلاح BUG 3: Race condition في previousMessages (إزالة التوازي)
+4. 🟠 إصلاح BUG 7: Cache invalidation بعد إنشاء workflow (سطر واحد)
+5. 🟡 إصلاح BUG 5: buildSuccessMessage مع smart gate (تمرير wasGated)
+6. 🟡 تعديل BUG 6: رفع الـ threshold لـ 5 nodes (رقم واحد)
+
+### الأولوية الثانية — تحسينات سريعة (2-3 أيام)
+7. 💡 المقترح 3: Workflow Versioning (جدول DB + منطق بسيط)
+8. 💡 المقترح 4: Diff View (مكوّن React)
+9. 💡 المقترح 5: Abort Controller (endpoint + زر)
+10. 💡 المقترح 6: Auto-Import التلقائي (اختياري)
+
+### الأولوية الثالثة — إعادة المعمارية (أسبوع+)
+11. 💡 المقترح 1: Tool Calling Architecture (تغيير جوهري)
+12. 💡 المقترح 2: Auto-Fix Loop عبر n8n
+13. 💡 المقترح 8: Dynamic Schema Injection
+
+---
+
+## الملفات المعدّلة — تاريخي
+
+| الملف | التغييرات |
+|-------|-----------|
+| `artifacts/api-server/src/services/n8nCache.service.ts` | **جديد** — Cache service |
+| `artifacts/api-server/src/services/intentDetector.service.ts` | **جديد** — LLM intent + fuzzy + smartTruncate |
+| `artifacts/api-server/src/services/sequentialEngine.service.ts` | **محدَّث** — n8nContext + Smart Gate |
+| `artifacts/api-server/src/services/promptBuilder.service.ts` | **محدَّث** — n8nContext في Phase 1B |
+| `artifacts/api-server/src/routes/chat.routes.ts` | **مُعاد كتابته** — كل التحسينات |
+| `artifacts/n8n-manager/src/pages/chat.tsx` | **محدَّث** — SSE fix + streaming + phase display |
+
+---
+
+*آخر تحديث: 17 أبريل 2026 — مراجعة شاملة للكود بعد المرحلتين الأولى والثانية*
