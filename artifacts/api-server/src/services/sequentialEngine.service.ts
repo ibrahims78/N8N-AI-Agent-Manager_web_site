@@ -64,6 +64,60 @@ export interface EngineConfig {
    * Pass at most 6 turns (12 messages) to keep the prompt concise.
    */
   conversationHistory?: ConversationTurn[];
+  /**
+   * [FIX 4.1] Streaming callback for Phase 1B (the longest phase).
+   * Called with each text chunk as it is generated, so the frontend can
+   * display live progress instead of waiting silently for 20-40 seconds.
+   */
+  onPhase1BStream?: (chunk: string) => void;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FIX 4.4: Token Usage & Cost Tracking
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface TokenUsage {
+  phase1aPromptTokens: number;
+  phase1aCompletionTokens: number;
+  phase1bPromptTokens: number;
+  phase1bCompletionTokens: number;
+  phase3PromptTokens: number;
+  phase3CompletionTokens: number;
+  phase3ExtraPromptTokens: number;
+  phase3ExtraCompletionTokens: number;
+  totalOpenaiPromptTokens: number;
+  totalOpenaiCompletionTokens: number;
+  totalOpenaiTokens: number;
+  /** Estimated cost in USD based on GPT-4o pricing ($2.50/1M input, $10/1M output) */
+  estimatedCostUsd: number;
+}
+
+function buildTokenUsage(raw: {
+  p1aPrompt: number; p1aCompletion: number;
+  p1bPrompt: number; p1bCompletion: number;
+  p3Prompt: number; p3Completion: number;
+  p3xPrompt: number; p3xCompletion: number;
+}): TokenUsage {
+  const totalPrompt = raw.p1aPrompt + raw.p1bPrompt + raw.p3Prompt + raw.p3xPrompt;
+  const totalCompletion = raw.p1aCompletion + raw.p1bCompletion + raw.p3Completion + raw.p3xCompletion;
+  const totalTokens = totalPrompt + totalCompletion;
+  // GPT-4o pricing: $2.50 per 1M input tokens, $10.00 per 1M output tokens
+  const estimatedCostUsd = (totalPrompt / 1_000_000) * 2.50 + (totalCompletion / 1_000_000) * 10.00;
+
+  return {
+    phase1aPromptTokens: raw.p1aPrompt,
+    phase1aCompletionTokens: raw.p1aCompletion,
+    phase1bPromptTokens: raw.p1bPrompt,
+    phase1bCompletionTokens: raw.p1bCompletion,
+    phase3PromptTokens: raw.p3Prompt,
+    phase3CompletionTokens: raw.p3Completion,
+    phase3ExtraPromptTokens: raw.p3xPrompt,
+    phase3ExtraCompletionTokens: raw.p3xCompletion,
+    totalOpenaiPromptTokens: totalPrompt,
+    totalOpenaiCompletionTokens: totalCompletion,
+    totalOpenaiTokens: totalTokens,
+    estimatedCostUsd: Math.round(estimatedCostUsd * 10_000) / 10_000,
+  };
 }
 
 export interface PhaseProgress {
@@ -90,6 +144,8 @@ export interface EngineResult {
   phase4Approved: boolean;
   error?: string;
   lang: Language;
+  /** [FIX 4.4] Token usage and estimated cost breakdown per phase */
+  tokenUsage?: TokenUsage;
 }
 
 interface GeminiReviewReport {
@@ -217,10 +273,19 @@ export async function runSequentialEngine(
   const geminiModel = config.geminiModel ?? "gemini-2.5-pro-exp-03-25";
   const n8nContext = config.n8nContext;
   const simpleNodeThreshold = config.simpleWorkflowNodeThreshold ?? 3;
+  const onPhase1BStream = config.onPhase1BStream;
 
   // FIX 3.4: Conversation history — last N turns for Phase 1B context
   // Trim to last 6 turns max so the prompt stays within token budget
   const conversationHistory = (config.conversationHistory ?? []).slice(-6);
+
+  // FIX 4.4: Token usage accumulators
+  const tokenRaw = {
+    p1aPrompt: 0, p1aCompletion: 0,
+    p1bPrompt: 0, p1bCompletion: 0,
+    p3Prompt: 0, p3Completion: 0,
+    p3xPrompt: 0, p3xCompletion: 0,
+  };
 
   try {
     // ─── PHASE 1: GPT-4o — Two-Step Workflow Creation ─────────────────────────
@@ -249,7 +314,10 @@ export async function runSequentialEngine(
           "Phase1A-node-analysis"
         );
         nodeAnalysis = p1aResponse.choices[0]?.message?.content ?? "";
-        logger.info({ nodeAnalysis }, "Phase 1A complete — nodes identified");
+        // FIX 4.4: capture Phase 1A token usage
+        tokenRaw.p1aPrompt = p1aResponse.usage?.prompt_tokens ?? 0;
+        tokenRaw.p1aCompletion = p1aResponse.usage?.completion_tokens ?? 0;
+        logger.info({ nodeAnalysis, tokensUsed: p1aResponse.usage?.total_tokens }, "Phase 1A complete — nodes identified");
       } catch (err) {
         logger.warn({ err }, "Phase 1A failed — falling back to direct generation");
       }
@@ -257,44 +325,77 @@ export async function runSequentialEngine(
       // ── Step 1B: Build workflow JSON with injected schemas + conversation history ──
       logger.info({ phase: "1B" }, "Sequential engine: Phase 1B starting — workflow build");
 
-      if (nodeAnalysis) {
-        // FIX 3.4: inject conversation history turns before the final user message
-        // so the model knows what was discussed/created in this session
-        const historyMessages: Array<{ role: "user" | "assistant"; content: string }> =
-          conversationHistory.length > 0
-            ? conversationHistory.map((t) => ({
-                role: t.role,
-                // Truncate very long assistant messages (e.g. workflow JSON blocks)
-                content:
-                  t.content.length > 1500
-                    ? t.content.slice(0, 1200) + "\n...[truncated for context]..."
-                    : t.content,
-              }))
-            : [];
+      // FIX 3.4: inject conversation history turns before the final user message
+      // so the model knows what was discussed/created in this session
+      const historyMessages: Array<{ role: "user" | "assistant"; content: string }> =
+        conversationHistory.length > 0
+          ? conversationHistory.map((t) => ({
+              role: t.role,
+              // Truncate very long assistant messages (e.g. workflow JSON blocks)
+              content:
+                t.content.length > 1500
+                  ? t.content.slice(0, 1200) + "\n...[truncated for context]..."
+                  : t.content,
+            }))
+          : [];
 
-        const p1bResponse = await withRetry(
-          () => openai.chat.completions.create({
-            model: openaiModel,
-            messages: [
-              {
-                role: "system",
-                content: buildPhase1BSystemPrompt(userRequest, lang),
-              },
-              // Inject prior conversation turns so the engine has session context
-              ...historyMessages,
-              {
-                role: "user",
-                // [أ1] Pass n8nContext so Phase 1B is aware of existing workflows
-                content: buildPhase1BUserPrompt(userRequest, nodeAnalysis, lang, n8nContext),
-              },
-            ],
-            max_tokens: 4000,
-            temperature: 0.2,
-            response_format: { type: "json_object" },
-          }),
-          "Phase1B-workflow-build"
-        );
-        phase1JsonString = p1bResponse.choices[0]?.message?.content ?? "";
+      if (nodeAnalysis) {
+        const p1bMessages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
+          { role: "system", content: buildPhase1BSystemPrompt(userRequest, lang) },
+          ...historyMessages,
+          {
+            role: "user",
+            // [أ1] Pass n8nContext so Phase 1B is aware of existing workflows
+            content: buildPhase1BUserPrompt(userRequest, nodeAnalysis, lang, n8nContext),
+          },
+        ];
+
+        // FIX 4.1: Stream Phase 1B when caller provides onPhase1BStream callback
+        if (onPhase1BStream) {
+          const p1bStream = await withRetry(
+            () => openai.chat.completions.create({
+              model: openaiModel,
+              messages: p1bMessages,
+              max_tokens: 4000,
+              temperature: 0.2,
+              response_format: { type: "json_object" },
+              stream: true,
+              stream_options: { include_usage: true },
+            }),
+            "Phase1B-workflow-build-stream"
+          );
+
+          let accumulated = "";
+          for await (const chunk of p1bStream) {
+            const delta = chunk.choices[0]?.delta?.content ?? "";
+            if (delta) {
+              accumulated += delta;
+              onPhase1BStream(delta);
+            }
+            // FIX 4.4: usage arrives in the final chunk when stream_options.include_usage=true
+            if (chunk.usage) {
+              tokenRaw.p1bPrompt = chunk.usage.prompt_tokens ?? 0;
+              tokenRaw.p1bCompletion = chunk.usage.completion_tokens ?? 0;
+            }
+          }
+          phase1JsonString = accumulated;
+          logger.info({ streamedChars: accumulated.length, p1bTokens: tokenRaw.p1bPrompt + tokenRaw.p1bCompletion }, "Phase 1B streaming complete");
+        } else {
+          // Non-streaming (backward compatible)
+          const p1bResponse = await withRetry(
+            () => openai.chat.completions.create({
+              model: openaiModel,
+              messages: p1bMessages,
+              max_tokens: 4000,
+              temperature: 0.2,
+              response_format: { type: "json_object" },
+            }),
+            "Phase1B-workflow-build"
+          );
+          phase1JsonString = p1bResponse.choices[0]?.message?.content ?? "";
+          tokenRaw.p1bPrompt = p1bResponse.usage?.prompt_tokens ?? 0;
+          tokenRaw.p1bCompletion = p1bResponse.usage?.completion_tokens ?? 0;
+        }
       } else {
         // Fallback: direct generation without node analysis
         const p1FallbackResponse = await withRetry(
@@ -311,6 +412,8 @@ export async function runSequentialEngine(
           "Phase1-fallback"
         );
         phase1JsonString = p1FallbackResponse.choices[0]?.message?.content ?? "";
+        tokenRaw.p1bPrompt = p1FallbackResponse.usage?.prompt_tokens ?? 0;
+        tokenRaw.p1bCompletion = p1FallbackResponse.usage?.completion_tokens ?? 0;
       }
     } catch (err) {
       logger.error({ err }, "Phase 1 OpenAI call failed");
@@ -477,6 +580,9 @@ export async function runSequentialEngine(
         );
 
         phase3JsonString = p3Response.choices[0]?.message?.content ?? phase1JsonForReview;
+        // FIX 4.4: capture Phase 3 token usage
+        tokenRaw.p3Prompt = p3Response.usage?.prompt_tokens ?? 0;
+        tokenRaw.p3Completion = p3Response.usage?.completion_tokens ?? 0;
       } catch (err) {
         logger.warn({ err }, "Phase 3 OpenAI call failed — using Phase 1 result");
         phase3JsonString = phase1JsonForReview;
@@ -590,6 +696,9 @@ export async function runSequentialEngine(
         );
 
         const extraJson = extraRefineResponse.choices[0]?.message?.content ?? finalJsonForValidation;
+        // FIX 4.4: capture extra refinement token usage
+        tokenRaw.p3xPrompt = extraRefineResponse.usage?.prompt_tokens ?? 0;
+        tokenRaw.p3xCompletion = extraRefineResponse.usage?.completion_tokens ?? 0;
         let extraParsed: Record<string, unknown> | null = null;
         try {
           extraParsed = JSON.parse(extractJson(extraJson)) as Record<string, unknown>;
@@ -630,6 +739,13 @@ export async function runSequentialEngine(
     result.workflowJson = result.phase3Result ?? result.phase1Result;
     result.totalTimeMs = Date.now() - startTime;
     result.success = true;
+
+    // FIX 4.4: build and attach token usage summary
+    result.tokenUsage = buildTokenUsage(tokenRaw);
+    logger.info(
+      { tokens: result.tokenUsage.totalOpenaiTokens, costUsd: result.tokenUsage.estimatedCostUsd },
+      "Token usage summary"
+    );
 
     result.userMessage = buildSuccessMessage(
       userRequest,

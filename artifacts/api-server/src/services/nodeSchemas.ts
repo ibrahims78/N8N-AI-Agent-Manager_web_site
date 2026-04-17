@@ -610,6 +610,495 @@ export const NODE_SCHEMAS: Record<string, NodeSchema> = {
     description: "Call and execute another n8n workflow",
     category: "core",
   },
+
+  // ─── Project Management ───────────────────────────────────────────────────────
+  "n8n-nodes-base.jira": {
+    type: "n8n-nodes-base.jira",
+    typeVersion: 1,
+    credentials: { jiraSoftwareCloudApi: "jiraSoftwareCloudApi" },
+    defaultParameters: {
+      resource: "issue",
+      operation: "create",
+      project: { __rl: true, value: "", mode: "id" },
+      issuetype: { __rl: true, value: "Task", mode: "name" },
+      summary: "",
+      additionalFields: {},
+    },
+    description: "Create, update, and manage Jira issues and projects",
+    category: "project-management",
+  },
+  "n8n-nodes-base.jiraTrigger": {
+    type: "n8n-nodes-base.jiraTrigger",
+    typeVersion: 1,
+    credentials: { jiraSoftwareCloudApi: "jiraSoftwareCloudApi" },
+    defaultParameters: {
+      events: ["jira:issue_created"],
+    },
+    description: "Trigger workflow on Jira events (issue created, updated, etc.)",
+    category: "trigger",
+  },
+  "n8n-nodes-base.github": {
+    type: "n8n-nodes-base.github",
+    typeVersion: 1,
+    credentials: { githubApi: "githubApi" },
+    defaultParameters: {
+      resource: "issue",
+      operation: "create",
+      owner: "",
+      repository: "",
+      title: "",
+      body: "",
+    },
+    description: "Create issues, PRs, and manage GitHub repositories",
+    category: "development",
+  },
+  "n8n-nodes-base.githubTrigger": {
+    type: "n8n-nodes-base.githubTrigger",
+    typeVersion: 1,
+    credentials: { githubApi: "githubApi" },
+    defaultParameters: {
+      owner: "",
+      repository: "",
+      events: ["push"],
+    },
+    description: "Trigger workflow on GitHub events (push, PR, issue, etc.)",
+    category: "trigger",
+  },
+  "n8n-nodes-base.gitlab": {
+    type: "n8n-nodes-base.gitlab",
+    typeVersion: 1,
+    credentials: { gitlabApi: "gitlabApi" },
+    defaultParameters: {
+      resource: "issue",
+      operation: "create",
+      projectId: "",
+      title: "",
+      description: "",
+    },
+    description: "Manage GitLab issues, merge requests, and repositories",
+    category: "development",
+  },
+  "n8n-nodes-base.linear": {
+    type: "n8n-nodes-base.linear",
+    typeVersion: 1,
+    credentials: { linearApi: "linearApi" },
+    defaultParameters: {
+      resource: "issue",
+      operation: "create",
+      teamId: "",
+      title: "",
+      description: "",
+      priority: 2,
+    },
+    description: "Create and manage Linear issues, projects, and cycles",
+    category: "project-management",
+  },
+  "n8n-nodes-base.asana": {
+    type: "n8n-nodes-base.asana",
+    typeVersion: 1,
+    credentials: { asanaApi: "asanaApi" },
+    defaultParameters: {
+      resource: "task",
+      operation: "create",
+      workspace: "",
+      name: "",
+      notes: "",
+      assignee: "me",
+    },
+    description: "Create and manage Asana tasks, projects, and teams",
+    category: "project-management",
+  },
+  "n8n-nodes-base.trello": {
+    type: "n8n-nodes-base.trello",
+    typeVersion: 1,
+    credentials: { trelloApi: "trelloApi" },
+    defaultParameters: {
+      resource: "card",
+      operation: "create",
+      listId: "",
+      name: "",
+      description: "",
+    },
+    description: "Create cards, manage boards and lists in Trello",
+    category: "project-management",
+  },
+  "n8n-nodes-base.clickUp": {
+    type: "n8n-nodes-base.clickUp",
+    typeVersion: 1,
+    credentials: { clickUpApi: "clickUpApi" },
+    defaultParameters: {
+      resource: "task",
+      operation: "create",
+      list: "",
+      name: "",
+      description: "",
+      priority: 3,
+    },
+    description: "Create tasks and manage ClickUp workspace",
+    category: "project-management",
+  },
+  "n8n-nodes-base.mondayCom": {
+    type: "n8n-nodes-base.mondayCom",
+    typeVersion: 1,
+    credentials: { mondayComApi: "mondayComApi" },
+    defaultParameters: {
+      resource: "item",
+      operation: "create",
+      boardId: "",
+      groupId: "",
+      name: "",
+      columnValues: {},
+    },
+    description: "Create and manage Monday.com boards and items",
+    category: "project-management",
+  },
+
+  // ─── Payments & E-commerce ────────────────────────────────────────────────────
+  "n8n-nodes-base.stripe": {
+    type: "n8n-nodes-base.stripe",
+    typeVersion: 1,
+    credentials: { stripeApi: "stripeApi" },
+    defaultParameters: {
+      resource: "charge",
+      operation: "getAll",
+      limit: 10,
+      filters: {},
+    },
+    description: "Manage Stripe payments, customers, subscriptions, and invoices",
+    category: "payments",
+  },
+  "n8n-nodes-base.stripeTrigger": {
+    type: "n8n-nodes-base.stripeTrigger",
+    typeVersion: 1,
+    credentials: { stripeApi: "stripeApi" },
+    defaultParameters: {
+      events: ["payment_intent.succeeded"],
+    },
+    description: "Trigger workflow on Stripe events (payment succeeded, subscription updated, etc.)",
+    category: "trigger",
+  },
+  "n8n-nodes-base.shopify": {
+    type: "n8n-nodes-base.shopify",
+    typeVersion: 1,
+    credentials: { shopifyApi: "shopifyApi" },
+    defaultParameters: {
+      resource: "order",
+      operation: "getAll",
+      filters: {},
+      options: {},
+    },
+    description: "Manage Shopify orders, products, customers, and inventory",
+    category: "ecommerce",
+  },
+  "n8n-nodes-base.shopifyTrigger": {
+    type: "n8n-nodes-base.shopifyTrigger",
+    typeVersion: 1,
+    credentials: { shopifyApi: "shopifyApi" },
+    defaultParameters: {
+      topic: "orders/create",
+    },
+    description: "Trigger workflow on Shopify events (new order, payment, refund, etc.)",
+    category: "trigger",
+  },
+  "n8n-nodes-base.wooCommerceTrigger": {
+    type: "n8n-nodes-base.wooCommerceTrigger",
+    typeVersion: 1,
+    credentials: { wooCommerceApi: "wooCommerceApi" },
+    defaultParameters: {
+      event: "order.created",
+    },
+    description: "Trigger workflow on WooCommerce events",
+    category: "trigger",
+  },
+
+  // ─── Extended Communication ───────────────────────────────────────────────────
+  "n8n-nodes-base.twilio": {
+    type: "n8n-nodes-base.twilio",
+    typeVersion: 1,
+    credentials: { twilioApi: "twilioApi" },
+    defaultParameters: {
+      resource: "sms",
+      operation: "send",
+      from: "",
+      to: "",
+      message: "",
+    },
+    description: "Send SMS and manage calls via Twilio",
+    category: "communication",
+  },
+  "n8n-nodes-base.sendGrid": {
+    type: "n8n-nodes-base.sendGrid",
+    typeVersion: 1,
+    credentials: { sendGridApi: "sendGridApi" },
+    defaultParameters: {
+      resource: "mail",
+      operation: "send",
+      toEmail: "",
+      fromEmail: "",
+      subject: "",
+      contentType: "text/html",
+      htmlContent: "",
+    },
+    description: "Send transactional emails via SendGrid",
+    category: "communication",
+  },
+  "n8n-nodes-base.mailchimp": {
+    type: "n8n-nodes-base.mailchimp",
+    typeVersion: 1,
+    credentials: { mailchimpApi: "mailchimpApi" },
+    defaultParameters: {
+      resource: "listMember",
+      operation: "create",
+      list: { __rl: true, value: "", mode: "id" },
+      email: "",
+      status: "subscribed",
+      additionalFields: {},
+    },
+    description: "Manage Mailchimp subscribers, campaigns, and lists",
+    category: "marketing",
+  },
+  "n8n-nodes-base.microsoftOutlook": {
+    type: "n8n-nodes-base.microsoftOutlook",
+    typeVersion: 2,
+    credentials: { microsoftOutlookOAuth2Api: "microsoftOutlookOAuth2Api" },
+    defaultParameters: {
+      resource: "message",
+      operation: "send",
+      toRecipients: "",
+      subject: "",
+      bodyContent: "",
+      bodyContentType: "html",
+    },
+    description: "Send and manage Microsoft Outlook emails and calendar events",
+    category: "communication",
+  },
+
+  // ─── Triggers & Forms ─────────────────────────────────────────────────────────
+  "n8n-nodes-base.rssFeedReadTrigger": {
+    type: "n8n-nodes-base.rssFeedReadTrigger",
+    typeVersion: 1,
+    defaultParameters: {
+      url: "",
+      pollTimes: { item: [{ mode: "everyHour" }] },
+    },
+    description: "Trigger workflow when new RSS feed items are published",
+    category: "trigger",
+  },
+  "n8n-nodes-base.typeformTrigger": {
+    type: "n8n-nodes-base.typeformTrigger",
+    typeVersion: 1,
+    credentials: { typeformApi: "typeformApi" },
+    defaultParameters: {
+      formId: "",
+    },
+    description: "Trigger workflow when a Typeform form is submitted",
+    category: "trigger",
+  },
+  "n8n-nodes-base.formTrigger": {
+    type: "n8n-nodes-base.formTrigger",
+    typeVersion: 2,
+    defaultParameters: {
+      formTitle: "",
+      formDescription: "",
+      formFields: { values: [] },
+      options: {},
+    },
+    description: "Built-in n8n form trigger — collect data without external tools",
+    category: "trigger",
+  },
+
+  // ─── Meetings & Scheduling ────────────────────────────────────────────────────
+  "n8n-nodes-base.zoom": {
+    type: "n8n-nodes-base.zoom",
+    typeVersion: 1,
+    credentials: { zoomOAuth2Api: "zoomOAuth2Api" },
+    defaultParameters: {
+      resource: "meeting",
+      operation: "create",
+      topic: "",
+      type: 2,
+      startTime: "",
+      duration: 60,
+      timezone: "UTC",
+    },
+    description: "Create and manage Zoom meetings and webinars",
+    category: "productivity",
+  },
+
+  // ─── CRM Extended ─────────────────────────────────────────────────────────────
+  "n8n-nodes-base.pipedrive": {
+    type: "n8n-nodes-base.pipedrive",
+    typeVersion: 1,
+    credentials: { pipedriveApi: "pipedriveApi" },
+    defaultParameters: {
+      resource: "deal",
+      operation: "create",
+      title: "",
+      additionalFields: {},
+    },
+    description: "Manage Pipedrive CRM deals, contacts, and activities",
+    category: "crm",
+  },
+  "n8n-nodes-base.zendesk": {
+    type: "n8n-nodes-base.zendesk",
+    typeVersion: 1,
+    credentials: { zendeskApi: "zendeskApi" },
+    defaultParameters: {
+      resource: "ticket",
+      operation: "create",
+      description: "",
+      additionalFields: {},
+    },
+    description: "Create and manage Zendesk support tickets and users",
+    category: "crm",
+  },
+  "n8n-nodes-base.freshdesk": {
+    type: "n8n-nodes-base.freshdesk",
+    typeVersion: 1,
+    credentials: { freshdeskApi: "freshdeskApi" },
+    defaultParameters: {
+      resource: "ticket",
+      operation: "create",
+      email: "",
+      subject: "",
+      description: "",
+      status: 2,
+      priority: 1,
+      additionalFields: {},
+    },
+    description: "Create and manage Freshdesk support tickets",
+    category: "crm",
+  },
+
+  // ─── Storage & Files ──────────────────────────────────────────────────────────
+  "n8n-nodes-base.awsS3": {
+    type: "n8n-nodes-base.awsS3",
+    typeVersion: 1,
+    credentials: { aws: "aws" },
+    defaultParameters: {
+      resource: "file",
+      operation: "upload",
+      bucketName: "",
+      fileName: "",
+      binaryPropertyName: "data",
+    },
+    description: "Upload, download, and manage files in AWS S3",
+    category: "files",
+  },
+  "n8n-nodes-base.dropbox": {
+    type: "n8n-nodes-base.dropbox",
+    typeVersion: 1,
+    credentials: { dropboxApi: "dropboxApi" },
+    defaultParameters: {
+      resource: "file",
+      operation: "upload",
+      path: "",
+      binaryPropertyName: "data",
+    },
+    description: "Upload, download, and manage Dropbox files",
+    category: "files",
+  },
+  "n8n-nodes-base.supabase": {
+    type: "n8n-nodes-base.supabase",
+    typeVersion: 1,
+    credentials: { supabaseApi: "supabaseApi" },
+    defaultParameters: {
+      resource: "row",
+      operation: "create",
+      tableId: "",
+      fieldsUi: { fieldValues: [] },
+    },
+    description: "Read and write data in Supabase tables",
+    category: "database",
+  },
+
+  // ─── CMS & WordPress ──────────────────────────────────────────────────────────
+  "n8n-nodes-base.wordpress": {
+    type: "n8n-nodes-base.wordpress",
+    typeVersion: 1,
+    credentials: { wordpressApi: "wordpressApi" },
+    defaultParameters: {
+      resource: "post",
+      operation: "create",
+      title: "",
+      content: "",
+      status: "publish",
+      additionalFields: {},
+    },
+    description: "Create and manage WordPress posts and pages",
+    category: "cms",
+  },
+
+  // ─── AI Extended ─────────────────────────────────────────────────────────────
+  "@n8n/n8n-nodes-langchain.lmChatGoogleGemini": {
+    type: "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+    typeVersion: 1,
+    credentials: { googlePalmApi: "googlePalmApi" },
+    defaultParameters: {
+      modelName: "models/gemini-2.0-flash",
+      options: {},
+    },
+    description: "Google Gemini LLM for AI Agent chains",
+    category: "ai",
+  },
+  "@n8n/n8n-nodes-langchain.embeddingsOpenAi": {
+    type: "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+    typeVersion: 1,
+    credentials: { openAiApi: "openAiApi" },
+    defaultParameters: {
+      model: "text-embedding-3-small",
+      options: {},
+    },
+    description: "Generate text embeddings using OpenAI for vector search",
+    category: "ai",
+  },
+  "@n8n/n8n-nodes-langchain.vectorStoreInMemory": {
+    type: "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+    typeVersion: 1,
+    defaultParameters: {
+      mode: "insert",
+    },
+    description: "In-memory vector store for AI/RAG workflows",
+    category: "ai",
+  },
+  "@n8n/n8n-nodes-langchain.toolHttpRequest": {
+    type: "@n8n/n8n-nodes-langchain.toolHttpRequest",
+    typeVersion: 1,
+    defaultParameters: {
+      url: "",
+      method: "GET",
+      name: "http_tool",
+      description: "Make HTTP requests as part of AI agent actions",
+    },
+    description: "HTTP request tool for AI agents",
+    category: "ai",
+  },
+
+  // ─── Utilities ────────────────────────────────────────────────────────────────
+  "n8n-nodes-base.stickyNote": {
+    type: "n8n-nodes-base.stickyNote",
+    typeVersion: 1,
+    defaultParameters: {
+      content: "## Workflow Notes\n\nAdd documentation here.",
+      height: 160,
+      width: 240,
+      color: 3,
+    },
+    description: "Add notes and documentation to workflow canvas",
+    category: "core",
+  },
+  "n8n-nodes-base.ftp": {
+    type: "n8n-nodes-base.ftp",
+    typeVersion: 1,
+    credentials: { ftp: "ftp" },
+    defaultParameters: {
+      protocol: "ftp",
+      operation: "download",
+      path: "",
+    },
+    description: "Upload and download files via FTP/SFTP",
+    category: "files",
+  },
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -740,6 +1229,123 @@ const KEYWORD_NODE_MAP: Array<{ keywords: string[]; nodes: string[] }> = [
   {
     keywords: ["summarize", "تلخيص", "ملخص"],
     nodes: ["@n8n/n8n-nodes-langchain.chainSummarization"],
+  },
+  // ─── FIX 4.3: New keyword mappings for expanded node schemas ─────────────────
+  {
+    keywords: ["jira", "جيرا"],
+    nodes: ["n8n-nodes-base.jira", "n8n-nodes-base.jiraTrigger"],
+  },
+  {
+    keywords: ["github", "git hub", "repository", "repo", "pull request", "pr", "issue"],
+    nodes: ["n8n-nodes-base.github", "n8n-nodes-base.githubTrigger"],
+  },
+  {
+    keywords: ["gitlab", "merge request"],
+    nodes: ["n8n-nodes-base.gitlab"],
+  },
+  {
+    keywords: ["linear", "لينير"],
+    nodes: ["n8n-nodes-base.linear"],
+  },
+  {
+    keywords: ["asana", "أسانا"],
+    nodes: ["n8n-nodes-base.asana"],
+  },
+  {
+    keywords: ["trello", "card", "board", "ترلو"],
+    nodes: ["n8n-nodes-base.trello"],
+  },
+  {
+    keywords: ["clickup", "click up"],
+    nodes: ["n8n-nodes-base.clickUp"],
+  },
+  {
+    keywords: ["monday", "monday.com"],
+    nodes: ["n8n-nodes-base.mondayCom"],
+  },
+  {
+    keywords: ["stripe", "payment", "charge", "invoice", "subscription", "دفع", "فاتورة", "اشتراك"],
+    nodes: ["n8n-nodes-base.stripe", "n8n-nodes-base.stripeTrigger"],
+  },
+  {
+    keywords: ["shopify", "شوبيفاي", "ecommerce", "store", "order", "product", "متجر", "طلب"],
+    nodes: ["n8n-nodes-base.shopify", "n8n-nodes-base.shopifyTrigger"],
+  },
+  {
+    keywords: ["woocommerce", "woo commerce", "wordpress store"],
+    nodes: ["n8n-nodes-base.wooCommerceTrigger"],
+  },
+  {
+    keywords: ["twilio", "sms", "text message", "رسالة نصية"],
+    nodes: ["n8n-nodes-base.twilio"],
+  },
+  {
+    keywords: ["sendgrid", "send grid", "transactional email"],
+    nodes: ["n8n-nodes-base.sendGrid"],
+  },
+  {
+    keywords: ["mailchimp", "newsletter", "email list", "subscriber", "نشرة", "مشترك"],
+    nodes: ["n8n-nodes-base.mailchimp"],
+  },
+  {
+    keywords: ["outlook", "microsoft outlook", "office 365 email"],
+    nodes: ["n8n-nodes-base.microsoftOutlook"],
+  },
+  {
+    keywords: ["rss", "feed", "blog", "news", "atom"],
+    nodes: ["n8n-nodes-base.rssFeedReadTrigger"],
+  },
+  {
+    keywords: ["typeform", "form", "survey", "استبيان", "نموذج"],
+    nodes: ["n8n-nodes-base.typeformTrigger", "n8n-nodes-base.formTrigger"],
+  },
+  {
+    keywords: ["zoom", "meeting", "webinar", "اجتماع", "مؤتمر"],
+    nodes: ["n8n-nodes-base.zoom"],
+  },
+  {
+    keywords: ["pipedrive", "بايب درايف"],
+    nodes: ["n8n-nodes-base.pipedrive"],
+  },
+  {
+    keywords: ["zendesk", "support ticket", "help desk"],
+    nodes: ["n8n-nodes-base.zendesk"],
+  },
+  {
+    keywords: ["freshdesk", "fresh desk"],
+    nodes: ["n8n-nodes-base.freshdesk"],
+  },
+  {
+    keywords: ["aws", "amazon s3", "s3 bucket", "amazonaws"],
+    nodes: ["n8n-nodes-base.awsS3"],
+  },
+  {
+    keywords: ["dropbox"],
+    nodes: ["n8n-nodes-base.dropbox"],
+  },
+  {
+    keywords: ["supabase"],
+    nodes: ["n8n-nodes-base.supabase"],
+  },
+  {
+    keywords: ["wordpress", "wp", "blog post", "cms"],
+    nodes: ["n8n-nodes-base.wordpress"],
+  },
+  {
+    keywords: ["gemini", "google ai", "google gemini", "palm"],
+    nodes: ["@n8n/n8n-nodes-langchain.lmChatGoogleGemini"],
+  },
+  {
+    keywords: ["embedding", "vector", "rag", "retrieval", "semantic search"],
+    nodes: ["@n8n/n8n-nodes-langchain.embeddingsOpenAi", "@n8n/n8n-nodes-langchain.vectorStoreInMemory"],
+  },
+  {
+    keywords: ["ftp", "sftp"],
+    nodes: ["n8n-nodes-base.ftp"],
+  },
+  {
+    keywords: ["project", "task", "مشروع", "مهمة"],
+    nodes: ["n8n-nodes-base.asana", "n8n-nodes-base.trello", "n8n-nodes-base.linear"],
   },
 ];
 

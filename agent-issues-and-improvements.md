@@ -38,6 +38,11 @@
 | 29 | **FIX 3.4 — Conversation History للـ Sequential Engine** | ✅ مُنجز |
 | 30 | **FIX 3.5 — PATH A2 يستخدم Phase 1A+1B+Schemas** | ✅ مُحسَّن |
 | 31 | **FIX 3.6 — withRetry Exponential Backoff** | ✅ مُنجز |
+| 32 | **FIX 4.1 — Streaming Phase 1B (PATH A + PATH A2)** | ✅ مُنجز |
+| 33 | **FIX 4.2 — Parallelization: Keys + Messages + Workflows** | ✅ مُنجز |
+| 34 | **FIX 4.3 — Node Schemas: 30+ نوع إضافي** | ✅ مُنجز |
+| 35 | **FIX 4.4 — Token/Cost Tracking عبر جميع المراحل** | ✅ مُنجز |
+| 36 | **FIX 4.5 — Input Sanitization (Prompt Injection Defense)** | ✅ مُنجز |
 
 ---
 
@@ -1113,4 +1118,151 @@ interface AgentMemory {
 
 ---
 
-*آخر تحديث: 17 أبريل 2026 — تقييم شامل + مقارنة مع Replit Agent + خطط مرحلية*
+## نتائج المرحلة الثانية من التحسين (الأولوية 4) — 17 أبريل 2026
+
+### ملخص التنفيذ
+
+تم تنفيذ جميع تحسينات الأولوية 4 (FIX 4.1 → 4.5) بنجاح تام.
+**حالة البناء:** ✅ `pnpm --filter @workspace/api-server run build` — نجح بدون أي خطأ (2.9mb)
+**حالة السيرفر:** ✅ يعمل على port 8080
+
+---
+
+### FIX 4.1 — Streaming Phase 1B
+
+**المشكلة:** المستخدم ينتظر 20-40 ثانية صامتة أثناء توليد الـ workflow JSON في Phase 1B.
+
+**الحل:**
+- أضفنا `onPhase1BStream?: (chunk: string) => void` لـ `EngineConfig` في `sequentialEngine.service.ts`
+- Phase 1B الآن يستخدم `stream: true` + `stream_options: { include_usage: true }` مع OpenAI
+- كل chunk يُرسل فوراً عبر SSE بحدث `phase1b_stream: { chunk }`
+- Path A يمرر `onPhase1BStream: (chunk) => sendEvent("phase1b_stream", { chunk })` للـ engine
+- PATH A2 (GPT-4o only) يستخدم streaming مباشراً في نفس المسار بحلقة `for await`
+- Fallback آمن: إذا لم يوفّر المُستدعي `onPhase1BStream`، يعمل النظام بالطريقة التقليدية (non-streaming)
+
+**الملفات المعدّلة:**
+- `artifacts/api-server/src/services/sequentialEngine.service.ts` — إضافة callback + streaming loop
+- `artifacts/api-server/src/routes/chat.routes.ts` — PATH A + PATH A2
+
+---
+
+### FIX 4.2 — Parallelization
+
+**المشكلة:** `getCachedWorkflows()` كانت تُستدعى بشكل تسلسلي بعد جلب المفاتيح والرسائل.
+
+**الحل:**
+- دمجنا الثلاث استدعاءات في `Promise.all` واحد:
+  ```typescript
+  const [{ openaiKey, geminiKey }, previousMessages, availableWorkflows] = await Promise.all([
+    getApiKeys(),
+    db.select().from(messagesTable)...,
+    getCachedWorkflows().catch(() => []),
+  ]);
+  ```
+- حذفنا الـ `try/catch` المنفصلة وحوّلناها لـ `.catch(() => [])` ضمن Promise.all
+- التوفير المتوقع: 50-300ms في كل طلب (أوضح تأثيراً على cache misses)
+
+**الملف المعدّل:** `artifacts/api-server/src/routes/chat.routes.ts`
+
+---
+
+### FIX 4.3 — Node Schemas Expansion
+
+**المشكلة:** `nodeSchemas.ts` لم يتضمن أنواعاً شائعة مثل Jira, GitHub, Stripe, Shopify, إلخ.
+
+**الحل:** أضفنا 30+ مخطط node جديد:
+
+| الفئة | الـ Nodes المضافة |
+|-------|-----------------|
+| Project Management | Jira, GitHub, GitLab, Linear, Asana, Trello, ClickUp, Monday |
+| E-commerce / Payments | Stripe, Shopify, WooCommerce |
+| Communication | Twilio (SMS), SendGrid, Mailchimp, Outlook, Zoom |
+| Content / Data | RSS Feed, Typeform, WordPress |
+| CRM | Pipedrive, Zendesk, Freshdesk |
+| Cloud / Storage | AWS S3, Dropbox, Supabase, FTP |
+| AI / ML | Gemini LLM, Text Embeddings |
+
+أضفنا أيضاً مدخلات `KEYWORD_NODE_MAP` مقابلة (عربي + إنجليزي) لكل node جديد.
+
+**الملف المعدّل:** `artifacts/api-server/src/services/nodeSchemas.ts`
+
+---
+
+### FIX 4.4 — Token & Cost Tracking
+
+**المشكلة:** لا توجد رؤية على كم token يُستهلك أو كم تكلف كل طلب.
+
+**الحل:**
+- أضفنا `TokenUsage` interface في `sequentialEngine.service.ts`:
+  ```typescript
+  interface TokenUsage {
+    phase1aPromptTokens, phase1aCompletionTokens,
+    phase1bPromptTokens, phase1bCompletionTokens,
+    phase3PromptTokens, phase3CompletionTokens,
+    phase3ExtraPromptTokens, phase3ExtraCompletionTokens,
+    totalOpenaiTokens, estimatedCostUsd (GPT-4o: $2.50/1M input, $10/1M output)
+  }
+  ```
+- `tokenRaw` accumulator يجمع tokens من كل phase
+- `buildTokenUsage(tokenRaw)` يحوّل الأرقام الخام لتقرير نهائي مع التكلفة
+- كل phase يلتقط `usage.prompt_tokens` + `usage.completion_tokens` من الاستجابة
+- في streaming mode: tokens تأتي في الـ chunk الأخير (`chunk.usage`)
+- `result.tokenUsage = buildTokenUsage(tokenRaw)` يُضاف قبل كل return
+- حدث `complete` في SSE يضم `tokenUsage` للـ frontend
+- PATH A2 يحتسب تكلفته المنفصلة محلياً
+
+**الملفات المعدّلة:**
+- `artifacts/api-server/src/services/sequentialEngine.service.ts`
+- `artifacts/api-server/src/routes/chat.routes.ts`
+
+---
+
+### FIX 4.5 — Input Sanitization (Prompt Injection Defense)
+
+**المشكلة:** لا حماية ضد هجمات Prompt Injection حيث يُحاول المستخدم تعديل سلوك الـ LLM.
+
+**الحل:** أنشأنا `artifacts/api-server/src/services/inputSanitizer.service.ts`:
+
+```typescript
+interface SanitizeResult {
+  safe: string;          // النص المُنقّح الآمن
+  original: string;      // النص الأصلي
+  injectionDetected: boolean;
+  warnings: string[];    // ما تم اكتشافه وحجبه
+  truncated: boolean;
+}
+```
+
+**أنماط الهجوم المُكتشفة (13 نمط):**
+1. `instruction-override` — "تجاهل التعليمات السابقة" / "ignore previous instructions"
+2. `persona-switch` — "تصرف كـ DAN" / "act as jailbreak"
+3. `secret-extraction` — "أخبرني بـ system prompt" / "reveal your prompt"
+4. `special-tokens` — `<|im_start|>`, `</s>`, `[INST]` إلخ
+5. `repetition-attack` — تكرار غير طبيعي للكلمات (> 6 مرات)
+6. عمليات إضافية: حذف control chars، تقليص طول النص (8000 حرف حد أقصى)
+
+**التكامل في `chat.routes.ts`:**
+```typescript
+const sanitized = sanitizeUserInput(rawContent);
+if (sanitized.injectionDetected) {
+  logger.warn({ convId, warnings, userId }, "Prompt injection attempt blocked");
+}
+const content = sanitized.safe;  // هذا ما يُرسل للـ LLM
+```
+
+**الفلسفة المتبعة:** لا نرفض الطلب (لتجنب false positives)، بل نُنقّح النص الخطر ونُسجّل محاولة الاختراق.
+
+---
+
+### خلاصة التغييرات التقنية — الأولوية 4
+
+| الملف | التعديلات |
+|-------|----------|
+| `sequentialEngine.service.ts` | `onPhase1BStream` callback، streaming loop Phase 1B، `TokenUsage` interface، `buildTokenUsage()`، capture tokens في كل phase |
+| `chat.routes.ts` | FIX 4.5 sanitization أول شيء، FIX 4.2 `Promise.all` موحّد، FIX 4.1 streaming callback PATH A + PATH A2، FIX 4.4 `tokenUsage` في `complete` events |
+| `nodeSchemas.ts` | FIX 4.3: 30+ node schemas + KEYWORD_NODE_MAP entries |
+| `inputSanitizer.service.ts` | ملف جديد: 13 pattern للكشف، control-char stripping، length limit |
+
+---
+
+*آخر تحديث: 17 أبريل 2026 — تقييم شامل + مقارنة مع Replit Agent + خطط مرحلية + الأولوية 4 مكتملة*

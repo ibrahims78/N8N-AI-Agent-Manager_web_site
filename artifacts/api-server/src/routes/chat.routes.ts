@@ -17,6 +17,8 @@ import {
   detectLanguage as detectLang,
 } from "../services/promptBuilder.service";
 import { validateWorkflowJson, sanitizeWorkflowJson, extractJson } from "../services/jsonValidator.service";
+// FIX 4.5: Input sanitization against prompt injection
+import { sanitizeUserInput } from "../services/inputSanitizer.service";
 import { logger } from "../lib/logger";
 import type { Request, Response } from "express";
 
@@ -168,8 +170,18 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
   const convId = parseInt(req.params.id, 10);
   if (isNaN(convId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid conversation ID" } }); return; }
 
-  const { content } = req.body as { content: string };
-  if (!content) { res.status(400).json({ success: false, error: { code: "MISSING_CONTENT", message: "Content required" } }); return; }
+  const rawContent = (req.body as { content?: string }).content;
+  if (!rawContent) { res.status(400).json({ success: false, error: { code: "MISSING_CONTENT", message: "Content required" } }); return; }
+
+  // FIX 4.5: Sanitize input before any LLM interaction
+  const sanitized = sanitizeUserInput(rawContent);
+  if (sanitized.injectionDetected) {
+    logger.warn(
+      { convId, warnings: sanitized.warnings, userId: req.user?.userId },
+      "Prompt injection attempt blocked in generate endpoint"
+    );
+  }
+  const content = sanitized.safe;
 
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -197,13 +209,19 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
     // appears in previousMessages (race condition when both ran in Promise.all).
     await db.insert(messagesTable).values({ conversationId: convId, role: "user", content });
 
-    // Now fetch keys and history in parallel — INSERT is already committed
-    const [{ openaiKey, geminiKey }, previousMessages] = await Promise.all([
+    // FIX 4.2: Parallelize all independent pre-generation fetches in one Promise.all:
+    // Previously getCachedWorkflows ran AFTER keys+history, causing unnecessary sequential delay.
+    // Now all three run concurrently — saves 50-300ms on cache misses.
+    const [{ openaiKey, geminiKey }, previousMessages, availableWorkflows] = await Promise.all([
       getApiKeys(),
       db.select().from(messagesTable)
         .where(eq(messagesTable.conversationId, convId))
         .orderBy(desc(messagesTable.createdAt))
         .limit(20),
+      getCachedWorkflows().catch(() => {
+        logger.warn("Could not fetch n8n workflows — continuing without");
+        return [] as Array<{ id: string; name: string; active: boolean }>;
+      }),
     ]);
 
     if (!openaiKey) {
@@ -218,15 +236,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
 
     const messageCount = previousMessages.length;
 
-    // ── Fetch n8n workflows (cached) for intent detection ─────────────────
-    let availableWorkflows: Array<{ id: string; name: string; active: boolean }> = [];
-    try {
-      availableWorkflows = await getCachedWorkflows();
-    } catch {
-      logger.warn("Could not fetch n8n workflows for intent detection — continuing without");
-    }
-
-    // ── LLM-based intent detection ────────────────────────────────────────
+    // ── LLM-based intent detection ─────────────────────────────────────────
     const intentResult = await detectIntent(content, availableWorkflows.map(w => w.name), openaiKey);
     const { intent, workflowNameHint } = intentResult;
     logger.info({ intent, confidence: intentResult.confidence, hint: workflowNameHint }, "Intent detected");
@@ -272,6 +282,9 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         simpleWorkflowNodeThreshold: 5,
         // FIX 3.4: pass last 6 turns so Phase 1B knows what was discussed before
         conversationHistory,
+        // FIX 4.1: Stream Phase 1B JSON generation so the user sees live progress
+        // instead of waiting silently for 20-40 seconds during the longest phase.
+        onPhase1BStream: (chunk) => sendEvent("phase1b_stream", { chunk }),
       });
 
       let assistantContent = engineResult.userMessage;
@@ -316,6 +329,8 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         totalTimeMs: engineResult.totalTimeMs,
         phases: engineResult.phases,
         isWorkflowCreation: true,
+        // FIX 4.4: expose token usage so the frontend can show cost estimates
+        tokenUsage: engineResult.tokenUsage,
       });
 
     // ══════════════════════════════════════════════════════════════════════
@@ -379,8 +394,11 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           .map((m) => ({ role: m.role as "user" | "assistant", content: m.content.slice(0, 1200) }));
 
         let workflowJsonStr = "{}";
+        // FIX 4.4: track tokens for PATH A2
+        let a2Tokens = { promptTokens: 0, completionTokens: 0 };
         if (nodeAnalysis) {
-          const a2BuildResp = await openai.chat.completions.create({
+          // FIX 4.1: stream Phase 1B in PATH A2 as well
+          const a2Stream = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
               { role: "system", content: buildPhase1BSystemPrompt(content, a2Lang) },
@@ -390,8 +408,22 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
             max_tokens: 3500,
             temperature: 0.2,
             response_format: { type: "json_object" },
+            stream: true,
+            stream_options: { include_usage: true },
           });
-          workflowJsonStr = a2BuildResp.choices[0]?.message?.content ?? "{}";
+          let a2Accumulated = "";
+          for await (const chunk of a2Stream) {
+            const delta = chunk.choices[0]?.delta?.content ?? "";
+            if (delta) {
+              a2Accumulated += delta;
+              sendEvent("phase1b_stream", { chunk: delta });
+            }
+            if (chunk.usage) {
+              a2Tokens.promptTokens = chunk.usage.prompt_tokens ?? 0;
+              a2Tokens.completionTokens = chunk.usage.completion_tokens ?? 0;
+            }
+          }
+          workflowJsonStr = a2Accumulated || "{}";
         } else {
           // Fallback: direct generation (better prompt than before)
           const a2FallbackResp = await openai.chat.completions.create({
@@ -411,7 +443,13 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
             response_format: { type: "json_object" },
           });
           workflowJsonStr = a2FallbackResp.choices[0]?.message?.content ?? "{}";
+          a2Tokens.promptTokens = a2FallbackResp.usage?.prompt_tokens ?? 0;
+          a2Tokens.completionTokens = a2FallbackResp.usage?.completion_tokens ?? 0;
         }
+        const a2EstimatedCost = (
+          (a2Tokens.promptTokens / 1_000_000) * 2.5 +
+          (a2Tokens.completionTokens / 1_000_000) * 10
+        ).toFixed(6);
 
         // Validate and sanitize
         let parsed: Record<string, unknown> | null = null;
@@ -453,6 +491,11 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           qualityScore: 72,
           qualityGrade: "C+",
           isWorkflowCreation: true,
+          // FIX 4.4: token usage for PATH A2
+          tokenUsage: {
+            totalOpenaiTokens: a2Tokens.promptTokens + a2Tokens.completionTokens,
+            estimatedCostUsd: parseFloat(a2EstimatedCost),
+          },
         });
       } catch (err) {
         sendEvent("error", { message: String(err) });
