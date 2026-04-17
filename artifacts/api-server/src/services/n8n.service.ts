@@ -246,7 +246,7 @@ export async function importWorkflow(workflowJson: Record<string, unknown>): Pro
     nodes: workflowJson.nodes ?? [],
     connections: workflowJson.connections ?? {},
     settings: workflowJson.settings ?? {},
-    active: false,
+    // NOTE: do NOT send `active` field — n8n API v1 treats it as read-only on POST
   };
   return createWorkflow(workflowData);
 }

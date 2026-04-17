@@ -363,7 +363,7 @@ export async function runAgenticEngine(
   const maxIterations = Math.min(config.maxIterations ?? 10, 15);
   const qualityThreshold = config.qualityThreshold ?? 75;
   const openaiModel = config.openaiModel ?? "gpt-4o";
-  const geminiModel = config.geminiModel ?? "gemini-2.5-pro-exp-03-25";
+  const geminiModel = config.geminiModel ?? "gemini-2.5-pro";
 
   logger.info(
     { userRequest: userRequest.slice(0, 100), maxIterations, openaiModel },

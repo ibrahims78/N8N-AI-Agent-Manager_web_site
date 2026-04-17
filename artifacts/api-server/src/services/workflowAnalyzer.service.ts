@@ -200,7 +200,7 @@ Analyze this workflow and return the JSON report.`;
 
       // BUG 4 FIX: label says "Gemini 2.5 Pro" — use the actual 2.5 Pro model instead of gemini-1.5-flash
       const genAI = new GoogleGenerativeAI(config.geminiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro-exp-03-25" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
 
       const p2Prompt = `You are reviewing an analysis of an n8n workflow.
 

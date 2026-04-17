@@ -110,7 +110,7 @@ async function tryImportToN8n(workflow: Record<string, unknown>): Promise<string
     nodes: workflow.nodes ?? [],
     connections: workflow.connections ?? {},
     settings: workflow.settings ?? { executionOrder: "v1" },
-    active: false,
+    // NOTE: do NOT send `active` field — n8n API v1 treats it as read-only on POST
   };
 
   const res = await fetch(`${config.url}/api/v1/workflows`, {

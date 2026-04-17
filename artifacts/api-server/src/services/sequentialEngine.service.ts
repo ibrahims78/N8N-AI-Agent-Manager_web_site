@@ -280,7 +280,7 @@ export async function runSequentialEngine(
   const geminiAI = new GoogleGenerativeAI(config.geminiKey);
   const openaiModel = config.openaiModel ?? "gpt-4o";
   // FIX 3.1: use the correct experimental model name that matches the label "Gemini 2.5 Pro"
-  const geminiModel = config.geminiModel ?? "gemini-2.5-pro-exp-03-25";
+  const geminiModel = config.geminiModel ?? "gemini-2.5-pro";
   const n8nContext = config.n8nContext;
   const simpleNodeThreshold = config.simpleWorkflowNodeThreshold ?? 3;
   const onPhase1BStream = config.onPhase1BStream;

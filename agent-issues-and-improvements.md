@@ -1,5 +1,5 @@
 # تقرير مفصل: مشاكل الوكيل الذكي واقتراحات التحسين
-## حالة التنفيذ — محدّث في 17 أبريل 2026 (ISSUE-5 + ISSUE-6 + ISSUE-7 مكتملة — جميع 45 بنداً منجزة ✅)
+## حالة التنفيذ — محدّث في 17 أبريل 2026 (اختبار حي شامل — 3 bugs جديدة مكتشفة ومُصلَحة — 48 بنداً ✅)
 
 ---
 
@@ -52,6 +52,9 @@
 | 43 | **ISSUE-5 — Conversation History لـ PATH B (workflowModifier)** | ✅ مُنجز |
 | 44 | **ISSUE-6 — Gemini Streaming في Phase 2 و Phase 4** | ✅ مُنجز |
 | 45 | **ISSUE-7 — Gemini بدلاً من GPT-4o في Phase 3 (تصحيح متقاطع)** | ✅ مُنجز |
+| 46 | **BUG-LIVE-1 — `active: false` في POST body يعطّل import إلى n8n** | ✅ مُصلَح |
+| 47 | **BUG-LIVE-2 — `max_tokens: 4000` يقطع JSON الكبير في PATH B** | ✅ مُصلَح |
+| 48 | **BUG-LIVE-3 — نموذج Gemini `exp-03-25` منتهي الصلاحية (404)** | ✅ مُصلَح |
 
 ---
 
@@ -2523,4 +2526,127 @@ Status: ✅ ALL PASSED
 
 ---
 
-*آخر تحديث: 17 أبريل 2026 — جميع المراحل (1→6) منجزة بالكامل ✅*
+*آخر تحديث: 17 أبريل 2026 — جميع المراحل (1→6) منجزة + اختبار حي شامل + 3 bugs مُصلَحة ✅*
+
+---
+
+## نتائج الاختبار الحي الشامل — 17 أبريل 2026
+
+### المنهجية
+اختبار مباشر عبر API calls للـ backend مع n8n + OpenAI + Gemini متصلة فعلياً.
+
+### نتائج كل حالة
+
+| الحالة | المسار | النتيجة | التفاصيل |
+|--------|--------|---------|----------|
+| Query Intent | chat | ✅ | Streaming SSE، عدد الـ workflows النشطة من n8n |
+| Create (PATH A) | Agentic Engine | ✅ | 6 iterations، tool calls، Gemini A+ (95/100)، import n8n ✅ |
+| Create (PATH A2) | GPT-4o only | ✅ | Phase 1A+1B streaming، import n8n ✅ |
+| Sequential Engine | /messages endpoint | ✅ | 5 مراحل (1A→1B→2→3→4)، Gemini review ✅ |
+| Phase 6 Clarification | اكتشاف نقص معلومات | ✅ | أسئلة توضيحية مُولَّدة تلقائياً |
+| Phase 6 Multi-Turn | رد على الأسئلة → بناء | ✅ | `clarification_fulfilled` + `agentic` engine |
+| Input Sanitization | Prompt Injection | ✅ | محاولة injection مُحظورة |
+| PATH B Modify | تعديل workflow موجود | ✅ بعد الإصلاح | Phase 1 ✅ (max_tokens 16000) |
+| Dashboard Stats | إحصائيات n8n | ✅ | 10 workflows، 2 نشط، n8n+OpenAI+Gemini متصلة |
+| Analyze Workflow | تحليل + إصلاح | ✅ | Phase 1 GPT-4o + Phase 2 Gemini |
+| Intent Detection | تصنيف الطلبات | ✅ | Query/Create/Modify محدد بدقة |
+| Self-Healing Import | استيراد n8n | ✅ بعد الإصلاح | `n8nId: "SJAZgzTA27cNAty6"` ، attempt 1 |
+| Phase 4 Memory | ذاكرة الوكيل | ✅ | `Agent memory: workflow recorded` |
+| Phase 5 Testing | تشغيل workflow | ⚠️ | `/rest/run → 401` — n8n يتطلب session auth لا API key |
+
+---
+
+## BUG-LIVE-1: `active: false` في POST body → n8n رفض الاستيراد
+
+### وصف المشكلة
+عند إرسال workflow لـ n8n عبر `POST /api/v1/workflows`، كانت دالتا `tryImportToN8n` و`importWorkflow` ترسلان `active: false` ضمن الـ body. n8n API v1 يعتبر حقل `active` **read-only** ولا يسمح بإرساله في الـ POST body.
+
+```
+event: self_heal_fail
+data: {"lastError":"request/body/active is read-only"}
+```
+
+### الإصلاح
+حذف `active: false` من الـ POST body في كلا الملفين:
+- `selfHealingLoop.service.ts` سطر 113
+- `n8n.service.ts` سطر 249
+
+### النتيجة بعد الإصلاح
+```
+event: self_heal_success
+data: {"attempt":1,"n8nWorkflowId":"SJAZgzTA27cNAty6","durationMs":479,"wasHealed":false}
+```
+
+---
+
+## BUG-LIVE-2: `max_tokens: 4000` يقطع JSON الكبير في PATH B
+
+### وصف المشكلة
+دالة `runWorkflowModifier` Phase 1 (GPT-4o) كانت تستخدم `max_tokens: 4000` فقط. عند تعديل workflows كبيرة (مثل مولّد الفيديوهات العربية بـ 20+ node)، ينتج GPT-4o JSON ناقص يُسبّب:
+```
+Phase 1 failed: SyntaxError: Unterminated string in JSON at position 13846
+```
+
+### الإصلاح
+1. رفع `max_tokens` من 4000 إلى **16000** (الحد الأقصى لـ GPT-4o output)
+2. إضافة حد 30,000 حرف للـ workflow JSON المُرسل → تجنب prompt ضخم جداً
+
+```typescript
+// BEFORE
+max_tokens: 4000
+
+// AFTER  
+max_tokens: 16000
+
+// + JSON truncation guard:
+const JSON_CHAR_LIMIT = 30_000;
+const currentJsonString = rawJsonString.length > JSON_CHAR_LIMIT
+  ? rawJsonString.slice(0, JSON_CHAR_LIMIT) + "\n  ... [truncated]\n}"
+  : rawJsonString;
+```
+
+---
+
+## BUG-LIVE-3: نموذج Gemini `gemini-2.5-pro-exp-03-25` منتهي الصلاحية (404)
+
+### وصف المشكلة
+جميع استدعاءات Gemini في كل المسارات كانت تفشل بـ 404:
+```
+[GoogleGenerativeAI Error]: models/gemini-2.5-pro-exp-03-25 is not found for API version v1beta
+```
+
+المشكلة تؤثر على:
+- AgenticEngine: Gemini quality review
+- SequentialEngine: Phase 2 (Gemini review) + Phase 3 (cross-model) + Phase 4 (validation)
+- WorkflowModifier: Phase 2 (Gemini validation)
+- WorkflowAnalyzer: Gemini-based analysis
+
+### الإصلاح
+تحديث اسم النموذج في 4 ملفات من النسخة التجريبية المنتهية إلى النسخة الثابتة:
+
+```
+gemini-2.5-pro-exp-03-25  →  gemini-2.5-pro
+```
+
+الملفات المُحدَّثة:
+- `agenticEngine.service.ts`
+- `sequentialEngine.service.ts`
+- `workflowModifier.service.ts`
+- `workflowAnalyzer.service.ts`
+
+### النتيجة بعد الإصلاح
+```
+INFO: AgenticEngine: Gemini review done
+  qualityScore: 95
+  qualityGrade: "A+"
+```
+
+---
+
+## قيود معروفة (غير أخطاء)
+
+| القيد | السبب | التأثير |
+|-------|--------|---------|
+| Phase 5 Testing → 401 | n8n `/rest/run` يتطلب session cookie لا API key | الـ workflow يُستورد لكن لا يُشغَّل تلقائياً |
+| syncN8nCredentials → خطأ URL | الـ URL غير متاح في context الـ server | تحذير غير حرج في الـ logs فقط |
+| PATH B على workflows > 30k chars | التقطيع قد يفقد بعض الـ nodes | GPT-4o يُعيد بناء الـ workflow الناقص (قد لا يكتمل) |

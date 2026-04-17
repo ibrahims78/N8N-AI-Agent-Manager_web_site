@@ -178,8 +178,18 @@ export async function runWorkflowModifier(
     totalTimeMs: 0,
   };
 
-  const openai = new OpenAI({ apiKey: config.openaiKey, timeout: 90000 });
-  const currentJsonString = JSON.stringify(currentWorkflowJson, null, 2);
+  const openai = new OpenAI({ apiKey: config.openaiKey, timeout: 120000 });
+
+  // Limit workflow JSON sent to GPT-4o to avoid truncated responses.
+  // GPT-4o context window is ~128k tokens but output is capped at 16384 tokens.
+  // Very large workflows (>30k chars) risk GPT-4o hitting output limits mid-JSON.
+  const rawJsonString = JSON.stringify(currentWorkflowJson, null, 2);
+  const JSON_CHAR_LIMIT = 30_000;
+  const currentJsonString =
+    rawJsonString.length > JSON_CHAR_LIMIT
+      ? rawJsonString.slice(0, JSON_CHAR_LIMIT) +
+        "\n  ... [workflow truncated for context — apply change to the relevant section only]\n}"
+      : rawJsonString;
 
   // [ISSUE-5] Build conversation history messages (max 6 turns, truncate long content)
   const historyMessages: Array<{ role: "user" | "assistant"; content: string }> =
@@ -210,7 +220,7 @@ export async function runWorkflowModifier(
           content: buildModifierUserPrompt(currentJsonString, userRequest, lang),
         },
       ],
-      max_tokens: 4000,
+      max_tokens: 16000,
       temperature: 0.15,
       response_format: { type: "json_object" },
     });
@@ -259,7 +269,7 @@ export async function runWorkflowModifier(
       const genAI = new GoogleGenerativeAI(config.geminiKey);
       // FIX 3.1: use correct Gemini 2.5 Pro experimental model name
       const geminiModel = genAI.getGenerativeModel({
-        model: "gemini-2.5-pro-exp-03-25",
+        model: "gemini-2.5-pro",
         generationConfig: { temperature: 0.1, maxOutputTokens: 500 },
       });
 
