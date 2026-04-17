@@ -1,5 +1,5 @@
 # تقرير مفصل: مشاكل الوكيل الذكي واقتراحات التحسين
-## حالة التنفيذ — محدّث في 17 أبريل 2026 (FIX 5.1 مكتمل)
+## حالة التنفيذ — محدّث في 17 أبريل 2026 (FIX 5.3 مكتمل)
 
 ---
 
@@ -44,6 +44,8 @@
 | 35 | **FIX 4.4 — Token/Cost Tracking عبر جميع المراحل** | ✅ مُنجز |
 | 36 | **FIX 4.5 — Input Sanitization (Prompt Injection Defense)** | ✅ مُنجز |
 | 37 | **FIX 5.1 — Tool Calling Architecture (Agentic Engine)** | ✅ مُنجز |
+| 38 | **FIX 5.2 — Dynamic Node Schema Discovery** | ✅ مُنجز |
+| 39 | **FIX 5.3 — Self-Healing Loop (حلقة الإصلاح الذاتي)** | ✅ مُنجز |
 
 ---
 
@@ -1624,3 +1626,224 @@ tokenUsage: {
 ---
 
 *آخر تحديث: 17 أبريل 2026 — FIX 5.2 Dynamic Node Schema Discovery مكتمل ✅*
+
+---
+
+## FIX 5.3 — Self-Healing Loop (حلقة الإصلاح الذاتي) — 17 أبريل 2026
+
+### ملخص التنفيذ
+
+تم تنفيذ المرحلة الثالثة من الـ Agentic Architecture: **حلقة الإصلاح الذاتي**. بعد توليد أي workflow JSON، يحاول الوكيل الآن استيراده مباشرة لـ n8n ويُصلح أي أخطاء يرجعها n8n تلقائياً — بنفس المبدأ الذي يستخدمه Replit Agent لتشغيل الكود ومراقبة النتيجة.
+
+**حالة البناء:** ✅ صفر أخطاء TypeScript (`dist/index.mjs` — 2.9mb)
+**حالة السيرفر:** ✅ يعمل على port 8080
+**الملفات الجديدة:** 1 ملف جديد
+**الملفات المعدّلة:** 1 ملف (chat.routes.ts)
+
+---
+
+### المعمارية الجديدة
+
+```
+قبل FIX 5.3:
+┌──────────────────────────────────┐
+│  Agentic Engine → workflow JSON  │
+│  ↓                               │
+│  إرسال JSON للمستخدم فقط         │
+│  (الاستيراد يدوي أو auto-import  │
+│   بدون تصحيح ذاتي)              │
+└──────────────────────────────────┘
+
+بعد FIX 5.3:
+┌──────────────────────────────────────────────────────────────────┐
+│  Agentic Engine → workflow JSON                                    │
+│     ↓                                                            │
+│  POST /api/v1/workflows  ─────────────────→  ✅ تم + n8n ID      │
+│     ↓ (على الفشل)                                                │
+│  GPT-4o يحلل رسالة الخطأ من n8n + يصلح الـ JSON                  │
+│     ↓                                                            │
+│  إعادة المحاولة (محاولة 2 من 3)                                   │
+│     ↓ (إذا فشل مجدداً)                                           │
+│  GPT-4o يصلح مرة أخرى → محاولة 3 من 3                           │
+│     ↓ (إذا فشل الكل)                                             │
+│  رسالة خطأ واضحة مع تفاصيل كل محاولة                            │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### الملفات المنشأة والمعدّلة
+
+#### 1. `selfHealingLoop.service.ts` (جديد — 270 سطر)
+
+الخدمة الأساسية تحتوي على 3 وظائف:
+
+| الدالة | الوظيفة |
+|--------|---------|
+| `tryImportToN8n(workflow)` | محاولة استيراد workflow JSON لـ n8n عبر `POST /api/v1/workflows` |
+| `healWithLLM(workflow, error, ...)` | GPT-4o يحلل خطأ n8n ويعيد JSON مُصلَح |
+| `runSelfHealingLoop(workflow, config)` | الحلقة الرئيسية: try → fail → heal → retry |
+
+**الأنواع المُصدَّرة:**
+
+```typescript
+export interface SelfHealingResult {
+  success: boolean;
+  healedWorkflow: Record<string, unknown>;
+  n8nWorkflowId?: string;          // فقط عند النجاح
+  attempts: HealAttemptRecord[];   // تفاصيل كل محاولة
+  totalHealingMs: number;
+  tokenUsage: { promptTokens, completionTokens, estimatedCostUsd };
+  finalError?: string;             // فقط عند الفشل الكلي
+}
+
+export interface SelfHealingConfig {
+  openaiKey: string;
+  openaiModel?: string;            // افتراضي: "gpt-4o"
+  lang?: Language;                 // افتراضي: "ar"
+  maxAttempts?: number;            // افتراضي: 3
+  onHealAttempt?: (ev) => void;    // SSE callback
+  onHealSuccess?: (ev) => void;    // SSE callback
+  onHealFail?: (ev) => void;       // SSE callback
+}
+```
+
+**استراتيجية الإصلاح في GPT-4o (System Prompt):**
+
+يُلزم GPT-4o بـ 6 قواعد للإصلاح:
+1. فهم السبب الجذري للخطأ قبل التصرف
+2. تصحيح فقط ما يسبب الخطأ المحدد
+3. التحقق من صحة جميع node IDs (UUID فريد)
+4. التحقق من تطابق أسماء connections مع nodes الموجودة
+5. التحقق من وجود typeVersion رقمي لكل node
+6. الإجابة بـ JSON فقط بدون أي نص إضافي
+
+**الحالات الخاصة المُعالَجة:**
+
+| الحالة | السلوك |
+|--------|--------|
+| `N8N_NOT_CONFIGURED` | خروج فوري — لا استهلاك لـ LLM tokens |
+| LLM fix parse fails | الاحتفاظ بالـ workflow السابق والمتابعة |
+| n8n timeout (30 ثانية) | يُعامَل كخطأ عادي → محاولة heal |
+| n8n returns no ID | يُعامَل كخطأ → محاولة heal |
+
+#### 2. `chat.routes.ts` (محدّث)
+
+أُضيف self-healing loop في **مسارين**:
+
+**PATH A (Agentic Engine + Gemini):**
+- يُشغَّل بعد `runAgenticEngine` مباشرة
+- يُحدّث `agentResult.workflowJson` بالنسخة المُصلَحة إذا نجح الـ healing
+- يُضيف note للمستخدم في `assistantContent` (نجاح / إصلاح + نجاح / فشل)
+- يُسجّل `selfHealing` في `qualityReport` بقاعدة البيانات
+- يُضيف `selfHealing` للحدث `complete` في SSE
+
+**PATH A2 (GPT-4o only):**
+- نفس المنطق بالكامل
+- يُحدّث `parsed` + `workflowJsonStr` إذا نجح الـ healing
+- يُضيف note في `a2AssistantContent`
+
+---
+
+### أحداث SSE الجديدة
+
+| الحدث | البيانات | متى يُرسَل |
+|--------|---------|-----------|
+| `self_heal_attempt` | `{attempt, maxAttempts, importError}` | قبل كل محاولة LLM fix (عند الفشل) |
+| `self_heal_success` | `{attempt, n8nWorkflowId, durationMs, wasHealed}` | عند نجاح الاستيراد |
+| `self_heal_fail` | `{totalAttempts, lastError, finalError}` | عند استنفاد كل المحاولات |
+
+**الحدث `complete` الموجود أُضيف إليه:**
+```typescript
+selfHealing: {
+  success: boolean,
+  n8nWorkflowId?: string,
+  attempts: number,
+  totalHealingMs: number,
+  healTokenUsage: { promptTokens, completionTokens, estimatedCostUsd }
+} | null
+```
+
+---
+
+### نصوص الرسائل للمستخدم
+
+**عند النجاح بدون healing (الاستيراد مباشر):**
+- عربي: `✅ **تم الاستيراد التلقائي** — تم إدراج الـ workflow مباشرة في n8n (ID: \`xyz\`).`
+- إنجليزي: `✅ **Auto-imported to n8n** — Workflow imported successfully (ID: \`xyz\`).`
+
+**عند النجاح بعد healing (GPT-4o أصلح خطأ):**
+- عربي: `🔧 **تم الإصلاح والاستيراد التلقائي** — تم اكتشاف خطأ في الـ workflow وإصلاحه تلقائياً بـ GPT-4o وإدراجه في n8n (ID: \`xyz\`).`
+- إنجليزي: `🔧 **Auto-imported after self-healing** — An error was detected, automatically fixed by GPT-4o, and imported to n8n (ID: \`xyz\`).`
+
+**عند الفشل الكلي (بعد 3 محاولات):**
+- عربي: `⚠️ **فشل الاستيراد التلقائي** — فشل الاستيراد بعد 3 محاولات. آخر خطأ: [رسالة n8n]. يمكنك نسخ الـ workflow JSON وإدراجه يدوياً في n8n.`
+- إنجليزي: `⚠️ **Auto-import failed** — Import failed after 3 attempts. Last n8n error: [n8n message]. You can copy the workflow JSON and import it manually in n8n.`
+
+**عند عدم تكوين n8n (صامت — لا رسالة تُعرض):**
+- يخرج الـ loop بهدوء بدون إضافة أي رسالة للمستخدم
+
+---
+
+### نتائج الاختبارات
+
+جميع الاختبارات أُجريت على الكود المبني:
+
+| الاختبار | الأمر | النتيجة |
+|---------|-------|---------|
+| بناء TypeScript | `pnpm --filter @workspace/api-server run build` | ✅ 0 أخطاء، 2.9mb |
+| selfHealingLoop في الـ bundle | `grep selfHealingLoop dist/index.mjs` | ✅ موجود |
+| N8N_NOT_CONFIGURED check | `grep -c "N8N_NOT_CONFIGURED" dist/index.mjs` | ✅ 10 مراجع |
+| 3 أحداث SSE في الـ bundle | `grep -c "self_heal_*" dist/index.mjs` | ✅ 6 (2 لكل حدث) |
+| healWithLLM في الـ bundle | `grep -c "healWithLLM" dist/index.mjs` | ✅ 10 مراجع |
+| السيرفر يعمل | `curl localhost:8080/api/settings/n8n` | ✅ 401 (يعمل، يحتاج auth) |
+| PATH A integration | `grep "self_heal_attempt" chat.routes.ts` | ✅ موجود في PATH A |
+| PATH A2 integration | `grep "a2HealResult" chat.routes.ts` | ✅ موجود في PATH A2 |
+
+---
+
+### مقارنة مع الوصف في الخطة الأصلية
+
+الخطة في الملف كانت:
+```
+توليد workflow JSON
+    ↓
+محاولة استيراد لـ n8n (POST /api/v1/workflows)
+    ↓
+نجاح؟ → ✅ تم
+فشل؟  → تحليل رسالة الخطأ
+           ↓
+       تصحيح تلقائي بـ LLM
+           ↓
+       إعادة المحاولة (حتى 3 مرات)
+           ↓
+       إذا فشل الكل → رسالة خطأ واضحة مع السبب
+```
+
+**تم تنفيذ الخطة بالكامل بدقة + إضافات:**
+- ✅ محاولة الاستيراد في كل مرة (ليس فقط عند الإنشاء)
+- ✅ تحليل رسالة الخطأ من n8n بدقة (system prompt متخصص)
+- ✅ تصحيح تلقائي بـ GPT-4o (مع 6 قواعد محددة)
+- ✅ إعادة المحاولة حتى 3 مرات
+- ✅ رسالة خطأ واضحة مع السبب عند الفشل الكلي
+- ✅ **إضافة:** SSE events لكل خطوة (تجربة مستخدم حية)
+- ✅ **إضافة:** graceful exit عند N8N_NOT_CONFIGURED
+- ✅ **إضافة:** تكامل في PATH A وPATH A2 معاً
+- ✅ **إضافة:** تتبع token usage لتكلفة الـ healing
+- ✅ **إضافة:** `wasHealed` flag في رسالة المستخدم
+
+---
+
+### قيمة الترقية
+
+| المعيار | قبل 5.3 | بعد 5.3 |
+|---------|---------|---------|
+| الاستيراد لـ n8n | يدوي أو auto-import بدون تصحيح | ✅ تلقائي مع self-correction |
+| معالجة أخطاء n8n | يُعرض على المستخدم ويتوقف | ✅ GPT-4o يُصلح ويُعيد المحاولة |
+| ماذا يرى المستخدم عند خطأ | رسالة خطأ تقنية | ✅ "جاري الإصلاح..." ثم "تم الاستيراد" |
+| عدد محاولات الاستيراد | 1 | ✅ حتى 3 محاولات مع إصلاح بينها |
+| مقارنة مع Replit Agent | لا يُشغّل الكود ولا يرى النتيجة | ✅ يُجرّب الاستيراد ويرى الخطأ ويُصلح |
+
+---
+
+*آخر تحديث: 17 أبريل 2026 — FIX 5.3 Self-Healing Loop مكتمل ✅*

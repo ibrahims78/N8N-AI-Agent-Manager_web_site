@@ -21,6 +21,8 @@ import {
 import { validateWorkflowJson, sanitizeWorkflowJson, extractJson } from "../services/jsonValidator.service";
 // FIX 4.5: Input sanitization against prompt injection
 import { sanitizeUserInput } from "../services/inputSanitizer.service";
+// FIX 5.3: Self-Healing Loop — auto-import to n8n with LLM-based error correction
+import { runSelfHealingLoop } from "../services/selfHealingLoop.service";
 import { logger } from "../lib/logger";
 import type { Request, Response } from "express";
 
@@ -315,8 +317,88 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           sendEvent("agent_review", { phase, score }),
       });
 
-      let assistantContent = agentResult.userMessage;
+      // ── FIX 5.3: Self-Healing Loop ──────────────────────────────────────────
+      // After the agentic engine generates the workflow JSON, automatically
+      // try to import it to n8n. If n8n rejects it, GPT-4o analyzes the error
+      // and fixes the JSON, then retries (up to 3 times total).
+      let selfHealingResult: Awaited<ReturnType<typeof runSelfHealingLoop>> | null = null;
       if (agentResult.success && agentResult.workflowJson) {
+        try {
+          selfHealingResult = await runSelfHealingLoop(agentResult.workflowJson, {
+            openaiKey,
+            lang: agentResult.lang,
+            maxAttempts: 3,
+
+            // SSE: before each LLM fix attempt
+            onHealAttempt: (ev) =>
+              sendEvent("self_heal_attempt", {
+                attempt: ev.attempt,
+                maxAttempts: ev.maxAttempts,
+                importError: ev.importError,
+              }),
+
+            // SSE: import succeeded (possibly after healing)
+            onHealSuccess: (ev) =>
+              sendEvent("self_heal_success", {
+                attempt: ev.attempt,
+                n8nWorkflowId: ev.n8nWorkflowId,
+                durationMs: ev.durationMs,
+                wasHealed: ev.wasHealed,
+              }),
+
+            // SSE: all attempts exhausted
+            onHealFail: (ev) =>
+              sendEvent("self_heal_fail", {
+                totalAttempts: ev.totalAttempts,
+                lastError: ev.lastError,
+                finalError: ev.finalError,
+              }),
+          });
+
+          // If healing produced a better workflow, use it as the final version
+          if (selfHealingResult.success && selfHealingResult.healedWorkflow) {
+            agentResult.workflowJson = selfHealingResult.healedWorkflow;
+          }
+
+          logger.info(
+            {
+              healSuccess: selfHealingResult.success,
+              n8nWorkflowId: selfHealingResult.n8nWorkflowId,
+              healAttempts: selfHealingResult.attempts.length,
+              healingMs: selfHealingResult.totalHealingMs,
+            },
+            "FIX 5.3: Self-healing loop completed"
+          );
+        } catch (healErr) {
+          logger.warn({ healErr }, "FIX 5.3: Self-healing loop threw unexpectedly — continuing without it");
+        }
+      }
+
+      let assistantContent = agentResult.userMessage;
+
+      // Append self-healing status to the assistant message
+      if (selfHealingResult) {
+        if (selfHealingResult.success) {
+          const wasHealed = selfHealingResult.attempts.length > 1 || selfHealingResult.attempts.some(a => a.llmFixApplied);
+          const healNote =
+            agentResult.lang === "ar"
+              ? wasHealed
+                ? `\n\n🔧 **تم الإصلاح والاستيراد التلقائي** — تم اكتشاف خطأ في الـ workflow وإصلاحه تلقائياً بـ GPT-4o وإدراجه في n8n (ID: \`${selfHealingResult.n8nWorkflowId}\`).`
+                : `\n\n✅ **تم الاستيراد التلقائي** — تم إدراج الـ workflow مباشرة في n8n (ID: \`${selfHealingResult.n8nWorkflowId}\`).`
+              : wasHealed
+                ? `\n\n🔧 **Auto-imported after self-healing** — An error was detected, automatically fixed by GPT-4o, and imported to n8n (ID: \`${selfHealingResult.n8nWorkflowId}\`).`
+                : `\n\n✅ **Auto-imported to n8n** — Workflow imported successfully (ID: \`${selfHealingResult.n8nWorkflowId}\`).`;
+          assistantContent += healNote;
+        } else if (selfHealingResult.finalError && !selfHealingResult.finalError.includes("N8N_NOT_CONFIGURED")) {
+          const failNote =
+            agentResult.lang === "ar"
+              ? `\n\n⚠️ **فشل الاستيراد التلقائي** — ${selfHealingResult.finalError}`
+              : `\n\n⚠️ **Auto-import failed** — ${selfHealingResult.finalError}`;
+          assistantContent += failNote;
+        }
+      }
+
+      if (agentResult.workflowJson) {
         assistantContent += `\n\n\`\`\`json\n${JSON.stringify(agentResult.workflowJson, null, 2)}\n\`\`\``;
         try {
           await db.insert(generationSessionsTable).values({
@@ -334,6 +416,13 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
               grade: agentResult.qualityGrade,
               engine: "agentic-tool-calling",
               toolCalls: agentResult.toolCallLog.length,
+              selfHealing: selfHealingResult
+                ? {
+                    success: selfHealingResult.success,
+                    attempts: selfHealingResult.attempts.length,
+                    n8nWorkflowId: selfHealingResult.n8nWorkflowId,
+                  }
+                : null,
             }),
           });
         } catch (err) {
@@ -364,6 +453,16 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         engine: "agentic",
         // FIX 4.4: token usage summary
         tokenUsage: agentResult.tokenUsage,
+        // FIX 5.3: self-healing result summary
+        selfHealing: selfHealingResult
+          ? {
+              success: selfHealingResult.success,
+              n8nWorkflowId: selfHealingResult.n8nWorkflowId,
+              attempts: selfHealingResult.attempts.length,
+              totalHealingMs: selfHealingResult.totalHealingMs,
+              healTokenUsage: selfHealingResult.tokenUsage,
+            }
+          : null,
       });
 
     // ══════════════════════════════════════════════════════════════════════
@@ -498,19 +597,73 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
 
         sendEvent("phase", { phase: 1, status: "done", durationMs: Date.now() - a2Start });
 
+        // ── FIX 5.3: Self-Healing Loop for PATH A2 ────────────────────────
+        let a2HealResult: Awaited<ReturnType<typeof runSelfHealingLoop>> | null = null;
+        if (parsed) {
+          try {
+            a2HealResult = await runSelfHealingLoop(parsed, {
+              openaiKey,
+              lang: a2Lang,
+              maxAttempts: 3,
+              onHealAttempt: (ev) =>
+                sendEvent("self_heal_attempt", {
+                  attempt: ev.attempt,
+                  maxAttempts: ev.maxAttempts,
+                  importError: ev.importError,
+                }),
+              onHealSuccess: (ev) =>
+                sendEvent("self_heal_success", {
+                  attempt: ev.attempt,
+                  n8nWorkflowId: ev.n8nWorkflowId,
+                  durationMs: ev.durationMs,
+                  wasHealed: ev.wasHealed,
+                }),
+              onHealFail: (ev) =>
+                sendEvent("self_heal_fail", {
+                  totalAttempts: ev.totalAttempts,
+                  lastError: ev.lastError,
+                  finalError: ev.finalError,
+                }),
+            });
+            if (a2HealResult.success && a2HealResult.healedWorkflow) {
+              parsed = a2HealResult.healedWorkflow;
+              workflowJsonStr = JSON.stringify(parsed, null, 2);
+            }
+          } catch (healErr) {
+            logger.warn({ healErr }, "PATH A2: self-healing loop threw — continuing without it");
+          }
+        }
+
         const noGeminiNote = a2Lang === "ar"
           ? "\n\n⚠️ *ملاحظة: مفتاح Gemini غير مضبوط — تم استخدام GPT-4o مع Node Schemas للحصول على أفضل جودة ممكنة.*"
           : "\n\n⚠️ *Note: Gemini key not configured — GPT-4o used with Node Schemas for best possible quality.*";
 
-        const assistantContent = (a2Lang === "ar"
+        let a2AssistantContent = (a2Lang === "ar"
           ? "✅ تم إنشاء الـ workflow (GPT-4o + Node Schemas):\n\n"
           : "✅ Workflow created (GPT-4o + Node Schemas):\n\n") +
           `\`\`\`json\n${workflowJsonStr}\n\`\`\`` + noGeminiNote;
 
+        if (a2HealResult) {
+          if (a2HealResult.success) {
+            const wasHealed = a2HealResult.attempts.some(a => a.llmFixApplied);
+            a2AssistantContent += a2Lang === "ar"
+              ? wasHealed
+                ? `\n\n🔧 **تم الإصلاح والاستيراد التلقائي** — تم إدراج الـ workflow في n8n بعد الإصلاح (ID: \`${a2HealResult.n8nWorkflowId}\`).`
+                : `\n\n✅ **تم الاستيراد التلقائي** — تم إدراج الـ workflow في n8n (ID: \`${a2HealResult.n8nWorkflowId}\`).`
+              : wasHealed
+                ? `\n\n🔧 **Auto-imported after self-healing** — Workflow fixed and imported to n8n (ID: \`${a2HealResult.n8nWorkflowId}\`).`
+                : `\n\n✅ **Auto-imported to n8n** — Workflow imported successfully (ID: \`${a2HealResult.n8nWorkflowId}\`).`;
+          } else if (a2HealResult.finalError && !a2HealResult.finalError.includes("N8N_NOT_CONFIGURED")) {
+            a2AssistantContent += a2Lang === "ar"
+              ? `\n\n⚠️ **فشل الاستيراد التلقائي** — ${a2HealResult.finalError}`
+              : `\n\n⚠️ **Auto-import failed** — ${a2HealResult.finalError}`;
+          }
+        }
+
         const [assistantMsg] = await db.insert(messagesTable).values({
           conversationId: convId,
           role: "assistant",
-          content: assistantContent,
+          content: a2AssistantContent,
           modelUsed: "gpt-4o",
         }).returning();
 
@@ -529,6 +682,15 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
             totalOpenaiTokens: a2Tokens.promptTokens + a2Tokens.completionTokens,
             estimatedCostUsd: parseFloat(a2EstimatedCost),
           },
+          // FIX 5.3: self-healing summary
+          selfHealing: a2HealResult
+            ? {
+                success: a2HealResult.success,
+                n8nWorkflowId: a2HealResult.n8nWorkflowId,
+                attempts: a2HealResult.attempts.length,
+                totalHealingMs: a2HealResult.totalHealingMs,
+              }
+            : null,
         });
       } catch (err) {
         sendEvent("error", { message: String(err) });
