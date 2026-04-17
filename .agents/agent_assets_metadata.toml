@@ -6,3 +6,9 @@ id = "kU7SVdWRykYNXJn8ZRXjr"
 uri = "file://chat-page-improvements-plan.md"
 type = "text"
 title = "خطة تحسين صفحة المحادثة — الدليل الكامل"
+
+[[outputs]]
+id = "5DP6AwsY9rs3efd_itjBV"
+uri = "file://agent-mechanism-documentation.md"
+type = "text"
+title = "آلية عمل الوكيل الذكي — توثيق تفصيلي شامل"
