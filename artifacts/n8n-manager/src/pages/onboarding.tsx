@@ -78,11 +78,9 @@ export default function OnboardingPage() {
   const saveAndNext = async () => {
     setStepError("");
     if (step === 1) {
-      if (n8nStatus !== "ok") {
-        setStepError(isRTL ? "يجب اختبار الاتصال بـ N8N بنجاح قبل المتابعة" : "You must successfully test the N8N connection before continuing");
-        return;
+      if (n8nStatus === "ok") {
+        await apiRequest("/settings/n8n", { method: "PUT", body: JSON.stringify({ url: n8nUrl, apiKey: n8nKey }) });
       }
-      await apiRequest("/settings/n8n", { method: "PUT", body: JSON.stringify({ url: n8nUrl, apiKey: n8nKey }) });
       setStep(2);
     } else if (step === 2) {
       if (openaiStatus === "ok") {
@@ -233,17 +231,13 @@ export default function OnboardingPage() {
           )}
 
           <div className="flex justify-between mt-6">
-            {step > 2 ? (
-              <button
-                onClick={finish}
-                disabled={completing}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {t("onboarding.skip")}
-              </button>
-            ) : (
-              <span />
-            )}
+            <button
+              onClick={finish}
+              disabled={completing}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {t("onboarding.skip")}
+            </button>
             <button
               onClick={saveAndNext}
               disabled={completing}
