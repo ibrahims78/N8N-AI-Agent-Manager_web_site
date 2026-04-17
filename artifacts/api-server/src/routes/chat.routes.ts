@@ -3,10 +3,12 @@ import { db, conversationsTable, messagesTable, systemSettingsTable, generationS
 import { eq, desc } from "drizzle-orm";
 import { authenticate, requirePermission } from "../middleware/auth.middleware";
 import { decryptApiKey } from "../services/encryption.service";
-import { runSequentialEngine, detectWorkflowCreationIntent, detectWorkflowModifyIntent } from "../services/sequentialEngine.service";
+import { runSequentialEngine } from "../services/sequentialEngine.service";
 import { runWorkflowAnalyzer } from "../services/workflowAnalyzer.service";
-import { runWorkflowModifier, extractWorkflowNameFromMessage } from "../services/workflowModifier.service";
-import { getWorkflow, getWorkflows, updateWorkflow, getWorkflowExecutionsWithErrors } from "../services/n8n.service";
+import { runWorkflowModifier } from "../services/workflowModifier.service";
+import { updateWorkflow, getWorkflowExecutionsWithErrors } from "../services/n8n.service";
+import { getCachedWorkflows, getCachedWorkflow, invalidateWorkflowCache } from "../services/n8nCache.service";
+import { detectIntent, findWorkflowNameHint, smartTruncateMessage } from "../services/intentDetector.service";
 import { logger } from "../lib/logger";
 import type { Request, Response } from "express";
 
@@ -40,6 +42,8 @@ async function getApiKeys() {
   return { openaiKey, geminiKey };
 }
 
+// ─── Conversations CRUD ───────────────────────────────────────────────────────
+
 router.get("/conversations", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
@@ -58,15 +62,7 @@ router.get("/conversations", authenticate, requirePermission("use_chat"), async 
   const total = allConversations.length;
   const conversations = allConversations.slice(offset, offset + limit);
 
-  res.json({
-    success: true,
-    data: {
-      conversations,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit),
-    },
-  });
+  res.json({ success: true, data: { conversations, total, page, totalPages: Math.ceil(total / limit) } });
 });
 
 router.post("/conversations", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
@@ -83,11 +79,7 @@ router.post("/conversations", authenticate, requirePermission("use_chat"), async
   }).returning();
 
   if (initialMessage && conv) {
-    await db.insert(messagesTable).values({
-      conversationId: conv.id,
-      role: "user",
-      content: initialMessage,
-    });
+    await db.insert(messagesTable).values({ conversationId: conv.id, role: "user", content: initialMessage });
     await db.update(conversationsTable).set({ messageCount: 1 }).where(eq(conversationsTable.id, conv.id));
   }
 
@@ -100,18 +92,9 @@ router.get("/conversations/:id", authenticate, requirePermission("use_chat"), as
 
   const convs = await db.select().from(conversationsTable).where(eq(conversationsTable.id, convId)).limit(1);
   const conv = convs[0];
+  if (!conv) { res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Conversation not found" } }); return; }
 
-  if (!conv) {
-    res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Conversation not found" } });
-    return;
-  }
-
-  const messages = await db
-    .select()
-    .from(messagesTable)
-    .where(eq(messagesTable.conversationId, convId))
-    .orderBy(messagesTable.createdAt);
-
+  const messages = await db.select().from(messagesTable).where(eq(messagesTable.conversationId, convId)).orderBy(messagesTable.createdAt);
   res.json({ success: true, data: { conversation: conv, messages } });
 });
 
@@ -120,21 +103,14 @@ router.put("/conversations/:id", authenticate, requirePermission("use_chat"), as
   if (isNaN(convId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid conversation ID" } }); return; }
 
   const { title } = req.body as { title?: string };
-  if (!title || !title.trim()) {
-    res.status(400).json({ success: false, error: { code: "MISSING_TITLE", message: "Title is required" } });
-    return;
-  }
+  if (!title?.trim()) { res.status(400).json({ success: false, error: { code: "MISSING_TITLE", message: "Title is required" } }); return; }
 
   const [updated] = await db.update(conversationsTable)
     .set({ title: title.trim(), updatedAt: new Date() })
     .where(eq(conversationsTable.id, convId))
     .returning();
 
-  if (!updated) {
-    res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Conversation not found" } });
-    return;
-  }
-
+  if (!updated) { res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Conversation not found" } }); return; }
   res.json({ success: true, data: updated });
 });
 
@@ -146,7 +122,7 @@ router.delete("/conversations/:id", authenticate, requirePermission("use_chat"),
   res.json({ success: true, message: "Conversation deleted" });
 });
 
-// ─── SSE: Real-time phase progress for workflow generation ─────────────────
+// ─── SSE: Real-time workflow generation & chat ────────────────────────────────
 router.post("/conversations/:id/generate", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
@@ -154,11 +130,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
   if (isNaN(convId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid conversation ID" } }); return; }
 
   const { content } = req.body as { content: string };
-
-  if (!content) {
-    res.status(400).json({ success: false, error: { code: "MISSING_CONTENT", message: "Content required" } });
-    return;
-  }
+  if (!content) { res.status(400).json({ success: false, error: { code: "MISSING_CONTENT", message: "Content required" } }); return; }
 
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -173,40 +145,54 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
     }
   };
 
+  const isArabic = /[\u0600-\u06FF]/.test(content);
+  const lang = isArabic ? "ar" : "en";
+
+  // ── Immediate acknowledgment — shows typing indicator to user instantly ──
+  sendEvent("thinking", {
+    message: lang === "ar" ? "استلمت طلبك، جاري التحليل..." : "Got your request, analyzing...",
+  });
+
   try {
-    const isArabic = /[\u0600-\u06FF]/.test(content);
-    const lang = isArabic ? "ar" : "en";
-
-    await db.insert(messagesTable).values({
-      conversationId: convId,
-      role: "user",
-      content,
-    });
-
-    const { openaiKey, geminiKey } = await getApiKeys();
+    // ── Save user message & get API keys in parallel ──────────────────────
+    const [, { openaiKey, geminiKey }, previousMessages] = await Promise.all([
+      db.insert(messagesTable).values({ conversationId: convId, role: "user", content }),
+      getApiKeys(),
+      db.select().from(messagesTable)
+        .where(eq(messagesTable.conversationId, convId))
+        .orderBy(desc(messagesTable.createdAt))
+        .limit(20),
+    ]);
 
     if (!openaiKey) {
       sendEvent("error", {
         message: lang === "ar"
-          ? "مفتاح OpenAI غير مضبوط. يرجى الذهاب للإعدادات."
-          : "OpenAI key not configured. Please go to Settings.",
+          ? "⚠️ مفتاح OpenAI غير مضبوط.\n\n**للإصلاح:** اذهب إلى ⚙️ الإعدادات → OpenAI وأضف مفتاحك."
+          : "⚠️ OpenAI key is not configured.\n\n**To fix:** Go to ⚙️ Settings → OpenAI and add your key.",
       });
       res.end();
       return;
     }
 
-    const previousMessages = await db
-      .select()
-      .from(messagesTable)
-      .where(eq(messagesTable.conversationId, convId))
-      .orderBy(desc(messagesTable.createdAt))
-      .limit(20);
-
     const messageCount = previousMessages.length;
 
-    const isCreateIntent = detectWorkflowCreationIntent(content);
+    // ── Fetch n8n workflows (cached) for intent detection ─────────────────
+    let availableWorkflows: Array<{ id: string; name: string; active: boolean }> = [];
+    try {
+      availableWorkflows = await getCachedWorkflows();
+    } catch {
+      logger.warn("Could not fetch n8n workflows for intent detection — continuing without");
+    }
 
-    if (isCreateIntent && openaiKey && geminiKey) {
+    // ── LLM-based intent detection ────────────────────────────────────────
+    const intentResult = await detectIntent(content, availableWorkflows.map(w => w.name), openaiKey);
+    const { intent, workflowNameHint } = intentResult;
+    logger.info({ intent, confidence: intentResult.confidence, hint: workflowNameHint }, "Intent detected");
+
+    // ══════════════════════════════════════════════════════════════════════
+    // PATH A: CREATE WORKFLOW
+    // ══════════════════════════════════════════════════════════════════════
+    if (intent === "create" && geminiKey) {
       sendEvent("start", { type: "sequential", rounds: 3 });
 
       const engineResult = await runSequentialEngine(content, {
@@ -214,16 +200,12 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         geminiKey,
         maxRefinementRounds: 2,
         qualityThreshold: 80,
-        onPhaseUpdate: (phase) => {
-          sendEvent("phase", phase);
-        },
+        onPhaseUpdate: (phase) => sendEvent("phase", phase),
       });
 
       let assistantContent = engineResult.userMessage;
-
       if (engineResult.success && engineResult.workflowJson) {
         assistantContent += `\n\n\`\`\`json\n${JSON.stringify(engineResult.workflowJson, null, 2)}\n\`\`\``;
-
         try {
           await db.insert(generationSessionsTable).values({
             conversationId: convId,
@@ -236,10 +218,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
             totalTimeMs: engineResult.totalTimeMs,
             finalWorkflowJson: engineResult.workflowJson as Record<string, unknown>,
             qualityScore: engineResult.qualityScore,
-            qualityReport: JSON.stringify({
-              grade: engineResult.qualityGrade,
-              phases: engineResult.phases,
-            }),
+            qualityReport: JSON.stringify({ grade: engineResult.qualityGrade, phases: engineResult.phases }),
           });
         } catch (err) {
           logger.error({ err }, "Failed to save generation session");
@@ -267,17 +246,18 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         phases: engineResult.phases,
         isWorkflowCreation: true,
       });
-    } else if (isCreateIntent && openaiKey && !geminiKey) {
+
+    // ══════════════════════════════════════════════════════════════════════
+    // PATH A2: CREATE — GPT-4o only (no Gemini key)
+    // ══════════════════════════════════════════════════════════════════════
+    } else if (intent === "create" && !geminiKey) {
       sendEvent("start", { type: "gpt-only" });
       sendEvent("phase", { phase: 1, label: "GPT-4o: Creating workflow", labelAr: "GPT-4o: إنشاء الـ workflow", status: "running" });
-
-      const noGeminiNote = lang === "ar"
-        ? "\n\n⚠️ *ملاحظة: مفتاح Gemini غير مضبوط. استُخدم GPT-4o فقط.*"
-        : "\n\n⚠️ *Note: Gemini key not configured. GPT-4o only mode.*";
 
       try {
         const OpenAI = (await import("openai")).default;
         const openai = new OpenAI({ apiKey: openaiKey, timeout: 90000 });
+
         const systemPrompt = lang === "ar"
           ? "أنت خبير في بناء n8n workflows. أنشئ workflow JSON صالح وكامل. أرجع JSON فقط."
           : "You are an n8n workflow expert. Create a valid, complete workflow JSON. Return JSON only.";
@@ -295,6 +275,10 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         try { parsed = JSON.parse(workflowJson) as Record<string, unknown>; } catch { parsed = null; }
 
         sendEvent("phase", { phase: 1, status: "done", durationMs: 0 });
+
+        const noGeminiNote = lang === "ar"
+          ? "\n\n⚠️ *ملاحظة: مفتاح Gemini غير مضبوط. استُخدم GPT-4o فقط.*"
+          : "\n\n⚠️ *Note: Gemini key not configured. GPT-4o only mode.*";
 
         const assistantContent = (lang === "ar"
           ? "✅ تم إنشاء الـ workflow (GPT-4o فقط):\n\n"
@@ -323,42 +307,41 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         sendEvent("error", { message: String(err) });
       }
 
-    // ── Modify Intent: edit/fix/update an existing workflow ──────────────────
-    } else if (!isCreateIntent && detectWorkflowModifyIntent(content) && openaiKey) {
+    // ══════════════════════════════════════════════════════════════════════
+    // PATH B: MODIFY WORKFLOW
+    // ══════════════════════════════════════════════════════════════════════
+    } else if (intent === "modify") {
       sendEvent("start", { type: "modify" });
       sendEvent("phase", { phase: 1, label: "GPT-4o: Generating modification", labelAr: "GPT-4o: توليد التعديل", status: "pending" });
       sendEvent("phase", { phase: 2, label: "Gemini 2.5 Pro: Validating changes", labelAr: "Gemini 2.5 Pro: التحقق من التعديلات", status: "pending" });
       sendEvent("phase", { phase: 3, label: "Applying to n8n", labelAr: "تطبيق التعديل على n8n", status: "pending" });
 
       try {
-        // Step 1: Find which workflow the user is referring to
         let targetWorkflowId: string | null = null;
         let targetWorkflowName: string | null = null;
         let currentWorkflowJson: Record<string, unknown> | null = null;
 
         try {
-          const allWorkflows = await getWorkflows();
-          if (allWorkflows.length > 0) {
-            const match = await extractWorkflowNameFromMessage(
-              content,
-              allWorkflows.map((w) => ({ id: w.id, name: w.name })),
-              openaiKey
-            );
-            if (match) {
-              targetWorkflowId = match.workflowId;
-              targetWorkflowName = match.workflowName;
-              currentWorkflowJson = await getWorkflow(targetWorkflowId) as unknown as Record<string, unknown>;
+          if (availableWorkflows.length > 0) {
+            const nameHint = workflowNameHint ?? findWorkflowNameHint(content, availableWorkflows.map(w => w.name));
+            const matched = nameHint
+              ? availableWorkflows.find(w => w.name === nameHint || w.name.toLowerCase().includes(nameHint.toLowerCase()))
+              : null;
+
+            if (matched) {
+              targetWorkflowId = matched.id;
+              targetWorkflowName = matched.name;
+              currentWorkflowJson = await getCachedWorkflow(targetWorkflowId, 10_000);
             }
           }
         } catch {
-          logger.warn("Could not fetch workflows from n8n — modify will work without n8n context");
+          logger.warn("Could not fetch target workflow — modify will ask user for clarification");
         }
 
-        // If no n8n workflow found, ask user to clarify
         if (!currentWorkflowJson) {
           const clarifyMsg = lang === "ar"
-            ? `⚠️ **لم أتمكن من تحديد الـ workflow المقصود.**\n\nيرجى:\n1. التأكد من أن n8n مضبوط ومتصل في **الإعدادات**\n2. أو ذكر اسم الـ workflow بوضوح في رسالتك\n3. أو استخدام زر "تحليل وإصلاح" من صفحة الـ Workflows`
-            : `⚠️ **Could not identify which workflow to modify.**\n\nPlease:\n1. Make sure n8n is configured and connected in **Settings**\n2. Or mention the workflow name clearly in your message\n3. Or use the "Analyze & Fix" button from the Workflows page`;
+            ? `⚠️ **لم أتمكن من تحديد الـ workflow المقصود.**\n\nيرجى:\n1. ذكر اسم الـ workflow بوضوح في رسالتك\n2. أو التأكد من أن n8n مضبوط ومتصل في **الإعدادات**\n3. أو استخدام زر "تحليل وإصلاح" من صفحة الـ Workflows\n\n**الـ Workflows المتاحة:**\n${availableWorkflows.slice(0, 10).map(w => `- ${w.name}`).join("\n") || "لا توجد workflows مضافة بعد"}`
+            : `⚠️ **Could not identify which workflow to modify.**\n\nPlease:\n1. Mention the workflow name clearly in your message\n2. Make sure n8n is configured in **Settings**\n3. Or use the "Analyze & Fix" button from the Workflows page\n\n**Available workflows:**\n${availableWorkflows.slice(0, 10).map(w => `- ${w.name}`).join("\n") || "No workflows found"}`;
 
           const [clarifyResp] = await db.insert(messagesTable).values({
             conversationId: convId,
@@ -375,7 +358,6 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           return;
         }
 
-        // Step 2: Run the modifier
         const modifierResult = await runWorkflowModifier(
           currentWorkflowJson,
           content,
@@ -383,9 +365,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           {
             openaiKey,
             geminiKey: geminiKey ?? undefined,
-            onPhaseUpdate: (phase) => {
-              sendEvent("phase", { ...phase, phase: phase.phase });
-            },
+            onPhaseUpdate: (phase) => sendEvent("phase", { ...phase, phase: phase.phase }),
           }
         );
 
@@ -398,7 +378,6 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
           return;
         }
 
-        // Step 3: Apply to n8n
         let appliedToN8n = false;
         let applyError: string | null = null;
 
@@ -412,40 +391,23 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
             settings: sanitizeSettings(modifierResult.modifiedWorkflowJson.settings ?? currentWorkflowJson.settings),
           };
           await updateWorkflow(targetWorkflowId!, updatePayload as Record<string, unknown>);
+          invalidateWorkflowCache(targetWorkflowId!);
           appliedToN8n = true;
           sendEvent("phase", { phase: 3, label: "Applying to n8n", labelAr: "تطبيق التعديل على n8n", status: "done", durationMs: 0 });
         } catch (applyErr) {
           applyError = String(applyErr);
           sendEvent("phase", { phase: 3, label: "Applying to n8n", labelAr: "تطبيق التعديل على n8n", status: "failed", durationMs: 0 });
-          logger.warn({ applyErr }, "Could not apply modification to n8n");
         }
 
-        // Build assistant response
         let assistantContent = "";
         if (lang === "ar") {
-          if (appliedToN8n) {
-            assistantContent = `✅ **تم تعديل الـ workflow "${targetWorkflowName}" وتطبيقه على n8n بنجاح!**\n\n`;
-            assistantContent += `📝 **التغييرات التي تمت:**\n${modifierResult.changesSummaryAr}\n\n`;
-            assistantContent += `الـ workflow محدّث مباشرة في n8n. يمكنك مراجعته الآن.`;
-          } else {
-            assistantContent = `⚠️ **تم توليد التعديل لكن لم يتم تطبيقه على n8n تلقائياً.**\n\n`;
-            assistantContent += `📝 **التغييرات المطلوبة:**\n${modifierResult.changesSummaryAr}\n\n`;
-            if (applyError) assistantContent += `**سبب الفشل:** ${applyError}\n\n`;
-            assistantContent += `يمكنك استيراد الـ JSON أدناه يدوياً:\n\n`;
-            assistantContent += `\`\`\`json\n${JSON.stringify(modifierResult.modifiedWorkflowJson, null, 2)}\n\`\`\``;
-          }
+          assistantContent = appliedToN8n
+            ? `✅ **تم تعديل الـ workflow "${targetWorkflowName}" وتطبيقه على n8n بنجاح!**\n\n📝 **التغييرات:**\n${modifierResult.changesSummaryAr}\n\nالـ workflow محدّث مباشرة في n8n. يمكنك مراجعته الآن.`
+            : `⚠️ **تم توليد التعديل لكن لم يتم تطبيقه على n8n تلقائياً.**\n\n📝 **التغييرات:**\n${modifierResult.changesSummaryAr}${applyError ? `\n\n**سبب الفشل:** ${applyError}` : ""}\n\nيمكنك استيراد الـ JSON أدناه يدوياً:\n\n\`\`\`json\n${JSON.stringify(modifierResult.modifiedWorkflowJson, null, 2)}\n\`\`\``;
         } else {
-          if (appliedToN8n) {
-            assistantContent = `✅ **Workflow "${targetWorkflowName}" successfully modified and applied to n8n!**\n\n`;
-            assistantContent += `📝 **Changes made:**\n${modifierResult.changesSummary}\n\n`;
-            assistantContent += `The workflow is now updated directly in n8n. You can review it now.`;
-          } else {
-            assistantContent = `⚠️ **Modification generated but could not be applied to n8n automatically.**\n\n`;
-            assistantContent += `📝 **Requested changes:**\n${modifierResult.changesSummary}\n\n`;
-            if (applyError) assistantContent += `**Reason:** ${applyError}\n\n`;
-            assistantContent += `You can import the JSON below manually:\n\n`;
-            assistantContent += `\`\`\`json\n${JSON.stringify(modifierResult.modifiedWorkflowJson, null, 2)}\n\`\`\``;
-          }
+          assistantContent = appliedToN8n
+            ? `✅ **Workflow "${targetWorkflowName}" successfully modified and applied to n8n!**\n\n📝 **Changes:**\n${modifierResult.changesSummary}\n\nThe workflow is now updated directly in n8n. You can review it now.`
+            : `⚠️ **Modification generated but could not be applied to n8n automatically.**\n\n📝 **Changes:**\n${modifierResult.changesSummary}${applyError ? `\n\n**Reason:** ${applyError}` : ""}\n\nYou can import the JSON below manually:\n\n\`\`\`json\n${JSON.stringify(modifierResult.modifiedWorkflowJson, null, 2)}\n\`\`\``;
         }
 
         const [assistantMsg] = await db.insert(messagesTable).values({
@@ -474,96 +436,92 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         sendEvent("error", { message: String(err) });
       }
 
+    // ══════════════════════════════════════════════════════════════════════
+    // PATH C: QUERY / CHAT — with streaming + n8n context
+    // ══════════════════════════════════════════════════════════════════════
     } else {
       sendEvent("start", { type: "chat" });
 
       const OpenAI = (await import("openai")).default;
       const openai = new OpenAI({ apiKey: openaiKey, timeout: 60000 });
 
-      const isArabicReq = /[\u0600-\u06FF]/.test(content);
-
-      // ── Fetch n8n workflows to give GPT real context ─────────────────────
+      // ── Build n8n workflow context (cached, non-blocking) ─────────────
       let workflowContext = "";
-      let detailedWorkflow: Record<string, unknown> | null = null;
       try {
-        const workflows = await getWorkflows();
-        if (workflows.length > 0) {
-          // Build a summary list of all workflows
-          const workflowList = workflows.map(w =>
-            `- ID: ${w.id} | Name: "${w.name}" | Status: ${w.active ? "Active ✅" : "Inactive ⏸️"} | Nodes: ${w.nodes?.length ?? 0}`
+        if (availableWorkflows.length > 0) {
+          const workflowList = availableWorkflows.map(w =>
+            `- ID: ${w.id} | Name: "${w.name}" | Status: ${w.active ? "Active ✅" : "Inactive ⏸️"} | Nodes: ${w.nodes?.length ?? "?"}`
           ).join("\n");
+          workflowContext = `\n\n## Connected n8n Workflows (${availableWorkflows.length} total):\n${workflowList}\n`;
 
-          workflowContext = `\n\n## Connected n8n Workflows (${workflows.length} total):\n${workflowList}\n`;
-
-          // If user mentions a workflow by name, fetch its full details
-          const contentLower = content.toLowerCase();
-          const mentionedWorkflow = workflows.find(w =>
-            contentLower.includes(w.name.toLowerCase()) ||
-            contentLower.includes(w.id.toLowerCase())
-          );
+          const nameHint = workflowNameHint ?? findWorkflowNameHint(content, availableWorkflows.map(w => w.name));
+          const mentionedWorkflow = nameHint
+            ? availableWorkflows.find(w => w.name === nameHint || w.name.toLowerCase().includes(nameHint.toLowerCase()))
+            : null;
 
           if (mentionedWorkflow) {
             try {
-              const fullWf = await getWorkflow(mentionedWorkflow.id) as unknown as Record<string, unknown>;
-              const nodes = (fullWf.nodes as Array<{type?: string; name?: string; parameters?: Record<string, unknown>}> | undefined) ?? [];
-              // Build a concise node summary — no raw JSON to avoid token bloat
+              const fullWf = await getCachedWorkflow(mentionedWorkflow.id);
+              const nodes = (fullWf.nodes as Array<{ type?: string; name?: string; parameters?: Record<string, unknown> }> | undefined) ?? [];
               const nodesSummary = nodes.map((n, i) => {
                 const paramKeys = n.parameters ? Object.keys(n.parameters).slice(0, 4).join(", ") : "";
                 return `  ${i + 1}. [${n.type ?? "unknown"}] "${n.name ?? "unnamed"}"${paramKeys ? ` — params: ${paramKeys}` : ""}`;
               }).join("\n");
-              detailedWorkflow = fullWf;
               workflowContext += `\n## Detailed Workflow: "${mentionedWorkflow.name}" (ID: ${mentionedWorkflow.id})\n`;
               workflowContext += `Status: ${mentionedWorkflow.active ? "Active ✅" : "Inactive ⏸️"}\n`;
-              workflowContext += `Total Nodes: ${nodes.length}\n`;
-              workflowContext += `Node List:\n${nodesSummary}\n`;
-              // Include connections summary
+              workflowContext += `Total Nodes: ${nodes.length}\nNode List:\n${nodesSummary}\n`;
               const connections = fullWf.connections as Record<string, unknown> | undefined;
               if (connections) {
-                workflowContext += `\nConnections: ${Object.keys(connections).length} nodes have outgoing connections.\n`;
+                workflowContext += `Connections: ${Object.keys(connections).length} nodes have outgoing connections.\n`;
               }
-            } catch { /* ignore if can't fetch full details */ }
+            } catch { /* ignore */ }
           }
         }
-      } catch { /* ignore if n8n not reachable */ }
+      } catch {
+        logger.warn("Could not build n8n context for chat — continuing without");
+      }
 
-      const systemPrompt = isArabicReq
+      const systemPrompt = isArabic
         ? `أنت مساعد ذكي متخصص في n8n مربوط مباشرةً بنظام n8n الخاص بالمستخدم. تحدث بالعربية دائماً.
 مهمتك: الإجابة عن أسئلة المستخدم بشكل دقيق ومفصّل بناءً على الـ workflows الفعلية المربوطة.
 إذا سأل عن workflow معين، اشرح نودات عمله وتسلسله الفعلي.
-إذا وجدت خطأ أو مشكلة، اقترح حلاً ملموساً.
-${workflowContext}`
+إذا وجدت خطأ أو مشكلة، اقترح حلاً ملموساً.${workflowContext}`
         : `You are an AI assistant directly connected to the user's n8n instance. Always answer based on the ACTUAL connected workflows below.
 If asked about a specific workflow, explain its real nodes, flow, and behavior.
-If you spot issues or improvements, suggest concrete changes.
-${workflowContext}`;
+If you spot issues or improvements, suggest concrete changes.${workflowContext}`;
 
+      // ── Build conversation context with smart truncation ──────────────
       const contextMessages = [...previousMessages]
         .reverse()
         .slice(-10)
-        .map(m => {
-          // Truncate very long messages (e.g. analysis reports) to avoid polluting context
-          const maxLen = 800;
-          const msgContent = m.content.length > maxLen
-            ? m.content.slice(0, maxLen) + "\n...[truncated for brevity]"
-            : m.content;
-          return { role: m.role as "user" | "assistant", content: msgContent };
-        });
+        .map(m => ({
+          role: m.role as "user" | "assistant",
+          content: smartTruncateMessage(m.content, 1200),
+        }));
 
+      // ── Streaming response ────────────────────────────────────────────
       let assistantContent = "";
       try {
-        const response = await openai.chat.completions.create({
+        const stream = await openai.chat.completions.create({
           model: "gpt-4o",
           messages: [{ role: "system", content: systemPrompt }, ...contextMessages],
           max_tokens: 2000,
           temperature: 0.7,
+          stream: true,
         });
-        assistantContent = response.choices[0]?.message?.content ?? "";
+
+        for await (const chunk of stream) {
+          const delta = chunk.choices[0]?.delta?.content ?? "";
+          if (delta) {
+            assistantContent += delta;
+            sendEvent("stream_chunk", { delta });
+          }
+        }
       } catch (err) {
-        assistantContent = isArabicReq
+        assistantContent = isArabic
           ? `عذراً، تعذر الاتصال بـ GPT: ${String(err)}`
           : `Sorry, could not connect to GPT: ${String(err)}`;
       }
-      void detailedWorkflow; // used in system prompt above
 
       const [assistantMsg] = await db.insert(messagesTable).values({
         conversationId: convId,
@@ -586,6 +544,7 @@ ${workflowContext}`;
   }
 });
 
+// ─── Non-SSE messages endpoint (kept for compatibility) ───────────────────────
 router.post("/conversations/:id/messages", authenticate, requirePermission("use_chat"), async (req: Request, res: Response): Promise<void> => {
   if (!req.user) { res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } }); return; }
 
@@ -593,26 +552,16 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
   if (isNaN(convId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid conversation ID" } }); return; }
 
   const { content } = req.body as { content: string; mode?: string };
-
-  if (!content) {
-    res.status(400).json({ success: false, error: { code: "MISSING_CONTENT", message: "Message content required" } });
-    return;
-  }
+  if (!content) { res.status(400).json({ success: false, error: { code: "MISSING_CONTENT", message: "Message content required" } }); return; }
 
   const isArabic = /[\u0600-\u06FF]/.test(content);
   const lang = isArabic ? "ar" : "en";
 
-  await db.insert(messagesTable).values({
-    conversationId: convId,
-    role: "user",
-    content,
-  });
+  await db.insert(messagesTable).values({ conversationId: convId, role: "user", content });
 
   const { openaiKey, geminiKey } = await getApiKeys();
 
-  const previousMessages = await db
-    .select()
-    .from(messagesTable)
+  const previousMessages = await db.select().from(messagesTable)
     .where(eq(messagesTable.conversationId, convId))
     .orderBy(desc(messagesTable.createdAt))
     .limit(20);
@@ -624,189 +573,54 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
   let tokensUsed: number | null = null;
   let generationSessionId: number | undefined;
 
-  const isCreateIntent = detectWorkflowCreationIntent(content);
+  let availableWorkflows: Array<{ id: string; name: string; active: boolean }> = [];
+  try { availableWorkflows = await getCachedWorkflows(); } catch { /* ignore */ }
 
-  if (isCreateIntent && openaiKey && geminiKey) {
-    logger.info({ convId, content: content.slice(0, 50) }, "Routing to sequential engine");
+  const intentResult = openaiKey
+    ? await detectIntent(content, availableWorkflows.map(w => w.name), openaiKey)
+    : { intent: "query" as const, confidence: "low" as const, workflowNameHint: null, reasoning: "no key" };
 
-    const engineResult = await runSequentialEngine(content, {
-      openaiKey,
-      geminiKey,
-      maxRefinementRounds: 2,
-      qualityThreshold: 80,
-    });
+  const { intent } = intentResult;
 
+  if (intent === "create" && openaiKey && geminiKey) {
+    const engineResult = await runSequentialEngine(content, { openaiKey, geminiKey, maxRefinementRounds: 2, qualityThreshold: 80 });
     assistantContent = engineResult.userMessage;
     modelUsed = "sequential-gpt4o+gemini";
-
     if (engineResult.success) {
       try {
         const [session] = await db.insert(generationSessionsTable).values({
-          conversationId: convId,
-          userRequest: content,
+          conversationId: convId, userRequest: content,
           phase1Result: engineResult.phase1Result as Record<string, unknown>,
           phase2Feedback: engineResult.phase2Feedback ?? "",
           phase3Result: engineResult.phase3Result as Record<string, unknown>,
           phase4Approved: engineResult.phase4Approved,
-          roundsCount: engineResult.roundsCount,
-          totalTimeMs: engineResult.totalTimeMs,
+          roundsCount: engineResult.roundsCount, totalTimeMs: engineResult.totalTimeMs,
           finalWorkflowJson: engineResult.workflowJson as Record<string, unknown>,
           qualityScore: engineResult.qualityScore,
-          qualityReport: JSON.stringify({
-            grade: engineResult.qualityGrade,
-            phases: engineResult.phases,
-          }),
+          qualityReport: JSON.stringify({ grade: engineResult.qualityGrade, phases: engineResult.phases }),
         }).returning();
         generationSessionId = session?.id;
-      } catch (err) {
-        logger.error({ err }, "Failed to save generation session");
-      }
-
-      if (engineResult.workflowJson) {
-        assistantContent += `\n\n\`\`\`json\n${JSON.stringify(engineResult.workflowJson, null, 2)}\n\`\`\``;
-      }
+      } catch (err) { logger.error({ err }, "Failed to save generation session"); }
+      if (engineResult.workflowJson) assistantContent += `\n\n\`\`\`json\n${JSON.stringify(engineResult.workflowJson, null, 2)}\n\`\`\``;
     }
-  } else if (isCreateIntent && openaiKey && !geminiKey) {
-    logger.info({ convId }, "Gemini key not configured — using GPT-4o only mode");
-
-    const noGeminiNote = lang === "ar"
-      ? "\n\n⚠️ *ملاحظة: مفتاح Gemini API غير مُضبوط. استُخدم GPT-4o فقط.*"
-      : "\n\n⚠️ *Note: Gemini API key is not configured. GPT-4o only mode.*";
-
-    try {
-      const OpenAI = (await import("openai")).default;
-      const openai = new OpenAI({ apiKey: openaiKey, timeout: 90000 });
-
-      const systemPrompt = lang === "ar"
-        ? "أنت خبير متقدم في بناء n8n workflows. أنشئ workflow JSON صالح وكامل. أرجع JSON فقط."
-        : "You are an advanced n8n workflow expert. Create a valid, complete workflow JSON. Return JSON only.";
-
-      const p1Response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [{ role: "system", content: systemPrompt }, { role: "user", content }],
-        max_tokens: 3000,
-        temperature: 0.3,
-        response_format: { type: "json_object" },
-      });
-
-      const workflowJson = p1Response.choices[0]?.message?.content ?? "{}";
-      tokensUsed = p1Response.usage?.total_tokens ?? null;
-
-      assistantContent = (lang === "ar"
-        ? "✅ تم إنشاء الـ workflow (وضع GPT-4o فقط):\n\n"
-        : "✅ Workflow created (GPT-4o only mode):\n\n") +
-        `\`\`\`json\n${workflowJson}\n\`\`\`` + noGeminiNote;
-    } catch (err) {
-      assistantContent = lang === "ar"
-        ? `❌ فشل إنشاء الـ workflow: ${String(err)}`
-        : `❌ Workflow creation failed: ${String(err)}`;
-    }
-
-  } else if (!isCreateIntent && detectWorkflowModifyIntent(content) && openaiKey) {
-    // ── Modify Intent (non-SSE) ──────────────────────────────────────────────
-    logger.info({ convId, content: content.slice(0, 50) }, "Routing to workflow modifier");
-    modelUsed = "modifier-gpt4o+gemini";
-
-    try {
-      let currentWorkflowJson: Record<string, unknown> | null = null;
-      let targetWorkflowName: string | null = null;
-      let targetWorkflowId: string | null = null;
-
-      try {
-        const allWorkflows = await getWorkflows();
-        if (allWorkflows.length > 0) {
-          const match = await extractWorkflowNameFromMessage(
-            content,
-            allWorkflows.map((w) => ({ id: w.id, name: w.name })),
-            openaiKey
-          );
-          if (match) {
-            targetWorkflowId = match.workflowId;
-            targetWorkflowName = match.workflowName;
-            currentWorkflowJson = await getWorkflow(targetWorkflowId) as unknown as Record<string, unknown>;
-          }
-        }
-      } catch {
-        logger.warn("Could not fetch workflows from n8n for modify intent");
-      }
-
-      if (!currentWorkflowJson) {
-        assistantContent = lang === "ar"
-          ? `⚠️ **لم أتمكن من تحديد الـ workflow المقصود.**\n\nيرجى:\n1. التأكد من أن n8n مضبوط ومتصل في **الإعدادات**\n2. أو ذكر اسم الـ workflow بوضوح في رسالتك\n3. أو استخدام زر "تحليل وإصلاح" من صفحة الـ Workflows`
-          : `⚠️ **Could not identify which workflow to modify.**\n\nPlease:\n1. Make sure n8n is configured and connected in **Settings**\n2. Or mention the workflow name clearly in your message\n3. Or use the "Analyze & Fix" button from the Workflows page`;
-      } else {
-        const modifierResult = await runWorkflowModifier(
-          currentWorkflowJson,
-          content,
-          lang,
-          { openaiKey, geminiKey: geminiKey ?? undefined }
-        );
-
-        if (modifierResult.success && modifierResult.modifiedWorkflowJson) {
-          let appliedToN8n = false;
-          try {
-            const updatePayload = {
-              name: (modifierResult.modifiedWorkflowJson.name as string) ?? (currentWorkflowJson.name as string),
-              nodes: modifierResult.modifiedWorkflowJson.nodes,
-              connections: modifierResult.modifiedWorkflowJson.connections,
-              settings: sanitizeSettings(modifierResult.modifiedWorkflowJson.settings ?? currentWorkflowJson.settings),
-            };
-            await updateWorkflow(targetWorkflowId!, updatePayload as Record<string, unknown>);
-            appliedToN8n = true;
-          } catch (applyErr) {
-            logger.warn({ applyErr }, "Could not apply modification to n8n (non-SSE)");
-          }
-
-          if (lang === "ar") {
-            assistantContent = appliedToN8n
-              ? `✅ **تم تعديل الـ workflow "${targetWorkflowName}" وتطبيقه على n8n بنجاح!**\n\n📝 **التغييرات:** ${modifierResult.changesSummaryAr}`
-              : `⚠️ **تم توليد التعديل لكن لم يُطبَّق تلقائياً على n8n.**\n\n📝 **التغييرات:** ${modifierResult.changesSummaryAr}\n\n\`\`\`json\n${JSON.stringify(modifierResult.modifiedWorkflowJson, null, 2)}\n\`\`\``;
-          } else {
-            assistantContent = appliedToN8n
-              ? `✅ **Workflow "${targetWorkflowName}" modified and applied to n8n successfully!**\n\n📝 **Changes:** ${modifierResult.changesSummary}`
-              : `⚠️ **Modification generated but not automatically applied to n8n.**\n\n📝 **Changes:** ${modifierResult.changesSummary}\n\n\`\`\`json\n${JSON.stringify(modifierResult.modifiedWorkflowJson, null, 2)}\n\`\`\``;
-          }
-        } else {
-          assistantContent = lang === "ar"
-            ? `❌ فشل توليد التعديل: ${modifierResult.error ?? "خطأ غير معروف"}`
-            : `❌ Failed to generate modification: ${modifierResult.error ?? "Unknown error"}`;
-        }
-      }
-    } catch (err) {
-      logger.error({ err }, "Modify workflow non-SSE error");
-      assistantContent = lang === "ar"
-        ? `❌ خطأ أثناء تعديل الـ workflow: ${String(err)}`
-        : `❌ Error while modifying workflow: ${String(err)}`;
-    }
-
   } else if (openaiKey) {
     const OpenAI = (await import("openai")).default;
     const openai = new OpenAI({ apiKey: openaiKey, timeout: 60000 });
-
-    const systemPrompt = lang === "ar"
-      ? `أنت مساعد ذكي متخصص في إدارة n8n workflows. تتحدث باللغة العربية.`
-      : `You are an AI assistant specialized in n8n workflow management.`;
-
-    const contextMessages = [...previousMessages]
-      .reverse()
-      .slice(-10)
-      .map(m => ({ role: m.role as "user" | "assistant", content: m.content }));
-
+    const systemPrompt = lang === "ar" ? `أنت مساعد ذكي متخصص في إدارة n8n workflows.` : `You are an AI assistant specialized in n8n workflow management.`;
+    const contextMessages = [...previousMessages].reverse().slice(-10).map(m => ({
+      role: m.role as "user" | "assistant",
+      content: smartTruncateMessage(m.content, 1200),
+    }));
     try {
       const response = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [{ role: "system", content: systemPrompt }, ...contextMessages],
-        max_tokens: 1500,
-        temperature: 0.7,
+        max_tokens: 1500, temperature: 0.7,
       });
-
       assistantContent = response.choices[0]?.message?.content ?? "";
       tokensUsed = response.usage?.total_tokens ?? null;
-      modelUsed = "gpt-4o";
     } catch (err) {
-      assistantContent = lang === "ar"
-        ? `عذراً، تعذر الاتصال بـ GPT: ${String(err)}`
-        : `Sorry, could not connect to GPT: ${String(err)}`;
+      assistantContent = lang === "ar" ? `عذراً، تعذر الاتصال بـ GPT: ${String(err)}` : `Sorry, could not connect to GPT: ${String(err)}`;
     }
   } else {
     assistantContent = lang === "ar"
@@ -815,25 +629,14 @@ router.post("/conversations/:id/messages", authenticate, requirePermission("use_
   }
 
   const [assistantMsg] = await db.insert(messagesTable).values({
-    conversationId: convId,
-    role: "assistant",
-    content: assistantContent,
-    modelUsed,
-    tokensUsed,
+    conversationId: convId, role: "assistant", content: assistantContent, modelUsed, tokensUsed,
   }).returning();
 
   await db.update(conversationsTable)
     .set({ messageCount: messageCount + 1, updatedAt: new Date() })
     .where(eq(conversationsTable.id, convId));
 
-  res.json({
-    success: true,
-    data: {
-      ...assistantMsg,
-      generationSessionId,
-      isWorkflowCreation: isCreateIntent,
-    },
-  });
+  res.json({ success: true, data: { ...assistantMsg, generationSessionId, isWorkflowCreation: intent === "create" } });
 });
 
 // ─── SSE: Workflow Analysis ───────────────────────────────────────────────────
@@ -844,11 +647,7 @@ router.post("/conversations/:id/analyze-workflow", authenticate, requirePermissi
   if (isNaN(convId)) { res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid conversation ID" } }); return; }
 
   const { workflowId, userContext } = req.body as { workflowId: string; userContext?: string };
-
-  if (!workflowId) {
-    res.status(400).json({ success: false, error: { code: "MISSING_WORKFLOW_ID", message: "workflowId is required" } });
-    return;
-  }
+  if (!workflowId) { res.status(400).json({ success: false, error: { code: "MISSING_WORKFLOW_ID", message: "workflowId is required" } }); return; }
 
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -866,7 +665,7 @@ router.post("/conversations/:id/analyze-workflow", authenticate, requirePermissi
   try {
     const { openaiKey, geminiKey } = await getApiKeys();
     if (!openaiKey) {
-      sendEvent("error", { message: "مفتاح OpenAI غير مضبوط. يرجى الذهاب للإعدادات." });
+      sendEvent("error", { message: "⚠️ مفتاح OpenAI غير مضبوط. يرجى الذهاب للإعدادات." });
       res.end();
       return;
     }
@@ -878,7 +677,7 @@ router.post("/conversations/:id/analyze-workflow", authenticate, requirePermissi
 
     let workflowJson: Record<string, unknown>;
     try {
-      workflowJson = await getWorkflow(workflowId) as unknown as Record<string, unknown>;
+      workflowJson = await getCachedWorkflow(workflowId, 10_000);
     } catch {
       sendEvent("error", { message: "لم يتم العثور على الـ workflow في n8n. تحقق من الاتصال." });
       res.end();
@@ -893,14 +692,11 @@ router.post("/conversations/:id/analyze-workflow", authenticate, requirePermissi
       logger.warn({ workflowId }, "Could not fetch execution errors — continuing without them");
     }
 
-    const contextMsg = userContext ? `تحليل مسار العمل: ${workflowJson.name as string}\n\nملاحظة المستخدم: ${userContext}` : `تحليل مسار العمل: ${workflowJson.name as string}`;
+    const contextMsg = userContext
+      ? `تحليل مسار العمل: ${workflowJson.name as string}\n\nملاحظة المستخدم: ${userContext}`
+      : `تحليل مسار العمل: ${workflowJson.name as string}`;
 
-    await db.insert(messagesTable).values({
-      conversationId: convId,
-      role: "user",
-      content: contextMsg,
-    });
-
+    await db.insert(messagesTable).values({ conversationId: convId, role: "user", content: contextMsg });
     const prevCount = await db.select().from(messagesTable).where(eq(messagesTable.conversationId, convId));
 
     const analyzerResult = await runWorkflowAnalyzer(
@@ -910,13 +706,11 @@ router.post("/conversations/:id/analyze-workflow", authenticate, requirePermissi
       {
         openaiKey,
         geminiKey: geminiKey ?? undefined,
-        onPhaseUpdate: (phase) => {
-          sendEvent("phase", phase);
-        },
+        onPhaseUpdate: (phase) => sendEvent("phase", phase),
       },
     );
 
-    const workflowName = workflowJson.name as string ?? "Workflow";
+    const workflowName = (workflowJson.name as string) ?? "Workflow";
     const critCount = analyzerResult.problems.filter(p => p.severity === "critical").length;
     const highCount = analyzerResult.problems.filter(p => p.severity === "high").length;
 
@@ -924,8 +718,7 @@ router.post("/conversations/:id/analyze-workflow", authenticate, requirePermissi
     if (analyzerResult.problems.length === 0) {
       assistantContent = `✅ **تحليل مسار العمل: "${workflowName}"**\n\nلم يتم اكتشاف أي مشاكل! يبدو أن مسار العمل مصمم بشكل صحيح.\n\n${analyzerResult.summaryAr}`;
     } else {
-      assistantContent = `🔍 **تحليل مسار العمل: "${workflowName}"**\n\n${analyzerResult.summaryAr}\n\n`;
-      assistantContent += `**المشاكل المكتشفة (${analyzerResult.problems.length}):**\n`;
+      assistantContent = `🔍 **تحليل مسار العمل: "${workflowName}"**\n\n${analyzerResult.summaryAr}\n\n**المشاكل المكتشفة (${analyzerResult.problems.length}):**\n`;
       if (critCount > 0) assistantContent += `🔴 حرجة: ${critCount} | `;
       if (highCount > 0) assistantContent += `🟠 عالية: ${highCount} | `;
       const medCount = analyzerResult.problems.filter(p => p.severity === "medium").length;

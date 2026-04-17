@@ -748,6 +748,8 @@ export default function ChatPage() {
   const [generationResult, setGenerationResult] = useState<GenerationResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [optimisticUserMsg, setOptimisticUserMsg] = useState<Message | null>(null);
+  const [streamingContent, setStreamingContent] = useState("");
+  const streamCompletedRef = useRef(false);
 
   // Persist generation result per conversation in sessionStorage
   const saveGenerationResult = useCallback((convId: number | null, result: GenerationResult | null) => {
@@ -883,7 +885,7 @@ export default function ChatPage() {
   // ── Effects ──
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isGenerating, generationResult]);
+  }, [messages, isGenerating, generationResult, streamingContent]);
 
   useEffect(() => {
     const replay = sessionStorage.getItem("chatReplay");
@@ -1044,7 +1046,9 @@ export default function ChatPage() {
     setInput("");
     setAttachments([]);
     setSending(true);
-    setIsGenerating(false);
+    setIsGenerating(true);
+    setStreamingContent("");
+    streamCompletedRef.current = false;
     setGenerationResult(null);
     saveGenerationResult(selectedConvId, null);
     setAnalysisResult(null);
@@ -1062,7 +1066,9 @@ export default function ChatPage() {
     const token = localStorage.getItem("accessToken");
     if (token) headers["Authorization"] = `Bearer ${token}`;
 
-    fetch(`${API_BASE}/chat/conversations/${selectedConvId}/generate`, {
+    const activeConvId = selectedConvId;
+
+    fetch(`${API_BASE}/chat/conversations/${activeConvId}/generate`, {
       method: "POST",
       headers,
       body: JSON.stringify({ content: fullContent, mode: chatMode }),
@@ -1072,12 +1078,14 @@ export default function ChatPage() {
       const decoder = new TextDecoder();
       let buffer = "";
       let lastEventName = "";
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split("\n");
         buffer = lines.pop() ?? "";
+
         for (const line of lines) {
           if (line.startsWith("event: ")) {
             lastEventName = line.slice(7).trim();
@@ -1088,14 +1096,25 @@ export default function ChatPage() {
             try {
               const parsed = JSON.parse(eventLine) as Record<string, unknown>;
 
-              // ── Error event ──────────────────────────────────────────────
-              if (lastEventName === "error") {
+              // ── Thinking event (immediate acknowledgment) ─────────────────
+              if (lastEventName === "thinking") {
+                setIsGenerating(true);
+
+              // ── Stream chunk (streaming text) ─────────────────────────────
+              } else if (lastEventName === "stream_chunk") {
+                const delta = (parsed as { delta?: string }).delta ?? "";
+                if (delta) setStreamingContent(prev => prev + delta);
+
+              // ── Error event ───────────────────────────────────────────────
+              } else if (lastEventName === "error") {
                 const errMsg = (parsed as { message?: string }).message ?? (isRTL ? "حدث خطأ غير متوقع" : "Unexpected error");
+                streamCompletedRef.current = true;
+                setStreamingContent("");
                 setSending(false);
                 setIsGenerating(false);
                 setOptimisticUserMsg(null);
                 setPhases([]);
-                toast({ title: isRTL ? `⚠️ ${errMsg}` : `⚠️ ${errMsg}`, variant: "destructive" });
+                toast({ title: `⚠️ ${errMsg}`, variant: "destructive" });
 
               // ── Phase progress ────────────────────────────────────────────
               } else if ((parsed as { phase?: number }).phase !== undefined) {
@@ -1107,33 +1126,40 @@ export default function ChatPage() {
                   return [...prev, phaseData];
                 });
 
-              // ── Start event (type announcement) ──────────────────────────
-              } else if ((parsed as { type?: string }).type === "sequential" || (parsed as { type?: string }).type === "gpt-only" || (parsed as { type?: string }).type === "chat") {
-                if ((parsed as { type?: string }).type === "sequential") {
+              // ── Start event (type announcement) ───────────────────────────
+              } else if ((parsed as { type?: string }).type !== undefined) {
+                const type = (parsed as { type: string }).type;
+                if (type === "sequential") {
                   setPhases([
                     { phase: 1, label: "GPT-4o: Creating workflow", labelAr: "GPT-4o: إنشاء الـ workflow", status: "pending" },
                     { phase: 2, label: "Gemini: Reviewing & scoring", labelAr: "Gemini: مراجعة وتقييم", status: "pending" },
                     { phase: 3, label: "GPT-4o: Refining workflow", labelAr: "GPT-4o: تحسين الـ workflow", status: "pending" },
                     { phase: 4, label: "Gemini: Final validation", labelAr: "Gemini: التحقق النهائي", status: "pending" },
                   ]);
-                  setIsGenerating(true);
-                } else {
-                  // Regular chat or gpt-only: show typing indicator
-                  setIsGenerating(true);
                 }
+                setIsGenerating(true);
 
               // ── Complete event ────────────────────────────────────────────
               } else if ((parsed as { message?: unknown }).message !== undefined) {
+                streamCompletedRef.current = true;
+                setStreamingContent("");
                 setIsGenerating(false);
                 if ((parsed as { workflowJson?: unknown }).workflowJson) {
                   const r = parsed as { workflowJson: Record<string, unknown>; qualityScore: number; qualityGrade: string; roundsCount: number; totalTimeMs: number; phases: PhaseProgress[] };
-                  const result: GenerationResult = { workflowJson: r.workflowJson, qualityScore: r.qualityScore ?? 75, qualityGrade: r.qualityGrade ?? "B", roundsCount: r.roundsCount ?? 1, totalTimeMs: r.totalTimeMs ?? 0, phases: r.phases ?? [] };
+                  const result: GenerationResult = {
+                    workflowJson: r.workflowJson,
+                    qualityScore: r.qualityScore ?? 75,
+                    qualityGrade: r.qualityGrade ?? "B",
+                    roundsCount: r.roundsCount ?? 1,
+                    totalTimeMs: r.totalTimeMs ?? 0,
+                    phases: r.phases ?? [],
+                  };
                   setGenerationResult(result);
-                  saveGenerationResult(selectedConvId, result);
+                  saveGenerationResult(activeConvId, result);
                 } else {
                   setPhases([]);
                 }
-                // Refetch first, THEN clear the optimistic message to avoid blank flash
+                // Refetch first, THEN clear optimistic message to avoid blank flash
                 void refetchConv().then(() => {
                   setSending(false);
                   setOptimisticUserMsg(null);
@@ -1143,11 +1169,21 @@ export default function ChatPage() {
                 });
                 void queryClient.invalidateQueries({ queryKey: getGetConversationsQueryKey() });
               }
-            } catch { /* ignore */ }
+            } catch { /* ignore parse errors */ }
           }
         }
       }
+
+      // ── Stream ended without complete event → ensure cleanup ──────────
+      if (!streamCompletedRef.current) {
+        setStreamingContent("");
+        setIsGenerating(false);
+        setSending(false);
+        setOptimisticUserMsg(null);
+        void refetchConv();
+      }
     }).catch((err: unknown) => {
+      setStreamingContent("");
       setSending(false);
       setIsGenerating(false);
       setOptimisticUserMsg(null);
@@ -1874,9 +1910,31 @@ export default function ChatPage() {
                   );
                 })}
 
+                {/* ── Streaming message bubble ── */}
+                <AnimatePresence>
+                  {streamingContent && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className={`flex items-end gap-2.5 mb-2 ${isRTL ? "justify-end" : "justify-start"}`}
+                    >
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-500 flex items-center justify-center shrink-0 shadow-md shadow-violet-500/20">
+                        <Bot size={16} className="text-white" />
+                      </div>
+                      <div className="bg-card border border-border rounded-2xl rounded-ts-sm px-4 py-3 max-w-[75%] shadow-sm">
+                        <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed select-text">
+                          <MarkdownRenderer content={streamingContent} />
+                        </div>
+                        <span className="inline-block w-0.5 h-4 bg-accent animate-pulse ml-0.5 align-text-bottom" />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 {/* Phase 5: Improved typing indicator */}
                 <AnimatePresence>
-                  {isGenerating && phases.length > 0 && (
+                  {isGenerating && !streamingContent && phases.length > 0 && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -1886,7 +1944,7 @@ export default function ChatPage() {
                       <PhaseProgressBar phases={phases} isRTL={isRTL} />
                     </motion.div>
                   )}
-                  {isGenerating && phases.length === 0 && (
+                  {isGenerating && !streamingContent && phases.length === 0 && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
