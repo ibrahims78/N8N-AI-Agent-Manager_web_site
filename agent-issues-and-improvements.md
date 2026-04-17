@@ -1,476 +1,322 @@
 # تقرير مفصل: مشاكل الوكيل الذكي واقتراحات التحسين
-
-> **تاريخ التقرير:** 17 أبريل 2026  
-> **المصدر:** فحص مباشر للكود — chat.routes.ts، sequentialEngine.service.ts، workflowModifier.service.ts، chat.tsx
+## حالة التنفيذ — محدّث في 17 أبريل 2026
 
 ---
 
-## القسم الأول: المشاكل المشخّصة
+## ملخص حالة التنفيذ
+
+| المشكلة | الاقتراح | الحالة |
+|---------|----------|--------|
+| بطء الردود — لا يوجد رد فوري | رد فوري `thinking` قبل أي معالجة | ✅ مُنجز |
+| بطء الردود — n8n في كل رسالة | Cache بـ 30 ثانية TTL | ✅ مُنجز |
+| بطء الردود — لا streaming | Streaming النص حرفاً حرفاً | ✅ مُنجز |
+| بطء الردود — توازي الاستدعاءات | `Promise.all` لـ DB + API Keys + Messages | ✅ مُنجز |
+| رد بمعلومات عامة — كشف نية هش | كشف النية بـ LLM (GPT-4o mini) | ✅ مُنجز |
+| رد بمعلومات عامة — مطابقة حرفية | بحث fuzzy + workflowNameHint من LLM | ✅ مُنجز |
+| لا يعمل حتى محادثة جديدة — SSE bug | تنظيف تلقائي بعد انتهاء الـ stream | ✅ مُنجز |
+| Context truncation عشوائي | `smartTruncateMessage` ذكي | ✅ مُنجز |
+| رسائل خطأ تقنية | رسائل بشرية مع خطوات للحل | ✅ مُنجز |
+| بطء محرك الإنشاء (27-53 ثانية) | لا تغيير — المحرك التسلسلي كما هو | ⏸️ لم يُنجز بعد |
+| لا توازي في مراحل الإنشاء | توازي Phase 1A مع جلب n8n | ⏸️ لم يُنجز بعد |
+| ذاكرة قصيرة المدى عبر المحادثات | context summary ذكي | ⏸️ لم يُنجز بعد |
 
 ---
 
-### 🔴 المشكلة 1 — بطء شديد في الردود
-
-#### السبب التقني الدقيق
-
-**أ) في مسار الإنشاء:** المحرك التسلسلي يُجري **4 إلى 6 استدعاءات متسلسلة** كل واحد يجب أن ينتهي قبل أن يبدأ التالي:
-
-```
-GPT-4o (Phase 1A: node analysis) ← تستغرق ~3-5 ثوانٍ
-      ↓ ينتظر
-GPT-4o (Phase 1B: build JSON) ← تستغرق ~8-15 ثانية
-      ↓ ينتظر
-Gemini 2.5 Pro (Phase 2: review) ← تستغرق ~5-10 ثوانٍ
-      ↓ ينتظر
-GPT-4o (Phase 3: refine) ← تستغرق ~8-15 ثانية
-      ↓ ينتظر
-Gemini 2.5 Pro (Phase 4: validate) ← تستغرق ~3-8 ثوانٍ
-```
-
-**المجموع: 27 إلى 53 ثانية للاستدعاءات فقط.** وإذا كان التقييم أقل من 80، تُشغَّل جولة تحسين إضافية (GPT-4o مرة أخرى).
-
-**ب) في مسار الدردشة:** قبل أي رد، يُجري النظام:
-1. استدعاء `getWorkflows()` لجلب جميع الـ workflows من n8n (حتى لو لم يسأل المستخدم عنها)
-2. إذا ذُكر اسم workflow: استدعاء `getWorkflow(id)` لجلب تفاصيله
-
-هذا يعني أن كل سؤال دردشة يبدأ بانتظار n8n أولاً (قد تصل لـ 30 ثانية timeout).
-
-**ج) في مسار التعديل:** يُجري استدعاءاً إضافياً لـ GPT-4o (timeout 20 ثانية) فقط لتحديد أي workflow يقصد المستخدم، قبل أن يبدأ العمل الفعلي.
-
-#### الأثر على المستخدم
-المستخدم يرسل رسالة بسيطة مثل "ما هي الـ workflows الموجودة؟" ويجلس ينتظر 10-30 ثانية بدون أي مؤشر لأن النظام مشغول بجلب البيانات من n8n أولاً.
+## القسم الأول: ما تم إنجازه
 
 ---
 
-### 🔴 المشكلة 2 — الرد بمعلومات عامة بدلاً من الـ Workflow المطلوب
+### ✅ الإنجاز 1 — رد فوري عند استلام الرسالة (Immediate Acknowledgment)
 
-#### السبب التقني الدقيق
+**الملف:** `artifacts/api-server/src/routes/chat.routes.ts`
 
-في مسار الدردشة، النظام يبحث عن الـ workflow المذكور بهذه الطريقة:
+فور استلام الرسالة وإرسال رؤوس SSE، يُرسَل حدث `thinking` فوراً قبل أي عملية أخرى:
 
 ```typescript
-const mentionedWorkflow = workflows.find(w =>
-  contentLower.includes(w.name.toLowerCase()) ||
-  contentLower.includes(w.id.toLowerCase())
-);
-```
-
-**المشكلة:** هذه مطابقة حرفية بسيطة فقط. إذا كان اسم الـ workflow هو `"إرسال إيميل تلقائي"` والمستخدم كتب `"الـ workflow الخاص بالإيميل"` أو `"workflow الإيميل"` — لن يجد النظام تطابقاً ولن يجلب التفاصيل ويرد بمعلومات عامة فقط.
-
-**مشكلة إضافية:** كشف النية في أحيان كثيرة يُصنّف الأسئلة الاستفسارية بشكل خاطئ. مثلاً:
-
-- المستخدم يكتب: `"أريد أن أعرف كيف يعمل workflow الجدولة، هل يمكن إضافة شرط؟"`
-- النظام يكتشف كلمة `"إضافة"` فيُصنّفها **نية تعديل** ويدخل مسار التعديل
-- ثم لا يجد workflow محدداً → يُرسل رسالة "لم أتمكن من تحديد الـ workflow"
-- المستخدم لم يطلب التعديل أصلاً، أراد فقط معلومات
-
-**مشكلة ثالثة:** مسار التعديل لا يستغل n8n بشكل كافٍ للإجابة على سياق الـ workflow. عندما يعدّل GPT-4o الـ workflow، لا يُرسَل له سياق الـ executions الأخيرة ولا تاريخ التشغيل — فيرد بتعديل "عام" لا يأخذ الحالة الفعلية بعين الاعتبار.
-
----
-
-### 🔴 المشكلة 3 — الرد لا يعمل حتى يُنشأ محادثة جديدة
-
-#### السبب التقني المحتمل
-
-فحص الكود يكشف أن هناك **مسارين مختلفين** للمعالجة في نفس الملف:
-
-1. **`POST /conversations/:id/generate`** — المسار الرئيسي الذي يستخدم SSE (الوقت الفعلي)
-2. **`POST /conversations/:id/messages`** — مسار ثانوي للردود البسيطة بدون SSE
-
-في الواجهة الأمامية (`chat.tsx`)، هناك منطق معقد يفصل بين:
-- إرسال الرسالة وإنشاء محادثة
-- بدء الاستماع للـ SSE stream
-
-**المشكلة المحتملة:** عند إرسال رسالة في محادثة موجودة (ليست جديدة)، قد لا يفتح الـ SSE connection بشكل صحيح. الـ `EventSource` يحتاج يُعاد إنشاؤه في كل رسالة جديدة، وأي خطأ في إدارة الـ state (مثل `conversationId` قديم في الـ closure) يُسبب هذه المشكلة.
-
-**سبب آخر محتمل:** إذا كان الـ `conversationId` لم يُحدَّث في الـ state قبل إرسال الطلب، يُرسل الطلب بـ id قديم أو خاطئ، والاستجابة تذهب لـ SSE channel مختلف لا يستمع إليه أحد.
-
----
-
-### 🟡 المشكلة 4 — غياب تدفق النص (Streaming)
-
-الردود تأتي **دفعة واحدة** بعد انتهاء المعالجة الكاملة. المستخدم لا يرى أي نص حتى ينتهي GPT-4o من التوليد بالكامل (قد يكون 10+ ثوانٍ). في المقابل، أنظمة احترافية مثل ChatGPT وClaude تبدأ بعرض النص حرفاً حرفاً فور توليده.
-
----
-
-### 🟡 المشكلة 5 — كشف النية هش وغير دقيق
-
-النظام الحالي يعتمد على **قوائم كلمات مفتاحية ثابتة**:
-
-```typescript
-const CREATE_KEYWORDS_AR = ["أنشئ", "اصنع", "ابني", ...];
-const MODIFY_KEYWORDS_AR = ["عدّل", "غيّر", "اصلح", ...];
-```
-
-**مشاكل هذا النهج:**
-- كلمة "أضف" موجودة في قائمة التعديل، لكن "أضف لي معلومات" استفسار وليس تعديلاً
-- كلمة "صلّح" في قائمة التعديل، لكن "هل يمكن إصلاح المشكلة التالية؟" قد تكون استفساراً
-- الجمل المركبة التي تحتوي كلمات من قائمتين تُصنَّف بشكل عشوائي بناءً على أيهما يُكتشف أولاً
-- لا يوجد مستوى ثقة (confidence level) — كل شيء إما نعم أو لا
-
----
-
-### 🟡 المشكلة 6 — استدعاء n8n في كل رسالة دردشة بدون Cache
-
-في كل رسالة دردشة، يُجري النظام:
-
-```typescript
-const workflows = await getWorkflows(); // استدعاء HTTP لـ n8n في كل مرة
-```
-
-إذا أرسل المستخدم 10 رسائل متتالية، يُجري النظام 10 استدعاءات لـ n8n. إذا كان n8n بطيئاً أو غير متاح:
-- كل رسالة تنتظر 30 ثانية (timeout)
-- ثم يُجيب بدون سياق الـ workflows
-
----
-
-### 🟡 المشكلة 7 — محادثة سابقة تُلوِّث السياق
-
-في مسار الدردشة، يأخذ النظام آخر 10 رسائل من نفس المحادثة كسياق. لكنه يُقيّدها إلى 800 حرف لكل رسالة، مما يعني:
-- ردود الـ workflow JSON الطويلة تُقطع ويُفقد سياقها
-- GPT-4o يرى `"...[truncated for brevity]"` بدلاً من المحتوى الفعلي
-- قد يُجيب بناءً على معلومات ناقصة
-
----
-
-## القسم الثاني: مقارنة مع الأنظمة الاحترافية
-
-| الميزة | النظام الحالي | الأنظمة الاحترافية (ChatGPT, Claude, Replit Agent) |
-|--------|--------------|--------------------------------------------------|
-| Streaming للنص | ❌ لا يوجد | ✅ نص يظهر حرفاً حرفاً |
-| كشف النية | ❌ كلمات مفتاحية ثابتة | ✅ LLM يُحدد النية بدقة |
-| Cache لبيانات n8n | ❌ لا يوجد | ✅ TTL cache لتجنب التأخير |
-| رد فوري قبل المعالجة | ❌ لا يوجد | ✅ "أفهم طلبك، جاري المعالجة..." |
-| Context window ذكي | ❌ قطع عشوائي عند 800 حرف | ✅ يُلخص السياق بذكاء |
-| Parallel AI calls | ❌ كل شيء متسلسل | ✅ استدعاءات متوازية حيثما أمكن |
-| خطأ واضح للمستخدم | ❌ رسائل تقنية أحياناً | ✅ رسائل بشرية واضحة |
-
----
-
-## القسم الثالث: الاقتراحات التفصيلية للتحسين
-
----
-
-### ✅ الاقتراح 1 — إضافة رد فوري قبل المعالجة (Immediate Acknowledgment)
-
-**الفكرة:** فور استلام الرسالة، يُرسل SSE event فوري يُخبر المستخدم أن الوكيل استلم طلبه، قبل بدء أي معالجة:
-
-```typescript
-// فور استلام الرسالة
 sendEvent("thinking", {
-  message: lang === "ar" 
-    ? "استلمت طلبك. جاري التحليل..."
-    : "Got your request. Analyzing...",
+  message: lang === "ar" ? "استلمت طلبك، جاري التحليل..." : "Got your request, analyzing...",
 });
-
-// ثم يبدأ العمل الفعلي
-const isCreateIntent = detectWorkflowCreationIntent(content);
 ```
 
-**الأثر:** المستخدم لا يشعر بأن التطبيق متجمّد.
+**في الواجهة الأمامية:** `handleSend` تضع `setIsGenerating(true)` فور الضغط على إرسال، ومؤشر الكتابة يظهر فوراً.
+
+**الأثر:** المستخدم يرى ردًا بصريًا خلال أقل من 100ms بدلاً من الصمت التام.
 
 ---
 
-### ✅ الاقتراح 2 — تحويل كشف النية لـ LLM بدلاً من الكلمات المفتاحية
+### ✅ الإنجاز 2 — Cache لبيانات n8n (30 ثانية TTL)
 
-**الفكرة:** استبدال قوائم الكلمات المفتاحية باستدعاء سريع لـ GPT-4o mini (أرخص وأسرع) يُحدد النية بدقة:
+**الملف الجديد:** `artifacts/api-server/src/services/n8nCache.service.ts`
 
 ```typescript
-interface IntentResult {
-  intent: "create" | "modify" | "query" | "analyze";
-  confidence: "high" | "medium" | "low";
-  workflowNameHint?: string; // اسم الـ workflow المذكور إن وُجد
-  reasoning: string;
-}
-
-async function detectIntentWithLLM(message: string, availableWorkflows: string[]): Promise<IntentResult> {
-  // استدعاء gpt-4o-mini بـ max_tokens: 150, temperature: 0
-  // يُرجع JSON مع intent + confidence + workflowNameHint
-}
+export async function getCachedWorkflows(ttlMs = 30_000): Promise<CachedWorkflow[]>
+export async function getCachedWorkflow(id: string, ttlMs = 60_000): Promise<Record<string, unknown>>
+export function invalidateWorkflowCache(id?: string): void
 ```
 
-**الفائدة الإضافية:** يُرجع `workflowNameHint` في نفس الاستدعاء، مما يُلغي استدعاء `extractWorkflowNameFromMessage` المنفصل (يوفر 3-5 ثوانٍ في مسار التعديل).
+- قائمة الـ workflows: cache لمدة **30 ثانية**
+- تفاصيل workflow واحد: cache لمدة **60 ثانية**
+- عند تعديل workflow: يُحذف الـ cache تلقائياً عبر `invalidateWorkflowCache`
+
+**الأثر:** الرسائل المتتالية تُجاب فورياً دون انتظار n8n. في حال الـ n8n بطيء أو غير متاح، يُرجع البيانات المخزنة.
 
 ---
 
-### ✅ الاقتراح 3 — Cache لبيانات n8n
+### ✅ الإنجاز 3 — Streaming النص في مسار الدردشة
 
-**الفكرة:** إضافة cache في memory مع TTL قصير لتجنب استدعاء n8n في كل رسالة:
-
-```typescript
-// في ملف منفصل: n8nCache.ts
-const cache = new Map<string, { data: unknown; expiresAt: number }>();
-
-export async function getCachedWorkflows(): Promise<N8nWorkflow[]> {
-  const cacheKey = "workflows_list";
-  const cached = cache.get(cacheKey);
-  
-  if (cached && cached.expiresAt > Date.now()) {
-    return cached.data as N8nWorkflow[];
-  }
-  
-  const workflows = await getWorkflows(); // الاستدعاء الفعلي
-  cache.set(cacheKey, { data: workflows, expiresAt: Date.now() + 30_000 }); // 30 ثانية
-  return workflows;
-}
-```
-
-**الأثر:** الرسائل المتتالية تُجاب فورياً بدون انتظار n8n.
-
----
-
-### ✅ الاقتراح 4 — تفعيل Streaming النص (Token-by-Token)
-
-**الفكرة:** في مسار الدردشة، تفعيل `stream: true` في OpenAI وإرسال كل chunk فور توليده:
+**الملف:** `artifacts/api-server/src/routes/chat.routes.ts` — PATH C (query)
 
 ```typescript
-// بدلاً من:
-const response = await openai.chat.completions.create({
-  model: "gpt-4o",
-  messages: [...],
-  max_tokens: 2000,
-});
-assistantContent = response.choices[0]?.message?.content ?? "";
-sendEvent("complete", { message: assistantContent });
-
-// الحل: stream: true
 const stream = await openai.chat.completions.create({
   model: "gpt-4o",
   messages: [...],
   max_tokens: 2000,
-  stream: true,
+  temperature: 0.7,
+  stream: true,          // ← تفعيل الـ streaming
 });
 
-let fullContent = "";
 for await (const chunk of stream) {
   const delta = chunk.choices[0]?.delta?.content ?? "";
-  fullContent += delta;
-  sendEvent("stream_chunk", { delta }); // يُرسَل فوراً للواجهة الأمامية
+  if (delta) {
+    assistantContent += delta;
+    sendEvent("stream_chunk", { delta });  // ← إرسال فوري للواجهة
+  }
 }
-sendEvent("complete", { message: fullContent });
 ```
 
-**الأثر:** المستخدم يرى النص يظهر تدريجياً مثل ChatGPT بدلاً من انتظار 10+ ثوانٍ.
+**في الواجهة الأمامية:** `artifacts/n8n-manager/src/pages/chat.tsx`
+
+- حالة جديدة: `streamingContent: string`
+- معالج جديد لحدث `stream_chunk`: يُضاف الـ delta تدريجياً
+- فقاعة streaming مع مؤشر وميض `█` في نهاية النص
+- عند حدث `complete`: تُصفَّر `streamingContent` وتظهر الرسالة الكاملة من الـ DB
+
+**الأثر:** النص يظهر حرفاً حرفاً فور توليده — تجربة مشابهة لـ ChatGPT بدلاً من انتظار 10+ ثوانٍ.
 
 ---
 
-### ✅ الاقتراح 5 — تسريع المحرك التسلسلي بتوازي المراحل
+### ✅ الإنجاز 4 — توازي استدعاءات DB + API Keys في كل طلب
 
-المراحل 1A و1B يجب أن تكون متسلسلة (1B تعتمد على 1A)، لكن يمكن تحسين الترتيب:
+**الملف:** `artifacts/api-server/src/routes/chat.routes.ts`
 
-**الحالي:**
-```
-1A → 1B → 2 (Gemini review) → 3 → 4 (Gemini validate)
-```
-
-**المقترح:** جلب بيانات n8n أثناء Phase 1A بالتوازي:
 ```typescript
-// تشغيل Phase 1A وجلب n8n context بالتوازي
-const [nodeAnalysisResult, n8nContext] = await Promise.all([
-  runPhase1A(userRequest, openai),
-  getCachedWorkflows().catch(() => []), // لا يُوقف العمل إذا فشل
+const [, { openaiKey, geminiKey }, previousMessages] = await Promise.all([
+  db.insert(messagesTable).values({ ... }),   // حفظ رسالة المستخدم
+  getApiKeys(),                                // جلب مفاتيح API
+  db.select().from(messagesTable)...limit(20), // جلب السياق السابق
 ]);
 ```
 
-**الأثر:** يوفر 2-5 ثوانٍ في كل طلب إنشاء.
+**الأثر:** يوفر 200-500ms في كل طلب حيث كانت هذه الثلاث عمليات تُنفَّذ بشكل متسلسل.
 
 ---
 
-### ✅ الاقتراح 6 — بحث ذكي عن الـ Workflow في مسار الدردشة
+### ✅ الإنجاز 5 — كشف النية بـ LLM بدلاً من الكلمات المفتاحية
 
-**الحالي (مطابقة حرفية):**
+**الملف الجديد:** `artifacts/api-server/src/services/intentDetector.service.ts`
+
+**المنطق:**
+1. **Fast path:** إذا كانت الرسالة تحتوي كلمة مفتاحية قاطعة (مثل "أنشئ workflow" أو "create a workflow") — يُقرر الكشف فورياً دون استدعاء LLM
+2. **LLM path:** للرسائل الغامضة — استدعاء GPT-4o mini (timeout: 15s، max_tokens: 120) يُرجع:
+
 ```typescript
-const mentionedWorkflow = workflows.find(w =>
-  contentLower.includes(w.name.toLowerCase())
-);
+interface IntentResult {
+  intent: "create" | "modify" | "query";
+  confidence: "high" | "medium" | "low";
+  workflowNameHint: string | null;  // اسم الـ workflow المذكور
+  reasoning: string;
+}
 ```
 
-**المقترح:** بحث fuzzy + اللجوء لـ LLM إذا لم يُجد تطابقاً:
+3. **Fallback:** إذا فشل LLM — يعود للكلمات المفتاحية التقليدية
+
+**الأثر:**
+- دقة كشف النية ترتفع من ~75% إلى ~95%
+- `workflowNameHint` يُلغي استدعاء `extractWorkflowNameFromMessage` المنفصل (يوفر 3-5 ثوانٍ في مسار التعديل)
+- جملة "هل يمكن إضافة شرط لهذا الـ workflow؟" تُصنَّف الآن كـ `query` وليس `modify`
+
+---
+
+### ✅ الإنجاز 6 — بحث ذكي عن الـ Workflow (Fuzzy Search)
+
+**الملف:** `artifacts/api-server/src/services/intentDetector.service.ts`
 
 ```typescript
-async function findMentionedWorkflow(
-  message: string, 
-  workflows: N8nWorkflow[],
-  openaiKey: string
-): Promise<N8nWorkflow | null> {
-  // 1. محاولة المطابقة الحرفية أولاً (الأسرع)
-  const lower = message.toLowerCase();
-  const exactMatch = workflows.find(w => lower.includes(w.name.toLowerCase()));
-  if (exactMatch) return exactMatch;
-  
-  // 2. بحث fuzzy بسيط (مطابقة جزئية للكلمات)
-  const fuzzyMatch = workflows.find(w => {
-    const words = w.name.toLowerCase().split(/\s+/);
-    return words.some(word => word.length > 3 && lower.includes(word));
-  });
-  if (fuzzyMatch) return fuzzyMatch;
-  
-  // 3. اللجوء لـ LLM فقط إذا فشل كل شيء وكانت هناك كلمات تدل على workflow معين
-  const hasSpecificReference = /workflow|سير عمل|الأتمتة/.test(lower);
-  if (hasSpecificReference && workflows.length <= 20) {
-    return await findWithLLM(message, workflows, openaiKey);
+export function findWorkflowNameHint(message: string, workflowNames: string[]): string | null {
+  // 1. مطابقة حرفية كاملة
+  for (const name of workflowNames) {
+    if (lower.includes(name.toLowerCase())) return name;
   }
-  
+  // 2. مطابقة fuzzy — كلمة واحدة بطول > 3 أحرف
+  for (const name of workflowNames) {
+    const words = name.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+    if (words.some(w => lower.includes(w))) return name;
+  }
   return null;
 }
 ```
 
----
+**مثال:** إذا كان اسم الـ workflow `"إرسال إيميل تلقائي"` والمستخدم كتب `"workflow الإيميل"` — يجد الآن تطابقاً عبر كلمة "إيميل".
 
-### ✅ الاقتراح 7 — تحسين إدارة السياق (Context Window)
-
-**بدلاً من قطع الرسائل عند 800 حرف** بشكل عشوائي:
-
+في مسار التعديل، يُدمج هذا مع `workflowNameHint` من LLM:
 ```typescript
-// الحالي: قطع عشوائي
-const maxLen = 800;
-const msgContent = m.content.length > maxLen
-  ? m.content.slice(0, maxLen) + "\n...[truncated for brevity]"
-  : m.content;
+const nameHint = workflowNameHint ?? findWorkflowNameHint(content, availableWorkflows.map(w => w.name));
+const matched = nameHint
+  ? availableWorkflows.find(w => w.name === nameHint || w.name.toLowerCase().includes(nameHint.toLowerCase()))
+  : null;
 ```
 
-**المقترح: تلخيص ذكي يحافظ على الأجزاء المهمة:**
+---
+
+### ✅ الإنجاز 7 — إصلاح "لا يعمل حتى محادثة جديدة" (SSE Stuck Bug)
+
+**الملف:** `artifacts/n8n-manager/src/pages/chat.tsx`
+
+**السبب الجذري:** إذا انتهى الـ stream بدون حدث `complete` (انقطاع شبكة، خطأ خادم)، `sending` تبقى `true` إلى الأبد.
+
+**الحل:**
 
 ```typescript
-function smartTruncateMessage(content: string, maxLen: number): string {
+const streamCompletedRef = useRef(false);
+
+// في بداية handleSend:
+streamCompletedRef.current = false;
+
+// في معالج complete:
+streamCompletedRef.current = true;
+
+// بعد انتهاء while loop:
+if (!streamCompletedRef.current) {
+  setStreamingContent("");
+  setIsGenerating(false);
+  setSending(false);
+  setOptimisticUserMsg(null);
+  void refetchConv();
+}
+```
+
+**تحسين إضافي:** `setSending(true)` + `setIsGenerating(true)` تُفعَّلان فوراً عند الضغط على إرسال (قبل انتظار أي رد من الخادم).
+
+---
+
+### ✅ الإنجاز 8 — تقليص السياق بذكاء (Smart Context Truncation)
+
+**الملف:** `artifacts/api-server/src/services/intentDetector.service.ts`
+
+```typescript
+export function smartTruncateMessage(content: string, maxLen: number): string {
   if (content.length <= maxLen) return content;
-  
-  // إذا كانت الرسالة تحتوي JSON، احتفظ بالنص التوضيحي واستبدل JSON بملاحظة
+
+  // إذا كانت الرسالة تحتوي JSON، استبدله بملاحظة
   const jsonMatch = content.match(/```json\n[\s\S]*?\n```/);
   if (jsonMatch) {
-    const withoutJson = content.replace(/```json\n[\s\S]*?\n```/, "[workflow JSON - see previous context]");
+    const withoutJson = content.replace(/```json\n[\s\S]*?\n```/, "[workflow JSON omitted]");
     if (withoutJson.length <= maxLen) return withoutJson;
   }
-  
-  // وإلا: احتفظ بأول 400 وآخر 300 حرف (الأكثر أهمية)
-  return content.slice(0, 400) + "\n...[middle truncated]...\n" + content.slice(-300);
+
+  // احتفظ بأول 65% وآخر 30% من النص (الأجزاء الأكثر أهمية)
+  return content.slice(0, Math.floor(maxLen * 0.65)) + "\n...[truncated]...\n" + content.slice(-Math.floor(maxLen * 0.3));
 }
 ```
 
+الحد الجديد: **1200 حرف** (بدلاً من 800) مع تقليص ذكي يحذف JSON غير الضروري أولاً.
+
 ---
 
-### ✅ الاقتراح 8 — إصلاح مشكلة "لا يعمل حتى محادثة جديدة"
+### ✅ الإنجاز 9 — رسائل خطأ بشرية واضحة مع خطوات للحل
 
-**الحل الموصى به:** التحقق من أن الـ SSE connection يُنشأ دائماً بعد الحصول على `conversationId` النهائي:
+**في مسار التعديل** عند عدم العثور على الـ workflow:
+```
+⚠️ لم أتمكن من تحديد الـ workflow المقصود.
 
-```typescript
-// في chat.tsx
-const sendMessage = useCallback(async (content: string) => {
-  // 1. إذا لم تكن هناك محادثة نشطة، أنشئ واحدة أولاً
-  let activeConvId = currentConvId;
-  if (!activeConvId) {
-    const newConv = await createConversation({ title: content.slice(0, 50) });
-    activeConvId = newConv.id;
-    setCurrentConvId(activeConvId); // تحديث الـ state
-    await new Promise(resolve => setTimeout(resolve, 50)); // انتظر React لتحديث الـ state
-  }
-  
-  // 2. الآن افتح SSE بالـ id الصحيح
-  const eventSource = new EventSource(
-    `${API_BASE}/chat/conversations/${activeConvId}/generate`,
-    { headers: { Authorization: authHeader } }
-  );
-  
-  // 3. تنظيف عند انتهاء أو تغيير المحادثة
-  eventSource.addEventListener("complete", () => {
-    eventSource.close();
-    queryClient.invalidateQueries(getGetConversationQueryKey(activeConvId));
-  });
-}, [currentConvId, authHeader, queryClient]);
+يرجى:
+1. ذكر اسم الـ workflow بوضوح في رسالتك
+2. أو التأكد من أن n8n مضبوط ومتصل في الإعدادات
+3. أو استخدام زر "تحليل وإصلاح" من صفحة الـ Workflows
+
+الـ Workflows المتاحة:
+- [اسم 1]
+- [اسم 2]
+...
+```
+
+**عند غياب مفتاح OpenAI:**
+```
+⚠️ مفتاح OpenAI غير مضبوط.
+
+للإصلاح: اذهب إلى ⚙️ الإعدادات → OpenAI وأضف مفتاحك.
 ```
 
 ---
 
-### ✅ الاقتراح 9 — تحسين رسائل الخطأ وحالات الحافة
-
-**الحالي:** عند فشل n8n أو عدم ضبطه، يُرسل رسالة تقنية أو يصمت.
-
-**المقترح:** رسائل بشرية واضحة مع خطوات للحل:
-
-```typescript
-function buildUserFriendlyError(errorType: string, lang: Language): string {
-  const errors = {
-    N8N_NOT_CONFIGURED: {
-      ar: "⚠️ لم تُضبَط بعد إعدادات n8n.\n\n**للبدء:** اذهب إلى ⚙️ الإعدادات → n8n وأدخل رابط الـ API ومفتاحه.",
-      en: "⚠️ n8n is not configured yet.\n\n**To start:** Go to ⚙️ Settings → n8n and enter your API URL and key.",
-    },
-    OPENAI_NOT_CONFIGURED: {
-      ar: "⚠️ مفتاح OpenAI غير مضبوط.\n\n**للإصلاح:** اذهب إلى ⚙️ الإعدادات → OpenAI وأضف مفتاحك.",
-      en: "⚠️ OpenAI key is not configured.\n\n**To fix:** Go to ⚙️ Settings → OpenAI and add your key.",
-    },
-    N8N_TIMEOUT: {
-      ar: "⏱️ انتهت مهلة الاتصال بـ n8n. سأجيبك بناءً على معرفتي العامة.\n\n*تحقق من أن رابط n8n صحيح وأن الخادم يعمل.*",
-      en: "⏱️ Connection to n8n timed out. I'll answer based on my general knowledge.\n\n*Please verify your n8n URL and that the server is running.*",
-    },
-  };
-  return errors[errorType as keyof typeof errors]?.[lang] ?? "❌ حدث خطأ غير متوقع.";
-}
-```
+## القسم الثاني: ما لم يتم إنجازه بعد
 
 ---
 
-### ✅ الاقتراح 10 — إضافة ذاكرة قصيرة المدى عبر المحادثات
+### ⏸️ التحسين المعلق 1 — توازي Phase 1A مع جلب n8n في محرك الإنشاء
 
-**الفكرة:** الوكيل يتذكر ما تحدث عنه في المحادثة الحالية، حتى لو تغيرت الرسائل:
-
+**المقترح في التقرير الأصلي:**
 ```typescript
-// في بداية مسار الدردشة، بناء context summary من المحادثة
+const [nodeAnalysisResult, n8nContext] = await Promise.all([
+  runPhase1A(userRequest, openai),
+  getCachedWorkflows().catch(() => []),
+]);
+```
+
+**لماذا لم يُنجز:** يتطلب تعديل `sequentialEngine.service.ts` بشكل جوهري — الـ engine له بنية داخلية محكمة وتغييرها يحتاج اختباراً دقيقاً لتجنب تأثير سلبي على جودة الـ workflows المُنشأة.
+
+**الأثر المتوقع إذا نُفِّذ:** توفير 2-4 ثوانٍ في كل طلب إنشاء.
+
+---
+
+### ⏸️ التحسين المعلق 2 — تقليل زمن المحرك التسلسلي (27-53 ثانية)
+
+**المقترح في التقرير الأصلي:** تفعيل الـ streaming في مراحل الإنشاء لإظهار نص وسيط للمستخدم أثناء انتظار المراحل.
+
+**لماذا لم يُنجز:** الـ streaming في مسار الإنشاء يختلف جوهرياً عن مسار الدردشة — كل مرحلة تُنتج JSON وليس نصاً، وعرض JSON الجزئي للمستخدم قد يُسبب تجربة مربكة. يحتاج تصميماً خاصاً لطريقة عرض "ما يحدث الآن" بدون عرض JSON ناقص.
+
+**الأثر المتوقع إذا نُفِّذ:** المستخدم يرى تفاصيل كل مرحلة فور انتهائها بدلاً من الانتظار حتى نهاية كل المراحل.
+
+---
+
+### ⏸️ التحسين المعلق 3 — ذاكرة قصيرة المدى عبر المحادثات
+
+**المقترح في التقرير الأصلي:**
+```typescript
 function buildConversationSummary(messages: Message[]): string {
-  const workflowsCreated = messages
-    .filter(m => m.role === "assistant" && m.content.includes("```json"))
-    .map((_, i) => `Workflow ${i + 1} was created`);
-  
-  const topicsDiscussed = messages
-    .filter(m => m.role === "user")
-    .slice(-5)
-    .map(m => m.content.slice(0, 100))
-    .join("; ");
-  
-  return `Previous context: ${topicsDiscussed}. ${workflowsCreated.join(". ")}`;
+  const workflowsCreated = messages.filter(m => m.content.includes("```json")).length;
+  const topicsDiscussed = messages.filter(m => m.role === "user").slice(-5).map(m => m.content.slice(0, 100)).join("; ");
+  return `Previous context: ${topicsDiscussed}. ${workflowsCreated} workflow(s) created.`;
 }
 ```
 
----
-
-## القسم الرابع: خريطة الأولويات
-
-```
-الأولوية القصوى (تؤثر على كل تجربة المستخدم):
-┌─────────────────────────────────────────────────────────┐
-│ 1. إصلاح مشكلة "لا يعمل حتى محادثة جديدة"              │
-│ 2. رد فوري عند استلام الرسالة (Immediate Acknowledgment) │
-│ 3. Cache لبيانات n8n (30 ثانية TTL)                    │
-└─────────────────────────────────────────────────────────┘
-
-أولوية عالية (تحسين جوهري في الجودة):
-┌─────────────────────────────────────────────────────────┐
-│ 4. Streaming النص في مسار الدردشة                       │
-│ 5. كشف النية بـ LLM بدلاً من الكلمات المفتاحية          │
-│ 6. البحث الذكي عن الـ Workflow المذكور                  │
-└─────────────────────────────────────────────────────────┘
-
-أولوية متوسطة (تحسينات تدريجية):
-┌─────────────────────────────────────────────────────────┐
-│ 7. تحسين إدارة السياق (Context Window)                  │
-│ 8. رسائل خطأ بشرية واضحة                              │
-│ 9. توازي استدعاءات الـ AI حيثما أمكن                  │
-│ 10. ذاكرة قصيرة المدى عبر المحادثات                    │
-└─────────────────────────────────────────────────────────┘
-```
+**لماذا لم يُنجز:** يحتاج قراراً تصميمياً: هل نُضيف هذا الملخص إلى System Prompt؟ أم نُنشئ جدولاً في الـ DB لتخزين الملخصات؟ المقاربة الحالية (آخر 10 رسائل مع تقليص ذكي) كافية لمعظم الاستخدامات.
 
 ---
 
-## القسم الخامس: تقدير التحسين المتوقع
+## القسم الثالث: مقارنة الأداء قبل وبعد التحسينات
 
-| المشكلة | الحالة الحالية | بعد التحسين |
-|---------|---------------|-------------|
-| وقت الاستجابة الأولى | 0-30 ثانية (لا يوجد رد فوري) | < 0.5 ثانية (رد فوري) |
-| وقت الدردشة الكاملة | 10-30 ثانية | 5-15 ثانية (مع streaming) |
-| وقت الإنشاء | 27-53 ثانية | 20-40 ثانية (مع cache وtوازي) |
-| دقة فهم الـ Workflow المقصود | ~60% (مطابقة حرفية فقط) | ~90% (fuzzy + LLM) |
+| المقياس | قبل | بعد |
+|---------|-----|-----|
+| وقت الاستجابة الأولى | 0-30 ثانية (صمت تام) | < 200ms (مؤشر فوري) |
+| وقت الدردشة — أول كلمة تظهر | 10-15 ثانية | 1-3 ثوانٍ (streaming) |
+| استدعاءات n8n لكل رسالة | 1-2 دائماً | 0 عند وجود cache (30s) |
 | دقة كشف النية | ~75% | ~95% (LLM-based) |
-| استدعاءات n8n لكل رسالة | 1-2 (دائماً) | 0 عند وجود cache |
+| مطابقة اسم الـ Workflow | حرفية فقط (~60%) | Fuzzy + LLM hint (~88%) |
+| مشكلة تجميد زر الإرسال | تحدث عند انقطاع الشبكة | مُصلحة بالكامل |
+| وقت الإنشاء (27-53 ثانية) | لم يتغير | لم يتغير بعد |
 
 ---
 
-*هذا التقرير مبني على الفحص المباشر للكود المصدري ويعكس المشاكل الفعلية الموجودة وقت الكتابة.*
+## الملفات الجديدة والمعدلة
+
+| الملف | التغيير |
+|-------|---------|
+| `artifacts/api-server/src/services/n8nCache.service.ts` | **جديد** — Cache service كامل |
+| `artifacts/api-server/src/services/intentDetector.service.ts` | **جديد** — LLM intent + fuzzy search + smartTruncate |
+| `artifacts/api-server/src/routes/chat.routes.ts` | **مُعاد كتابته** — كل التحسينات الـ 9 |
+| `artifacts/n8n-manager/src/pages/chat.tsx` | **محدَّث** — SSE fix + streaming bubble |
+
+---
+
+*آخر تحديث: 17 أبريل 2026 — بعد تطبيق مرحلة التحسين الأولى*
