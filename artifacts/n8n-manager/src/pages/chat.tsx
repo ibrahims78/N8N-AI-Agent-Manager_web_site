@@ -656,7 +656,7 @@ function AnalysisReport({
 // ─── WorkflowPicker modal ─────────────────────────────────────────────────────
 
 function WorkflowPickerModal({
-  open, onClose, workflows, loading, onSelect, isRTL, userContext, setUserContext,
+  open, onClose, workflows, loading, onSelect, isRTL,
 }: {
   open: boolean;
   onClose: () => void;
@@ -664,8 +664,6 @@ function WorkflowPickerModal({
   loading: boolean;
   onSelect: (id: string, name: string) => void;
   isRTL: boolean;
-  userContext: string;
-  setUserContext: (v: string) => void;
 }) {
   const [search, setSearch] = useState("");
   const filtered = workflows.filter(w => w.name.toLowerCase().includes(search.toLowerCase()));
@@ -684,12 +682,17 @@ function WorkflowPickerModal({
         <div className="p-4 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ScanSearch className="h-5 w-5 text-violet-500" />
-            <h2 className="font-semibold text-base">{isRTL ? "تحليل مسار عمل" : "Analyze Workflow"}</h2>
+            <h2 className="font-semibold text-base">{isRTL ? "اختر مسار العمل للتحليل" : "Select Workflow to Analyze"}</h2>
           </div>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><X className="h-4 w-4" /></button>
         </div>
 
         <div className="p-4 space-y-3">
+          <p className="text-xs text-muted-foreground">
+            {isRTL
+              ? "بعد الاختيار، ستُفتح محادثة وتُسأل عن المشكلة قبل بدء التحليل."
+              : "After selecting, a conversation will open and ask you to describe the issue before analysis begins."}
+          </p>
           <div className="relative">
             <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
@@ -700,7 +703,7 @@ function WorkflowPickerModal({
             />
           </div>
 
-          <div className="max-h-52 overflow-y-auto rounded-lg border border-border divide-y divide-border">
+          <div className="max-h-60 overflow-y-auto rounded-lg border border-border divide-y divide-border">
             {loading && (
               <div className="p-4 flex items-center justify-center gap-2 text-muted-foreground text-sm">
                 <Loader2 className="h-4 w-4 animate-spin" />{isRTL ? "جار التحميل..." : "Loading..."}
@@ -720,17 +723,6 @@ function WorkflowPickerModal({
                 <span className="text-xs text-muted-foreground">{wf.active ? (isRTL ? "نشط" : "Active") : (isRTL ? "معطل" : "Inactive")}</span>
               </button>
             ))}
-          </div>
-
-          <div>
-            <label className="text-xs text-muted-foreground block mb-1">{isRTL ? "ملاحظات إضافية (اختياري)" : "Additional context (optional)"}</label>
-            <textarea
-              value={userContext}
-              onChange={e => setUserContext(e.target.value)}
-              rows={2}
-              placeholder={isRTL ? "مثال: يعطي خطأ عند تشغيله يدوياً..." : "E.g. it fails when triggered manually..."}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
-            />
           </div>
         </div>
       </motion.div>
@@ -836,7 +828,8 @@ export default function ChatPage() {
   const [n8nWorkflows, setN8nWorkflows] = useState<N8nWorkflowBasic[]>([]);
   const [loadingWorkflows, setLoadingWorkflows] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
-  const [analyzeContext, setAnalyzeContext] = useState("");
+  // Replaces analyzeContext: holds the workflow waiting for user to describe the problem
+  const [pendingAnalysisWorkflow, setPendingAnalysisWorkflow] = useState<{ id: string; name: string } | null>(null);
 
   // ── Data fetching ──
   const { data: convRes } = useGetConversations(
@@ -1043,6 +1036,23 @@ export default function ChatPage() {
     const text = (overrideText ?? input).trim();
     if (!text || sending || !selectedConvId) return;
 
+    // ── Intercept: if a workflow is pending analysis, use user's message as context ──
+    if (pendingAnalysisWorkflow) {
+      const wf = pendingAnalysisWorkflow;
+      setPendingAnalysisWorkflow(null);
+      setInput("");
+      setAttachments([]);
+      // Show user's message optimistically
+      setOptimisticUserMsg({
+        id: -1,
+        role: "user",
+        content: text,
+        createdAt: new Date().toISOString(),
+      });
+      executeAnalyze(wf.id, wf.name, text);
+      return;
+    }
+
     // Intercept analysis intent → open picker instead (skip for auto-sent template messages)
     const bypassAnalysis = skipAnalysisRef.current;
     skipAnalysisRef.current = false;
@@ -1245,7 +1255,7 @@ export default function ChatPage() {
         toast({ title: String(err), variant: "destructive" });
       }
     });
-  }, [input, sending, selectedConvId, authHeader, chatMode, refetchConv, queryClient, toast, attachments, isRTL, saveGenerationResult, detectAnalysisIntent, openAnalyzePicker]);
+  }, [input, sending, selectedConvId, authHeader, chatMode, refetchConv, queryClient, toast, attachments, isRTL, saveGenerationResult, detectAnalysisIntent, openAnalyzePicker, pendingAnalysisWorkflow, executeAnalyze]);
 
   useEffect(() => {
     if (selectedConvId && pendingAutoSend.current) {
@@ -1256,16 +1266,10 @@ export default function ChatPage() {
     }
   }, [selectedConvId, handleSend]);
 
-  const handleAnalyze = useCallback((workflowId: string, workflowName: string) => {
-    setAnalyzePickerOpen(false);
-    if (sending) return;
-
-    let convId = selectedConvId;
-    if (!convId) {
-      pendingAnalyzeRef.current = { workflowId, workflowName };
-      createConv({ title: isRTL ? `تحليل: ${workflowName}` : `Analyze: ${workflowName}`, type: "analyze" } as Parameters<typeof createConv>[0]);
-      return;
-    }
+  // ── Execute the actual analysis SSE call (called after user describes the problem) ──
+  const executeAnalyze = useCallback((workflowId: string, workflowName: string, userContext: string) => {
+    const convId = selectedConvId;
+    if (!convId || sending) return;
 
     setSending(true);
     setIsGenerating(true);
@@ -1285,7 +1289,7 @@ export default function ChatPage() {
       method: "POST",
       headers,
       credentials: "include",
-      body: JSON.stringify({ workflowId, userContext: analyzeContext }),
+      body: JSON.stringify({ workflowId, userContext }),
     }).then(async (res) => {
       if (res.status === 401) {
         setSending(false);
@@ -1357,15 +1361,31 @@ export default function ChatPage() {
       setPhases([]);
       toast({ title: String(err), variant: "destructive" });
     });
-  }, [sending, selectedConvId, authHeader, isRTL, analyzeContext, createConv, refetchConv, queryClient, toast]);
+  }, [sending, selectedConvId, refetchConv, queryClient, toast]);
 
+  // ── Initiate analysis session: open conv + show greeting, wait for user input ──
+  const initiateAnalyzeSession = useCallback((workflowId: string, workflowName: string) => {
+    setAnalyzePickerOpen(false);
+    if (sending) return;
+
+    if (!selectedConvId) {
+      // Create a new conversation first, then set pending after conv is created
+      pendingAnalyzeRef.current = { workflowId, workflowName };
+      createConv({ title: isRTL ? `تحليل: ${workflowName}` : `Analyze: ${workflowName}`, type: "analyze" } as Parameters<typeof createConv>[0]);
+      return;
+    }
+    // Conversation exists — set pending state so user can describe the problem
+    setPendingAnalysisWorkflow({ id: workflowId, name: workflowName });
+  }, [sending, selectedConvId, isRTL, createConv]);
+
+  // When a conv is newly created for a pending analysis, activate the session
   useEffect(() => {
     if (selectedConvId && pendingAnalyzeRef.current) {
       const { workflowId, workflowName } = pendingAnalyzeRef.current;
       pendingAnalyzeRef.current = null;
-      handleAnalyze(workflowId, workflowName);
+      setPendingAnalysisWorkflow({ id: workflowId, name: workflowName });
     }
-  }, [selectedConvId, handleAnalyze]);
+  }, [selectedConvId]);
 
   // Phase 4: Keyboard handler with sendOnEnter setting
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -2148,6 +2168,42 @@ export default function ChatPage() {
             </div>
           )}
 
+          {/* ── Pending Analysis Banner ── */}
+          <AnimatePresence>
+            {pendingAnalysisWorkflow && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                className="mb-2.5 flex items-start gap-2.5 px-3.5 py-2.5 rounded-xl bg-violet-500/10 border border-violet-500/30"
+                dir={isRTL ? "rtl" : "ltr"}
+              >
+                <div className="mt-0.5 p-1.5 rounded-lg bg-violet-500/20 shrink-0">
+                  <ScanSearch className="h-3.5 w-3.5 text-violet-500" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-violet-600 dark:text-violet-400 mb-0.5">
+                    {isRTL
+                      ? `جاهز لتحليل: "${pendingAnalysisWorkflow.name}"`
+                      : `Ready to analyze: "${pendingAnalysisWorkflow.name}"`}
+                  </p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {isRTL
+                      ? "✍️ اكتب وصف المشكلة أو ما تريد فحصه، ثم أرسل لبدء التحليل."
+                      : "✍️ Describe the issue or what you want checked, then send to start analysis."}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setPendingAnalysisWorkflow(null)}
+                  className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground shrink-0"
+                  title={isRTL ? "إلغاء" : "Cancel"}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* ── Super-input container ── */}
           <div className="border border-border rounded-2xl bg-background shadow-sm focus-within:ring-2 focus-within:ring-accent/30 focus-within:border-accent/40 transition-all overflow-hidden">
             <textarea
@@ -2155,9 +2211,11 @@ export default function ChatPage() {
               value={input}
               onChange={handleTextareaInput}
               onKeyDown={handleKeyDown}
-              placeholder={selectedConvId
-                ? (isRTL ? t("chat.placeholder") : "Ask about n8n or describe a workflow to build...")
-                : (isRTL ? "← اختر محادثة أو أنشئ واحدة جديدة" : "Select or create a conversation →")}
+              placeholder={pendingAnalysisWorkflow
+                ? (isRTL ? `صف المشكلة في "${pendingAnalysisWorkflow.name}"...` : `Describe the issue with "${pendingAnalysisWorkflow.name}"...`)
+                : selectedConvId
+                  ? (isRTL ? t("chat.placeholder") : "Ask about n8n or describe a workflow to build...")
+                  : (isRTL ? "← اختر محادثة أو أنشئ واحدة جديدة" : "Select or create a conversation →")}
               rows={1}
               className="w-full resize-none px-4 pt-3.5 pb-2 bg-transparent text-foreground text-sm focus:outline-none max-h-36 placeholder:text-muted-foreground/50"
             />
@@ -2257,10 +2315,8 @@ export default function ChatPage() {
             onClose={() => setAnalyzePickerOpen(false)}
             workflows={n8nWorkflows}
             loading={loadingWorkflows}
-            onSelect={handleAnalyze}
+            onSelect={initiateAnalyzeSession}
             isRTL={isRTL}
-            userContext={analyzeContext}
-            setUserContext={setAnalyzeContext}
           />
         )}
       </AnimatePresence>
