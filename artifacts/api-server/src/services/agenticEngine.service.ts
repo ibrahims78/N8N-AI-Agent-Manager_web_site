@@ -169,6 +169,11 @@ function buildAgentSystemPrompt(
 - \`connections\`: كائن الاتصالات الصحيح
 - \`settings\`: \`{"executionOrder": "v1"}\`
 
+## استخدام parameterTemplate (مهم جداً):
+عندما يُرجع get_node_schema حقل \`parameterTemplate\`، فهو يحتوي على أسماء الحقول الحقيقية من n8n مباشرةً.
+استخدم هذه الأسماء الدقيقة في \`parameters\` الخاصة بالـ node — لا تخمّن أسماء من معرفتك التدريبية.
+إذا ظهر \`[REQUIRED]\` بجانب حقل، فيجب وجوده حتماً في \`parameters\`.
+
 ## القاعدة الذهبية:
 لا تخمّن أي schema أو type أو typeVersion — استخدم get_node_schema دائماً.
 
@@ -220,6 +225,11 @@ When choosing which node type to use:
 2. **SECOND CHOICE:** Nodes from static schemas (hasStaticSchema: true)
 3. **NEVER USE:** Any node type that get_node_schema returned \`found: false\` for — do not use it, find an alternative instead
 4. **NEVER GUESS:** Do not invent or guess node type strings from your training knowledge — only use types confirmed by the tools
+
+## Using parameterTemplate (Critical):
+When get_node_schema returns a \`parameterTemplate\` field, that contains the REAL parameter names and types from n8n's API.
+Use those exact field names in the node's \`parameters\` object — not guessed names from your training knowledge.
+If a parameter shows \`[REQUIRED]\`, it MUST be present in the node's parameters.
 
 ## Golden Rule:
 Never guess any schema, type, or typeVersion — always use get_node_schema.${contextSection}${memorySection}`;

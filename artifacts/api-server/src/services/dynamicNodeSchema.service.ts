@@ -61,6 +61,15 @@ export interface N8nRawNodeType {
   };
 }
 
+export interface DynamicNodeProperty {
+  name: string;
+  type: string;
+  default?: unknown;
+  required?: boolean;
+  description?: string;
+  options?: Array<{ name: string; value: unknown }>;
+}
+
 export interface DynamicNodeInfo {
   /** Canonical n8n node type key */
   type: string;
@@ -84,6 +93,8 @@ export interface DynamicNodeInfo {
   aliases: string[];
   /** True if this node type was seen in actual n8n workflows (confirmed installed) */
   confirmedFromWorkflow?: boolean;
+  /** Real parameter definitions from n8n API (top-level only, no nested sub-options) */
+  rawProperties?: DynamicNodeProperty[];
 }
 
 export interface DynamicNodeCacheResult {
@@ -214,7 +225,6 @@ function normalizeRawNode(raw: N8nRawNodeType): DynamicNodeInfo {
   }
   if (!category && raw.group?.length) {
     const g = raw.group[0] ?? "";
-    // Map n8n group names to friendlier category strings
     const groupMap: Record<string, string> = {
       trigger: "trigger",
       output: "action",
@@ -232,6 +242,28 @@ function normalizeRawNode(raw: N8nRawNodeType): DynamicNodeInfo {
   // Check if we have a curated static schema
   const staticSchema = NODE_SCHEMAS[raw.name];
 
+  // Extract top-level properties from n8n API (exclude huge nested option lists > 20 items)
+  let rawProperties: DynamicNodeProperty[] | undefined;
+  if (Array.isArray(raw.properties) && raw.properties.length > 0) {
+    rawProperties = raw.properties
+      .filter(p => p.name && p.type)
+      .slice(0, 30) // cap at 30 top-level params to avoid token explosion
+      .map(p => {
+        const prop: DynamicNodeProperty = {
+          name: p.name,
+          type: p.type,
+          default: p.default,
+          required: p.required,
+          description: p.description,
+        };
+        // Only include options if list is small (≤ 20) to avoid huge payloads
+        if (Array.isArray(p.options) && p.options.length > 0 && p.options.length <= 20) {
+          prop.options = p.options.map(o => ({ name: o.name, value: o.value }));
+        }
+        return prop;
+      });
+  }
+
   return {
     type: raw.name,
     displayName: raw.displayName ?? raw.name,
@@ -243,6 +275,7 @@ function normalizeRawNode(raw: N8nRawNodeType): DynamicNodeInfo {
     staticSchema: staticSchema ?? undefined,
     category,
     aliases,
+    rawProperties: rawProperties && rawProperties.length > 0 ? rawProperties : undefined,
   };
 }
 

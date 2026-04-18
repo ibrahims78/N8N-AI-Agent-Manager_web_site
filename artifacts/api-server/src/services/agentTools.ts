@@ -306,7 +306,29 @@ async function executeGetNodeSchema(nodeType: string): Promise<unknown> {
           },
         };
       }
-      // Dynamic-only node (no curated schema) — return what n8n told us
+      // Dynamic-only node (no curated schema) — return what n8n told us + real properties
+      // Build defaultParameters from rawProperties so the agent knows what fields to set
+      const defaultParameters: Record<string, unknown> = {};
+      if (node.rawProperties && node.rawProperties.length > 0) {
+        for (const prop of node.rawProperties) {
+          if (prop.default !== undefined && prop.default !== null && prop.default !== "") {
+            defaultParameters[prop.name] = prop.default;
+          }
+        }
+      }
+
+      // Build human-friendly parameter template for the agent
+      const parameterTemplate = node.rawProperties?.map(p => {
+        let hint = `  "${p.name}": <${p.type}>`;
+        if (p.required) hint += " [REQUIRED]";
+        if (p.default !== undefined) hint += ` (default: ${JSON.stringify(p.default)})`;
+        if (p.description) hint += ` — ${p.description.slice(0, 80)}`;
+        if (p.options && p.options.length > 0) {
+          hint += ` | options: ${p.options.map(o => `"${o.value}"`).join(", ")}`;
+        }
+        return hint;
+      }).join("\n");
+
       return {
         found: true,
         source: dynamic.source,
@@ -320,15 +342,18 @@ async function executeGetNodeSchema(nodeType: string): Promise<unknown> {
             (acc, ct) => { acc[ct] = ct; return acc; },
             {}
           ),
-          defaultParameters: {},
+          defaultParameters,
           description: node.description,
           category: node.category,
         },
         recommendedTypeVersion: node.version,
         alternatives: dynamic.alternatives,
+        parameterTemplate: parameterTemplate
+          ? `## Real parameters for ${node.type} (from n8n API):\n${parameterTemplate}`
+          : undefined,
         note: node.confirmedFromWorkflow
           ? `✅ Confirmed installed in this n8n instance (seen in existing workflows). Use typeVersion: ${node.version}.`
-          : "Schema inferred from n8n API — curated static schema not available for this node.",
+          : "Schema from n8n API — curated static schema not available. Use parameterTemplate above for correct field names.",
         nodeInfo: {
           displayName: node.displayName,
           version: node.version,
