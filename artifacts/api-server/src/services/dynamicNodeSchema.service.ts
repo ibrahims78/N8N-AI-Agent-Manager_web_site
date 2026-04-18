@@ -17,6 +17,7 @@
  */
 
 import { getN8nConfig } from "./n8n.service";
+import { getCachedWorkflows } from "./n8nCache.service";
 import { NODE_SCHEMAS, KEYWORD_NODE_MAP, type NodeSchema } from "./nodeSchemas";
 import { logger } from "../lib/logger";
 
@@ -81,6 +82,8 @@ export interface DynamicNodeInfo {
   category: string;
   /** Search aliases from codex */
   aliases: string[];
+  /** True if this node type was seen in actual n8n workflows (confirmed installed) */
+  confirmedFromWorkflow?: boolean;
 }
 
 export interface DynamicNodeCacheResult {
@@ -244,6 +247,106 @@ function normalizeRawNode(raw: N8nRawNodeType): DynamicNodeInfo {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Build fallback by scanning existing n8n workflows for real installed nodes
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Scans all workflows in the user's n8n instance and extracts unique node types
+ * with their actual typeVersions. Merges with static schemas to provide the most
+ * accurate possible picture of what's really installed.
+ */
+async function buildWorkflowBasedFallback(): Promise<DynamicNodeCacheResult | null> {
+  try {
+    const workflows = await getCachedWorkflows();
+    if (!workflows || workflows.length === 0) return null;
+
+    // Extract unique node types with their highest version seen in workflows
+    const realNodeVersions = new Map<string, number>();
+    for (const wf of workflows) {
+      const nodes = (wf as Record<string, unknown>).nodes as Array<{
+        type?: string;
+        typeVersion?: number;
+      }> | undefined;
+      if (!Array.isArray(nodes)) continue;
+      for (const node of nodes) {
+        if (!node.type) continue;
+        const currentMax = realNodeVersions.get(node.type) ?? 0;
+        const v = typeof node.typeVersion === "number" ? node.typeVersion : 1;
+        if (v > currentMax) realNodeVersions.set(node.type, v);
+      }
+    }
+
+    if (realNodeVersions.size === 0) return null;
+
+    // Build DynamicNodeInfo for each real node type
+    const confirmedNodes: DynamicNodeInfo[] = [];
+    for (const [nodeType, maxVersion] of realNodeVersions.entries()) {
+      const staticSchema = NODE_SCHEMAS[nodeType];
+      const parts = nodeType.split(".");
+      const shortName = parts[parts.length - 1] ?? nodeType;
+      const displayName = shortName
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (c) => c.toUpperCase())
+        .trim();
+      const isLangChain = nodeType.startsWith("@n8n/n8n-nodes-langchain");
+      confirmedNodes.push({
+        type: nodeType,
+        displayName: staticSchema ? (shortName) : displayName,
+        description: staticSchema?.description ?? `${displayName} node (confirmed installed)`,
+        version: maxVersion,
+        groups: isLangChain ? ["langchain"] : ["action"],
+        credentialTypes: staticSchema?.credentials
+          ? Object.values(staticSchema.credentials)
+          : [],
+        hasStaticSchema: !!staticSchema,
+        staticSchema: staticSchema ?? undefined,
+        category: isLangChain ? "langchain" : (staticSchema?.category ?? "utility"),
+        aliases: NODE_TYPE_KEYWORDS.get(nodeType) ?? [],
+        confirmedFromWorkflow: true,
+      });
+    }
+
+    // Merge: add static schemas for types not seen in any workflow (still potentially installed)
+    const confirmedTypes = new Set(confirmedNodes.map((n) => n.type));
+    const staticOnlyNodes: DynamicNodeInfo[] = [];
+    for (const [key, schema] of Object.entries(NODE_SCHEMAS)) {
+      if (!confirmedTypes.has(key)) {
+        staticOnlyNodes.push({
+          type: key,
+          displayName: key.split(".").pop() ?? key,
+          description: schema.description,
+          version: schema.typeVersion,
+          groups: [schema.category],
+          credentialTypes: schema.credentials ? Object.values(schema.credentials) : [],
+          hasStaticSchema: true,
+          staticSchema: schema,
+          category: schema.category,
+          aliases: NODE_TYPE_KEYWORDS.get(key) ?? [],
+        });
+      }
+    }
+
+    logger.info(
+      { confirmedFromWorkflows: confirmedNodes.length, staticOnly: staticOnlyNodes.length, totalWorkflows: workflows.length },
+      "FIX 5.2+: Node types discovered from existing workflows + static schemas"
+    );
+
+    return {
+      nodes: [...confirmedNodes, ...staticOnlyNodes],
+      source: "n8n-api",
+      fetchedAt: new Date().toISOString(),
+      endpoint: "workflow-scan",
+    };
+  } catch (err) {
+    logger.debug(
+      { err: err instanceof Error ? err.message : String(err) },
+      "FIX 5.2+: Workflow scan for node types failed"
+    );
+    return null;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Build static fallback from NODE_SCHEMAS
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -358,7 +461,16 @@ export async function getCachedN8nNodeTypes(
     );
   }
 
-  // Static fallback
+  // FIX 5.2+: Try workflow scan before pure static fallback
+  // Scanning existing n8n workflows gives us confirmed real node types + typeVersions
+  const workflowBased = await buildWorkflowBasedFallback();
+  if (workflowBased) {
+    _cachedResult = workflowBased;
+    _cacheExpiresAt = Date.now() + NODE_CACHE_TTL_MS;
+    return workflowBased;
+  }
+
+  // Pure static fallback (last resort)
   const fallback = buildStaticFallback();
   _cachedResult = fallback;
   _cacheExpiresAt = Date.now() + NODE_CACHE_TTL_MS;
@@ -477,6 +589,7 @@ export async function searchDynamicNodeTypes(query: string): Promise<{
     hasStaticSchema: boolean;
     credentialTypes: string[];
     score: number;
+    confirmedInstalledInN8n: boolean;
   }>;
   hint: string;
 }> {
@@ -537,6 +650,7 @@ export async function searchDynamicNodeTypes(query: string): Promise<{
       hasStaticSchema: node.hasStaticSchema,
       credentialTypes: node.credentialTypes,
       score,
+      confirmedInstalledInN8n: node.confirmedFromWorkflow === true,
     })),
     hint:
       top.length === 0

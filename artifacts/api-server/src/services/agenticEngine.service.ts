@@ -170,7 +170,14 @@ function buildAgentSystemPrompt(
 - \`settings\`: \`{"executionOrder": "v1"}\`
 
 ## القاعدة الذهبية:
-لا تخمّن أي schema أو type أو typeVersion — استخدم get_node_schema دائماً.${contextSection}${memorySection}`;
+لا تخمّن أي schema أو type أو typeVersion — استخدم get_node_schema دائماً.
+
+## أولوية اختيار الـ nodes:
+عندما تحصل على نتيجة get_node_schema أو search_node_types:
+1. **أولاً:** اختر nodes التي تحمل \`confirmedInstalledInN8n: true\` — هذه موجودة فعلاً في n8n المستخدم
+2. **ثانياً:** استخدم \`recommendedTypeVersion\` أو \`typeVersion\` من الـ schema مباشرةً — لا تخترع أرقام versions
+3. **ممنوع:** استخدام node type لم يُرجع له get_node_schema \`found: true\`
+4. **ممنوع:** تغيير typeVersion عن القيمة في الـ schema${contextSection}${memorySection}`;
   }
 
   return `You are an expert n8n workflow building agent using Tool Calling architecture.
@@ -199,13 +206,20 @@ Must include:
 - \`nodes\`: complete array where each node has:
   - \`id\` (unique UUID)
   - \`name\` (short clear name)
-  - \`type\` (from real schema)
-  - \`typeVersion\` (from real schema)
+  - \`type\` (from real schema — NEVER guess or invent node types)
+  - \`typeVersion\` (use EXACTLY the value from recommendedTypeVersion or schema — never guess)
   - \`position\` ([x, y] with 200-250px spacing between nodes)
   - \`parameters\` (from real schema)
   - \`credentials\` (if required)
 - \`connections\`: correct connections object
 - \`settings\`: \`{"executionOrder": "v1"}\`
+
+## Node Selection Priority:
+When choosing which node type to use:
+1. **FIRST CHOICE:** Nodes with \`confirmedInstalledInN8n: true\` from search/schema results — these are CONFIRMED installed in the user's n8n instance
+2. **SECOND CHOICE:** Nodes from static schemas (hasStaticSchema: true)
+3. **NEVER USE:** Any node type that get_node_schema returned \`found: false\` for — do not use it, find an alternative instead
+4. **NEVER GUESS:** Do not invent or guess node type strings from your training knowledge — only use types confirmed by the tools
 
 ## Golden Rule:
 Never guess any schema, type, or typeVersion — always use get_node_schema.${contextSection}${memorySection}`;

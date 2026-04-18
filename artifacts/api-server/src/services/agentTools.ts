@@ -310,7 +310,8 @@ async function executeGetNodeSchema(nodeType: string): Promise<unknown> {
       return {
         found: true,
         source: dynamic.source,
-        installedInN8n: dynamic.source === "n8n-api",
+        installedInN8n: node.confirmedFromWorkflow === true || dynamic.source === "n8n-api",
+        confirmedInstalledInN8n: node.confirmedFromWorkflow === true,
         resolvedAs: node.type,
         schema: {
           type: node.type,
@@ -323,8 +324,11 @@ async function executeGetNodeSchema(nodeType: string): Promise<unknown> {
           description: node.description,
           category: node.category,
         },
+        recommendedTypeVersion: node.version,
         alternatives: dynamic.alternatives,
-        note: "Schema inferred from n8n API — curated static schema not available for this node.",
+        note: node.confirmedFromWorkflow
+          ? `✅ Confirmed installed in this n8n instance (seen in existing workflows). Use typeVersion: ${node.version}.`
+          : "Schema inferred from n8n API — curated static schema not available for this node.",
         nodeInfo: {
           displayName: node.displayName,
           version: node.version,
@@ -553,21 +557,43 @@ function executeValidateWorkflow(workflowJson: Record<string, unknown>): unknown
   }
 
   const validation = validateWorkflowJson(jsonStr);
-  const nodes = workflowJson.nodes as unknown[] | undefined;
+  const nodes = workflowJson.nodes as Array<{ type?: string; typeVersion?: number; name?: string }> | undefined;
+
+  // Check for unknown node types (not in static schemas or keyword lookup)
+  const unknownNodeTypes: string[] = [];
+  if (Array.isArray(nodes)) {
+    for (const node of nodes) {
+      if (!node.type) continue;
+      const inStatic = !!NODE_SCHEMAS[node.type];
+      const inKeyword = Object.values(KEYWORD_LOOKUP).includes(node.type);
+      const isBaseNode = node.type.startsWith("n8n-nodes-base.") || node.type.startsWith("@n8n/");
+      if (!inStatic && !inKeyword && isBaseNode) {
+        unknownNodeTypes.push(node.type);
+      }
+    }
+  }
+
+  const unknownWarnings = unknownNodeTypes.length > 0
+    ? [`⚠️ Unknown node types (not in known schema list): ${unknownNodeTypes.join(", ")} — verify these exist in your n8n instance by calling get_node_schema for each`]
+    : [];
 
   return {
     valid: validation.valid,
     errors: validation.errors ?? [],
+    warnings: unknownWarnings,
     nodeCount: Array.isArray(nodes) ? nodes.length : 0,
+    unknownNodeTypes,
     checks: {
       hasName: typeof workflowJson.name === "string" && workflowJson.name.length > 0,
       hasNodes: Array.isArray(nodes) && nodes.length > 0,
       hasConnections: typeof workflowJson.connections === "object",
       hasSettings: typeof workflowJson.settings === "object",
     },
-    advice: validation.valid
-      ? "✅ Workflow JSON is valid and ready for import."
-      : `❌ Fix ${(validation.errors ?? []).length} issue(s) before importing.`,
+    advice: validation.valid && unknownNodeTypes.length === 0
+      ? "✅ Workflow JSON is valid and all node types are recognized."
+      : validation.valid && unknownNodeTypes.length > 0
+        ? `⚠️ JSON structure is valid but ${unknownNodeTypes.length} node type(s) are unrecognized — call get_node_schema to verify or find alternatives.`
+        : `❌ Fix ${(validation.errors ?? []).length} issue(s) before importing.`,
   };
 }
 
