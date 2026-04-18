@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "wouter";
 import {
   Search, Star, Eye, ArrowRight, Zap, X, Plus,
   Download, Globe, BookMarked, ChevronLeft, ChevronRight,
@@ -230,7 +229,6 @@ export default function TemplatesPage() {
   const isRTL = language === "ar";
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [, navigate] = useLocation();
 
   const [tab, setTab] = useState<"local" | "n8n">("local");
 
@@ -297,19 +295,25 @@ export default function TemplatesPage() {
     setUsingTemplate(true);
     try {
       const headers: Record<string, string> = { ...getAuthHeader(), "Content-Type": "application/json" };
-      const res = await fetch(`${API_BASE}/templates/${template.id}/use`, { method: "POST", headers });
-      const data = await res.json() as { success: boolean; data?: { id?: number } };
-      if (data.success && data.data?.id) {
-        const message = isRTL
-          ? `أريد إنشاء workflow في n8n بناءً على هذا القالب:\n📌 الاسم: ${template.name}${template.description ? `\n📝 الوصف: ${template.description}` : ""}`
-          : `I want to create a workflow in n8n based on this template:\n📌 Name: ${template.name}${template.description ? `\n📝 Description: ${template.description}` : ""}`;
-        sessionStorage.setItem("templateUse", JSON.stringify({ convId: data.data.id, message }));
-        navigate("/chat");
+      const res = await fetch(`${API_BASE}/templates/${template.id}/deploy`, { method: "POST", headers });
+      const data = await res.json() as {
+        success: boolean;
+        data?: { workflowId?: string; workflowName?: string };
+        error?: { code?: string; message?: string };
+      };
+      if (data.success) {
+        toast({
+          title: isRTL
+            ? `✅ تم إرسال "${data.data?.workflowName ?? template.name}" إلى n8n بنجاح`
+            : `✅ "${data.data?.workflowName ?? template.name}" sent to n8n successfully`,
+        });
+        setPreviewTemplate(null);
       } else {
-        toast({ title: isRTL ? "فشل تطبيق القالب" : "Failed to apply template", variant: "destructive" });
+        const msg = data.error?.message ?? (isRTL ? "فشل إرسال القالب إلى n8n" : "Failed to send template to n8n");
+        toast({ title: msg, variant: "destructive" });
       }
     } catch {
-      toast({ title: isRTL ? "فشل تطبيق القالب" : "Failed to apply template", variant: "destructive" });
+      toast({ title: isRTL ? "فشل إرسال القالب إلى n8n" : "Failed to send template to n8n", variant: "destructive" });
     } finally {
       setUsingTemplate(false);
     }

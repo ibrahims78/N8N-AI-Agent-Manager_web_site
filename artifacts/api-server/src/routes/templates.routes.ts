@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db, templatesTable, conversationsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { authenticate, requirePermission, requireAdmin } from "../middleware/auth.middleware";
+import { importWorkflow } from "../services/n8n.service";
 import type { Request, Response } from "express";
 
 const router = Router();
@@ -284,6 +285,49 @@ router.post("/:id/use", authenticate, requirePermission("use_chat"), async (req:
     res.json({ success: true, data: conv });
   } catch (err) {
     res.status(500).json({ success: false, error: { code: "SERVER_ERROR", message: String(err) } });
+  }
+});
+
+router.post("/:id/deploy", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ success: false, error: { code: "UNAUTHORIZED", message: "Unauthorized" } });
+      return;
+    }
+
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+      res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid template ID" } });
+      return;
+    }
+
+    const templates = await db.select().from(templatesTable).where(eq(templatesTable.id, id)).limit(1);
+    const template = templates[0];
+    if (!template) {
+      res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Template not found" } });
+      return;
+    }
+
+    const workflowJson = template.workflowJson as Record<string, unknown>;
+    if (!workflowJson || !Array.isArray(workflowJson.nodes) || (workflowJson.nodes as unknown[]).length === 0) {
+      res.status(422).json({ success: false, error: { code: "EMPTY_WORKFLOW", message: "القالب لا يحتوي على عقد - لا يمكن إرساله إلى n8n" } });
+      return;
+    }
+
+    const n8nWorkflow = await importWorkflow(workflowJson);
+
+    await db.update(templatesTable)
+      .set({ usageCount: template.usageCount + 1 })
+      .where(eq(templatesTable.id, id));
+
+    res.json({ success: true, data: { workflowId: n8nWorkflow.id, workflowName: n8nWorkflow.name } });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (message === "N8N_NOT_CONFIGURED") {
+      res.status(503).json({ success: false, error: { code: "N8N_NOT_CONFIGURED", message: "n8n غير مُهيَّأ - تحقق من الإعدادات" } });
+      return;
+    }
+    res.status(500).json({ success: false, error: { code: "SERVER_ERROR", message } });
   }
 });
 
