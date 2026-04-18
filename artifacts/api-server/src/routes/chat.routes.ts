@@ -1049,9 +1049,25 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
         try {
           if (availableWorkflows.length > 0) {
             const nameHint = workflowNameHint ?? findWorkflowNameHint(content, availableWorkflows.map(w => w.name));
-            const matched = nameHint
-              ? availableWorkflows.find(w => w.name === nameHint || w.name.toLowerCase().includes(nameHint.toLowerCase()))
-              : null;
+            let matched = null;
+            if (nameHint) {
+              // 1) Exact match (case-insensitive) — safest
+              const exactMatch = availableWorkflows.find(
+                w => w.name.toLowerCase() === nameHint.toLowerCase()
+              );
+              if (exactMatch) {
+                matched = exactMatch;
+              } else {
+                // 2) Contains match — only safe when exactly ONE workflow matches
+                const containsMatches = availableWorkflows.filter(
+                  w => w.name.toLowerCase().includes(nameHint.toLowerCase())
+                );
+                if (containsMatches.length === 1) {
+                  matched = containsMatches[0];
+                }
+                // If multiple workflows match via contains → require clarification
+              }
+            }
 
             if (matched) {
               targetWorkflowId = matched.id;
@@ -1146,9 +1162,32 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
             logger.warn({ err: versionErr }, "Could not auto-save version before modification — non-fatal, proceeding");
           }
 
+          // ── Safety guard: validate node count before overwriting ──────────
+          const originalNodeCount = Array.isArray(currentWorkflowJson.nodes)
+            ? (currentWorkflowJson.nodes as unknown[]).length : 0;
+          const modifiedNodes = modifierResult.modifiedWorkflowJson.nodes;
+          const modifiedNodeCount = Array.isArray(modifiedNodes)
+            ? (modifiedNodes as unknown[]).length : 0;
+
+          if (modifiedNodeCount === 0) {
+            throw new Error(
+              lang === "ar"
+                ? `⚠️ رفض تطبيق التعديل: الـ workflow المُعدَّل لا يحتوي على أي nodes — تم إلغاء التطبيق حمايةً لبياناتك. الـ workflow الأصلي لم يُمس.`
+                : `⚠️ Modification rejected: modified workflow has zero nodes — cancelled to protect your data. Original workflow is untouched.`
+            );
+          }
+
+          if (originalNodeCount > 0 && modifiedNodeCount < originalNodeCount * 0.4) {
+            throw new Error(
+              lang === "ar"
+                ? `⚠️ رفض تطبيق التعديل: الـ workflow الأصلي يحتوي على ${originalNodeCount} nodes لكن النسخة المعدّلة تحتوي على ${modifiedNodeCount} فقط — فجوة كبيرة غير متوقعة. تم إلغاء التطبيق حمايةً لبياناتك.`
+                : `⚠️ Modification rejected: original workflow has ${originalNodeCount} nodes but modified version has only ${modifiedNodeCount} — unexpected large drop. Cancelled to protect your data.`
+            );
+          }
+
           const updatePayload = {
             name: (modifierResult.modifiedWorkflowJson.name as string) ?? (currentWorkflowJson.name as string),
-            nodes: modifierResult.modifiedWorkflowJson.nodes,
+            nodes: modifiedNodes,
             connections: modifierResult.modifiedWorkflowJson.connections,
             settings: sanitizeSettings(modifierResult.modifiedWorkflowJson.settings ?? currentWorkflowJson.settings),
           };

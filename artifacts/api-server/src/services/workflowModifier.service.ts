@@ -59,6 +59,14 @@ Rules:
 5. Return a valid n8n workflow JSON with: nodes (array), connections (object), settings (object)
 6. Include a brief summary of what was changed
 
+CRITICAL SAFETY RULES — NEVER VIOLATE:
+- ALWAYS return the COMPLETE nodes array including ALL original nodes
+- NEVER return an empty nodes array (nodes: [])
+- NEVER drop existing nodes unless the user explicitly asked to remove them
+- The returned nodes count must be >= original nodes count (unless user asked to remove specific nodes)
+- If the workflow JSON is truncated in the input, still return all nodes you received — do NOT omit them
+- settings must only contain: executionOrder, saveManualExecutions, callerPolicy, callerIds, errorWorkflow, timezone, saveDataErrorExecution, saveDataSuccessExecution, saveExecutionProgress — NO other properties
+
 Return ONLY a valid JSON object with this structure (no markdown, no extra text):
 {
   "nodes": [...],
