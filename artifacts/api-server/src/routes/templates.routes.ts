@@ -83,12 +83,32 @@ router.post("/n8n-library/import/:id", authenticate, requirePermission("manage_w
       return;
     }
 
+    let workflowJson: Record<string, unknown> = { name, nodes: [], connections: {}, source: "n8n-library", n8nId };
+    try {
+      const n8nRes = await fetch(`${N8N_API}/templates/${n8nId}`, {
+        headers: { "Accept": "application/json", "User-Agent": "n8n-manager/1.0" },
+        signal: AbortSignal.timeout(10000),
+      });
+      if (n8nRes.ok) {
+        const n8nData = await n8nRes.json() as {
+          workflow?: { nodes?: unknown[]; connections?: unknown };
+          workflowInfo?: { nodes?: unknown[]; connections?: unknown };
+        };
+        const wf = n8nData.workflow ?? n8nData.workflowInfo;
+        if (wf && Array.isArray(wf.nodes) && wf.nodes.length > 0) {
+          workflowJson = { name, ...wf, source: "n8n-library", n8nId };
+        }
+      }
+    } catch {
+      // fall back to empty workflow if fetch fails
+    }
+
     const [template] = await db.insert(templatesTable).values({
       name,
       description: description ?? "",
       category: category ?? "general",
-      nodesCount: nodesCount ?? 0,
-      workflowJson: { name, nodes: [], connections: {}, source: "n8n-library", n8nId },
+      nodesCount: nodesCount ?? (Array.isArray(workflowJson.nodes) ? (workflowJson.nodes as unknown[]).length : 0),
+      workflowJson,
       usageCount: 0,
       avgRating: 0,
       ratingCount: 0,

@@ -274,9 +274,24 @@ export default function TemplatesPage() {
       const data = await res.json() as { success: boolean; data?: { id?: number } };
       if (data.success && data.data?.id) {
         const convId = data.data.id;
-        const message = isRTL
-          ? `أريد إنشاء workflow مشابه لهذا القالب:\n📌 الاسم: ${template.name}${template.description ? `\n📝 الوصف: ${template.description}` : ""}`
-          : `I want to create a workflow similar to this template:\n📌 Name: ${template.name}${template.description ? `\n📝 Description: ${template.description}` : ""}`;
+
+        const hasRealWorkflow =
+          template.workflowJson?.nodes != null &&
+          Array.isArray(template.workflowJson.nodes) &&
+          template.workflowJson.nodes.length > 0;
+
+        let message: string;
+        if (hasRealWorkflow) {
+          const jsonStr = JSON.stringify(template.workflowJson, null, 2);
+          message = isRTL
+            ? `أنشئ هذا الـ workflow في n8n بالضبط كما هو:\n📌 الاسم: ${template.name}${template.description ? `\n📝 الوصف: ${template.description}` : ""}\n\nJSON الـ workflow:\n\`\`\`json\n${jsonStr}\n\`\`\``
+            : `Create and deploy exactly this workflow to n8n:\n📌 Name: ${template.name}${template.description ? `\n📝 Description: ${template.description}` : ""}\n\nWorkflow JSON:\n\`\`\`json\n${jsonStr}\n\`\`\``;
+        } else {
+          message = isRTL
+            ? `أريد إنشاء workflow في n8n بناءً على هذا القالب:\n📌 الاسم: ${template.name}${template.description ? `\n📝 الوصف: ${template.description}` : ""}`
+            : `I want to create a workflow in n8n based on this template:\n📌 Name: ${template.name}${template.description ? `\n📝 Description: ${template.description}` : ""}`;
+        }
+
         sessionStorage.setItem("templateUse", JSON.stringify({ convId, message }));
         navigate("/chat");
       } else {
