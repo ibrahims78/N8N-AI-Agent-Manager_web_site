@@ -1024,6 +1024,102 @@ export default function ChatPage() {
     }
   }, [n8nWorkflows.length, isRTL, toast]);
 
+  // ── Execute the actual analysis SSE call (MUST be defined before handleSend) ──
+  const executeAnalyze = useCallback((workflowId: string, workflowName: string, userContext: string) => {
+    const convId = selectedConvId;
+    if (!convId || sending) return;
+
+    setSending(true);
+    setIsGenerating(true);
+    setPhases([
+      { phase: 1, label: "GPT-4o: Analyzing workflow", labelAr: "GPT-4o: تحليل المشاكل", status: "pending" },
+      { phase: 2, label: "Gemini: Validating analysis", labelAr: "Gemini: التحقق من التحليل", status: "pending" },
+      { phase: 3, label: "GPT-4o: Generating fix", labelAr: "GPT-4o: إنشاء الإصلاح", status: "pending" },
+    ]);
+    setGenerationResult(null);
+    setAnalysisResult(null);
+
+    const fetchUrl = `${API_BASE}/chat/conversations/${convId}/analyze-workflow`;
+    const freshAuthHeader = getAuthHeader();
+    const headers: Record<string, string> = { ...freshAuthHeader, "Content-Type": "application/json" };
+
+    fetch(fetchUrl, {
+      method: "POST",
+      headers,
+      credentials: "include",
+      body: JSON.stringify({ workflowId, userContext }),
+    }).then(async (res) => {
+      if (res.status === 401) {
+        setSending(false);
+        setIsGenerating(false);
+        setPhases([]);
+        toast({ title: isRTL ? "انتهت جلستك، يرجى تسجيل الدخول مجدداً" : "Session expired, please log in again", variant: "destructive" });
+        return;
+      }
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({})) as { error?: { message?: string } };
+        throw new Error(errData?.error?.message ?? `HTTP ${res.status}`);
+      }
+      const reader = res.body?.getReader();
+      if (!reader) throw new Error("No response body");
+
+      let buffer = "";
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop() ?? "";
+
+        for (const part of parts) {
+          const lines = part.split("\n");
+          const eventLine = lines.find(l => l.startsWith("event:"));
+          const dataLine = lines.find(l => l.startsWith("data:"));
+          if (!eventLine || !dataLine) continue;
+
+          const event = eventLine.replace("event:", "").trim();
+          try {
+            const parsed = JSON.parse(dataLine.replace("data:", "").trim()) as Record<string, unknown>;
+
+            if (event === "phase") {
+              setPhases(prev => prev.map(p =>
+                p.phase === parsed.phase
+                  ? { ...p, status: parsed.status as string, durationMs: parsed.durationMs as number | undefined }
+                  : p
+              ));
+            } else if (event === "complete") {
+              setSending(false);
+              setIsGenerating(false);
+              const analysisRes: AnalysisResult = {
+                problems: (parsed.problems ?? []) as WorkflowProblem[],
+                fixedWorkflowJson: (parsed.fixedWorkflowJson ?? null) as Record<string, unknown> | null,
+                workflowId,
+                workflowName,
+                totalTimeMs: (parsed.totalTimeMs ?? 0) as number,
+                phases: (parsed.phases ?? []) as PhaseProgress[],
+              };
+              setAnalysisResult(analysisRes);
+              refetchConv();
+              queryClient.invalidateQueries({ queryKey: getGetConversationsQueryKey() });
+            } else if (event === "error") {
+              setSending(false);
+              setIsGenerating(false);
+              setPhases([]);
+              toast({ title: (parsed.message as string) ?? "Error", variant: "destructive" });
+            }
+          } catch { /* ignore parse errors */ }
+        }
+      }
+    }).catch((err: unknown) => {
+      setSending(false);
+      setIsGenerating(false);
+      setPhases([]);
+      toast({ title: String(err), variant: "destructive" });
+    });
+  }, [sending, selectedConvId, isRTL, refetchConv, queryClient, toast]);
+
   // ── Send Handler ──
   const detectAnalysisIntent = useCallback((text: string): boolean => {
     const lower = text.toLowerCase();
@@ -1265,103 +1361,6 @@ export default function ChatPage() {
       handleSend(message);
     }
   }, [selectedConvId, handleSend]);
-
-  // ── Execute the actual analysis SSE call (called after user describes the problem) ──
-  const executeAnalyze = useCallback((workflowId: string, workflowName: string, userContext: string) => {
-    const convId = selectedConvId;
-    if (!convId || sending) return;
-
-    setSending(true);
-    setIsGenerating(true);
-    setPhases([
-      { phase: 1, label: "GPT-4o: Analyzing workflow", labelAr: "GPT-4o: تحليل المشاكل", status: "pending" },
-      { phase: 2, label: "Gemini: Validating analysis", labelAr: "Gemini: التحقق من التحليل", status: "pending" },
-      { phase: 3, label: "GPT-4o: Generating fix", labelAr: "GPT-4o: إنشاء الإصلاح", status: "pending" },
-    ]);
-    setGenerationResult(null);
-    setAnalysisResult(null);
-
-    const fetchUrl = `${API_BASE}/chat/conversations/${convId}/analyze-workflow`;
-    const freshAuthHeader = getAuthHeader();
-    const headers: Record<string, string> = { ...freshAuthHeader, "Content-Type": "application/json" };
-
-    fetch(fetchUrl, {
-      method: "POST",
-      headers,
-      credentials: "include",
-      body: JSON.stringify({ workflowId, userContext }),
-    }).then(async (res) => {
-      if (res.status === 401) {
-        setSending(false);
-        setIsGenerating(false);
-        setPhases([]);
-        toast({ title: isRTL ? "انتهت جلستك، يرجى تسجيل الدخول مجدداً" : "Session expired, please log in again", variant: "destructive" });
-        return;
-      }
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({})) as { error?: { message?: string } };
-        throw new Error(errData?.error?.message ?? `HTTP ${res.status}`);
-      }
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error("No response body");
-
-      let buffer = "";
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const parts = buffer.split("\n\n");
-        buffer = parts.pop() ?? "";
-
-        for (const part of parts) {
-          const lines = part.split("\n");
-          const eventLine = lines.find(l => l.startsWith("event:"));
-          const dataLine = lines.find(l => l.startsWith("data:"));
-          if (!eventLine || !dataLine) continue;
-
-          const event = eventLine.replace("event:", "").trim();
-          try {
-            const parsed = JSON.parse(dataLine.replace("data:", "").trim()) as Record<string, unknown>;
-
-            if (event === "phase") {
-              setPhases(prev => prev.map(p =>
-                p.phase === parsed.phase
-                  ? { ...p, status: parsed.status as string, durationMs: parsed.durationMs as number | undefined }
-                  : p
-              ));
-            } else if (event === "complete") {
-              setSending(false);
-              setIsGenerating(false);
-              const analysisRes: AnalysisResult = {
-                problems: (parsed.problems ?? []) as WorkflowProblem[],
-                fixedWorkflowJson: (parsed.fixedWorkflowJson ?? null) as Record<string, unknown> | null,
-                workflowId,
-                workflowName,
-                totalTimeMs: (parsed.totalTimeMs ?? 0) as number,
-                phases: (parsed.phases ?? []) as PhaseProgress[],
-              };
-              setAnalysisResult(analysisRes);
-              setAnalyzeContext("");
-              refetchConv();
-              queryClient.invalidateQueries({ queryKey: getGetConversationsQueryKey() });
-            } else if (event === "error") {
-              setSending(false);
-              setIsGenerating(false);
-              setPhases([]);
-              toast({ title: (parsed.message as string) ?? "Error", variant: "destructive" });
-            }
-          } catch { /* ignore parse errors */ }
-        }
-      }
-    }).catch((err: unknown) => {
-      setSending(false);
-      setIsGenerating(false);
-      setPhases([]);
-      toast({ title: String(err), variant: "destructive" });
-    });
-  }, [sending, selectedConvId, refetchConv, queryClient, toast]);
 
   // ── Initiate analysis session: open conv + show greeting, wait for user input ──
   const initiateAnalyzeSession = useCallback((workflowId: string, workflowName: string) => {
