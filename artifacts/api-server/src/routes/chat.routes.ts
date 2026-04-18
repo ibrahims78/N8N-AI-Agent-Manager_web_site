@@ -1238,7 +1238,7 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
       }
 
     // ══════════════════════════════════════════════════════════════════════
-    // PATH C: QUERY / CHAT — with streaming + n8n context
+    // PATH C: QUERY / CHAT — deep workflow analysis, explain, diagnose
     // ══════════════════════════════════════════════════════════════════════
     } else {
       sendEvent("start", { type: "chat" });
@@ -1246,12 +1246,13 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
       const OpenAI = (await import("openai")).default;
       const openai = new OpenAI({ apiKey: openaiKey, timeout: 60000 });
 
-      // ── Build n8n workflow context (cached, non-blocking) ─────────────
+      // ── Build rich n8n workflow context ──────────────────────────────
       let workflowContext = "";
+      let mentionedWorkflowId: string | null = null;
       try {
         if (availableWorkflows.length > 0) {
           const workflowList = availableWorkflows.map(w =>
-            `- ID: ${w.id} | Name: "${w.name}" | Status: ${w.active ? "Active ✅" : "Inactive ⏸️"} | Nodes: ${w.nodes?.length ?? "?"}`
+            `- ID: ${w.id} | Name: "${w.name}" | Status: ${w.active ? "Active ✅" : "Inactive ⏸️"}`
           ).join("\n");
           workflowContext = `\n\n## Connected n8n Workflows (${availableWorkflows.length} total):\n${workflowList}\n`;
 
@@ -1261,21 +1262,72 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
             : null;
 
           if (mentionedWorkflow) {
+            mentionedWorkflowId = mentionedWorkflow.id;
             try {
               const fullWf = await getCachedWorkflow(mentionedWorkflow.id);
-              const nodes = (fullWf.nodes as Array<{ type?: string; name?: string; parameters?: Record<string, unknown> }> | undefined) ?? [];
-              const nodesSummary = nodes.map((n, i) => {
-                const paramKeys = n.parameters ? Object.keys(n.parameters).slice(0, 4).join(", ") : "";
-                return `  ${i + 1}. [${n.type ?? "unknown"}] "${n.name ?? "unnamed"}"${paramKeys ? ` — params: ${paramKeys}` : ""}`;
-              }).join("\n");
-              workflowContext += `\n## Detailed Workflow: "${mentionedWorkflow.name}" (ID: ${mentionedWorkflow.id})\n`;
+              type WfNode = { id?: string; type?: string; name?: string; typeVersion?: number; parameters?: Record<string, unknown>; disabled?: boolean; credentials?: Record<string, unknown>; notes?: string };
+              const nodes = (fullWf.nodes as WfNode[] | undefined) ?? [];
+
+              // Build rich node details with full parameter values (truncated per node)
+              const nodeDetails = nodes.map((n, i) => {
+                const lines: string[] = [];
+                lines.push(`  ### Node ${i + 1}: "${n.name ?? "unnamed"}"`);
+                lines.push(`     Type: ${n.type ?? "unknown"} (v${n.typeVersion ?? "?"})`);
+                if (n.disabled) lines.push(`     Status: DISABLED ⛔`);
+                if (n.notes) lines.push(`     Notes: ${n.notes}`);
+                if (n.credentials && Object.keys(n.credentials).length > 0) {
+                  lines.push(`     Credentials: ${Object.keys(n.credentials).join(", ")}`);
+                }
+                if (n.parameters && Object.keys(n.parameters).length > 0) {
+                  const paramStr = JSON.stringify(n.parameters, null, 2);
+                  // Truncate large parameter blocks to keep context manageable
+                  const truncated = paramStr.length > 600 ? paramStr.slice(0, 600) + "\n     ...(truncated)" : paramStr;
+                  lines.push(`     Parameters:\n     ${truncated.replace(/\n/g, "\n     ")}`);
+                }
+                return lines.join("\n");
+              }).join("\n\n");
+
+              workflowContext += `\n## Full Workflow Details: "${mentionedWorkflow.name}" (ID: ${mentionedWorkflow.id})\n`;
               workflowContext += `Status: ${mentionedWorkflow.active ? "Active ✅" : "Inactive ⏸️"}\n`;
-              workflowContext += `Total Nodes: ${nodes.length}\nNode List:\n${nodesSummary}\n`;
+              workflowContext += `Total Nodes: ${nodes.length}\n\n`;
+              workflowContext += `### Node-by-Node Breakdown:\n${nodeDetails}\n`;
+
               const connections = fullWf.connections as Record<string, unknown> | undefined;
-              if (connections) {
-                workflowContext += `Connections: ${Object.keys(connections).length} nodes have outgoing connections.\n`;
+              if (connections && Object.keys(connections).length > 0) {
+                const connSummary = Object.entries(connections).map(([fromNode, targets]) => {
+                  const mainOutputs = (targets as Record<string, unknown[][]>)?.main?.[0] ?? [];
+                  const targetNames = (mainOutputs as Array<{ node?: string }>).map(t => t.node).filter(Boolean).join(", ");
+                  return `  "${fromNode}" → ${targetNames || "(no targets)"}`;
+                }).join("\n");
+                workflowContext += `\n### Execution Flow (connections):\n${connSummary}\n`;
               }
-            } catch { /* ignore */ }
+
+              // ── Fetch execution errors for diagnosis ──────────────────
+              try {
+                const execData = await getWorkflowExecutionsWithErrors(mentionedWorkflow.id, 10);
+                if (execData.all.length > 0) {
+                  const recentRuns = execData.all.slice(0, 5).map(e =>
+                    `  - [${e.status.toUpperCase()}] ${e.startedAt ?? "?"} (mode: ${e.mode})`
+                  ).join("\n");
+                  workflowContext += `\n### Recent Executions (last ${execData.all.length}):\n${recentRuns}\n`;
+
+                  if (execData.errorDetails.length > 0) {
+                    const errSummary = execData.errorDetails.map(e => {
+                      const errMsg = e.error?.message ?? "unknown error";
+                      const errNode = e.error?.node?.name ? ` at node "${e.error.node.name}"` : "";
+                      return `  ❌ [${e.startedAt ?? "?"}]${errNode}: ${errMsg}`;
+                    }).join("\n");
+                    workflowContext += `\n### Execution Errors Detected:\n${errSummary}\n`;
+                  } else {
+                    const allSuccess = execData.all.every(e => e.status === "success");
+                    if (allSuccess) workflowContext += `\n### Execution Health: ✅ All recent runs succeeded.\n`;
+                  }
+                } else {
+                  workflowContext += `\n### Execution History: No executions recorded yet.\n`;
+                }
+              } catch { /* ignore — execution errors are non-blocking */ }
+
+            } catch { /* ignore if workflow fetch fails */ }
           }
         }
       } catch {
@@ -1286,13 +1338,22 @@ router.post("/conversations/:id/generate", authenticate, requirePermission("use_
       const sessionSummary = buildSessionSummary(previousMessages.map(m => ({ role: m.role, content: m.content })));
 
       const systemPrompt = isArabic
-        ? `أنت مساعد ذكي متخصص في n8n مربوط مباشرةً بنظام n8n الخاص بالمستخدم. تحدث بالعربية دائماً.
-مهمتك: الإجابة عن أسئلة المستخدم بشكل دقيق ومفصّل بناءً على الـ workflows الفعلية المربوطة.
-إذا سأل عن workflow معين، اشرح نودات عمله وتسلسله الفعلي.
-إذا وجدت خطأ أو مشكلة، اقترح حلاً ملموساً.${workflowContext}${sessionSummary}`
-        : `You are an AI assistant directly connected to the user's n8n instance. Always answer based on the ACTUAL connected workflows below.
-If asked about a specific workflow, explain its real nodes, flow, and behavior.
-If you spot issues or improvements, suggest concrete changes.${workflowContext}${sessionSummary}`;
+        ? `أنت خبير متخصص في n8n مربوط مباشرةً بنظام n8n الخاص بالمستخدم. تحدث بالعربية الفصحى دائماً.
+
+## مهامك:
+- **الشرح الاحترافي**: عند السؤال عن workflow، اشرح كل node بتفصيل: ماذا يفعل، ما هي إعداداته، ولماذا هو في هذا الموضع من المسار.
+- **تحليل الإعدادات**: إذا سُئلت عن إعداد معين، اشرح قيمته الحالية ومعناها وكيف تؤثر على سير العمل.
+- **تشخيص الأخطاء**: إذا وُجدت أخطاء في سجل التنفيذ، حللها واشرح سببها وقدّم خطوات حل واضحة ومرقّمة.
+- **اقتراح التحسينات**: إذا رأيت مشاكل محتملة أو فرص تحسين، اذكرها بشكل بنّاء.
+- **الدقة**: استند دائماً على البيانات الفعلية المقدّمة — لا تخمّن.${workflowContext}${sessionSummary}`
+        : `You are an n8n expert directly connected to the user's n8n instance. Always answer based on ACTUAL data provided.
+
+## Your Capabilities:
+- **Professional Explanation**: For any workflow question, explain each node in detail: what it does, its current settings/parameters, and why it's placed at that step.
+- **Settings Analysis**: When asked about a specific setting, explain its current value, what it means, and how it affects the workflow.
+- **Error Diagnosis**: If execution errors are present in the context, analyze the root cause and provide clear numbered steps to fix them.
+- **Improvement Suggestions**: Proactively mention potential issues or optimization opportunities.
+- **Accuracy**: Always base answers on the actual data provided — never guess or hallucinate.${workflowContext}${sessionSummary}`;
 
       // ── Build conversation context with smart truncation ──────────────
       const contextMessages = [...previousMessages]
@@ -1309,8 +1370,8 @@ If you spot issues or improvements, suggest concrete changes.${workflowContext}$
         const stream = await openai.chat.completions.create({
           model: "gpt-4o",
           messages: [{ role: "system", content: systemPrompt }, ...contextMessages],
-          max_tokens: 2000,
-          temperature: 0.7,
+          max_tokens: 2500,
+          temperature: 0.4,
           stream: true,
         });
 
@@ -1338,7 +1399,11 @@ If you spot issues or improvements, suggest concrete changes.${workflowContext}$
         .set({ messageCount: messageCount + 1, updatedAt: new Date() })
         .where(eq(conversationsTable.id, convId));
 
-      sendEvent("complete", { message: assistantMsg, isWorkflowCreation: false });
+      sendEvent("complete", {
+        message: assistantMsg,
+        isWorkflowCreation: false,
+        analyzedWorkflowId: mentionedWorkflowId,
+      });
     }
   } catch (err) {
     logger.error({ err }, "SSE generate error");
