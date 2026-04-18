@@ -13,6 +13,7 @@ import {
   importWorkflow,
   getWorkflowExecutions,
   getAllRecentExecutions,
+  sanitizeWorkflowSettings,
 } from "../services/n8n.service";
 // BUG 7 FIX: invalidate cache on every mutation so next query reflects reality
 import { invalidateWorkflowCache } from "../services/n8nCache.service";
@@ -303,23 +304,11 @@ router.post("/:id/apply-fix", authenticate, requirePermission("manage_workflows"
       try { await deactivateWorkflow(id); } catch { /* ignore deactivation errors */ }
     }
 
-    const ALLOWED_SETTINGS_KEYS = new Set([
-      "executionOrder", "saveManualExecutions", "callerPolicy", "callerIds",
-      "errorWorkflow", "timezone", "saveDataErrorExecution", "saveDataSuccessExecution",
-      "executionTimeout", "saveExecutionProgress",
-    ]);
-    const sanitizeSettings = (raw: unknown): Record<string, unknown> => {
-      if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
-      return Object.fromEntries(
-        Object.entries(raw as Record<string, unknown>).filter(([k]) => ALLOWED_SETTINGS_KEYS.has(k))
-      );
-    };
-
     const updatePayload = {
       name: (workflowJson.name as string) ?? current.name,
       nodes: workflowJson.nodes ?? current.nodes,
       connections: workflowJson.connections ?? current.connections,
-      settings: sanitizeSettings(workflowJson.settings ?? current.settings),
+      settings: sanitizeWorkflowSettings(workflowJson.settings ?? current.settings),
     };
 
     const updated = await updateWorkflow(id, updatePayload);

@@ -1,6 +1,20 @@
 import { db, systemSettingsTable } from "@workspace/db";
 import { decryptApiKey } from "./encryption.service";
 
+const ALLOWED_SETTINGS_KEYS = new Set([
+  "executionOrder", "saveManualExecutions", "callerPolicy", "callerIds",
+  "errorWorkflow", "timezone", "saveDataErrorExecution", "saveDataSuccessExecution",
+  "saveExecutionProgress",
+]);
+
+export function sanitizeWorkflowSettings(raw: unknown): Record<string, unknown> {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return { executionOrder: "v1" };
+  const filtered = Object.fromEntries(
+    Object.entries(raw as Record<string, unknown>).filter(([k]) => ALLOWED_SETTINGS_KEYS.has(k))
+  );
+  return Object.keys(filtered).length > 0 ? filtered : { executionOrder: "v1" };
+}
+
 interface N8nWorkflow {
   id: string;
   name: string;
@@ -245,7 +259,7 @@ export async function importWorkflow(workflowJson: Record<string, unknown>): Pro
     name: (workflowJson.name as string) ?? "Imported Workflow",
     nodes: workflowJson.nodes ?? [],
     connections: workflowJson.connections ?? {},
-    settings: workflowJson.settings ?? {},
+    settings: sanitizeWorkflowSettings(workflowJson.settings),
     // NOTE: do NOT send `active` field — n8n API v1 treats it as read-only on POST
   };
   return createWorkflow(workflowData);

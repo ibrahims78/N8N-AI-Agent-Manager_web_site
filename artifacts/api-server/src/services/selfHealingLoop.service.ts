@@ -30,7 +30,7 @@
 
 import OpenAI from "openai";
 import { logger } from "../lib/logger";
-import { getN8nConfig } from "./n8n.service";
+import { getN8nConfig, sanitizeWorkflowSettings } from "./n8n.service";
 import { sanitizeWorkflowJson, extractJson } from "./jsonValidator.service";
 import type { Language } from "./promptBuilder.service";
 
@@ -109,7 +109,7 @@ async function tryImportToN8n(workflow: Record<string, unknown>): Promise<string
     name: (workflow.name as string) ?? "Imported Workflow",
     nodes: workflow.nodes ?? [],
     connections: workflow.connections ?? {},
-    settings: workflow.settings ?? { executionOrder: "v1" },
+    settings: sanitizeWorkflowSettings(workflow.settings),
     // NOTE: do NOT send `active` field — n8n API v1 treats it as read-only on POST
   };
 
