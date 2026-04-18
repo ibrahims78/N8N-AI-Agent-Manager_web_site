@@ -6,7 +6,7 @@ import {
   Search, Star, Eye, ArrowRight, Zap, X, Plus,
   Download, Globe, BookMarked, ChevronLeft, ChevronRight,
   Loader2, User, BarChart2, Languages, Mail, Webhook,
-  Clock, Code2, Database, Globe2, Send, GitBranch, Filter, Trash2,
+  Clock, Code2, Database, Globe2, Send, GitBranch, Filter, Trash2, BookOpen,
 } from "lucide-react";
 import { useGetTemplates, getGetTemplatesQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -254,6 +254,8 @@ export default function TemplatesPage() {
   const [importedIds, setImportedIds] = useState<Set<number>>(new Set());
   const [n8nPreview, setN8nPreview] = useState<N8nTemplate | null>(null);
 
+  const [explainingTemplate, setExplainingTemplate] = useState(false);
+
   const [translatedLocal, setTranslatedLocal] = useState<Record<number, TranslatedContent>>({});
   const [translatingLocalId, setTranslatingLocalId] = useState<number | null>(null);
   const [translatedN8n, setTranslatedN8n] = useState<Record<number, TranslatedContent>>({});
@@ -266,6 +268,43 @@ export default function TemplatesPage() {
 
   const [usingTemplate, setUsingTemplate] = useState(false);
   const [deletingTemplateId, setDeletingTemplateId] = useState<number | null>(null);
+
+  const handleExplainTemplate = async (template: LocalTemplate) => {
+    if (explainingTemplate) return;
+    setExplainingTemplate(true);
+    try {
+      const headers: Record<string, string> = { ...getAuthHeader(), "Content-Type": "application/json" };
+      const res = await fetch(`${API_BASE}/templates/${template.id}/use`, { method: "POST", headers });
+      const data = await res.json() as { success: boolean; data?: { id?: number } };
+      if (data.success && data.data?.id) {
+        const hasNodes =
+          template.workflowJson?.nodes != null &&
+          Array.isArray(template.workflowJson.nodes) &&
+          (template.workflowJson.nodes as unknown[]).length > 0;
+
+        let message: string;
+        if (hasNodes) {
+          const jsonStr = JSON.stringify(template.workflowJson, null, 2);
+          message = isRTL
+            ? `اشرح لي بالتفصيل كل عقدة (node) في هذا الـ workflow وما وظيفتها:\n\n📌 الاسم: ${template.name}${template.description ? `\n📝 الوصف: ${template.description}` : ""}\n\nبنية الـ workflow:\n\`\`\`json\n${jsonStr}\n\`\`\``
+            : `Explain in detail each node in this workflow and its purpose:\n\n📌 Name: ${template.name}${template.description ? `\n📝 Description: ${template.description}` : ""}\n\nWorkflow structure:\n\`\`\`json\n${jsonStr}\n\`\`\``;
+        } else {
+          message = isRTL
+            ? `اشرح لي هذا القالب وما يفعله:\n📌 الاسم: ${template.name}${template.description ? `\n📝 الوصف: ${template.description}` : ""}`
+            : `Explain this template and what it does:\n📌 Name: ${template.name}${template.description ? `\n📝 Description: ${template.description}` : ""}`;
+        }
+
+        sessionStorage.setItem("templateUse", JSON.stringify({ convId: data.data.id, message }));
+        navigate("/chat");
+      } else {
+        toast({ title: isRTL ? "فشل فتح المحادثة" : "Failed to open chat", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: isRTL ? "فشل فتح المحادثة" : "Failed to open chat", variant: "destructive" });
+    } finally {
+      setExplainingTemplate(false);
+    }
+  };
 
   const handleDeleteTemplate = async (template: LocalTemplate) => {
     const confirmed = window.confirm(
@@ -570,8 +609,14 @@ export default function TemplatesPage() {
                       </div>
                       <h3 className="font-medium text-foreground text-sm mb-1">{translated ? translated.name : template.name}</h3>
                       <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{translated ? translated.description : template.description}</p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">{template.nodesCount} {t("workflows.nodes")}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground me-auto">{template.nodesCount} {t("workflows.nodes")}</span>
+                        <button onClick={() => handleExplainTemplate(template)}
+                          disabled={explainingTemplate}
+                          title={isRTL ? "شرح العقد" : "Explain nodes"}
+                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                          {explainingTemplate ? <Loader2 size={12} className="animate-spin" /> : <BookOpen size={12} />}
+                        </button>
                         <button onClick={() => handleUseTemplate(template)}
                           disabled={usingTemplate}
                           className="flex items-center gap-1 px-3 py-1 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
@@ -646,12 +691,19 @@ export default function TemplatesPage() {
                       </div>
                       <div className="flex gap-2">
                         <button onClick={() => setPreviewTemplate(template)}
-                          className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors">
+                          className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors">
                           <Eye size={12} /> {t("templates.preview")}
+                        </button>
+                        <button onClick={() => handleExplainTemplate(template)}
+                          disabled={explainingTemplate}
+                          title={isRTL ? "شرح العقد بالذكاء الاصطناعي" : "AI explain nodes"}
+                          className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                          {explainingTemplate ? <Loader2 size={12} className="animate-spin" /> : <BookOpen size={12} />}
+                          <span className="hidden sm:inline">{isRTL ? "شرح" : "Explain"}</span>
                         </button>
                         <button onClick={() => handleUseTemplate(template)}
                           disabled={usingTemplate}
-                          className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                          className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                           {usingTemplate ? <Loader2 size={12} className="animate-spin" /> : <>{t("templates.use")} <ArrowRight size={12} /></>}
                         </button>
                       </div>
