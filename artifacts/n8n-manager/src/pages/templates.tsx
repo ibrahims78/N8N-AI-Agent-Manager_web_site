@@ -292,6 +292,34 @@ export default function TemplatesPage() {
 
   const handleUseTemplate = async (template: LocalTemplate) => {
     if (usingTemplate) return;
+
+    const hasNodes = Array.isArray(template.workflowJson?.nodes) && (template.workflowJson?.nodes?.length ?? 0) > 0;
+
+    if (!hasNodes) {
+      // No nodes → send to AI agent to generate the workflow from description
+      setUsingTemplate(true);
+      try {
+        const headers: Record<string, string> = { ...getAuthHeader(), "Content-Type": "application/json" };
+        const res = await fetch(`${API_BASE}/templates/${template.id}/use`, { method: "POST", headers });
+        const data = await res.json() as { success: boolean; data?: { id?: number } };
+        if (data.success && data.data?.id) {
+          const message = isRTL
+            ? `أريد إنشاء workflow في n8n بناءً على هذا القالب:\n📌 الاسم: ${template.name}${template.description ? `\n📝 الوصف: ${template.description}` : ""}`
+            : `I want to create a workflow in n8n based on this template:\n📌 Name: ${template.name}${template.description ? `\n📝 Description: ${template.description}` : ""}`;
+          sessionStorage.setItem("templateUse", JSON.stringify({ convId: data.data.id, message }));
+          window.location.href = "/chat";
+        } else {
+          toast({ title: isRTL ? "فشل تطبيق القالب" : "Failed to apply template", variant: "destructive" });
+        }
+      } catch {
+        toast({ title: isRTL ? "فشل تطبيق القالب" : "Failed to apply template", variant: "destructive" });
+      } finally {
+        setUsingTemplate(false);
+      }
+      return;
+    }
+
+    // Has nodes → send directly to n8n
     setUsingTemplate(true);
     try {
       const headers: Record<string, string> = { ...getAuthHeader(), "Content-Type": "application/json" };
