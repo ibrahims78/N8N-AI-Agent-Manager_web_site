@@ -254,10 +254,29 @@ export async function getWorkflowExecutionsWithErrors(workflowId: string, limit 
   return { all, errorDetails };
 }
 
+// Allowed node fields for n8n workflow API v1
+const ALLOWED_NODE_FIELDS = new Set([
+  "id", "name", "type", "typeVersion", "position", "parameters", "credentials",
+  "disabled", "notes", "retryOnFail", "maxTries", "waitBetweenTries",
+  "alwaysOutputData", "executeOnce", "continueOnFail", "onError",
+  "notesInFlow", "webhookId", "extendsCredential",
+]);
+
+function sanitizeNode(node: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(node).filter(([k]) => ALLOWED_NODE_FIELDS.has(k))
+  );
+}
+
 export async function importWorkflow(workflowJson: Record<string, unknown>): Promise<N8nWorkflow> {
+  const rawNodes = Array.isArray(workflowJson.nodes) ? workflowJson.nodes : [];
+  const sanitizedNodes = rawNodes.map(n =>
+    sanitizeNode(n as Record<string, unknown>)
+  );
+
   const workflowData = {
     name: (workflowJson.name as string) ?? "Imported Workflow",
-    nodes: workflowJson.nodes ?? [],
+    nodes: sanitizedNodes,
     connections: workflowJson.connections ?? {},
     settings: sanitizeWorkflowSettings(workflowJson.settings),
     // NOTE: do NOT send `active` field — n8n API v1 treats it as read-only on POST
