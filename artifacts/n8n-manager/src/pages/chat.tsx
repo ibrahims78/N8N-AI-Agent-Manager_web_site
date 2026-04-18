@@ -758,6 +758,7 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const pendingAutoSend = useRef<string | null>(null);
+  const skipAnalysisRef = useRef(false);
   const pendingAnalyzeRef = useRef<{ workflowId: string; workflowName: string } | null>(null);
   const [phases, setPhases] = useState<PhaseProgress[]>([]);
   const [generationResult, setGenerationResult] = useState<GenerationResult | null>(null);
@@ -1042,8 +1043,10 @@ export default function ChatPage() {
     const text = (overrideText ?? input).trim();
     if (!text || sending || !selectedConvId) return;
 
-    // Intercept analysis intent → open picker instead
-    if (detectAnalysisIntent(text)) {
+    // Intercept analysis intent → open picker instead (skip for auto-sent template messages)
+    const bypassAnalysis = skipAnalysisRef.current;
+    skipAnalysisRef.current = false;
+    if (!bypassAnalysis && detectAnalysisIntent(text)) {
       setInput("");
       toast({
         title: isRTL ? "🔍 اختر مسار العمل للتحليل" : "🔍 Select a workflow to analyze",
@@ -1248,6 +1251,7 @@ export default function ChatPage() {
     if (selectedConvId && pendingAutoSend.current) {
       const message = pendingAutoSend.current;
       pendingAutoSend.current = null;
+      skipAnalysisRef.current = true; // template auto-messages bypass analysis detection
       handleSend(message);
     }
   }, [selectedConvId, handleSend]);
@@ -2172,7 +2176,7 @@ export default function ChatPage() {
                   onClick={openAnalyzePicker}
                   disabled={sending}
                   className="p-1.5 rounded-lg text-violet-500 hover:text-violet-600 hover:bg-violet-500/10 transition-colors disabled:opacity-40"
-                  title={isRTL ? "تحليل مسار عمل" : "Analyze workflow"}
+                  title={isRTL ? "كشف أخطاء وإصلاح مسار عمل موجود" : "Debug & fix an existing workflow"}
                 >
                   <ScanSearch size={15} />
                 </button>
