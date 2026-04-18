@@ -295,34 +295,61 @@ export default function TemplatesPage() {
   const handleUseTemplate = async (template: LocalTemplate) => {
     if (usingTemplate) return;
     setUsingTemplate(true);
+
+    const hasRealWorkflow =
+      template.workflowJson?.nodes != null &&
+      Array.isArray(template.workflowJson.nodes) &&
+      (template.workflowJson.nodes as unknown[]).length > 0;
+
     try {
       const headers: Record<string, string> = { ...getAuthHeader(), "Content-Type": "application/json" };
-      const res = await fetch(`${API_BASE}/templates/${template.id}/use`, { method: "POST", headers });
-      const data = await res.json() as { success: boolean; data?: { id?: number } };
-      if (data.success && data.data?.id) {
-        const convId = data.data.id;
 
-        const hasRealWorkflow =
-          template.workflowJson?.nodes != null &&
-          Array.isArray(template.workflowJson.nodes) &&
-          template.workflowJson.nodes.length > 0;
+      // Update usage count (fire and forget)
+      void fetch(`${API_BASE}/templates/${template.id}/use`, { method: "POST", headers });
 
-        let message: string;
-        if (hasRealWorkflow) {
-          const jsonStr = JSON.stringify(template.workflowJson, null, 2);
-          message = isRTL
-            ? `أنشئ هذا الـ workflow في n8n بالضبط كما هو:\n📌 الاسم: ${template.name}${template.description ? `\n📝 الوصف: ${template.description}` : ""}\n\nJSON الـ workflow:\n\`\`\`json\n${jsonStr}\n\`\`\``
-            : `Create and deploy exactly this workflow to n8n:\n📌 Name: ${template.name}${template.description ? `\n📝 Description: ${template.description}` : ""}\n\nWorkflow JSON:\n\`\`\`json\n${jsonStr}\n\`\`\``;
+      if (hasRealWorkflow) {
+        // ── Path A: Direct import to n8n ──────────────────────────────────
+        const importRes = await fetch(`${API_BASE}/workflows/import`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ workflowJson: template.workflowJson }),
+        });
+        const importData = await importRes.json() as { success: boolean; data?: { id?: string; name?: string }; error?: { message?: string } };
+
+        if (importData.success) {
+          toast({
+            title: isRTL
+              ? `✅ تم نشر "${template.name}" في n8n بنجاح!`
+              : `✅ "${template.name}" deployed to n8n successfully!`,
+          });
+          navigate("/workflows");
         } else {
-          message = isRTL
+          const errMsg = importData.error?.message ?? "";
+          if (errMsg.includes("N8N_NOT_CONFIGURED")) {
+            toast({
+              title: isRTL ? "⚠️ n8n غير مُهيأ" : "⚠️ n8n not configured",
+              description: isRTL
+                ? "يرجى إعداد اتصال n8n من صفحة الإعدادات أولاً"
+                : "Please configure your n8n connection in Settings first",
+              variant: "destructive",
+            });
+          } else {
+            toast({ title: isRTL ? "فشل نشر القالب" : "Failed to deploy template", variant: "destructive" });
+          }
+        }
+      } else {
+        // ── Path B: No nodes → open chat to build with AI ─────────────────
+        const convRes = await fetch(`${API_BASE}/templates/${template.id}/use`, { method: "POST", headers });
+        const convData = await convRes.json() as { success: boolean; data?: { id?: number } };
+        if (convData.success && convData.data?.id) {
+          const message = isRTL
             ? `أريد إنشاء workflow في n8n بناءً على هذا القالب:\n📌 الاسم: ${template.name}${template.description ? `\n📝 الوصف: ${template.description}` : ""}`
             : `I want to create a workflow in n8n based on this template:\n📌 Name: ${template.name}${template.description ? `\n📝 Description: ${template.description}` : ""}`;
+          sessionStorage.setItem("templateUse", JSON.stringify({ convId: convData.data.id, message }));
+          navigate("/chat");
+        } else {
+          toast({ title: isRTL ? "فشل تطبيق القالب" : "Failed to apply template", variant: "destructive" });
         }
-
-        sessionStorage.setItem("templateUse", JSON.stringify({ convId, message }));
-        navigate("/chat");
-      } else {
-        toast({ title: isRTL ? "فشل تطبيق القالب" : "Failed to apply template", variant: "destructive" });
       }
     } catch {
       toast({ title: isRTL ? "فشل تطبيق القالب" : "Failed to apply template", variant: "destructive" });
