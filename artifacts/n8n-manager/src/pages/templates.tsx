@@ -6,7 +6,7 @@ import {
   Search, Star, Eye, ArrowRight, Zap, X, Plus,
   Download, Globe, BookMarked, ChevronLeft, ChevronRight,
   Loader2, User, BarChart2, Languages, Mail, Webhook,
-  Clock, Code2, Database, Globe2, Send, GitBranch, Filter,
+  Clock, Code2, Database, Globe2, Send, GitBranch, Filter, Trash2,
 } from "lucide-react";
 import { useGetTemplates, getGetTemplatesQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -38,6 +38,7 @@ interface LocalTemplate {
   usageCount: number;
   avgRating: number;
   ratingCount: number;
+  isSystem?: boolean;
   workflowJson?: WorkflowJson;
 }
 
@@ -264,6 +265,32 @@ export default function TemplatesPage() {
   const { data: res, isLoading: localLoading } = useGetTemplates(undefined, {});
 
   const [usingTemplate, setUsingTemplate] = useState(false);
+  const [deletingTemplateId, setDeletingTemplateId] = useState<number | null>(null);
+
+  const handleDeleteTemplate = async (template: LocalTemplate) => {
+    const confirmed = window.confirm(
+      isRTL
+        ? `هل أنت متأكد من حذف القالب "${template.name}"؟`
+        : `Are you sure you want to delete "${template.name}"?`
+    );
+    if (!confirmed) return;
+    setDeletingTemplateId(template.id);
+    try {
+      const headers: Record<string, string> = { ...getAuthHeader() };
+      const res = await fetch(`${API_BASE}/templates/${template.id}`, { method: "DELETE", headers });
+      const data = await res.json() as { success: boolean };
+      if (data.success) {
+        toast({ title: isRTL ? "تم حذف القالب ✅" : "Template deleted ✅" });
+        queryClient.invalidateQueries({ queryKey: getGetTemplatesQueryKey() });
+      } else {
+        toast({ title: isRTL ? "فشل الحذف" : "Delete failed", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: isRTL ? "فشل الحذف" : "Delete failed", variant: "destructive" });
+    } finally {
+      setDeletingTemplateId(null);
+    }
+  };
 
   const handleUseTemplate = async (template: LocalTemplate) => {
     if (usingTemplate) return;
@@ -570,6 +597,15 @@ export default function TemplatesPage() {
                             className={`p-1 rounded-md transition-colors disabled:opacity-50 ${translated ? "bg-accent/20 text-accent" : "text-muted-foreground hover:text-accent hover:bg-accent/10"}`}>
                             {isTranslating ? <Loader2 size={13} className="animate-spin" /> : <Languages size={13} />}
                           </button>
+                          {!template.isSystem && (
+                            <button
+                              onClick={() => handleDeleteTemplate(template)}
+                              disabled={deletingTemplateId === template.id}
+                              title={isRTL ? "حذف القالب" : "Delete template"}
+                              className="p-1 rounded-md text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50">
+                              {deletingTemplateId === template.id ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+                            </button>
+                          )}
                           <StarRating templateId={template.id} currentRating={template.avgRating} ratingCount={template.ratingCount} isRTL={isRTL} onRated={(avg, count) => setLocalRatings(p => ({ ...p, [template.id]: { avgRating: avg, ratingCount: count } }))} />
                         </div>
                       </div>
