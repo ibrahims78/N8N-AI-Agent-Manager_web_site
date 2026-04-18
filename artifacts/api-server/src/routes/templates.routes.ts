@@ -85,18 +85,28 @@ router.post("/n8n-library/import/:id", authenticate, requirePermission("manage_w
 
     let workflowJson: Record<string, unknown> = { name, nodes: [], connections: {}, source: "n8n-library", n8nId };
     try {
-      const n8nRes = await fetch(`${N8N_API}/templates/${n8nId}`, {
+      // Correct endpoint: /templates/workflows/{id} returns nested workflow.workflow
+      const n8nRes = await fetch(`${N8N_API}/templates/workflows/${n8nId}`, {
         headers: { "Accept": "application/json", "User-Agent": "n8n-manager/1.0" },
         signal: AbortSignal.timeout(10000),
       });
       if (n8nRes.ok) {
         const n8nData = await n8nRes.json() as {
-          workflow?: { nodes?: unknown[]; connections?: unknown };
-          workflowInfo?: { nodes?: unknown[]; connections?: unknown };
+          workflow?: {
+            name?: string;
+            workflow?: { nodes?: unknown[]; connections?: unknown; meta?: unknown; pinData?: unknown };
+          };
         };
-        const wf = n8nData.workflow ?? n8nData.workflowInfo;
-        if (wf && Array.isArray(wf.nodes) && wf.nodes.length > 0) {
-          workflowJson = { name, ...wf, source: "n8n-library", n8nId };
+        const innerWf = n8nData.workflow?.workflow;
+        if (innerWf && Array.isArray(innerWf.nodes) && innerWf.nodes.length > 0) {
+          workflowJson = {
+            name,
+            nodes: innerWf.nodes,
+            connections: innerWf.connections ?? {},
+            ...(innerWf.meta ? { meta: innerWf.meta } : {}),
+            source: "n8n-library",
+            n8nId,
+          };
         }
       }
     } catch {
