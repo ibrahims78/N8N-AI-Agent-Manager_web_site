@@ -6,7 +6,8 @@ import {
   Download, Globe, BookMarked, ChevronLeft, ChevronRight,
   Loader2, User, BarChart2, Languages, Mail, Webhook,
   Clock, Code2, Database, Globe2, Send, GitBranch, Filter, Trash2,
-  Upload, FileJson, CheckCircle2,
+  Upload, FileJson, CheckCircle2, Sparkles, Settings2, AlertTriangle,
+  ExternalLink, Copy, ChevronDown, Info,
 } from "lucide-react";
 import { useGetTemplates, getGetTemplatesQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -225,6 +226,464 @@ function StarRating({
   );
 }
 
+const TIMEZONES = [
+  "UTC", "Asia/Riyadh", "Asia/Dubai", "Asia/Kuwait", "Asia/Baghdad",
+  "Asia/Cairo", "Africa/Casablanca", "Europe/London", "Europe/Paris",
+  "America/New_York", "America/Chicago", "America/Los_Angeles",
+  "Asia/Tokyo", "Asia/Singapore", "Australia/Sydney",
+];
+
+interface ExportModalProps {
+  template: LocalTemplate;
+  isRTL: boolean;
+  onClose: () => void;
+  onExported: (workflowName: string) => void;
+}
+
+function ExportModal({ template, isRTL, onClose, onExported }: ExportModalProps) {
+  const { toast } = useToast();
+  const authHeader = getAuthHeader();
+
+  type Phase = "prepare" | "configure" | "exporting" | "done";
+  const [phase, setPhase] = useState<Phase>("prepare");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  const [preparedJson, setPreparedJson] = useState<WorkflowJson>(template.workflowJson ?? { nodes: [], connections: {} });
+  const [warnings, setWarnings] = useState<string[]>([]);
+  const [changes, setChanges] = useState<string[]>([]);
+  const [exportName, setExportName] = useState(template.name);
+  const [timezone, setTimezone] = useState("UTC");
+  const [executionOrder, setExecutionOrder] = useState("v1");
+  const [showJsonPreview, setShowJsonPreview] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
+
+  const hasNodes = Array.isArray(preparedJson?.nodes) && (preparedJson?.nodes?.length ?? 0) > 0;
+
+  const handlePrepareWithAI = async () => {
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const res = await fetch(`${API_BASE}/templates/${template.id}/prepare-export`, {
+        method: "POST",
+        headers: { ...authHeader, "Content-Type": "application/json" },
+      });
+      const data = await res.json() as {
+        success: boolean;
+        data?: { workflowName: string; workflowJson: WorkflowJson; warnings: string[]; changes: string[] };
+        error?: { code?: string; message?: string };
+      };
+      if (data.success && data.data) {
+        setPreparedJson(data.data.workflowJson);
+        setExportName(data.data.workflowName);
+        setWarnings(data.data.warnings ?? []);
+        setChanges(data.data.changes ?? []);
+        setPhase("configure");
+      } else {
+        const code = data.error?.code;
+        const msg = code === "AI_NOT_CONFIGURED"
+          ? (isRTL ? "مفتاح OpenAI غير مُهيَّأ في الإعدادات" : "OpenAI key not configured in settings")
+          : (data.error?.message ?? (isRTL ? "فشل التحضير بالذكاء الاصطناعي" : "AI preparation failed"));
+        setAiError(msg);
+      }
+    } catch {
+      setAiError(isRTL ? "خطأ في الاتصال بالخادم" : "Server connection error");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const handleSkipAI = () => {
+    setPreparedJson(template.workflowJson ?? { nodes: [], connections: {} });
+    setWarnings([]);
+    setChanges([]);
+    setPhase("configure");
+  };
+
+  const handleDownloadJson = () => {
+    const finalJson = {
+      ...preparedJson,
+      name: exportName,
+      settings: { executionOrder, timezone },
+    };
+    const blob = new Blob([JSON.stringify(finalJson, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${exportName.replace(/\s+/g, "_")}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({ title: isRTL ? `✅ تم تحميل "${exportName}.json"` : `✅ Downloaded "${exportName}.json"` });
+  };
+
+  const handleCopyJson = () => {
+    const finalJson = { ...preparedJson, name: exportName, settings: { executionOrder, timezone } };
+    navigator.clipboard.writeText(JSON.stringify(finalJson, null, 2)).then(() => {
+      toast({ title: isRTL ? "تم نسخ JSON إلى الحافظة ✅" : "JSON copied to clipboard ✅" });
+    });
+  };
+
+  const handleExportToN8n = async () => {
+    setExportLoading(true);
+    setPhase("exporting");
+    try {
+      const res = await fetch(`${API_BASE}/templates/${template.id}/deploy`, {
+        method: "POST",
+        headers: { ...authHeader, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workflowJson: preparedJson,
+          name: exportName,
+          timezone,
+          executionOrder,
+        }),
+      });
+      const data = await res.json() as {
+        success: boolean;
+        data?: { workflowId?: string; workflowName?: string };
+        error?: { code?: string; message?: string };
+      };
+      if (data.success) {
+        setPhase("done");
+        onExported(data.data?.workflowName ?? exportName);
+      } else {
+        const code = data.error?.code;
+        const msg = code === "N8N_NOT_CONFIGURED"
+          ? (isRTL ? "n8n غير مُهيَّأ - تحقق من الإعدادات" : "n8n not configured - check settings")
+          : (data.error?.message ?? (isRTL ? "فشل التصدير" : "Export failed"));
+        toast({ title: msg, variant: "destructive" });
+        setPhase("configure");
+      }
+    } catch {
+      toast({ title: isRTL ? "فشل التصدير" : "Export failed", variant: "destructive" });
+      setPhase("configure");
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const nodes = preparedJson?.nodes ?? [];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4" onClick={onClose}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        onClick={e => e.stopPropagation()}
+        className="bg-card rounded-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto border border-border shadow-2xl"
+      >
+        <div className="p-5 sm:p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-accent/15 flex items-center justify-center">
+                <ExternalLink size={15} className="text-accent" />
+              </div>
+              <div>
+                <h2 className="text-sm font-semibold text-foreground">
+                  {isRTL ? "تصدير احترافي إلى n8n" : "Professional Export to n8n"}
+                </h2>
+                <p className="text-[11px] text-muted-foreground truncate max-w-[220px]">{template.name}</p>
+              </div>
+            </div>
+            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
+              <X size={15} className="text-muted-foreground" />
+            </button>
+          </div>
+
+          {/* Steps indicator */}
+          <div className="flex items-center gap-1.5 mb-5">
+            {[
+              { key: "prepare", label: isRTL ? "التحضير" : "Prepare" },
+              { key: "configure", label: isRTL ? "الإعدادات" : "Configure" },
+              { key: "done", label: isRTL ? "تم" : "Done" },
+            ].map((step, i, arr) => {
+              const stepOrder = ["prepare", "configure", "exporting", "done"];
+              const currentIdx = stepOrder.indexOf(phase);
+              const stepIdx = stepOrder.indexOf(step.key);
+              const isActive = phase === step.key || (step.key === "done" && phase === "exporting");
+              const isDone = currentIdx > stepIdx;
+              return (
+                <div key={step.key} className="flex items-center gap-1.5 flex-1">
+                  <div className="flex items-center gap-1.5 flex-1">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors ${isDone ? "bg-green-500 text-white" : isActive ? "bg-accent text-white" : "bg-muted text-muted-foreground"}`}>
+                      {isDone ? <CheckCircle2 size={11} /> : i + 1}
+                    </div>
+                    <span className={`text-[11px] font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}>{step.label}</span>
+                  </div>
+                  {i < arr.length - 1 && <div className={`h-px flex-1 transition-colors ${isDone ? "bg-green-500/50" : "bg-border"}`} />}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* PHASE: PREPARE */}
+          {phase === "prepare" && (
+            <div className="space-y-4">
+              <div className="bg-muted/50 rounded-xl p-4 border border-border">
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-background border border-border flex items-center justify-center shrink-0">
+                    <FileJson size={16} className="text-accent" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground">{template.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {nodes.length > 0
+                        ? `${nodes.length} ${isRTL ? "عقدة في الـ workflow" : "nodes in workflow"}`
+                        : (isRTL ? "لا توجد عقد" : "No nodes")}
+                    </p>
+                    {nodes.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {(nodes as WorkflowNode[]).slice(0, 5).map((n, i) => {
+                          const { color, bg } = getNodeStyle(n.type ?? "");
+                          return (
+                            <span key={i} className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${bg} ${color}`}>
+                              {n.name ?? n.type}
+                            </span>
+                          );
+                        })}
+                        {nodes.length > 5 && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded border border-border bg-muted text-muted-foreground">
+                            +{nodes.length - 5}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-accent/5 to-violet-500/5 rounded-xl p-4 border border-accent/20">
+                <div className="flex items-start gap-3">
+                  <Sparkles size={18} className="text-accent mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground mb-1">
+                      {isRTL ? "التحضير الذكي بالذكاء الاصطناعي" : "AI-Powered Preparation"}
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-0.5">
+                      <li>• {isRTL ? "إعادة تسمية العقد بأسماء واضحة" : "Rename nodes with descriptive names"}</li>
+                      <li>• {isRTL ? "ترتيب مواضع العقد بشكل منظم" : "Organize node positions neatly"}</li>
+                      <li>• {isRTL ? "اقتراح اسم احترافي للـ workflow" : "Suggest a professional workflow name"}</li>
+                      <li>• {isRTL ? "كشف Credentials المفقودة" : "Detect missing credentials"}</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {aiError && (
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                  <AlertTriangle size={14} className="text-destructive mt-0.5 shrink-0" />
+                  <p className="text-xs text-destructive">{aiError}</p>
+                </div>
+              )}
+
+              <div className="flex gap-2.5">
+                <button onClick={handleSkipAI} disabled={!hasNodes}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm hover:bg-muted transition-colors disabled:opacity-40">
+                  {isRTL ? "تخطي، أكمل يدوياً" : "Skip, continue manually"}
+                </button>
+                <button onClick={handlePrepareWithAI} disabled={aiLoading || !hasNodes}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-50">
+                  {aiLoading ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                  {aiLoading ? (isRTL ? "جاري التحليل..." : "Analyzing...") : (isRTL ? "تحضير بالذكاء الاصطناعي" : "Prepare with AI")}
+                </button>
+              </div>
+
+              {!hasNodes && (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                  <Info size={13} className="text-amber-600 shrink-0" />
+                  <p className="text-xs text-amber-700 dark:text-amber-400">
+                    {isRTL ? "هذا القالب لا يحتوي على عقد. لا يمكن تصديره إلى n8n." : "This template has no nodes. It cannot be exported to n8n."}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* PHASE: CONFIGURE */}
+          {phase === "configure" && (
+            <div className="space-y-4">
+              {/* Changes from AI */}
+              {changes.length > 0 && (
+                <div className="bg-green-500/5 rounded-xl p-3.5 border border-green-500/20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CheckCircle2 size={13} className="text-green-500" />
+                    <span className="text-xs font-medium text-green-700 dark:text-green-400">
+                      {isRTL ? `تم إجراء ${changes.length} تحسينات بالذكاء الاصطناعي` : `${changes.length} AI improvements applied`}
+                    </span>
+                  </div>
+                  <ul className="space-y-1">
+                    {changes.map((c, i) => (
+                      <li key={i} className="text-[11px] text-muted-foreground flex items-start gap-1.5">
+                        <span className="text-green-500 shrink-0">✓</span> {c}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Warnings */}
+              {warnings.length > 0 && (
+                <div className="bg-amber-500/5 rounded-xl p-3.5 border border-amber-500/20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertTriangle size={13} className="text-amber-500" />
+                    <span className="text-xs font-medium text-amber-700 dark:text-amber-400">
+                      {isRTL ? "تحذيرات تحتاج انتباهك" : "Warnings requiring attention"}
+                    </span>
+                  </div>
+                  <ul className="space-y-1">
+                    {warnings.map((w, i) => (
+                      <li key={i} className="text-[11px] text-muted-foreground flex items-start gap-1.5">
+                        <span className="text-amber-500 shrink-0">⚠</span> {w}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Workflow name */}
+              <div>
+                <label className="text-xs font-medium text-muted-foreground block mb-1.5">
+                  {isRTL ? "اسم الـ Workflow في n8n" : "Workflow Name in n8n"} *
+                </label>
+                <input value={exportName} onChange={e => setExportName(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  placeholder={isRTL ? "اسم الـ workflow" : "Workflow name"} />
+              </div>
+
+              {/* Settings */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1.5">
+                    <Settings2 size={11} className="inline me-1" />
+                    {isRTL ? "المنطقة الزمنية" : "Timezone"}
+                  </label>
+                  <select value={timezone} onChange={e => setTimezone(e.target.value)}
+                    className="w-full px-2.5 py-2 rounded-lg border border-border bg-background text-xs focus:outline-none focus:ring-2 focus:ring-accent/50">
+                    {TIMEZONES.map(tz => <option key={tz} value={tz}>{tz}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1.5">
+                    <Settings2 size={11} className="inline me-1" />
+                    {isRTL ? "ترتيب التنفيذ" : "Execution Order"}
+                  </label>
+                  <select value={executionOrder} onChange={e => setExecutionOrder(e.target.value)}
+                    className="w-full px-2.5 py-2 rounded-lg border border-border bg-background text-xs focus:outline-none focus:ring-2 focus:ring-accent/50">
+                    <option value="v1">v1 (Default)</option>
+                    <option value="v0">v0 (Legacy)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Nodes preview */}
+              <div>
+                <button onClick={() => setShowJsonPreview(p => !p)}
+                  className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-2">
+                  <ChevronDown size={12} className={`transition-transform ${showJsonPreview ? "rotate-180" : ""}`} />
+                  {isRTL ? "معاينة العقد المُحضَّرة" : "Preview prepared nodes"}
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted">{nodes.length}</span>
+                </button>
+                {showJsonPreview && (
+                  <div className="bg-muted/40 rounded-xl border border-border p-3 overflow-x-auto max-h-36 overflow-y-auto">
+                    <div className="flex flex-wrap gap-1.5">
+                      {(nodes as WorkflowNode[]).map((n, i) => {
+                        const { color, bg, Icon } = getNodeStyle(n.type ?? "");
+                        return (
+                          <div key={i} className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[10px] font-medium ${bg} ${color}`}>
+                            <Icon size={10} className="shrink-0" />
+                            {n.name}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Download / Copy for testing */}
+              <div className="bg-muted/30 rounded-xl p-3 border border-border">
+                <p className="text-[11px] font-medium text-muted-foreground mb-2">
+                  {isRTL ? "اختبر الـ workflow قبل التصدير" : "Test the workflow before exporting"}
+                </p>
+                <div className="flex gap-2">
+                  <button onClick={handleDownloadJson}
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-border bg-background hover:bg-muted text-xs transition-colors">
+                    <Download size={12} />
+                    {isRTL ? "تحميل JSON" : "Download JSON"}
+                  </button>
+                  <button onClick={handleCopyJson}
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-border bg-background hover:bg-muted text-xs transition-colors">
+                    <Copy size={12} />
+                    {isRTL ? "نسخ JSON" : "Copy JSON"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2.5 pt-1">
+                <button onClick={() => setPhase("prepare")}
+                  className="px-4 py-2.5 rounded-xl border border-border text-sm hover:bg-muted transition-colors">
+                  {isRTL ? "رجوع" : "Back"}
+                </button>
+                <button onClick={handleExportToN8n} disabled={!exportName.trim()}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-50">
+                  <ExternalLink size={14} />
+                  {isRTL ? "تصدير إلى n8n" : "Export to n8n"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* PHASE: EXPORTING */}
+          {phase === "exporting" && (
+            <div className="flex flex-col items-center justify-center py-10 gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <Loader2 size={26} className="text-accent animate-spin" />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium text-foreground">
+                  {isRTL ? "جاري التصدير إلى n8n..." : "Exporting to n8n..."}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {isRTL ? "قد يستغرق هذا بضع ثوانٍ" : "This may take a few seconds"}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* PHASE: DONE */}
+          {phase === "done" && (
+            <div className="flex flex-col items-center justify-center py-8 gap-4">
+              <motion.div
+                initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center border border-green-500/20">
+                <CheckCircle2 size={30} className="text-green-500" />
+              </motion.div>
+              <div className="text-center">
+                <p className="text-base font-semibold text-foreground">
+                  {isRTL ? "تم التصدير بنجاح! 🎉" : "Exported Successfully! 🎉"}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {isRTL
+                    ? `تم إرسال "${exportName}" إلى n8n وهو جاهز للتشغيل`
+                    : `"${exportName}" has been sent to n8n and is ready to run`}
+                </p>
+              </div>
+              <button onClick={onClose}
+                className="px-6 py-2.5 rounded-xl bg-accent text-white text-sm hover:bg-accent/90 transition-colors">
+                {isRTL ? "إغلاق" : "Close"}
+              </button>
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function TemplatesPage() {
   const { t } = useTranslation();
   const { language } = useAppStore();
@@ -272,6 +731,7 @@ export default function TemplatesPage() {
 
   const [usingTemplate, setUsingTemplate] = useState(false);
   const [deletingTemplateId, setDeletingTemplateId] = useState<number | null>(null);
+  const [exportTemplate, setExportTemplate] = useState<LocalTemplate | null>(null);
 
   const handleDownloadJson = (template: LocalTemplate) => {
     const json = template.workflowJson;
@@ -646,6 +1106,14 @@ export default function TemplatesPage() {
                               {deletingTemplateId === template.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
                             </button>
                           )}
+                          {Array.isArray(template.workflowJson?.nodes) && (template.workflowJson?.nodes?.length ?? 0) > 0 && (
+                            <button
+                              onClick={() => setExportTemplate(template)}
+                              title={isRTL ? "تصدير احترافي إلى n8n" : "Professional export to n8n"}
+                              className="flex items-center justify-center p-1.5 rounded-lg border border-accent/30 text-accent hover:bg-accent/10 transition-colors">
+                              <ExternalLink size={12} />
+                            </button>
+                          )}
                           <button onClick={() => handleUseTemplate(template)}
                             disabled={usingTemplate}
                             className="flex items-center gap-1 px-3 py-1 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
@@ -746,6 +1214,14 @@ export default function TemplatesPage() {
                             title={isRTL ? "تحميل JSON" : "Download JSON"}
                             className="flex items-center justify-center px-2.5 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0">
                             <Download size={12} />
+                          </button>
+                        )}
+                        {Array.isArray(template.workflowJson?.nodes) && (template.workflowJson?.nodes?.length ?? 0) > 0 && (
+                          <button
+                            onClick={() => setExportTemplate(template)}
+                            title={isRTL ? "تصدير احترافي إلى n8n" : "Professional export to n8n"}
+                            className="flex items-center justify-center px-2.5 py-1.5 rounded-lg border border-accent/30 text-accent hover:bg-accent/10 transition-colors shrink-0">
+                            <ExternalLink size={12} />
                           </button>
                         )}
                         <button onClick={() => handleUseTemplate(template)}
@@ -992,6 +1468,14 @@ export default function TemplatesPage() {
                     {previewTemplate.isSystem ? (isRTL ? "حذف (نظامي)" : "Delete (system)") : (isRTL ? "حذف" : "Delete")}
                   </button>
                 )}
+                {Array.isArray(previewTemplate.workflowJson?.nodes) && (previewTemplate.workflowJson?.nodes?.length ?? 0) > 0 && (
+                  <button
+                    onClick={() => { setExportTemplate(previewTemplate); setPreviewTemplate(null); }}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-accent/40 text-accent hover:bg-accent/10 text-sm transition-colors">
+                    <ExternalLink size={14} />
+                    {isRTL ? "تصدير احترافي" : "Professional Export"}
+                  </button>
+                )}
                 <button onClick={() => { void handleUseTemplate(previewTemplate); setPreviewTemplate(null); }}
                   disabled={usingTemplate}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
@@ -1160,6 +1644,24 @@ export default function TemplatesPage() {
             </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {exportTemplate && (
+          <ExportModal
+            template={exportTemplate}
+            isRTL={isRTL}
+            onClose={() => setExportTemplate(null)}
+            onExported={(workflowName) => {
+              toast({
+                title: isRTL
+                  ? `✅ تم تصدير "${workflowName}" إلى n8n بنجاح`
+                  : `✅ "${workflowName}" exported to n8n successfully`,
+              });
+              queryClient.invalidateQueries({ queryKey: getGetTemplatesQueryKey() });
+            }}
+          />
         )}
       </AnimatePresence>
     </div>

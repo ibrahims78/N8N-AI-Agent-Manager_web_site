@@ -1,13 +1,22 @@
 import { Router } from "express";
-import { db, templatesTable, conversationsTable } from "@workspace/db";
+import { db, templatesTable, conversationsTable, systemSettingsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { authenticate, requirePermission, requireAdmin } from "../middleware/auth.middleware";
 import { importWorkflow } from "../services/n8n.service";
+import { decryptApiKey } from "../services/encryption.service";
+import OpenAI from "openai";
 import type { Request, Response } from "express";
 
 const router = Router();
 
 const N8N_API = "https://api.n8n.io/api";
+
+async function getOpenAIKey(): Promise<string | null> {
+  const settings = await db.select().from(systemSettingsTable).limit(1);
+  const s = settings[0];
+  if (!s || !s.openaiKeyEncrypted || !s.openaiKeyIv) return null;
+  return decryptApiKey(s.openaiKeyEncrypted, s.openaiKeyIv);
+}
 
 router.get("/n8n-library", authenticate, requirePermission("view_templates"), async (req: Request, res: Response): Promise<void> => {
   try {
@@ -288,6 +297,93 @@ router.post("/:id/use", authenticate, requirePermission("use_chat"), async (req:
   }
 });
 
+router.post("/:id/prepare-export", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+      res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid template ID" } });
+      return;
+    }
+
+    const templates = await db.select().from(templatesTable).where(eq(templatesTable.id, id)).limit(1);
+    const template = templates[0];
+    if (!template) {
+      res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Template not found" } });
+      return;
+    }
+
+    const workflowJson = template.workflowJson as Record<string, unknown>;
+    if (!workflowJson || !Array.isArray(workflowJson.nodes) || (workflowJson.nodes as unknown[]).length === 0) {
+      res.status(422).json({ success: false, error: { code: "EMPTY_WORKFLOW", message: "القالب لا يحتوي على عقد" } });
+      return;
+    }
+
+    const openaiKey = await getOpenAIKey();
+    if (!openaiKey) {
+      res.status(503).json({ success: false, error: { code: "AI_NOT_CONFIGURED", message: "مفتاح OpenAI غير مُهيَّأ" } });
+      return;
+    }
+
+    const openai = new OpenAI({ apiKey: openaiKey, timeout: 60000 });
+
+    const systemPrompt = `You are an expert n8n workflow engineer. Your job is to professionally prepare a workflow JSON for export to n8n.
+
+Given a workflow JSON, you MUST:
+1. Give each node a clear, descriptive English name (e.g. "Send Email Notification" instead of "EmailSend1")
+2. Suggest a professional workflow name
+3. Ensure nodes have clean, evenly-spaced positions (start at [250, 300], increment x by 220)
+4. Detect any nodes that require credentials and list them as warnings
+5. Add sensible settings: executionOrder "v1", timezone "UTC"
+6. Return ONLY valid JSON in the exact schema below
+
+Return this JSON schema (no markdown, no explanation):
+{
+  "workflowName": "string - professional workflow name",
+  "workflowJson": { ...full cleaned workflow json... },
+  "warnings": ["string", ...],
+  "changes": ["string description of what was changed", ...]
+}`;
+
+    const userPrompt = `Prepare this workflow for professional export:\n${JSON.stringify(workflowJson, null, 2)}`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      temperature: 0.2,
+      response_format: { type: "json_object" },
+    });
+
+    const raw = completion.choices[0]?.message?.content ?? "{}";
+    let parsed: {
+      workflowName?: string;
+      workflowJson?: Record<string, unknown>;
+      warnings?: string[];
+      changes?: string[];
+    };
+    try {
+      parsed = JSON.parse(raw) as typeof parsed;
+    } catch {
+      res.status(500).json({ success: false, error: { code: "AI_PARSE_ERROR", message: "فشل تحليل رد الذكاء الاصطناعي" } });
+      return;
+    }
+
+    res.json({
+      success: true,
+      data: {
+        workflowName: parsed.workflowName ?? template.name,
+        workflowJson: parsed.workflowJson ?? workflowJson,
+        warnings: parsed.warnings ?? [],
+        changes: parsed.changes ?? [],
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { code: "SERVER_ERROR", message: String(err) } });
+  }
+});
+
 router.post("/:id/deploy", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.user) {
@@ -308,7 +404,28 @@ router.post("/:id/deploy", authenticate, requirePermission("manage_workflows"), 
       return;
     }
 
-    const workflowJson = template.workflowJson as Record<string, unknown>;
+    const body = req.body as {
+      workflowJson?: Record<string, unknown>;
+      name?: string;
+      timezone?: string;
+      executionOrder?: string;
+    };
+
+    let workflowJson = (body.workflowJson ?? template.workflowJson) as Record<string, unknown>;
+
+    if (body.name) workflowJson = { ...workflowJson, name: body.name };
+    if (body.timezone || body.executionOrder) {
+      const currentSettings = (workflowJson.settings as Record<string, unknown>) ?? {};
+      workflowJson = {
+        ...workflowJson,
+        settings: {
+          ...currentSettings,
+          ...(body.timezone ? { timezone: body.timezone } : {}),
+          ...(body.executionOrder ? { executionOrder: body.executionOrder } : {}),
+        },
+      };
+    }
+
     if (!workflowJson || !Array.isArray(workflowJson.nodes) || (workflowJson.nodes as unknown[]).length === 0) {
       res.status(422).json({ success: false, error: { code: "EMPTY_WORKFLOW", message: "القالب لا يحتوي على عقد - لا يمكن إرساله إلى n8n" } });
       return;
