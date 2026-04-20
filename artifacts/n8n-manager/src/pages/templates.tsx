@@ -244,7 +244,7 @@ function ExportModal({ template, isRTL, onClose, onExported }: ExportModalProps)
   const { toast } = useToast();
   const authHeader = getAuthHeader();
 
-  type Phase = "prepare" | "configure" | "exporting" | "done";
+  type Phase = "prepare" | "configure" | "library" | "exporting" | "done";
   const [phase, setPhase] = useState<Phase>("prepare");
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
@@ -257,6 +257,20 @@ function ExportModal({ template, isRTL, onClose, onExported }: ExportModalProps)
   const [executionOrder, setExecutionOrder] = useState("v1");
   const [showJsonPreview, setShowJsonPreview] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
+
+  const [libLoading, setLibLoading] = useState(false);
+  const [libError, setLibError] = useState<string | null>(null);
+  const [libContent, setLibContent] = useState<{
+    title: string;
+    description: string;
+    categories: string[];
+    prerequisites: string[];
+    tags: string[];
+    usageInstructions: string[];
+    submissionUrl: string;
+  } | null>(null);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [zipLoading, setZipLoading] = useState(false);
 
   const hasNodes = Array.isArray(preparedJson?.nodes) && (preparedJson?.nodes?.length ?? 0) > 0;
 
@@ -323,6 +337,124 @@ function ExportModal({ template, isRTL, onClose, onExported }: ExportModalProps)
     navigator.clipboard.writeText(JSON.stringify(finalJson, null, 2)).then(() => {
       toast({ title: isRTL ? "تم نسخ JSON إلى الحافظة ✅" : "JSON copied to clipboard ✅" });
     });
+  };
+
+  const handleCopy = async (text: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 2000);
+    } catch {
+      toast({ title: isRTL ? "فشل النسخ" : "Copy failed", variant: "destructive" });
+    }
+  };
+
+  const handlePrepareLibrary = async () => {
+    setLibLoading(true);
+    setLibError(null);
+    try {
+      const res = await fetch(`${API_BASE}/templates/${template.id}/prepare-library`, {
+        method: "POST",
+        headers: { ...authHeader, "Content-Type": "application/json" },
+      });
+      const data = await res.json() as {
+        success: boolean;
+        data?: typeof libContent;
+        error?: { code?: string; message?: string };
+      };
+      if (data.success && data.data) {
+        setLibContent(data.data);
+        setPhase("library");
+      } else {
+        const code = data.error?.code;
+        const msg = code === "AI_NOT_CONFIGURED"
+          ? (isRTL ? "مفتاح OpenAI غير مُهيَّأ في الإعدادات" : "OpenAI key not configured in settings")
+          : (data.error?.message ?? (isRTL ? "فشل التحضير" : "Preparation failed"));
+        setLibError(msg);
+      }
+    } catch {
+      setLibError(isRTL ? "خطأ في الاتصال بالخادم" : "Server connection error");
+    } finally {
+      setLibLoading(false);
+    }
+  };
+
+  const handleDownloadZip = async () => {
+    if (!libContent) return;
+    setZipLoading(true);
+    try {
+      const JSZip = (await import("jszip")).default;
+      const zip = new JSZip();
+
+      const finalJson = { ...preparedJson, name: exportName || libContent.title, settings: { executionOrder, timezone } };
+      zip.file("workflow.json", JSON.stringify(finalJson, null, 2));
+
+      const descriptionMd = `# ${libContent.title}
+
+## Description
+${libContent.description}
+
+## Categories
+${libContent.categories.map(c => `- ${c}`).join("\n")}
+
+## Tags
+${libContent.tags.map(t => `\`${t}\``).join(", ")}
+`;
+      zip.file("description.md", descriptionMd);
+
+      const readme = `# ${libContent.title}
+
+${libContent.description}
+
+## Prerequisites
+
+${libContent.prerequisites.map((p, i) => `${i + 1}. ${p}`).join("\n")}
+
+## How to Use
+
+${libContent.usageInstructions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
+
+## Submitting to n8n Library
+
+1. Go to ${libContent.submissionUrl}
+2. Log in to your n8n.io account
+3. Upload \`workflow.json\` from this package
+4. Copy the title and description from \`description.md\`
+5. Select categories: ${libContent.categories.join(", ")}
+6. Add tags: ${libContent.tags.join(", ")}
+7. Submit for review
+`;
+      zip.file("README.md", readme);
+
+      const metadata = {
+        title: libContent.title,
+        description: libContent.description,
+        categories: libContent.categories,
+        tags: libContent.tags,
+        prerequisites: libContent.prerequisites,
+        usageInstructions: libContent.usageInstructions,
+        submissionUrl: libContent.submissionUrl,
+        nodesCount: (preparedJson?.nodes ?? []).length,
+        exportedAt: new Date().toISOString(),
+      };
+      zip.file("metadata.json", JSON.stringify(metadata, null, 2));
+
+      const blob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${(libContent.title || exportName).replace(/\s+/g, "_")}_n8n_submission.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast({ title: isRTL ? "✅ تم تحميل حزمة الإرسال الكاملة" : "✅ Complete submission package downloaded" });
+    } catch (err) {
+      toast({ title: isRTL ? "فشل تحميل الحزمة" : "Package download failed", variant: "destructive" });
+      console.error(err);
+    } finally {
+      setZipLoading(false);
+    }
   };
 
   const handleExportToN8n = async () => {
@@ -394,26 +526,27 @@ function ExportModal({ template, isRTL, onClose, onExported }: ExportModalProps)
           </div>
 
           {/* Steps indicator */}
-          <div className="flex items-center gap-1.5 mb-5">
+          <div className="flex items-center gap-1 mb-5">
             {[
               { key: "prepare", label: isRTL ? "التحضير" : "Prepare" },
               { key: "configure", label: isRTL ? "الإعدادات" : "Configure" },
+              { key: "library", label: isRTL ? "المكتبة" : "Library" },
               { key: "done", label: isRTL ? "تم" : "Done" },
             ].map((step, i, arr) => {
-              const stepOrder = ["prepare", "configure", "exporting", "done"];
+              const stepOrder = ["prepare", "configure", "library", "exporting", "done"];
               const currentIdx = stepOrder.indexOf(phase);
               const stepIdx = stepOrder.indexOf(step.key);
               const isActive = phase === step.key || (step.key === "done" && phase === "exporting");
               const isDone = currentIdx > stepIdx;
               return (
-                <div key={step.key} className="flex items-center gap-1.5 flex-1">
-                  <div className="flex items-center gap-1.5 flex-1">
+                <div key={step.key} className="flex items-center gap-1 flex-1 min-w-0">
+                  <div className="flex items-center gap-1 min-w-0">
                     <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors ${isDone ? "bg-green-500 text-white" : isActive ? "bg-accent text-white" : "bg-muted text-muted-foreground"}`}>
-                      {isDone ? <CheckCircle2 size={11} /> : i + 1}
+                      {isDone ? <CheckCircle2 size={10} /> : i + 1}
                     </div>
-                    <span className={`text-[11px] font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}>{step.label}</span>
+                    <span className={`text-[10px] font-medium truncate ${isActive ? "text-foreground" : "text-muted-foreground"}`}>{step.label}</span>
                   </div>
-                  {i < arr.length - 1 && <div className={`h-px flex-1 transition-colors ${isDone ? "bg-green-500/50" : "bg-border"}`} />}
+                  {i < arr.length - 1 && <div className={`h-px flex-1 shrink transition-colors ${isDone ? "bg-green-500/50" : "bg-border"}`} />}
                 </div>
               );
             })}
@@ -622,17 +755,166 @@ function ExportModal({ template, isRTL, onClose, onExported }: ExportModalProps)
                 </div>
               </div>
 
+              {/* Library error */}
+              {libError && (
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                  <AlertTriangle size={13} className="text-destructive mt-0.5 shrink-0" />
+                  <p className="text-xs text-destructive">{libError}</p>
+                </div>
+              )}
+
               {/* Actions */}
-              <div className="flex gap-2.5 pt-1">
+              <div className="flex gap-2 pt-1">
                 <button onClick={() => setPhase("prepare")}
-                  className="px-4 py-2.5 rounded-xl border border-border text-sm hover:bg-muted transition-colors">
+                  className="px-3 py-2.5 rounded-xl border border-border text-sm hover:bg-muted transition-colors shrink-0">
                   {isRTL ? "رجوع" : "Back"}
                 </button>
-                <button onClick={handleExportToN8n} disabled={!exportName.trim()}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-50">
-                  <ExternalLink size={14} />
-                  {isRTL ? "تصدير إلى n8n" : "Export to n8n"}
+                <button onClick={handlePrepareLibrary} disabled={libLoading || !hasNodes}
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-violet-500/40 text-violet-600 dark:text-violet-400 hover:bg-violet-500/10 text-sm transition-colors disabled:opacity-50">
+                  {libLoading ? <Loader2 size={13} className="animate-spin" /> : <Globe size={13} />}
+                  {libLoading ? (isRTL ? "جاري التحضير..." : "Preparing...") : (isRTL ? "إعداد للمكتبة" : "Prepare for Library")}
                 </button>
+                <button onClick={handleExportToN8n} disabled={!exportName.trim()}
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-50">
+                  <ExternalLink size={13} />
+                  {isRTL ? "تصدير n8n" : "Export to n8n"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* PHASE: LIBRARY */}
+          {phase === "library" && libContent && (
+            <div className="space-y-3">
+              {/* Title card */}
+              <div className="rounded-xl border border-border bg-muted/30 p-3.5">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    {isRTL ? "العنوان" : "Title"}
+                  </span>
+                  <button onClick={() => handleCopy(libContent.title, "title")}
+                    className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-accent/10 hover:text-accent transition-colors">
+                    {copiedKey === "title" ? <CheckCircle2 size={10} className="text-green-500" /> : <Copy size={10} />}
+                    {copiedKey === "title" ? (isRTL ? "تم" : "Copied!") : (isRTL ? "نسخ" : "Copy")}
+                  </button>
+                </div>
+                <p className="text-sm font-medium text-foreground">{libContent.title}</p>
+              </div>
+
+              {/* Description card */}
+              <div className="rounded-xl border border-border bg-muted/30 p-3.5">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    {isRTL ? "الوصف" : "Description"}
+                  </span>
+                  <button onClick={() => handleCopy(libContent.description, "desc")}
+                    className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-accent/10 hover:text-accent transition-colors">
+                    {copiedKey === "desc" ? <CheckCircle2 size={10} className="text-green-500" /> : <Copy size={10} />}
+                    {copiedKey === "desc" ? (isRTL ? "تم" : "Copied!") : (isRTL ? "نسخ" : "Copy")}
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-5">{libContent.description}</p>
+              </div>
+
+              {/* Categories + Tags row */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-xl border border-border bg-muted/30 p-3">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      {isRTL ? "التصنيفات" : "Categories"}
+                    </span>
+                    <button onClick={() => handleCopy(libContent.categories.join(", "), "cats")}
+                      className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted hover:bg-accent/10 hover:text-accent transition-colors">
+                      {copiedKey === "cats" ? <CheckCircle2 size={9} className="text-green-500" /> : <Copy size={9} />}
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {libContent.categories.map(c => (
+                      <span key={c} className="text-[10px] px-1.5 py-0.5 rounded-md bg-accent/10 text-accent border border-accent/20 font-medium">{c}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-border bg-muted/30 p-3">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      {isRTL ? "الـ Tags" : "Tags"}
+                    </span>
+                    <button onClick={() => handleCopy(libContent.tags.join(", "), "tags")}
+                      className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted hover:bg-accent/10 hover:text-accent transition-colors">
+                      {copiedKey === "tags" ? <CheckCircle2 size={9} className="text-green-500" /> : <Copy size={9} />}
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {libContent.tags.map(t => (
+                      <span key={t} className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted border border-border text-muted-foreground">{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Prerequisites */}
+              {libContent.prerequisites.length > 0 && (
+                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3.5">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <AlertTriangle size={12} className="text-amber-500" />
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
+                        {isRTL ? "المتطلبات المسبقة" : "Prerequisites"}
+                      </span>
+                    </div>
+                    <button onClick={() => handleCopy(libContent.prerequisites.join("\n"), "prereqs")}
+                      className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted hover:bg-accent/10 hover:text-accent transition-colors">
+                      {copiedKey === "prereqs" ? <CheckCircle2 size={9} className="text-green-500" /> : <Copy size={9} />}
+                    </button>
+                  </div>
+                  <ul className="space-y-1">
+                    {libContent.prerequisites.map((p, i) => (
+                      <li key={i} className="text-[11px] text-muted-foreground flex items-start gap-1.5">
+                        <span className="text-amber-500 shrink-0 mt-0.5">•</span> {p}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Usage Instructions */}
+              {libContent.usageInstructions.length > 0 && (
+                <div className="rounded-xl border border-border bg-muted/30 p-3.5">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      {isRTL ? "خطوات الإعداد" : "Setup Instructions"}
+                    </span>
+                    <button onClick={() => handleCopy(libContent.usageInstructions.map((s, i) => `${i + 1}. ${s}`).join("\n"), "steps")}
+                      className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted hover:bg-accent/10 hover:text-accent transition-colors">
+                      {copiedKey === "steps" ? <CheckCircle2 size={9} className="text-green-500" /> : <Copy size={9} />}
+                    </button>
+                  </div>
+                  <ol className="space-y-1">
+                    {libContent.usageInstructions.map((s, i) => (
+                      <li key={i} className="text-[11px] text-muted-foreground flex items-start gap-1.5">
+                        <span className="text-accent font-bold shrink-0">{i + 1}.</span> {s}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+
+              {/* Action buttons */}
+              <div className="flex gap-2 pt-1">
+                <button onClick={() => setPhase("configure")}
+                  className="px-3 py-2.5 rounded-xl border border-border text-sm hover:bg-muted transition-colors shrink-0">
+                  {isRTL ? "رجوع" : "Back"}
+                </button>
+                <button onClick={handleDownloadZip} disabled={zipLoading}
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-violet-500/40 text-violet-600 dark:text-violet-400 hover:bg-violet-500/10 text-sm transition-colors disabled:opacity-50">
+                  {zipLoading ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />}
+                  {zipLoading ? (isRTL ? "جاري التحضير..." : "Preparing...") : (isRTL ? "تحميل الحزمة كاملة ZIP" : "Download Full Package ZIP")}
+                </button>
+                <a href={libContent.submissionUrl} target="_blank" rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-accent text-white text-sm hover:bg-accent/90 transition-colors">
+                  <ExternalLink size={13} />
+                  {isRTL ? "فتح صفحة الإرسال" : "Open Submission Page"}
+                </a>
               </div>
             </div>
           )}

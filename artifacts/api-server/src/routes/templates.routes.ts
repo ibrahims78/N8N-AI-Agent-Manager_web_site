@@ -297,6 +297,102 @@ router.post("/:id/use", authenticate, requirePermission("use_chat"), async (req:
   }
 });
 
+router.post("/:id/prepare-library", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+      res.status(400).json({ success: false, error: { code: "INVALID_ID", message: "Invalid template ID" } });
+      return;
+    }
+
+    const templates = await db.select().from(templatesTable).where(eq(templatesTable.id, id)).limit(1);
+    const template = templates[0];
+    if (!template) {
+      res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Template not found" } });
+      return;
+    }
+
+    const workflowJson = template.workflowJson as Record<string, unknown>;
+    const nodes = Array.isArray(workflowJson?.nodes) ? workflowJson.nodes as Record<string, unknown>[] : [];
+    const nodeTypes = nodes.map(n => (n.type as string) ?? "").filter(Boolean);
+
+    const openaiKey = await getOpenAIKey();
+    if (!openaiKey) {
+      res.status(503).json({ success: false, error: { code: "AI_NOT_CONFIGURED", message: "مفتاح OpenAI غير مُهيَّأ" } });
+      return;
+    }
+
+    const openai = new OpenAI({ apiKey: openaiKey, timeout: 60000 });
+
+    const N8N_CATEGORIES = ["Marketing", "Sales", "Engineering", "IT Ops", "HR", "Finance", "Design", "Other"];
+    const N8N_SUBMISSION_URL = "https://n8n.io/workflows/submit";
+
+    const systemPrompt = `You are an expert at writing n8n workflow template submissions for the official n8n community library at n8n.io.
+
+You must generate complete submission content in JSON format. All text content (title, description, prerequisites, usageInstructions, tags) MUST be in English.
+
+Given a workflow's name, description, and node types, generate:
+1. title: A catchy, clear English title (max 70 chars). Good examples: "Auto-Send Weekly Reports via Gmail", "Sync Notion Database to Google Sheets Daily"
+2. description: 2-3 English paragraphs explaining: what the workflow does, the problem it solves, and what the user gets. Be specific and compelling. (~200 words)
+3. categories: Array of 1-2 best matching categories from ONLY: ${N8N_CATEGORIES.join(", ")}
+4. prerequisites: Array of strings listing tools/credentials needed (e.g., "Gmail OAuth2 credentials", "Slack API token"). Be specific to the node types.
+5. tags: Array of 5-8 lowercase tags relevant to the workflow (e.g., "automation", "email", "reporting")
+6. usageInstructions: Short step-by-step setup instructions in English (3-5 numbered steps as an array of strings)
+7. submissionUrl: Always "${N8N_SUBMISSION_URL}"
+
+Return ONLY valid JSON with no markdown or explanation.`;
+
+    const userPrompt = `Generate n8n library submission content for:
+Name: ${template.name}
+Description: ${template.description}
+Category: ${template.category}
+Node types used: ${nodeTypes.join(", ") || "unknown"}
+Number of nodes: ${nodes.length}`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      temperature: 0.3,
+      response_format: { type: "json_object" },
+    });
+
+    const raw = completion.choices[0]?.message?.content ?? "{}";
+    let parsed: {
+      title?: string;
+      description?: string;
+      categories?: string[];
+      prerequisites?: string[];
+      tags?: string[];
+      usageInstructions?: string[];
+      submissionUrl?: string;
+    };
+    try {
+      parsed = JSON.parse(raw) as typeof parsed;
+    } catch {
+      res.status(500).json({ success: false, error: { code: "AI_PARSE_ERROR", message: "فشل تحليل رد الذكاء الاصطناعي" } });
+      return;
+    }
+
+    res.json({
+      success: true,
+      data: {
+        title: parsed.title ?? template.name,
+        description: parsed.description ?? template.description,
+        categories: parsed.categories ?? [template.category],
+        prerequisites: parsed.prerequisites ?? [],
+        tags: parsed.tags ?? [],
+        usageInstructions: parsed.usageInstructions ?? [],
+        submissionUrl: N8N_SUBMISSION_URL,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { code: "SERVER_ERROR", message: String(err) } });
+  }
+});
+
 router.post("/:id/prepare-export", authenticate, requirePermission("manage_workflows"), async (req: Request, res: Response): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
