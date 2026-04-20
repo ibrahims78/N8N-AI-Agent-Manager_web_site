@@ -271,6 +271,9 @@ function ExportModal({ template, isRTL, onClose, onExported }: ExportModalProps)
   } | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [zipLoading, setZipLoading] = useState(false);
+  const [libTestLoading, setLibTestLoading] = useState(false);
+  const [libTestDone, setLibTestDone] = useState(false);
+  const [showLibChecklist, setShowLibChecklist] = useState(false);
 
   const hasNodes = Array.isArray(preparedJson?.nodes) && (preparedJson?.nodes?.length ?? 0) > 0;
 
@@ -492,6 +495,43 @@ ${libContent.usageInstructions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
       setPhase("configure");
     } finally {
       setExportLoading(false);
+    }
+  };
+
+  const handleLibTestInN8n = async () => {
+    if (!libContent) return;
+    setLibTestLoading(true);
+    setLibTestDone(false);
+    try {
+      const res = await fetch(`${API_BASE}/templates/${template.id}/deploy`, {
+        method: "POST",
+        headers: { ...authHeader, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workflowJson: preparedJson,
+          name: `[TEST] ${libContent.title}`,
+          timezone,
+          executionOrder,
+        }),
+      });
+      const data = await res.json() as {
+        success: boolean;
+        data?: { workflowId?: string; workflowName?: string };
+        error?: { code?: string; message?: string };
+      };
+      if (data.success) {
+        setLibTestDone(true);
+        toast({ title: isRTL ? "تم اختبار الـ workflow في n8n" : "Workflow sent to n8n for testing" });
+      } else {
+        const code = data.error?.code;
+        const msg = code === "N8N_NOT_CONFIGURED"
+          ? (isRTL ? "n8n غير مُهيَّأ - تحقق من الإعدادات" : "n8n not configured - check settings")
+          : (data.error?.message ?? (isRTL ? "فشل الإرسال" : "Send failed"));
+        toast({ title: msg, variant: "destructive" });
+      }
+    } catch {
+      toast({ title: isRTL ? "فشل الاتصال" : "Connection failed", variant: "destructive" });
+    } finally {
+      setLibTestLoading(false);
     }
   };
 
@@ -899,19 +939,85 @@ ${libContent.usageInstructions.map((s, i) => `${i + 1}. ${s}`).join("\n")}
                 </div>
               )}
 
+              {/* n8n library requirements checklist */}
+              <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 overflow-hidden">
+                <button
+                  onClick={() => setShowLibChecklist(v => !v)}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 hover:bg-blue-500/10 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-blue-500/15 flex items-center justify-center shrink-0">
+                      <span className="text-[10px] font-bold text-blue-500">i</span>
+                    </div>
+                    <span className="text-[11px] font-semibold text-blue-700 dark:text-blue-400">
+                      {isRTL ? "ماذا تحتاج صفحة إرسال n8n؟" : "What does the n8n submission page require?"}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-blue-500 font-medium">{showLibChecklist ? "▲" : "▼"}</span>
+                </button>
+                {showLibChecklist && (
+                  <div className="px-3.5 pb-3 space-y-1.5 border-t border-blue-500/10">
+                    <p className="text-[10px] text-muted-foreground pt-2.5 pb-1">
+                      {isRTL
+                        ? "صفحة الإرسال على n8n.io تطلب المعلومات التالية:"
+                        : "The n8n.io submission form requires the following:"}
+                    </p>
+                    {[
+                      { done: true, ar: "حساب n8n.io (مجاني)", en: "n8n.io account (free)" },
+                      { done: true, ar: "ملف workflow.json — موجود في حزمة ZIP", en: "workflow.json file — included in the ZIP" },
+                      { done: true, ar: "العنوان — تم توليده بالـ AI", en: "Title — AI-generated above" },
+                      { done: true, ar: "الوصف — تم توليده بالـ AI", en: "Description — AI-generated above" },
+                      { done: true, ar: "التصنيفات والـ Tags — موجودة أعلاه", en: "Categories & Tags — listed above" },
+                      { done: false, ar: "صورة screenshot للـ workflow (مطلوب يدوياً)", en: "Workflow screenshot image (manual)" },
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        {item.done
+                          ? <CheckCircle2 size={11} className="text-green-500 shrink-0" />
+                          : <div className="w-[11px] h-[11px] rounded-full border border-amber-500 shrink-0" />}
+                        <span className={`text-[10px] ${item.done ? "text-muted-foreground" : "text-amber-700 dark:text-amber-400 font-medium"}`}>
+                          {isRTL ? item.ar : item.en}
+                        </span>
+                      </div>
+                    ))}
+                    <p className="text-[10px] text-amber-600 dark:text-amber-400 pt-1.5 flex items-start gap-1">
+                      <AlertTriangle size={10} className="shrink-0 mt-0.5" />
+                      {isRTL
+                        ? "الشيء الوحيد غير متوفر في الحزمة هو الـ Screenshot — يمكنك التقاطه من n8n مباشرةً بعد الاختبار."
+                        : "The only thing not in the ZIP is a screenshot — capture it from n8n after testing."}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Test result banner */}
+              {libTestDone && (
+                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <CheckCircle2 size={13} className="text-green-500 shrink-0" />
+                  <p className="text-[11px] text-green-700 dark:text-green-400">
+                    {isRTL
+                      ? "تم إرسال الـ workflow إلى n8n بصيغة [TEST] — اختبره الآن ثم التقط screenshot قبل الإرسال للمكتبة."
+                      : 'Workflow sent to n8n as [TEST] — test it now, then take a screenshot before submitting.'}
+                  </p>
+                </div>
+              )}
+
               {/* Action buttons */}
-              <div className="flex gap-2 pt-1">
+              <div className="grid grid-cols-2 gap-2 pt-1">
                 <button onClick={() => setPhase("configure")}
-                  className="px-3 py-2.5 rounded-xl border border-border text-sm hover:bg-muted transition-colors shrink-0">
+                  className="col-span-2 sm:col-span-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-border text-sm hover:bg-muted transition-colors">
                   {isRTL ? "رجوع" : "Back"}
                 </button>
+                <button onClick={handleLibTestInN8n} disabled={libTestLoading}
+                  className="col-span-2 sm:col-span-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-blue-500/40 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 text-sm transition-colors disabled:opacity-50">
+                  {libTestLoading ? <Loader2 size={13} className="animate-spin" /> : libTestDone ? <CheckCircle2 size={13} className="text-green-500" /> : <ExternalLink size={13} />}
+                  {libTestLoading ? (isRTL ? "جاري الإرسال..." : "Sending...") : libTestDone ? (isRTL ? "تم الإرسال لـ n8n" : "Sent to n8n!") : (isRTL ? "اختبر في n8n أولاً" : "Test in n8n first")}
+                </button>
                 <button onClick={handleDownloadZip} disabled={zipLoading}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-violet-500/40 text-violet-600 dark:text-violet-400 hover:bg-violet-500/10 text-sm transition-colors disabled:opacity-50">
+                  className="col-span-2 sm:col-span-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-violet-500/40 text-violet-600 dark:text-violet-400 hover:bg-violet-500/10 text-sm transition-colors disabled:opacity-50">
                   {zipLoading ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />}
-                  {zipLoading ? (isRTL ? "جاري التحضير..." : "Preparing...") : (isRTL ? "تحميل الحزمة كاملة ZIP" : "Download Full Package ZIP")}
+                  {zipLoading ? (isRTL ? "جاري التحضير..." : "Preparing...") : (isRTL ? "تحميل حزمة ZIP" : "Download ZIP Package")}
                 </button>
                 <a href={libContent.submissionUrl} target="_blank" rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-accent text-white text-sm hover:bg-accent/90 transition-colors">
+                  className="col-span-2 sm:col-span-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-accent text-white text-sm hover:bg-accent/90 transition-colors">
                   <ExternalLink size={13} />
                   {isRTL ? "فتح صفحة الإرسال" : "Open Submission Page"}
                 </a>
