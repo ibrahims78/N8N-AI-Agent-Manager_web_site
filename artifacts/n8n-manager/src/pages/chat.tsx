@@ -740,6 +740,9 @@ export default function ChatPage() {
   const queryClient = useQueryClient();
   const authHeader = getAuthHeader();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isAtBottomRef = useRef(true);
+  const justSentRef = useRef(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resizeRef = useRef<number>(288);
@@ -802,7 +805,6 @@ export default function ChatPage() {
   const [isDragOver, setIsDragOver] = useState(false);
 
   // ── Phase 5: Message interactions ──
-  const [hoveredMsgId, setHoveredMsgId] = useState<number | null>(null);
   const lastUserMsgRef = useRef<string>("");
 
   // ── Phase 6: Message tools ──
@@ -899,10 +901,34 @@ export default function ChatPage() {
   const charCount = input.length;
   const selectedConv = conversations.find(c => c.id === selectedConvId);
 
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
+
+  const handleMessagesScroll = useCallback(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const threshold = 120;
+    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+    isAtBottomRef.current = atBottom;
+    setShowScrollBtn(!atBottom);
+  }, []);
+
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
+    messagesEndRef.current?.scrollIntoView({ behavior });
+    isAtBottomRef.current = true;
+    setShowScrollBtn(false);
+  }, []);
+
   // ── Effects ──
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isGenerating, generationResult, streamingContent]);
+    if (justSentRef.current) {
+      justSentRef.current = false;
+      scrollToBottom("smooth");
+      return;
+    }
+    if (isAtBottomRef.current) {
+      scrollToBottom("smooth");
+    }
+  }, [messages, isGenerating, generationResult, streamingContent, scrollToBottom]);
 
   useEffect(() => {
     const replay = sessionStorage.getItem("chatReplay");
@@ -1187,6 +1213,7 @@ export default function ChatPage() {
     setPhases([]);
 
     // ── Optimistic UI: show user message immediately ──
+    justSentRef.current = true;
     setOptimisticUserMsg({
       id: -1,
       role: "user",
@@ -1756,8 +1783,11 @@ export default function ChatPage() {
 
         <div className="flex flex-1 min-h-0">
           {/* Messages area */}
+          <div className="flex-1 relative min-h-0">
           <div
-            className={`flex-1 overflow-y-auto p-4 space-y-1 transition-all ${isDragOver ? "bg-accent/5 ring-2 ring-dashed ring-accent/40" : ""}`}
+            ref={scrollContainerRef}
+            onScroll={handleMessagesScroll}
+            className={`h-full overflow-y-auto p-4 space-y-1 transition-all ${isDragOver ? "bg-accent/5 ring-2 ring-dashed ring-accent/40" : ""}`}
           >
             {isDragOver && (
               <div className="fixed inset-0 z-30 flex items-center justify-center bg-accent/5 pointer-events-none">
@@ -1843,9 +1873,7 @@ export default function ChatPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: Math.min(i * 0.02, 0.3) }}
-                        className={`flex items-end gap-2 mb-2 ${isUser ? (isRTL ? "justify-start" : "justify-end") : (isRTL ? "justify-end" : "justify-start")}`}
-                        onMouseEnter={() => setHoveredMsgId(msg.id)}
-                        onMouseLeave={() => setHoveredMsgId(null)}
+                        className={`flex items-end gap-2 mb-4 ${isUser ? (isRTL ? "justify-start" : "justify-end") : (isRTL ? "justify-end" : "justify-start")}`}
                       >
                         {/* Assistant Avatar */}
                         {!isUser && (
@@ -1909,69 +1937,61 @@ export default function ChatPage() {
                               </span>
                             </div>
 
-                            {/* Phase 6: Message tools */}
-                            <AnimatePresence>
-                              {hoveredMsgId === msg.id && (
-                                <motion.div
-                                  initial={{ opacity: 0, y: 4 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0 }}
-                                  className={`absolute top-full mt-1 ${isUser ? (isRTL ? "start-0" : "end-0") : (isRTL ? "end-0" : "start-0")} flex items-center gap-1 bg-card border border-border rounded-lg px-1.5 py-1 shadow-sm z-10`}
-                                >
-                                  {/* Copy to input button — for all messages */}
-                                  <button
-                                    onClick={() => {
-                                      const textToCopy = msg.content.replace(/```json[\s\S]*?```/g, "").trim();
-                                      setInput(textToCopy || msg.content);
-                                      const textarea = document.querySelector("textarea");
-                                      textarea?.focus();
-                                    }}
-                                    className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                                    title={isRTL ? "نقل إلى خانة الكتابة" : "Copy to input"}
-                                  >
-                                    <CornerDownLeft size={12} />
-                                  </button>
+                            {/* Phase 6: Message tools — CSS-only, no React state re-render */}
+                            <div
+                              className={`absolute top-full mt-1 ${isUser ? (isRTL ? "start-0" : "end-0") : (isRTL ? "end-0" : "start-0")} flex items-center gap-1 bg-card border border-border rounded-lg px-1.5 py-1 shadow-sm z-10 opacity-0 group-hover/msg:opacity-100 transition-opacity duration-150 pointer-events-none group-hover/msg:pointer-events-auto`}
+                            >
+                              {/* Copy to input button — for all messages */}
+                              <button
+                                onClick={() => {
+                                  const textToCopy = msg.content.replace(/```json[\s\S]*?```/g, "").trim();
+                                  setInput(textToCopy || msg.content);
+                                  textareaRef.current?.focus();
+                                }}
+                                className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                                title={isRTL ? "نقل إلى خانة الكتابة" : "Copy to input"}
+                              >
+                                <CornerDownLeft size={12} />
+                              </button>
 
-                                  {!isUser && (
-                                    <>
-                                      <button
-                                        onClick={() => handleRate(msg.id, "up")}
-                                        className={`p-1 rounded hover:bg-muted transition-colors ${ratings[msg.id] === "up" ? "text-emerald-500" : "text-muted-foreground"}`}
-                                        title={isRTL ? "إعجاب" : "Like"}
-                                      >
-                                        <ThumbsUp size={12} />
-                                      </button>
-                                      <button
-                                        onClick={() => handleRate(msg.id, "down")}
-                                        className={`p-1 rounded hover:bg-muted transition-colors ${ratings[msg.id] === "down" ? "text-destructive" : "text-muted-foreground"}`}
-                                        title={isRTL ? "عدم إعجاب" : "Dislike"}
-                                      >
-                                        <ThumbsDown size={12} />
-                                      </button>
-                                      {isLastAssistant && (
-                                        <button
-                                          onClick={handleRegenerate}
-                                          className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                                          title={isRTL ? "إعادة توليد" : "Regenerate"}
-                                          disabled={sending}
-                                        >
-                                          <RotateCcw size={12} />
-                                        </button>
-                                      )}
-                                    </>
-                                  )}
-                                  {isUser && (
+                              {!isUser && (
+                                <>
+                                  <button
+                                    onClick={() => handleRate(msg.id, "up")}
+                                    className={`p-1 rounded hover:bg-muted transition-colors ${ratings[msg.id] === "up" ? "text-emerald-500" : "text-muted-foreground"}`}
+                                    title={isRTL ? "إعجاب" : "Like"}
+                                  >
+                                    <ThumbsUp size={12} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleRate(msg.id, "down")}
+                                    className={`p-1 rounded hover:bg-muted transition-colors ${ratings[msg.id] === "down" ? "text-destructive" : "text-muted-foreground"}`}
+                                    title={isRTL ? "عدم إعجاب" : "Dislike"}
+                                  >
+                                    <ThumbsDown size={12} />
+                                  </button>
+                                  {isLastAssistant && (
                                     <button
-                                      onClick={() => { setEditingMsgId(msg.id); setEditContent(msg.content); }}
+                                      onClick={handleRegenerate}
                                       className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                                      title={isRTL ? "تحرير" : "Edit"}
+                                      title={isRTL ? "إعادة توليد" : "Regenerate"}
+                                      disabled={sending}
                                     >
-                                      <Edit3 size={12} />
+                                      <RotateCcw size={12} />
                                     </button>
                                   )}
-                                </motion.div>
+                                </>
                               )}
-                            </AnimatePresence>
+                              {isUser && (
+                                <button
+                                  onClick={() => { setEditingMsgId(msg.id); setEditContent(msg.content); }}
+                                  className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                                  title={isRTL ? "تحرير" : "Edit"}
+                                >
+                                  <Edit3 size={12} />
+                                </button>
+                              )}
+                            </div>
                           </div>
                         )}
 
@@ -2059,6 +2079,24 @@ export default function ChatPage() {
               </>
             )}
             <div ref={messagesEndRef} />
+          </div>
+
+          {/* Scroll to bottom button */}
+          <AnimatePresence>
+            {showScrollBtn && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.85, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.85, y: 8 }}
+                transition={{ duration: 0.15 }}
+                onClick={() => scrollToBottom("smooth")}
+                className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border shadow-lg rounded-full text-xs font-medium text-foreground hover:bg-muted transition-colors"
+              >
+                <ChevronDown size={13} />
+                {isRTL ? "انتقل للأسفل" : "Scroll to bottom"}
+              </motion.button>
+            )}
+          </AnimatePresence>
           </div>
 
           {/* Phase 8: Context Panel */}
