@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, ChangeEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
@@ -6,6 +6,7 @@ import {
   Download, Globe, BookMarked, ChevronLeft, ChevronRight,
   Loader2, User, BarChart2, Languages, Mail, Webhook,
   Clock, Code2, Database, Globe2, Send, GitBranch, Filter, Trash2,
+  Upload, FileJson, CheckCircle2,
 } from "lucide-react";
 import { useGetTemplates, getGetTemplatesQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -242,6 +243,10 @@ export default function TemplatesPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newTemplate, setNewTemplate] = useState({ name: "", description: "", category: "api" });
   const [addingTemplate, setAddingTemplate] = useState(false);
+  const [uploadedJson, setUploadedJson] = useState<WorkflowJson | null>(null);
+  const [uploadedJsonName, setUploadedJsonName] = useState<string | null>(null);
+  const [jsonUploadError, setJsonUploadError] = useState<string | null>(null);
+  const jsonFileRef = useRef<HTMLInputElement>(null);
 
   const [n8nSearch, setN8nSearch] = useState("");
   const [n8nCategory, setN8nCategory] = useState("all");
@@ -492,14 +497,43 @@ export default function TemplatesPage() {
     }
   };
 
+  const handleJsonFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setJsonUploadError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.name.endsWith(".json")) {
+      setJsonUploadError(isRTL ? "يجب أن يكون الملف بصيغة JSON" : "File must be a .json file");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target?.result as string) as WorkflowJson;
+        if (typeof parsed !== "object" || parsed === null) throw new Error("invalid");
+        setUploadedJson(parsed);
+        setUploadedJsonName(file.name);
+        if (!newTemplate.name.trim() && parsed.name) {
+          setNewTemplate(p => ({ ...p, name: parsed.name ?? "" }));
+        }
+      } catch {
+        setJsonUploadError(isRTL ? "الملف غير صالح، يرجى التحقق من صيغة JSON" : "Invalid file, please check the JSON format");
+        setUploadedJson(null);
+        setUploadedJsonName(null);
+      }
+    };
+    reader.readAsText(file);
+  };
+
   const handleAddTemplate = async () => {
     if (!newTemplate.name.trim() || !newTemplate.description.trim()) return;
     setAddingTemplate(true);
     try {
       const headers: Record<string, string> = { ...getAuthHeader(), "Content-Type": "application/json" };
+      const workflowJson = uploadedJson ?? { name: newTemplate.name.trim(), nodes: [], connections: {} };
+      const nodesCount = uploadedJson?.nodes?.length ?? 0;
       const res = await fetch(`${API_BASE}/templates`, {
         method: "POST", headers,
-        body: JSON.stringify({ name: newTemplate.name.trim(), description: newTemplate.description.trim(), category: newTemplate.category, nodesCount: 0, workflowJson: { name: newTemplate.name.trim(), nodes: [], connections: {} } }),
+        body: JSON.stringify({ name: newTemplate.name.trim(), description: newTemplate.description.trim(), category: newTemplate.category, nodesCount, workflowJson }),
       });
       const data = await res.json() as { success: boolean };
       if (data.success) {
@@ -507,6 +541,9 @@ export default function TemplatesPage() {
         queryClient.invalidateQueries({ queryKey: getGetTemplatesQueryKey() });
         setShowAddModal(false);
         setNewTemplate({ name: "", description: "", category: "api" });
+        setUploadedJson(null);
+        setUploadedJsonName(null);
+        setJsonUploadError(null);
       } else {
         toast({ title: isRTL ? "فشل إضافة القالب" : "Failed to add template", variant: "destructive" });
       }
@@ -1067,9 +1104,54 @@ export default function TemplatesPage() {
                     {LOCAL_CATEGORIES.filter(c => c !== "all").map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1.5">
+                    {isRTL ? "ملف Workflow JSON" : "Workflow JSON File"}
+                    <span className="ms-1 text-muted-foreground/60 font-normal">{isRTL ? "(اختياري)" : "(optional)"}</span>
+                  </label>
+                  <input
+                    ref={jsonFileRef}
+                    type="file"
+                    accept=".json,application/json"
+                    onChange={handleJsonFileChange}
+                    className="hidden"
+                  />
+                  {uploadedJsonName ? (
+                    <div className="flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-green-500/40 bg-green-500/5">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <CheckCircle2 size={15} className="text-green-500 shrink-0" />
+                        <FileJson size={14} className="text-green-600 shrink-0" />
+                        <span className="text-xs text-green-700 dark:text-green-400 truncate font-medium">{uploadedJsonName}</span>
+                        {uploadedJson?.nodes && (
+                          <span className="text-[10px] text-muted-foreground shrink-0">
+                            ({uploadedJson.nodes.length} {isRTL ? "عقدة" : "nodes"})
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => { setUploadedJson(null); setUploadedJsonName(null); setJsonUploadError(null); if (jsonFileRef.current) jsonFileRef.current.value = ""; }}
+                        className="p-1 rounded hover:bg-muted transition-colors shrink-0">
+                        <X size={13} className="text-muted-foreground" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => jsonFileRef.current?.click()}
+                      className="w-full flex flex-col items-center justify-center gap-2 px-3 py-4 rounded-lg border border-dashed border-border hover:border-accent/50 hover:bg-accent/5 transition-colors group">
+                      <Upload size={18} className="text-muted-foreground group-hover:text-accent transition-colors" />
+                      <span className="text-xs text-muted-foreground group-hover:text-accent transition-colors">
+                        {isRTL ? "اضغط لرفع ملف JSON" : "Click to upload a JSON file"}
+                      </span>
+                    </button>
+                  )}
+                  {jsonUploadError && (
+                    <p className="text-xs text-destructive mt-1.5">{jsonUploadError}</p>
+                  )}
+                </div>
               </div>
               <div className="flex gap-3 mt-5">
-                <button onClick={() => setShowAddModal(false)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">{t("app.cancel")}</button>
+                <button onClick={() => { setShowAddModal(false); setUploadedJson(null); setUploadedJsonName(null); setJsonUploadError(null); }} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">{t("app.cancel")}</button>
                 <button onClick={handleAddTemplate} disabled={addingTemplate || !newTemplate.name.trim() || !newTemplate.description.trim()}
                   className="flex-1 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-50">
                   {addingTemplate ? (isRTL ? "جاري الحفظ..." : "Saving...") : (isRTL ? "حفظ القالب" : "Save Template")}
