@@ -265,6 +265,24 @@ export default function TemplatesPage() {
   const [usingTemplate, setUsingTemplate] = useState(false);
   const [deletingTemplateId, setDeletingTemplateId] = useState<number | null>(null);
 
+  const handleDownloadJson = (template: LocalTemplate) => {
+    const json = template.workflowJson;
+    if (!json) {
+      toast({ title: isRTL ? "لا يوجد JSON لهذا القالب" : "No JSON available for this template", variant: "destructive" });
+      return;
+    }
+    const blob = new Blob([JSON.stringify(json, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${template.name.replace(/\s+/g, "_")}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({ title: isRTL ? `✅ تم تحميل "${template.name}.json"` : `✅ Downloaded "${template.name}.json"` });
+  };
+
   const handleDeleteTemplate = async (template: LocalTemplate) => {
     const confirmed = window.confirm(
       isRTL
@@ -559,13 +577,23 @@ export default function TemplatesPage() {
                       </div>
                       <h3 className="font-medium text-foreground text-sm mb-1">{translated ? translated.name : template.name}</h3>
                       <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{translated ? translated.description : template.description}</p>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-2">
                         <span className="text-xs text-muted-foreground">{template.nodesCount} {t("workflows.nodes")}</span>
-                        <button onClick={() => handleUseTemplate(template)}
-                          disabled={usingTemplate}
-                          className="flex items-center gap-1 px-3 py-1 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
-                          {usingTemplate ? <Loader2 size={12} className="animate-spin" /> : <>{t("templates.use")} <ArrowRight size={12} /></>}
-                        </button>
+                        <div className="flex items-center gap-1.5">
+                          {template.workflowJson && (
+                            <button
+                              onClick={() => handleDownloadJson(template)}
+                              title={isRTL ? "تحميل JSON" : "Download JSON"}
+                              className="flex items-center justify-center p-1.5 rounded-lg border border-border/60 text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                              <Download size={12} />
+                            </button>
+                          )}
+                          <button onClick={() => handleUseTemplate(template)}
+                            disabled={usingTemplate}
+                            className="flex items-center gap-1 px-3 py-1 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                            {usingTemplate ? <Loader2 size={12} className="animate-spin" /> : <>{t("templates.use")} <ArrowRight size={12} /></>}
+                          </button>
+                        </div>
                       </div>
                     </motion.div>
                   );
@@ -638,6 +666,14 @@ export default function TemplatesPage() {
                           className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg border border-border text-xs hover:bg-muted transition-colors">
                           <Eye size={12} /> {t("templates.preview")}
                         </button>
+                        {template.workflowJson && (
+                          <button
+                            onClick={() => handleDownloadJson(template)}
+                            title={isRTL ? "تحميل JSON" : "Download JSON"}
+                            className="flex items-center justify-center px-2.5 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0">
+                            <Download size={12} />
+                          </button>
+                        )}
                         <button onClick={() => handleUseTemplate(template)}
                           disabled={usingTemplate}
                           className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
@@ -863,8 +899,16 @@ export default function TemplatesPage() {
                 <p className="text-xs font-medium text-muted-foreground mb-2">{isRTL ? "مخطط العقد" : "Node Graph"}</p>
                 <NodeGraphPreview workflowJson={previewTemplate.workflowJson} isRTL={isRTL} />
               </div>
-              <div className="flex gap-3">
-                <button onClick={() => setPreviewTemplate(null)} className="flex-1 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">{t("app.cancel")}</button>
+              <div className="flex gap-2 flex-wrap">
+                <button onClick={() => setPreviewTemplate(null)} className="px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors">{t("app.cancel")}</button>
+                {previewTemplate.workflowJson && (
+                  <button
+                    onClick={() => handleDownloadJson(previewTemplate)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
+                    <Download size={14} />
+                    {isRTL ? "تحميل JSON" : "Download JSON"}
+                  </button>
+                )}
                 <button onClick={() => { void handleUseTemplate(previewTemplate); setPreviewTemplate(null); }}
                   disabled={usingTemplate}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
