@@ -175,3 +175,341 @@ pnpm run build
 - **dashboard.routes.ts**: Removed unused `_period` variable from `top-workflows` endpoint
 - **app.ts**: Added global Express error handler middleware (catches uncaught route errors → returns JSON)
 - **auth.middleware.ts**: Added `.limit(50)` to `requirePermission` DB query (bounded fetch instead of unbounded)
+
+---
+
+## آلية عمل الوكيل الذكي — توثيق تفصيلي شامل
+
+### نظرة عامة على التدفق الكامل
+
+```
+رسالة المستخدم
+      ↓
+[1] كاشف النوايا (Intent Detector)
+      ↓ create / modify / query
+[2] كاشف التوضيح (Clarification Detector)  ← إذا كان الطلب غامضاً
+      ↓ طلب مكتمل أو إجابات توضيحية
+[3] سياق الذاكرة الدائمة (Agent Memory)
+      ↓
+[4] سياق n8n الحالي (قائمة الـ workflows الموجودة)
+      ↓
+[5A] المحرك الوكيلي (Agentic Engine — Tool Calling)
+       أو
+[5B] المحرك التسلسلي (Sequential Engine — 4 مراحل)
+      ↓
+[6] حلقة الإصلاح الذاتي (Self-Healing Loop)
+      ↓
+[7] تسجيل في ذاكرة المستخدم + إرسال SSE للواجهة
+```
+
+---
+
+### 1. كاشف النوايا — `intentDetector.service.ts`
+
+**الهدف:** تصنيف رسالة المستخدم إلى ثلاث فئات قبل أي معالجة.
+
+| النية | المعنى | مثال |
+|-------|---------|-------|
+| `create` | إنشاء workflow جديد | "أنشئ workflow يراقب Gmail" |
+| `modify` | تعديل workflow موجود في n8n | "عدّل الـ workflow وأضف Slack" |
+| `query` | سؤال أو استفسار عام | "كيف يعمل الـ webhook؟" |
+
+**آلية العمل:**
+1. **مسار سريع (Fast Path):** يفحص الكلمات المفتاحية أولاً (قائمة ثابتة بكلمات عربية وإنجليزية). إذا وُجدت ثقة عالية (`high`) يُرجع النتيجة فوراً بدون LLM.
+2. **مسار LLM:** إذا لم تُحدد الكلمات المفتاحية النية، يستخدم `gpt-4o-mini` (سريع + رخيص، max_tokens: 120) لتصنيف الرسالة مع قائمة الـ workflows الموجودة في n8n.
+3. **Fallback:** إذا فشل LLM، يعود لكشف الكلمات المفتاحية بثقة منخفضة.
+
+**`workflowNameHint`:** إذا كانت النية `modify`، يستخرج الكاشف اسم الـ workflow المقصود مطابقةً جزئية من قائمة أسماء الـ workflows الموجودة في n8n.
+
+---
+
+### 2. كاشف التوضيح — `clarificationDetector.service.ts`
+
+**الهدف:** منع بناء workflow غامض بطرح أسئلة مستهدفة أولاً.
+
+**متى يُفعَّل؟** فقط عند النية `create` وعدد الكلمات < 40.
+
+**المراحل الأربع:**
+
+#### أ) `needsClarification()` — هل الطلب كافٍ؟
+- يستخدم `gpt-4o-mini` لتحديد إن كان الطلب يحتوي على:
+  - **Trigger:** متى/كيف يبدأ الـ workflow؟
+  - **Action:** ماذا يفعل؟
+- يُرجع: `needed: boolean` + قائمة `missingInfo` (trigger / action / destination / frequency / conditions...)
+- **Fail-open:** إذا فشل LLM، يُكمل البناء بدون توضيح لتجنب تعطل المستخدم.
+
+#### ب) `generateClarificationQuestions()` — توليد الأسئلة
+- يستخدم `gpt-4o-mini` لتوليد 2-4 أسئلة محددة وعملية.
+- تُضاف أسئلة بخيارات شائعة (مثلاً: "Shopify / WooCommerce / Salla؟").
+- تُحفظ الرسالة كـ assistant message في DB مع **hidden marker** مخفي: `<!-- CLARIFICATION_REQUEST:base64encodedOriginalRequest -->`.
+
+#### ج) `detectClarificationResponse()` — كشف الإجابة
+- عند رسالة المستخدم التالية، يمسح الرسائل السابقة بحثاً عن الـ marker.
+- يستخرج الطلب الأصلي من base64 المضمّن في الـ marker.
+
+#### د) `buildEnrichedRequest()` — دمج الطلب الأصلي + الإجابات
+- يدمج الطلب الأصلي + الأسئلة المطروحة + إجابات المستخدم في prompt غني واحد.
+- يُرسل للـ LLM تعليماً صريحاً: "لا تسأل عن معلومات إضافية — هذا طلب مكتمل".
+
+---
+
+### 3. المحرك الوكيلي — `agenticEngine.service.ts`
+
+**هو المحرك الأساسي المستخدم حالياً لبناء الـ workflows.**
+
+**المبدأ:** GPT-4o يستدعي أدوات (Tool Calling) في حلقة تكرارية حتى يبني الـ workflow.
+
+```
+رسالة المستخدم + System Prompt
+         ↓
+    GPT-4o + 6 أدوات (max 10 تكرارات)
+         ↕  (tool calls ← → نتائج الأدوات)
+    Workflow JSON نهائي
+         ↓
+    Gemini 2.5 Pro — مراجعة وتقييم (0-100)
+         ↓
+    GPT-4o — تحسين إذا كانت الدرجة < 75
+         ↓
+    AgenticEngineResult
+```
+
+**System Prompt المحرك الوكيلي (4 خطوات ملزمة):**
+1. **الاستكشاف (قبل البناء):** `search_node_types` ← اكتشاف الـ nodes المتاحة، `list_available_workflows` ← تجنب التكرار، `get_node_schema` ← الحصول على البنية الحقيقية لكل node.
+2. **البناء:** workflow JSON كامل باستخدام البيانات الحقيقية من الأدوات.
+3. **التحقق (قبل الإجابة النهائية):** `validate_workflow_json` ← إذا وُجدت أخطاء: صحّح وأعد التحقق.
+4. **الإجابة النهائية:** JSON فقط — بدون نص توضيحي.
+
+**القيود الأمنية:**
+- Max 10 تكرارات (يمنع الحلقات اللانهائية)
+- Timeout: 120 ثانية
+- `temperature: 0.15` (ردود حتمية قدر الإمكان)
+
+**مرحلة Gemini Review (اختيارية):**
+- يرسل الـ workflow JSON + طلب المستخدم لـ Gemini 2.5 Pro.
+- يُرجع: `score (0-100)`, `grade (A+/A/B+/B/C/D)`, `feedback`.
+- إذا كانت الدرجة < 75 (threshold قابل للتكوين): يُشغّل مرحلة refinement.
+
+**مرحلة GPT-4o Refinement (عند الدرجة المنخفضة):**
+- Gemini يُولّد خطة التحسين (قائمة مرقمة بالتعديلات المطلوبة).
+- GPT-4o يُطبّق خطة التحسين ويُرجع JSON محسّناً.
+
+---
+
+### 4. الأدوات الست للوكيل — `agentTools.ts`
+
+| الأداة | الوظيفة | متى تُستخدم |
+|--------|---------|-------------|
+| `get_node_schema` | يجلب البنية الدقيقة لـ node محددة | قبل استخدام أي node في الـ workflow |
+| `search_node_types` | بحث في جميع الـ nodes المتاحة | لاكتشاف الـ nodes المناسبة للمهمة |
+| `list_available_workflows` | قائمة الـ workflows في n8n | لتجنب التكرار وفهم السياق |
+| `get_workflow_details` | JSON كامل لـ workflow محدد | عند التعديل أو الإصلاح |
+| `validate_workflow_json` | التحقق من صحة JSON للـ workflow | قبل الإجابة النهائية |
+| `get_execution_errors` | أخطاء التنفيذ الأخيرة | عند تشخيص فشل workflow |
+
+**`get_node_schema` — سلسلة البحث (5 مستويات):**
+1. **Dynamic (n8n API):** يسأل n8n مباشرة عن الـ node المثبّت ← أعلى أولوية.
+2. **Static Schema (محدّثة يدوياً):** إذا وُجد schema منسّق مسبقاً.
+3. **KEYWORD_LOOKUP:** جدول ترجمة (webhook → n8n-nodes-base.webhookTrigger...) يدعم ~40 اسماً مختصراً.
+4. **getRelevantSchemas:** خريطة كاملة للكلمات المفتاحية عربية + إنجليزية.
+5. **Fuzzy Key Match:** بحث جزئي في أسماء الـ node types.
+
+**`parameterTemplate`:** عندما تُرجع n8n API البارامترات الحقيقية، يُبني template نصي يخبر الـ LLM بأسماء الحقول الفعلية ونوعها وإذا كانت مطلوبة.
+
+**`confirmedInstalledInN8n: true`:** علامة تُعطى للـ nodes المكتشفة من workflows موجودة فعلاً في n8n المستخدم ← أعلى ثقة.
+
+---
+
+### 5. المحرك التسلسلي — `sequentialEngine.service.ts`
+
+**محرك قديم (احتياطي) — 4 مراحل صارمة:**
+
+| المرحلة | النموذج | الوظيفة |
+|---------|---------|---------|
+| Phase 1A | GPT-4o | تحليل الـ nodes المطلوبة (node analysis) |
+| Phase 1B | GPT-4o | بناء workflow JSON مع حقن schemas الـ nodes |
+| Phase 2 | Gemini 2.5 Pro | مراجعة وتقييم الـ workflow |
+| Phase 3 | GPT-4o | تحسين بناءً على ملاحظات Gemini |
+| Phase 4 | Gemini 2.5 Pro | تحقق نهائي + بوابة الجودة |
+
+- **Smart Gate:** إذا كان الـ workflow بسيطاً (عدد nodes < threshold)، تُتخطى المراحل 3 و4.
+- **SSE Streaming:** Phase 1B و2 و4 تُرسل نصاً حياً للواجهة عبر Server-Sent Events.
+- **Refinement Rounds:** حتى 2 جولات إضافية إذا كانت درجة Phase 4 < threshold.
+
+---
+
+### 6. حلقة الإصلاح الذاتي — `selfHealingLoop.service.ts`
+
+**الهدف:** ضمان أن الـ workflow يُستورد بنجاح إلى n8n أو يُصلح نفسه تلقائياً.
+
+```
+workflow JSON مُولَّد
+        ↓
+POST /api/v1/workflows → n8n
+        ↓ نجاح → إرجاع n8n ID ✅
+        ↓ فشل
+GPT-4o يحلل الخطأ + يصحح JSON
+        ↓
+إعادة المحاولة (حتى 3 مرات)
+        ↓ فشل كل المحاولات
+رسالة خطأ واضحة للمستخدم مع خيار النسخ اليدوي
+```
+
+**قواعد الإصلاح (GPT-4o):**
+- يُصلح فقط ما يسبب الخطأ المحدد — لا يغيّر ما هو صحيح.
+- يتحقق من: UUID صالحة لكل node، اتصالات تشير لأسماء nodes موجودة، وجود `typeVersion` رقمي، حقول `name/nodes/connections` مطلوبة.
+
+**الحالات الخاصة:**
+- `N8N_NOT_CONFIGURED`: يخرج فوراً بدون استهلاك LLM.
+- إذا فشل LLM في الإصلاح: يحتفظ بالـ workflow الأصلي ويحاول مجدداً.
+
+**SSE Events:** يرسل تحديثات حية للواجهة: `heal_attempt`, `heal_success`, `heal_fail`.
+
+---
+
+### 7. الذاكرة الدائمة — `agentMemory.service.ts`
+
+**الهدف:** الوكيل يتذكر تاريخ المستخدم عبر الجلسات ويستخدمه في كل طلب جديد.
+
+**ما يُخزَّن في جدول `agent_memory` (PostgreSQL):**
+
+| الحقل | المحتوى |
+|-------|---------|
+| `createdWorkflows` | آخر 50 workflow أُنشئت (اسم، ID في n8n، نوع الـ nodes، درجة الجودة، التاريخ) |
+| `userPatterns` | اللغة المفضلة، أكثر الـ nodes استخداماً، إجمالي الـ workflows المُنشأة |
+| `n8nCredentials` | بيانات اعتماد n8n (credentials) — تُحدَّث كل ساعة |
+| `lastN8nCredentialSync` | تاريخ آخر مزامنة للـ credentials |
+
+**`buildMemoryContext()`:** يبني نصاً مختصراً يُحقن في system prompt الوكيل:
+```
+### [ذاكرة دائمة — سياق المستخدم عبر الجلسات]
+## ذاكرة المستخدم — Workflows التي أنشأها سابقاً (5):
+  - "مراقبة Gmail" (ID: abc123) | جودة: 88% | nodes: gmail, googleDrive — أُنشئ: 15 أبريل 2026
+## Credentials مضبوطة في n8n (3):
+  Gmail OAuth (gmailOAuth2Api)، Slack (slackOAuth2Api)، Postgres (postgres)
+## أنماط الاستخدام:
+  - إجمالي الـ workflows المُنشأة: 12
+  - الـ nodes الأكثر استخداماً: gmail, slack, googleSheets
+```
+
+**`syncN8nCredentials()`:** تجلب credentials من `GET /api/v1/credentials` في n8n وتخزنها مؤقتاً (TTL: ساعة واحدة).
+
+---
+
+### 8. سياق المحادثة متعدد الأدوار
+
+**الهدف:** الوكيل يتذكر الـ workflows التي بناها في نفس المحادثة.
+
+**الآلية:**
+- آخر 6 أدوار من المحادثة (12 رسالة) تُحقن في messages array قبل رسالة المستخدم الجديدة.
+- كل رسالة تُقطَّع إذا تجاوزت 1200 حرف لتوفير tokens.
+- يُستخدم `smartTruncateMessage()`: يحذف JSON blocks أولاً قبل القطع لأنها الأكبر حجماً.
+
+---
+
+### 9. SSE Streaming — تحديثات حية للواجهة
+
+**المسار:** `POST /api/chat/conversations/:id/generate`
+
+**أحداث SSE المُرسَلة:**
+
+```typescript
+// مراحل المعالجة
+{ type: "phase_start", phase: 1, label: "جاري تحليل الطلب..." }
+{ type: "phase_stream", chunk: "نص جزئي..." }     // نص حي أثناء التوليد
+{ type: "phase_done", phase: 1 }
+
+// أحداث الوكيل الذكي
+{ type: "agent_tool_call", iteration: 2, toolName: "get_node_schema", args: {...} }
+{ type: "agent_tool_result", toolName: "get_node_schema", durationMs: 120, success: true }
+{ type: "agent_iteration_done", iteration: 2, totalToolCalls: 5 }
+{ type: "agent_gemini_phase", phase: "start" }
+{ type: "agent_gemini_phase", phase: "done", score: 87 }
+
+// حلقة الإصلاح الذاتي
+{ type: "heal_attempt", attempt: 1, maxAttempts: 3, importError: "..." }
+{ type: "heal_success", n8nWorkflowId: "123", wasHealed: true }
+{ type: "heal_fail", finalError: "..." }
+
+// النتيجة النهائية
+{ type: "done", workflowId: "123", workflowName: "...", qualityScore: 87, qualityGrade: "A" }
+{ type: "error", message: "..." }
+```
+
+---
+
+### 10. التحقق من JSON — `jsonValidator.service.ts`
+
+**`validateWorkflowJson()`:** يتحقق من:
+- الـ JSON صالح وقابل للتحليل.
+- يحتوي على `name`, `nodes` (array غير فارغة), `connections` (object).
+- كل node تحتوي على `id`, `name`, `type`, `typeVersion` (رقمي), `position` (array بعنصرين).
+
+**`sanitizeWorkflowJson()`:** يُصلح تلقائياً:
+- يُولّد `id` فريد (UUID) لكل node إذا كان مفقوداً.
+- يُحوّل `typeVersion` لرقم إذا كان نصاً.
+- يُضيف `position: [0, 0]` للـ nodes المفتقرة للموضع.
+- يُضيف `settings: {"executionOrder": "v1"}` إذا كان مفقوداً.
+
+**`extractJson()`:** يستخرج JSON من نص قد يحتوي على ماركداون أو نص توضيحي.
+
+---
+
+### 11. تكوين النماذج ومتغيرات البيئة
+
+| المتغير | القيمة الافتراضية | الوظيفة |
+|---------|------------------|---------|
+| `OPENAI_API_KEY` | — | مفتاح GPT-4o (مطلوب) |
+| `GEMINI_API_KEY` | — | مفتاح Gemini 2.5 Pro (مطلوب) |
+| `OPENAI_MODEL` | `gpt-4o` | نموذج OpenAI للوكيل |
+| `GEMINI_MODEL` | `gemini-2.5-pro` | نموذج Gemini للمراجعة |
+| `MAX_AGENT_ITERATIONS` | `10` | حد تكرارات الوكيل |
+| `QUALITY_THRESHOLD` | `75` | حد الدرجة لتشغيل التحسين |
+| `ENCRYPTION_KEY` | — | مفتاح AES-256-CBC لتشفير n8n API keys |
+| `JWT_SECRET` | — | مفتاح JWT للمصادقة |
+| `DATABASE_URL` | — | رابط PostgreSQL |
+
+---
+
+### 12. مخطط قاعدة البيانات (جداول الوكيل)
+
+| الجدول | الوظيفة |
+|--------|---------|
+| `conversations` | محادثات المستخدمين (عنوان، تاريخ، آخر workflow) |
+| `messages` | رسائل المحادثة (role, content, workflowJson, qualityScore, tokensUsed) |
+| `generation_sessions` | جلسات التوليد (phases, durations, token usage) |
+| `agent_memory` | ذاكرة المستخدم الدائمة (workflows, patterns, credentials) |
+| `workflow_versions` | نسخ الـ workflows (JSON + diff + إصدار) |
+| `audit_logs` | سجل جميع الأحداث (login, create, modify, delete) |
+
+---
+
+### 13. أولويات اختيار الـ nodes (قاعدة ذهبية)
+
+```
+1. confirmedInstalledInN8n: true  ← موجود فعلاً في n8n المستخدم (أعلى ثقة)
+2. hasStaticSchema: true          ← schema منسّق ومراجع يدوياً
+3. n8n-api source                 ← جلب مباشر من n8n API
+4. static fallback                ← من قائمة ثابتة
+5. ❌ ممنوع: تخمين أي node type أو typeVersion
+```
+
+**القاعدة المطلقة:** لا يُستخدم أي node type لم يُرجع له `get_node_schema` نتيجة `found: true`.
+
+---
+
+### 14. حساب تكلفة الـ Tokens
+
+يُحسب في كل جلسة توليد:
+
+```typescript
+{
+  agentLoopPromptTokens,      // tokens system prompt + tool results
+  agentLoopCompletionTokens,  // tokens استجابات GPT-4o
+  refinementPromptTokens,     // tokens مرحلة التحسين
+  refinementCompletionTokens, // tokens استجابات التحسين
+  totalOpenaiTokens,          // إجمالي OpenAI
+  estimatedCostUsd            // تكلفة تقديرية (input: $2.5/M, output: $10/M)
+}
+```
+
+يُخزَّن في جدول `messages.tokensUsed` ويُعرض في لوحة التحكم.
