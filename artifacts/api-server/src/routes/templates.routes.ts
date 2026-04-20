@@ -331,7 +331,7 @@ router.post("/:id/deploy", authenticate, requirePermission("manage_workflows"), 
   }
 });
 
-router.delete("/:id", authenticate, requireAdmin, async (req: Request, res: Response): Promise<void> => {
+router.delete("/:id", authenticate, async (req: Request, res: Response): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) {
@@ -339,7 +339,8 @@ router.delete("/:id", authenticate, requireAdmin, async (req: Request, res: Resp
       return;
     }
 
-    const templates = await db.select({ id: templatesTable.id, isSystem: templatesTable.isSystem })
+    const templates = await db
+      .select({ id: templatesTable.id, isSystem: templatesTable.isSystem, createdBy: templatesTable.createdBy })
       .from(templatesTable)
       .where(eq(templatesTable.id, id))
       .limit(1);
@@ -347,6 +348,21 @@ router.delete("/:id", authenticate, requireAdmin, async (req: Request, res: Resp
     if (!templates[0]) {
       res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Template not found" } });
       return;
+    }
+
+    const template = templates[0];
+    const isAdmin = req.user?.role === "admin";
+    const isOwner = template.createdBy === req.user?.userId;
+
+    if (!isAdmin) {
+      if (template.isSystem) {
+        res.status(403).json({ success: false, error: { code: "FORBIDDEN", message: "Only admins can delete system templates" } });
+        return;
+      }
+      if (!isOwner) {
+        res.status(403).json({ success: false, error: { code: "FORBIDDEN", message: "You can only delete your own templates" } });
+        return;
+      }
     }
 
     await db.delete(templatesTable).where(eq(templatesTable.id, id));

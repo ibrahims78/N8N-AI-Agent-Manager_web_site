@@ -11,6 +11,7 @@ import { useGetTemplates, getGetTemplatesQueryKey } from "@workspace/api-client-
 import { useQueryClient } from "@tanstack/react-query";
 import { getAuthHeader, API_BASE } from "@/lib/api";
 import { useAppStore } from "@/stores/useAppStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { useToast } from "@/hooks/use-toast";
 
 interface WorkflowNode {
@@ -229,6 +230,8 @@ export default function TemplatesPage() {
   const isRTL = language === "ar";
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === "admin";
 
   const [tab, setTab] = useState<"local" | "n8n">("local");
 
@@ -260,7 +263,7 @@ export default function TemplatesPage() {
   const N8N_ROWS = 18;
   const n8nTotalPages = Math.ceil(n8nTotal / N8N_ROWS);
 
-  const { data: res, isLoading: localLoading } = useGetTemplates(undefined, {});
+  const { data: res, isLoading: localLoading, isError: localError } = useGetTemplates(undefined, {});
 
   const [usingTemplate, setUsingTemplate] = useState(false);
   const [deletingTemplateId, setDeletingTemplateId] = useState<number | null>(null);
@@ -284,22 +287,31 @@ export default function TemplatesPage() {
   };
 
   const handleDeleteTemplate = async (template: LocalTemplate) => {
-    const confirmed = window.confirm(
-      isRTL
+    const isSystemTemplate = template.isSystem;
+    let confirmMsg: string;
+    if (isSystemTemplate) {
+      confirmMsg = isRTL
+        ? `⚠️ تحذير: "${template.name}" هو قالب نظامي!\n\nسيُعاد إنشاؤه تلقائياً عند إعادة تشغيل الخادم.\nهل أنت متأكد من الحذف المؤقت؟`
+        : `⚠️ Warning: "${template.name}" is a system template!\n\nIt will be recreated automatically on server restart.\nAre you sure you want to temporarily delete it?`;
+    } else {
+      confirmMsg = isRTL
         ? `هل أنت متأكد من حذف القالب "${template.name}"؟`
-        : `Are you sure you want to delete "${template.name}"?`
-    );
+        : `Are you sure you want to delete "${template.name}"?`;
+    }
+    const confirmed = window.confirm(confirmMsg);
     if (!confirmed) return;
     setDeletingTemplateId(template.id);
     try {
       const headers: Record<string, string> = { ...getAuthHeader() };
       const res = await fetch(`${API_BASE}/templates/${template.id}`, { method: "DELETE", headers });
-      const data = await res.json() as { success: boolean };
+      const data = await res.json() as { success: boolean; error?: { message?: string } };
       if (data.success) {
         toast({ title: isRTL ? "تم حذف القالب ✅" : "Template deleted ✅" });
         queryClient.invalidateQueries({ queryKey: getGetTemplatesQueryKey() });
+        if (previewTemplate?.id === template.id) setPreviewTemplate(null);
       } else {
-        toast({ title: isRTL ? "فشل الحذف" : "Delete failed", variant: "destructive" });
+        const msg = data.error?.message ?? (isRTL ? "فشل الحذف" : "Delete failed");
+        toast({ title: msg, variant: "destructive" });
       }
     } catch {
       toast({ title: isRTL ? "فشل الحذف" : "Delete failed", variant: "destructive" });
@@ -588,6 +600,15 @@ export default function TemplatesPage() {
                               <Download size={12} />
                             </button>
                           )}
+                          {(isAdmin || !template.isSystem) && (
+                            <button
+                              onClick={() => handleDeleteTemplate(template)}
+                              disabled={deletingTemplateId === template.id}
+                              title={template.isSystem ? (isRTL ? "حذف قالب نظامي" : "Delete system template") : (isRTL ? "حذف" : "Delete")}
+                              className={`flex items-center justify-center p-1.5 rounded-lg border transition-colors disabled:opacity-50 ${template.isSystem ? "border-orange-500/30 text-muted-foreground hover:text-orange-500 hover:bg-orange-500/10" : "border-border/60 text-muted-foreground hover:text-red-500 hover:bg-red-500/10"}`}>
+                              {deletingTemplateId === template.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
+                            </button>
+                          )}
                           <button onClick={() => handleUseTemplate(template)}
                             disabled={usingTemplate}
                             className="flex items-center gap-1 px-3 py-1 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
@@ -617,6 +638,18 @@ export default function TemplatesPage() {
                   </div>
                 ))}
               </div>
+            ) : localError ? (
+              <div className="flex flex-col items-center justify-center py-16 gap-3">
+                <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
+                  <X className="text-destructive" size={24} />
+                </div>
+                <p className="text-sm font-medium text-destructive">{isRTL ? "فشل تحميل القوالب" : "Failed to load templates"}</p>
+                <p className="text-xs text-muted-foreground">{isRTL ? "تحقق من اتصال الخادم وأعد المحاولة" : "Check server connection and try again"}</p>
+                <button onClick={() => queryClient.invalidateQueries({ queryKey: getGetTemplatesQueryKey() })}
+                  className="mt-1 px-4 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors">
+                  {isRTL ? "إعادة المحاولة" : "Retry"}
+                </button>
+              </div>
             ) : !filtered.length ? (
               <div className="text-center py-16">
                 <p className="text-muted-foreground">{t("templates.noTemplates")}</p>
@@ -641,12 +674,16 @@ export default function TemplatesPage() {
                             className={`p-1 rounded-md transition-colors disabled:opacity-50 ${translated ? "bg-accent/20 text-accent" : "text-muted-foreground hover:text-accent hover:bg-accent/10"}`}>
                             {isTranslating ? <Loader2 size={13} className="animate-spin" /> : <Languages size={13} />}
                           </button>
-                          {!template.isSystem && (
+                          {(isAdmin || !template.isSystem) && (
                             <button
                               onClick={() => handleDeleteTemplate(template)}
                               disabled={deletingTemplateId === template.id}
-                              title={isRTL ? "حذف القالب" : "Delete template"}
-                              className="p-1 rounded-md text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50">
+                              title={
+                                template.isSystem
+                                  ? (isRTL ? "حذف قالب نظامي (أدمن)" : "Delete system template (admin)")
+                                  : (isRTL ? "حذف القالب" : "Delete template")
+                              }
+                              className={`p-1 rounded-md transition-colors disabled:opacity-50 ${template.isSystem ? "text-muted-foreground hover:text-orange-500 hover:bg-orange-500/10" : "text-muted-foreground hover:text-red-500 hover:bg-red-500/10"}`}>
                               {deletingTemplateId === template.id ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
                             </button>
                           )}
@@ -907,6 +944,15 @@ export default function TemplatesPage() {
                     className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
                     <Download size={14} />
                     {isRTL ? "تحميل JSON" : "Download JSON"}
+                  </button>
+                )}
+                {(isAdmin || !previewTemplate.isSystem) && (
+                  <button
+                    onClick={() => { void handleDeleteTemplate(previewTemplate); }}
+                    disabled={deletingTemplateId === previewTemplate.id}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm transition-colors disabled:opacity-50 ${previewTemplate.isSystem ? "border-orange-500/40 text-orange-500 hover:bg-orange-500/10" : "border-red-500/40 text-red-500 hover:bg-red-500/10"}`}>
+                    {deletingTemplateId === previewTemplate.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                    {previewTemplate.isSystem ? (isRTL ? "حذف (نظامي)" : "Delete (system)") : (isRTL ? "حذف" : "Delete")}
                   </button>
                 )}
                 <button onClick={() => { void handleUseTemplate(previewTemplate); setPreviewTemplate(null); }}
