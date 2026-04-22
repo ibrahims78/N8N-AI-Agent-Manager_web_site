@@ -167,11 +167,23 @@ async function resolveSnippets(markdown: string): Promise<string> {
   await Promise.all(
     matches.map(async (m) => {
       const snippetPath = m[1]; // e.g. "_snippets/integrations/builtin/app-nodes/ai-tools.md"
-      const snippetUrl = `${DOCS_REPO_RAW}/docs/${snippetPath}`;
-      const snippetContent = await fetchRaw(snippetUrl);
+      // n8n-docs configures MkDocs base_path so snippets resolve from repo root
+      // (NOT from docs/). Try repo-root first, then docs/, then a few common
+      // alternative roots, before giving up.
+      const candidates = [
+        `${DOCS_REPO_RAW}/${snippetPath}`,
+        `${DOCS_REPO_RAW}/docs/${snippetPath}`,
+        `${DOCS_REPO_RAW}/${snippetPath.replace(/^_snippets\//, "snippets/")}`,
+      ];
+      let snippetContent: string | null = null;
+      for (const url of candidates) {
+        snippetContent = await fetchRaw(url);
+        if (snippetContent) break;
+      }
       if (snippetContent) {
-        // Replace the include directive with the fetched content
-        result = result.replace(m[0], snippetContent.trim());
+        // Recursively resolve nested snippet includes
+        const resolved = await resolveSnippets(snippetContent.trim());
+        result = result.replace(m[0], resolved);
       } else {
         // Remove the unresolvable directive silently
         result = result.replace(m[0], "");
@@ -179,6 +191,51 @@ async function resolveSnippets(markdown: string): Promise<string> {
     })
   );
   return result;
+}
+
+/**
+ * Strip YAML frontmatter from the top of a markdown document.
+ * Frontmatter looks like:
+ *   ---
+ *   title: ...
+ *   ---
+ */
+function stripFrontmatter(markdown: string): string {
+  return markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
+}
+
+/**
+ * Convert MkDocs admonition syntax to standard Markdown blockquotes.
+ * Supports both block and inline forms:
+ *   /// note | Title
+ *   body...
+ *   ///
+ *   /// note | Title body... ///
+ */
+function convertAdmonitions(markdown: string): string {
+  // Inline single-line form: /// type | Title body ///
+  let out = markdown.replace(
+    /\/\/\/\s*([a-zA-Z]+)\s*\|\s*([^\n]*?)\s*\/\/\//g,
+    (_m, type: string, rest: string) => {
+      const title = type.charAt(0).toUpperCase() + type.slice(1);
+      return `> **${title}:** ${rest.trim()}`;
+    }
+  );
+  // Block form across multiple lines
+  out = out.replace(
+    /\/\/\/\s*([a-zA-Z]+)(?:\s*\|\s*([^\n]*))?\n([\s\S]*?)\n\/\/\//g,
+    (_m, type: string, title: string | undefined, body: string) => {
+      const heading = (title?.trim() || type).trim();
+      const headingTitle = heading.charAt(0).toUpperCase() + heading.slice(1);
+      const quoted = body
+        .trim()
+        .split("\n")
+        .map((l) => `> ${l}`)
+        .join("\n");
+      return `> **${headingTitle}**\n>\n${quoted}`;
+    }
+  );
+  return out;
 }
 
 /**
@@ -250,14 +307,20 @@ async function fetchMarkdownFromGithub(
     const raw = await fetchRaw(url);
     if (!raw) continue;
 
-    // 1. Resolve --8<-- snippet includes
-    let md = await resolveSnippets(raw);
+    // 1. Strip YAML frontmatter from the top of the doc
+    let md = stripFrontmatter(raw);
 
-    // 2. Append sibling pages (common-issues.md, etc.) if this is an index.md
+    // 2. Resolve --8<-- snippet includes
+    md = await resolveSnippets(md);
+
+    // 3. Append sibling pages (common-issues.md, etc.) if this is an index.md
     const extra = await fetchSiblingPages(url);
-    if (extra) md += extra;
+    if (extra) md += extra.split(/^---[\s\S]*?---\n?/m).join("");
 
-    // 3. Strip MkDocs shortcodes that don't render in plain Markdown
+    // 4. Convert MkDocs admonitions (/// note ... ///) to blockquotes
+    md = convertAdmonitions(md);
+
+    // 5. Strip remaining MkDocs shortcodes that don't render in plain Markdown
     md = cleanMkDocsDirectives(md);
 
     if (md.length > 20) return { markdown: md, sourceUrl: url };
@@ -312,8 +375,14 @@ export async function getEnglishDoc(nodeType: string, force = false): Promise<Do
       };
     }
     if (cached?.markdown) {
-      // If cached content still has unresolved MkDocs includes, re-fetch silently
-      const hasUnresolved = /--8<--/.test(cached.markdown);
+      // If cached content still has unresolved MkDocs artifacts, re-fetch silently:
+      //  - Unresolved snippet includes (--8<--)
+      //  - YAML frontmatter that wasn't stripped (--- ... --- at top)
+      //  - MkDocs admonition blocks (/// note | ... ///) that weren't converted
+      const hasUnresolved =
+        /--8<--/.test(cached.markdown) ||
+        /^---\r?\n[\s\S]*?\r?\n---/.test(cached.markdown) ||
+        /\/\/\/\s*[a-zA-Z]+\s*\|/.test(cached.markdown);
       if (!hasUnresolved) {
         return {
           nodeType,
@@ -550,19 +619,26 @@ export async function getArabicDoc(nodeType: string, force = false): Promise<Doc
       };
     }
     if (cached?.markdown) {
-      return {
-        nodeType,
-        language: "ar",
-        markdown: cached.markdown,
-        sourceUrl: cached.sourceUrl,
-        fetchedAt: toISO(cached.fetchedAt),
-        fromCache: true,
-      };
+      const hasUnresolved =
+        /--8<--/.test(cached.markdown) ||
+        /^---\r?\n[\s\S]*?\r?\n---/.test(cached.markdown) ||
+        /\/\/\/\s*[a-zA-Z]+\s*\|/.test(cached.markdown);
+      if (!hasUnresolved) {
+        return {
+          nodeType,
+          language: "ar",
+          markdown: cached.markdown,
+          sourceUrl: cached.sourceUrl,
+          fetchedAt: toISO(cached.fetchedAt),
+          fromCache: true,
+        };
+      }
+      logger.info({ nodeType }, "Re-translating Arabic doc to resolve stale artifacts");
     }
   }
 
-  // Need EN first
-  const en = await getEnglishDoc(nodeType);
+  // Need EN first (force refresh if cached EN looks stale too)
+  const en = await getEnglishDoc(nodeType, force);
   if (!en.markdown) {
     return {
       nodeType,
