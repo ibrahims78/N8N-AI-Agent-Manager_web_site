@@ -1341,7 +1341,7 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
         )}
       </div>
 
-      <ScrollArea className="flex-1">
+      <div className="flex-1 min-h-0 overflow-y-auto">
         <div className="p-4" dir={lang === "ar" ? "rtl" : "ltr"}>
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 gap-3">
@@ -1406,7 +1406,7 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
             </>
           )}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 }
