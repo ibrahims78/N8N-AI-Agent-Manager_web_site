@@ -1,19 +1,16 @@
----
-title: Slack node documentation
-description: Learn how to use the Slack node in n8n. Follow technical documentation to integrate Slack node into your workflows.
-contentType: [integration, reference]
-priority: high
----
-
 # Slack node
 
 Use the Slack node to automate work in Slack, and integrate Slack with other applications. n8n has built-in support for a wide range of Slack features, including creating, archiving, and closing channels, getting users and files, as well as deleting messages.
 
 On this page, you'll find a list of operations the Slack node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Slack credentials](/integrations/builtin/credentials/slack.md) for guidance on setting up authentication.
-///
+> **Credentials**
+>
+> Refer to [Slack credentials](/integrations/builtin/credentials/slack.md) for guidance on setting up authentication.
+
+> **Human-in-the-loop for AI tool calls**
+>
+> This node can be used as a human review step for AI Agent tool calls. When configured this way, the AI Agent will pause and request human approval through this service before executing tools that require oversight. Learn more in [Human-in-the-loop for AI tool calls](/advanced-ai/human-in-the-loop-tools.md).
 
 ## Operations
 
@@ -129,3 +126,15 @@ If those aren't enough, use the table below to look up the resource and operatio
 | User Group   | Update                     | [usergroups.update](https://api.slack.com/methods/usergroups.update)               |
 
 <!-- vale on -->
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

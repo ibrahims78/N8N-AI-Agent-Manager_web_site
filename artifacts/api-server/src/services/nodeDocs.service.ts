@@ -928,6 +928,18 @@ async function upsertDoc(input: {
     } catch (err) {
       logger.warn({ err, nodeType: input.nodeType, lang: input.language }, "Failed to save doc to local file");
     }
+
+    // Keep the BM25 sections index in sync so the global search can find this
+    // newly-fetched/translated doc. Imported lazily to avoid a circular dep.
+    try {
+      const { reindexNodeSections } = await import("./docsAdvanced.service");
+      await reindexNodeSections(input.nodeType, input.language, input.markdown);
+    } catch (err) {
+      logger.warn(
+        { err, nodeType: input.nodeType, lang: input.language },
+        "Failed to reindex sections for global search"
+      );
+    }
   }
 
   return inserted[0];
