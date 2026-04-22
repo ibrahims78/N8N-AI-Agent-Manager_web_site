@@ -78,7 +78,11 @@ export default function GuidesPage() {
   const isRTL = i18n.language === "ar";
   const { toast } = useToast();
   const isAdmin = useAuthStore((s) => s.user?.role === "admin");
-  const lang = useAppStore((s) => s.language);
+  const appLang = useAppStore((s) => s.language);
+  // Independent per-page language for guide *content* (defaults to the app
+  // language but can be toggled without changing the whole UI direction).
+  const [lang, setLang] = useState<"ar" | "en">(appLang);
+  useEffect(() => { setLang(appLang); }, [appLang]);
 
   const [list, setList] = useState<GuideListItem[]>([]);
   const [stats, setStats] = useState<GuidesStats | null>(null);
@@ -127,7 +131,11 @@ export default function GuidesPage() {
   }
 
   // Reload when language changes so EN/AR stay in sync.
-  useEffect(() => { loadList(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [lang]);
+  useEffect(() => {
+    loadList();
+    if (selectedSlug) loadDoc(selectedSlug);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [lang]);
 
   async function loadDoc(slug: string, force = false) {
     setSelectedSlug(slug);
@@ -365,6 +373,37 @@ export default function GuidesPage() {
               </div>
             </div>
             <div className="flex-1" />
+            {/* Per-page language toggle for guide content (EN ↔ AR). */}
+            <div
+              className="inline-flex items-center rounded-md border border-border bg-background p-0.5 text-xs font-medium"
+              role="group"
+              aria-label={t("لغة الأدلة", "Guides language")}
+            >
+              <button
+                type="button"
+                onClick={() => setLang("ar")}
+                className={`px-2.5 py-1 rounded-[5px] transition-colors flex items-center gap-1 ${
+                  lang === "ar" ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted"
+                }`}
+                aria-pressed={lang === "ar"}
+                title={t("عرض الأدلة بالعربية", "Show guides in Arabic")}
+              >
+                <Languages size={12} />
+                <span>AR</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang("en")}
+                className={`px-2.5 py-1 rounded-[5px] transition-colors flex items-center gap-1 ${
+                  lang === "en" ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted"
+                }`}
+                aria-pressed={lang === "en"}
+                title={t("عرض الأدلة بالإنجليزية", "Show guides in English")}
+              >
+                <Languages size={12} />
+                <span>EN</span>
+              </button>
+            </div>
             {isAdmin && (
               <div className="flex items-center gap-2 flex-wrap">
                 <Button size="sm" variant="outline" onClick={() => refreshAllGuides(false)} disabled={refreshAll} title={t("جلب النسخة الإنجليزية لكل الأدلة", "Fetch English source for all guides")}>
