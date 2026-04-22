@@ -1,21 +1,21 @@
-# AWS Certificate Manager node (عقدة إدارة شهادات AWS)
+# عقدة AWS Certificate Manager
 
-Use the AWS Certificate Manager node to automate work in AWS Certificate Manager, and integrate AWS Certificate Manager with other applications. n8n has built-in support for a wide range of AWS Certificate Manager features, including creating, deleting, getting, and renewing SSL certificates.
+استخدم عقدة AWS Certificate Manager (مدير شهادات AWS) لأتمتة سير العمل في AWS Certificate Manager، ودمج AWS Certificate Manager مع التطبيقات الأخرى. تدعم n8n بشكل مدمج مجموعة واسعة من ميزات AWS Certificate Manager، بما في ذلك إنشاء شهادات SSL وحذفها والحصول عليها وتجديدها.
 
-On this page, you'll find a list of operations the AWS Certificate Manager node supports and links to more resources.
+ستجد في هذه الصفحة قائمة بالعمليات التي تدعمها عقدة AWS Certificate Manager وروابط لموارد إضافية.
 
 > **بيانات الاعتماد**
 >
-> يرجى الاطلاع على [بيانات اعتماد AWS Certificate Manager](/integrations/builtin/credentials/aws.md) للحصول على إرشادات حول إعداد المصادقة.
+> ارجع إلى [بيانات اعتماد AWS Certificate Manager](/integrations/builtin/credentials/aws.md) للحصول على إرشادات حول إعداد المصادقة.
 
 ## العمليات
 
-* شهادة
-	* حذف
-	* الحصول
-	* الحصول على عدة عناصر
-	* الحصول على بيانات التعريف
-	* التجديد
+*   الشهادة
+    *   حذف
+    *   الحصول
+    *   الحصول على العديد
+    *   الحصول على البيانات الوصفية
+    *   تجديد
 
 ## القوالب والأمثلة
 
@@ -23,16 +23,16 @@ On this page, you'll find a list of operations the AWS Certificate Manager node 
 
 ## الموارد ذات الصلة
 
-انظر إلى [توثيق AWS Certificate Manager](/docs.aws.amazon.com/acm/latest/userguide/acm-overview.html) لمزيد من المعلومات حول هذه الخدمة.
+ارجع إلى [توثيق AWS Certificate Manager](https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html) للمزيد من المعلومات حول هذه الخدمة.
 
-## ماذا تفعل إذا لم تكن العملية مدعومة
+## ماذا تفعل إذا كانت عمليتك غير مدعومة
 
-إذا لم تدعم هذه العقدة العملية التي تريد تنفيذها، فيمكنك استخدام عقدة HTTP Request (عقدة طلب HTTP) لاستدعاء API الخدمة.
+إذا كانت هذه العقدة لا تدعم العملية التي ترغب في تنفيذها، يمكنك استخدام عقدة HTTP Request (طلب HTTP) لاستدعاء واجهة برمجة تطبيقات الخدمة.
 
-يمكنك استخدام بيانات الاعتماد التي أنشأتها لهذه الخدمة في عقدة HTTP Request: 
+يمكنك استخدام بيانات الاعتماد التي أنشأتها لهذه الخدمة في عقدة HTTP Request:
 
-1. في عقدة HTTP Request، اختر Authentication (المصادقة) > نوع بيانات الاعتماد المعرفة مسبقاً.
-1. اختر الخدمة التي تريد الاتصال بها.
-1. اختر بيانات الاعتماد الخاصة بك.
+1.  في عقدة HTTP Request، حدد **المصادقة** > **نوع بيانات الاعتماد المُعرّف مسبقًا**.
+2.  حدد الخدمة التي ترغب في الاتصال بها.
+3.  حدد بيانات الاعتماد الخاصة بك.
 
-انظر إلى [عمليات API المخصصة](/integrations/custom-operations.md) لمزيد من المعلومات.
+ارجع إلى [عمليات API المخصصة](/integrations/custom-operations.md) للمزيد من المعلومات.

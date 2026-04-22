@@ -1,6 +1,6 @@
 ---
-title: n8n public REST API Documentation and Guides
-description: Access n8n public REST API documentation and guides. Find comprehensive resources to programmatically perform tasks with the public API instead of the GUI.
+title: توثيق وأدلة واجهة برمجة تطبيقات REST العامة لمنصة n8n
+description: يمكنك الوصول إلى توثيق وأدلة واجهة برمجة تطبيقات REST العامة لمنصة n8n. اعثر على موارد شاملة لأداء المهام برمجيًا باستخدام واجهة برمجة التطبيقات العامة بدلاً من الواجهة الرسومية للمستخدم (GUI).
 contentType: overview
 search:
     boost: 5
@@ -9,30 +9,30 @@ hide:
   - kapaButton
 ---
 
-# واجهة REST العامة لـ n8n
+# واجهة برمجة تطبيقات REST العامة لمنصة n8n
 
-/// info | Feature availability
-The n8n API isn't available during the free trial. Please upgrade to access this feature.  
+/// info | توفر الميزة
+واجهة برمجة تطبيقات n8n غير متاحة خلال الفترة التجريبية المجانية. يرجى الترقية للوصول إلى هذه الميزة.
 ///
 
+باستخدام [واجهة برمجة تطبيقات](/glossary.md#api) n8n العامة، يمكنك أداء العديد من المهام برمجيًا بنفس الطريقة التي يمكنك بها القيام بذلك عبر الواجهة الرسومية للمستخدم (GUI). يقدم هذا القسم واجهة برمجة تطبيقات REST الخاصة بمنصة n8n، بما في ذلك:
 
-باستخدام [API] العامة لـ n8n [API](/glossary.md#api)، يمكن تنفيذ العديد من المهام نفسها التي يمكن تنفيذها في الواجهة الرسومية للمستخدم برمجياً. تُقدم هذه الفقرة مقدمة عن REST API لـ n8n، بما في ذلك:
+*   كيفية [المصادقة](/api/authentication.md)
+*   [تقسيم](/api/pagination.md) النتائج إلى صفحات
+*   استخدام [بيئة اختبار API المدمجة](/api/using-api-playground.md) (لمنصات n8n المستضافة ذاتيًا فقط)
+*   [مرجع نقاط النهاية](/api/api-reference.md)
 
-* كيفية [المصادقة](/api/authentication.md)
-* [ترقيم الصفحات](/api/pagination.md) للنتائج
-* باستخدام [ساحة تجربة API المدمجة](/api/using-api-playground.md) (n8n مُستضافة محلياً فقط)
-* [مرجع نقاط النهاية](/api/api-reference.md)
+توفر n8n [عقدة API الخاصة بمنصة n8n](/integrations/builtin/core-nodes/n8n-nodes-base.n8n.md) للوصول إلى واجهة برمجة التطبيقات في سير عملك.
 
-تُوفر n8n عقدة [n8n API node](/integrations/builtin/core-nodes/n8n-nodes-base.n8n.md) للوصول إلى API داخل سير عملك. (n8n API node — عقدة API لـ n8n)
+## تعرف على واجهات برمجة تطبيقات REST
 
-## تعلم حول واجهات REST
+يفترض توثيق واجهة برمجة التطبيقات أنك على دراية بواجهات برمجة تطبيقات REST. إذا لم تكن كذلك، فقد تكون هذه الموارد مفيدة:
 
-تفترض وثائق API أنك على دراية بـواجهات REST. إذا لم تكن كذلك، فربما تكون هذه الموارد مفيدة:
+*   [دليل KnowledgeOwl للعمل مع واجهات برمجة التطبيقات](https://support.knowledgeowl.com/help/working-with-apis): مقدمة أساسية، تتضمن أمثلة لكيفية استدعاء واجهات برمجة تطبيقات REST.
+*   [مركز تعلم IBM Cloud - ما هي واجهة برمجة التطبيقات (API)](https://www.ibm.com/cloud/learn/api): يقدم هذا مقدمة عامة، ولكنها تقنية، لواجهات برمجة التطبيقات.
+*   [مركز تعلم IBM Cloud - ما هي واجهة برمجة تطبيقات REST؟](https://www.ibm.com/cloud/learn/rest-apis): معلومات أكثر تفصيلاً حول واجهات برمجة تطبيقات REST.
+*   [وثائق الويب MDN - نظرة عامة على HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview): تعمل واجهات برمجة تطبيقات REST عبر بروتوكول HTTP وتستخدم أفعال HTTP، أو طرقها، لتحديد الإجراء المراد تنفيذه.
 
-* [دليل KnowledgeOwl للعمل مع واجهات برمجة التطبيقات](https://support.knowledgeowl.com/help/working-with-apis): مقدمة أساسية، تتضمن أمثلة حول كيفية استدعاء واجهات REST.
-* [IBM Cloud Learn Hub - ما هو واجهة برمجة تطبيقات (API)](https://www.ibm.com/cloud/learn/api): تقدم مقدمة عامة، تقنية، عن واجهات البرمجة.
-* [IBM Cloud Learn Hub - ما هي REST API؟](https://www.ibm.com/cloud/learn/rest-apis): معلومات أكثر تفصيلاً حول واجهات REST.
-* [MDN web docs - نظرة عامة على HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview): تعمل واجهات REST عبر HTTP وتستخدم أفعال HTTP، أو أساليب، لتحديد الإجراء المطلوب.
-
-/// tip | استخدم ساحة API التجريبية
-إن تجربة API في [playground](/api/using-api-playground.md) يمكن أن تساعدك على فهم كيفية عمل واجهات API. إذا كنت قلقاً بشأن تغيير البيانات الحية، فكر في إنشاء سير عمل اختبار، أو نسخة تجربة من n8n، لاستكشاف الأمان.
+/// tip | استخدم بيئة اختبار API
+يمكن أن يساعدك تجربة واجهة برمجة التطبيقات في [بيئة الاختبار](/api/using-api-playground.md) على فهم كيفية عمل واجهات برمجة التطبيقات. إذا كنت قلقًا بشأن تغيير البيانات الحية، ففكر في إعداد سير عمل اختباري، أو [نسخة](/glossary.md#instance) n8n اختبارية، للاستكشاف بأمان.
+///

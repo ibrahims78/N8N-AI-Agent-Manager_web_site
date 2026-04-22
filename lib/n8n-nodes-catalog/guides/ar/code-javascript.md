@@ -1,4 +1,4 @@
----
+```yaml
 contentType: [integration, reference]
 tags:
   - code node
@@ -7,6 +7,7 @@ hide:
   - tags
 ---
 
-# استخدام العقدة Code (الكود)
+# استخدام عقدة Code
 
 --8<-- "_snippets/integrations/builtin/core-nodes/code-node.md"
+```

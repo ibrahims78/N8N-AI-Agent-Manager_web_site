@@ -1,20 +1,20 @@
 ---
-title: طرق إعدادات n8n
-description: كيفية تعيين المتغيرات البيئية لـ n8n.
-contentType: howto
+title: طرق التهيئة
+description: كيفية تعيين متغيرات البيئة لـ n8n.
+contentType: كيفية_القيام_بذلك
 ---
 
-# الإعدادات
+# التهيئة
 
-يمكنك تغيير إعدادات n8n باستخدام المتغيرات البيئية. للحصول على قائمة كاملة بالإعدادات المتاحة راجع [المتغيرات البيئية](/hosting/configuration/environment-variables/index.md).
+يمكن تغيير إعدادات n8n باستخدام متغيرات البيئة. للاطلاع على قائمة كاملة بالتهيئات المتاحة، راجع [متغيرات البيئة](/hosting/configuration/environment-variables/index.md).
 
-## تعيين المتغيرات البيئية عبر سطر الأوامر
+## تعيين متغيرات البيئة عبر سطر الأوامر
 
 ### npm
 
-بالنسبة لـ npm، قم بتعيين المتغيرات البيئية المطلوبة في الطرفية. يعتمد الأمر على سطر الأوامر لديك.
+بالنسبة لـ npm، قم بتعيين متغيرات البيئة المطلوبة في الطرفية. يعتمد الأمر على سطر الأوامر الخاص بك.
 
-واجهات Bash لسطر الأوامر:
+واجهات سطر أوامر Bash:
 
 ```bash
 export <variable>=<value>
@@ -34,7 +34,7 @@ $env:<variable>=<value>
 
 ### Docker
 
-في Docker، يمكنك استخدام الخيار `-e` من سطر الأوامر:
+في Docker، يمكنك استخدام العلامة `-e` من سطر الأوامر:
 
 ```bash
 docker run -it --rm \
@@ -46,7 +46,7 @@ docker run -it --rm \
 
 ## ملف Docker Compose
 
-في Docker، يمكنك تعيين متغيراتك البيئية في عنصر `n8n: environment:` من ملف `docker-compose.yaml` لديك.
+في Docker، يمكنك تعيين متغيرات البيئة الخاصة بك في العنصر `n8n: environment:` ضمن ملف `docker-compose.yaml` الخاص بك.
 
 على سبيل المثال:
 
@@ -56,13 +56,13 @@ n8n:
       - N8N_TEMPLATES_ENABLED=false
 ```
 
-## تخزين البيانات الحساسة في ملفات منفصلة
+## الاحتفاظ بالبيانات الحساسة في ملفات منفصلة
 
-يمكنك إضافة `_FILE` إلى كل متغير بيئي لتوفير إعداده في ملف منفصل، مما يتيح لك تجنب تمرير التفاصيل الحساسة عبر المتغيرات البيئية. يقوم n8n بتحميل البيانات من الملف بالاسم المعطى، مما يجعل من الممكن تحميل البيانات من [Docker-Secrets](https://docs.docker.com/engine/swarm/secrets/) و [Kubernetes-Secrets](https://kubernetes.io/docs/concepts/configuration/secret/).
+يمكنك إلحاق `_FILE` بمتغيرات البيئة الفردية لتوفير تهيئتها في ملف منفصل، مما يتيح لك تجنب تمرير التفاصيل الحساسة باستخدام متغيرات البيئة. يقوم n8n بتحميل البيانات من الملف بالاسم المحدد، مما يجعل من الممكن تحميل البيانات من [Docker-Secrets](https://docs.docker.com/engine/swarm/secrets/) و [Kubernetes-Secrets](https://kubernetes.io/docs/concepts/configuration/secret/).
 
-انظر إلى [المتغيرات البيئية](/hosting/configuration/environment-variables/index.md) لمزيد من التفاصيل حول كل متغير.
+ارجع إلى [متغيرات البيئة](/hosting/configuration/environment-variables/index.md) للحصول على تفاصيل حول كل متغير.
 
-بينما يمكن لمعظم المتغيرات البيئية استخدام لاحقة `_FILE`، فإنها تكون أكثر فائدة للبيانات الحساسة مثل [بيانات الاعتماد](/glossary.md#credential-n8n) وتكوين قاعدة البيانات. فيما يلي بعض الأمثلة:
+بينما يمكن لمعظم متغيرات البيئة استخدام اللاحقة `_FILE`، إلا أنها أكثر فائدة للبيانات الحساسة مثل [بيانات الاعتماد](/glossary.md#credential-n8n) وتهيئة قاعدة البيانات. فيما يلي بعض الأمثلة:
 
 ```yaml
 CREDENTIALS_OVERWRITE_DATA_FILE=/path/to/credentials_data

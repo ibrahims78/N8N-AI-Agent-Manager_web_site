@@ -1,6 +1,6 @@
-# Acuity Scheduling Trigger node (عقدة المُحفِّز لجدولة Acuity Scheduling)
+# عقدة Acuity Scheduling المُحفِّزة
 
-[Acuity Scheduling](https://acuityscheduling.com/) is a cloud-based appointment scheduling software solution that enables business owners to manage their appointments online. It has the capability to automatically sync calendars according to users' time zones and can send regular alerts and reminders to users regarding their appointment schedules.
+[Acuity Scheduling](https://acuityscheduling.com/) هو حل برمجي سحابي لجدولة المواعيد يمكّن أصحاب الأعمال من إدارة مواعيدهم عبر الإنترنت. يمتلك القدرة على مزامنة التقويمات تلقائيًا وفقًا للمناطق الزمنية للمستخدمين، ويمكنه إرسال تنبيهات وتذكيرات منتظمة للمستخدمين بخصوص جداول مواعيدهم.
 
 > **بيانات الاعتماد**
 >
@@ -8,12 +8,12 @@
 
 > **أمثلة وقوالب**
 >
-> لأمثلة الاستخدام والقوالب التي ستساعدك على البدء، راجع صفحة تكاملات عقدة المُحفِّز لجدولة Acuity Scheduling على موقع n8n.
+> للاطلاع على أمثلة الاستخدام والقوالب لمساعدتك على البدء، ارجع إلى صفحة [تكاملات Acuity Scheduling Trigger](https://n8n.io/integrations/acuity-scheduling-trigger/) الخاصة بـ n8n.
 
 ## الأحداث
 
-* إلغاء الموعد
-* تغيير الموعد
-* إعادة جدولة الموعد
-* جدولة الموعد
-* إتمام الطلب
+*   تم إلغاء الموعد
+*   تم تغيير الموعد
+*   تم إعادة جدولة الموعد
+*   تم جدولة الموعد
+*   تم إكمال الطلب

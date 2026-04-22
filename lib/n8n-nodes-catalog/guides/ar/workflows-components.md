@@ -3,10 +3,10 @@ description: تعرف على اللبنات الأساسية لسير العمل
 contentType: نظرة عامة
 ---
 
-# مكوّنات سير العمل
+# مكونات سير العمل
 
-هذا القسم يحتوي على:
+يحتوي هذا القسم على:
 
-* [العقد](/workflows/components/nodes.md): التكاملات والعمليات.
-* [الاتصالات](/workflows/components/connections.md): موصلات العقد.
-* [الملاحظات اللاصقة](/workflows/components/sticky-notes.md): توثّق سير العمل لديك.
+*   [العقد](/workflows/components/nodes.md): التكاملات والعمليات.
+*   [الاتصالات](/workflows/components/connections.md): روابط العقد.
+*   [الملاحظات اللاصقة](/workflows/components/sticky-notes.md): لتوثيق سير العمل الخاص بك.

@@ -1,15 +1,6 @@
----
-title: No Operation, do nothing
-description: Documentation for the No Operation, do nothing node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: high
----
+# No Operation (لا تقم بأي عملية)
 
-# No Operation, do nothing (عدم تنفيذ أي عملية)
-
-استخدم العقدة No Operation, do nothing عندما لا تريد تنفيذ أي عمليات.  
-الغرض من هذه العقدة هو جعل سير العمل أسهل للقراءة وفهم المكان الذي يتوقف فيه تدفق البيانات.  
-يمكن أن يساعد ذلك الآخرين على فهم سير العمل بصريًا بشكل أفضل.
+استخدم عقدة No Operation (لا تقم بأي عملية) عندما لا ترغب في تنفيذ أي عمليات. الغرض من هذه العقدة هو جعل سير العمل أسهل في القراءة والفهم، وتحديد مكان توقف تدفق البيانات. يمكن أن يساعد هذا الآخرين على فهم سير العمل بشكل مرئي أفضل.
 
 ## القوالب والأمثلة
 
