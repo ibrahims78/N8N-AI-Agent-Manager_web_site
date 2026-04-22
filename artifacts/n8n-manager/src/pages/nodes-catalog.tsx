@@ -23,6 +23,11 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import {
+  OperationsPanel, HistoryPanel, ManualEditor, WorkflowJsonViewer,
+} from "@/components/docs/AdvancedDocsTools";
+import { GlobalDocsSearch } from "@/components/docs/GlobalDocsSearch";
+import { SyncSettingsCard } from "@/components/docs/SyncSettingsCard";
 
 interface CatalogItem {
   id: number;
@@ -370,6 +375,9 @@ function CatalogAdminPanel({
                     : "Documentation is saved locally under lib/n8n-nodes-catalog/docs/ as Markdown files per language, enabling offline access."}
                 </span>
               </div>
+
+              {/* Sync settings + export tools */}
+              <SyncSettingsCard isRTL={isRTL} />
             </div>
           </motion.div>
         )}
@@ -620,6 +628,15 @@ export default function NodesCatalogPage() {
           onRefreshed={invalidateAll}
         />
       )}
+
+      {/* Global Docs Search (BM25 over all docs) */}
+      <Card className="p-3">
+        <GlobalDocsSearch
+          isRTL={isRTL}
+          lang={isRTL ? "ar" : "en"}
+          onPick={(nt) => setSearch(nt)}
+        />
+      </Card>
 
       {/* Filters */}
       <Card className="p-4 space-y-3">
@@ -1019,6 +1036,7 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
   const qc = useQueryClient();
   const [lang, setLang] = useState<"en" | "ar">(isRTL ? "ar" : "en");
   const [refreshing, setRefreshing] = useState(false);
+  const [hasOverride, setHasOverride] = useState(false);
 
   const queryKey = ["doc", nodeType, lang];
   const { data, isLoading, error } = useQuery<DocResp>({
@@ -1036,7 +1054,9 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
         if (j?.data) return j.data as DocResp;
         throw new Error(j?.error?.message || "Failed");
       }
-      return j.data as DocResp;
+      const dr = j.data as DocResp & { manualOverride?: boolean };
+      setHasOverride(!!dr.manualOverride);
+      return dr;
     },
     retry: false,
     staleTime: 5 * 60_000,
@@ -1093,6 +1113,23 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
           >
             <ExternalLink size={10} />{isRTL ? "المصدر" : "source"}
           </a>
+        )}
+        {/* Advanced tools — visible to all (some only act in admin mode) */}
+        <OperationsPanel nodeType={nodeType} lang={lang} isRTL={isRTL} />
+        <HistoryPanel
+          nodeType={nodeType} lang={lang} isRTL={isRTL} isAdmin={isAdmin}
+          onRestored={() => qc.invalidateQueries({ queryKey })}
+        />
+        {data?.markdown && (
+          <WorkflowJsonViewer markdown={data.markdown} isRTL={isRTL} />
+        )}
+        {isAdmin && data?.markdown && (
+          <ManualEditor
+            nodeType={nodeType} lang={lang} isRTL={isRTL}
+            currentMarkdown={data.markdown}
+            hasOverride={hasOverride}
+            onSaved={() => qc.invalidateQueries({ queryKey })}
+          />
         )}
         {isAdmin && (
           <Button variant="ghost" size="sm" onClick={refreshDoc} disabled={refreshing} className="h-7 px-2">

@@ -1,6 +1,10 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { seedDatabase } from "./seed";
+import {
+  ensureSectionsIndexBootstrap,
+  setupSyncScheduler,
+} from "./services/docsAdvanced.service";
 
 const rawPort = process.env["PORT"];
 
@@ -18,6 +22,14 @@ if (Number.isNaN(port) || port <= 0) {
 
 async function start() {
   await seedDatabase();
+
+  // ميزات نظام التوثيقات الاحترافي:
+  // - تأكَّد أن فهرس الأقسام مبني (مرة واحدة عند أول إقلاع بعد التحديث)
+  // - شغِّل جدولة المزامنة الدورية (تتفعَّل فقط إن طلب المستخدم)
+  ensureSectionsIndexBootstrap().catch((err) =>
+    logger.warn({ err }, "ensureSectionsIndexBootstrap failed (non-fatal)")
+  );
+  setupSyncScheduler();
 
   app.listen(port, (err?: Error) => {
     if (err) {

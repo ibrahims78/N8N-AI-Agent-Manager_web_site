@@ -10,3 +10,7 @@ export * from "./audit_logs";
 export * from "./agent_memory";
 export * from "./node_catalog";
 export * from "./node_docs";
+export * from "./node_docs_history";
+export * from "./node_doc_sections";
+export * from "./guides_docs";
+export * from "./docs_sync_settings";

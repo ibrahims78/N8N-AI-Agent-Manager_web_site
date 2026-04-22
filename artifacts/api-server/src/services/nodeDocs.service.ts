@@ -44,6 +44,8 @@ export interface DocResult {
   fromCache: boolean;
   localFile?: string | null;
   error?: string;
+  /** هل هذه نسخة محرَّرة يدوياً تعلو على المصدر؟ */
+  manualOverride?: boolean;
 }
 
 export interface BulkFetchProgress {
@@ -298,6 +300,17 @@ export async function getEnglishDoc(nodeType: string, force = false): Promise<Do
         .where(and(eq(nodeDocsTable.nodeType, nodeType), eq(nodeDocsTable.language, "en")))
         .limit(1)
     )[0];
+    if (cached?.manualOverrideMarkdown) {
+      return {
+        nodeType,
+        language: "en",
+        markdown: cached.manualOverrideMarkdown,
+        sourceUrl: cached.sourceUrl,
+        fetchedAt: toISO(cached.manualOverrideAt ?? cached.fetchedAt),
+        fromCache: true,
+        manualOverride: true,
+      };
+    }
     if (cached?.markdown) {
       // If cached content still has unresolved MkDocs includes, re-fetch silently
       const hasUnresolved = /--8<--/.test(cached.markdown);
@@ -525,6 +538,17 @@ export async function getArabicDoc(nodeType: string, force = false): Promise<Doc
         .where(and(eq(nodeDocsTable.nodeType, nodeType), eq(nodeDocsTable.language, "ar")))
         .limit(1)
     )[0];
+    if (cached?.manualOverrideMarkdown) {
+      return {
+        nodeType,
+        language: "ar",
+        markdown: cached.manualOverrideMarkdown,
+        sourceUrl: cached.sourceUrl,
+        fetchedAt: toISO(cached.manualOverrideAt ?? cached.fetchedAt),
+        fromCache: true,
+        manualOverride: true,
+      };
+    }
     if (cached?.markdown) {
       return {
         nodeType,

@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp, index, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp, integer, index, uniqueIndex } from "drizzle-orm/pg-core";
 
 /**
  * node_docs: caches the full Markdown documentation for each n8n node,
@@ -21,6 +21,10 @@ export const nodeDocsTable = pgTable(
     sourceUrl: text("source_url"),
     sourceSha: text("source_sha"),
     error: text("error"),
+    /** نسخة محرَّرة يدوياً (لها أولوية على markdown عند العرض). */
+    manualOverrideMarkdown: text("manual_override_markdown"),
+    manualOverrideAt: timestamp("manual_override_at", { withTimezone: true }),
+    manualOverrideBy: integer("manual_override_by"),
     fetchedAt: timestamp("fetched_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
