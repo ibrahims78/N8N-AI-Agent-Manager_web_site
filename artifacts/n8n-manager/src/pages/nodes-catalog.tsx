@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
   Search, ExternalLink, BookOpen, KeyRound, Filter, Loader2,
   Zap, Package, ChevronLeft, ChevronRight, Tag, RefreshCw, Globe,
-  Languages, FileText, CheckCircle2, AlertCircle,
+  Languages, FileText, CheckCircle2, AlertCircle, Database,
+  HardDrive, FolderOpen, ChevronDown, ChevronUp, X,
 } from "lucide-react";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -44,19 +45,432 @@ interface ListResp {
   limit: number;
   offset: number;
 }
+
 interface CategoryItem { name: string; count: number }
+
 interface StatusItem {
   totalNodes: number; source: string; branch: string;
   fetchedAt: string | null; loadedFromStatic: boolean;
 }
+
 interface DocsStats {
-  totalNodes: number; enFetched: number; enMissing: number;
-  arTranslated: number; arPending: number; lastFetchedAt: string | null;
+  totalNodes: number;
+  enFetched: number;
+  enMissing: number;
+  arTranslated: number;
+  arPending: number;
+  lastFetchedAt: string | null;
+  localFiles: { en: number; ar: number };
 }
+
 interface DocCoverageEntry { nodeType: string; en: boolean; ar: boolean }
+
+interface BulkProgress {
+  total: number;
+  attempted: number;
+  fetched: number;
+  failed: number;
+  current?: string;
+}
 
 const PAGE_SIZE = 24;
 
+/* ─────────────────────────────────────────────────── */
+/* SSE streaming hook                                  */
+/* ─────────────────────────────────────────────────── */
+function useSSEOperation() {
+  const [running, setRunning] = useState(false);
+  const [progress, setProgress] = useState<BulkProgress | null>(null);
+  const [done, setDone] = useState<BulkProgress | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const start = useCallback(async (url: string, onDone?: () => void) => {
+    if (running) return;
+    setRunning(true);
+    setProgress(null);
+    setDone(null);
+
+    abortRef.current = new AbortController();
+    try {
+      const resp = await fetch(`${API_BASE}${url}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...getAuthHeader() },
+        credentials: "include",
+        signal: abortRef.current.signal,
+      });
+
+      if (!resp.body) throw new Error("No response body");
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done: streamDone, value } = await reader.read();
+        if (streamDone) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const events = buffer.split("\n\n");
+        buffer = events.pop() ?? "";
+
+        for (const event of events) {
+          const lines = event.split("\n");
+          let eventType = "message";
+          let dataStr = "";
+          for (const line of lines) {
+            if (line.startsWith("event: ")) eventType = line.slice(7).trim();
+            else if (line.startsWith("data: ")) dataStr = line.slice(6).trim();
+          }
+          if (!dataStr) continue;
+          try {
+            const data = JSON.parse(dataStr) as BulkProgress & { message?: string };
+            if (eventType === "done") {
+              setDone(data);
+              setProgress(data);
+              onDone?.();
+            } else if (eventType === "error") {
+              throw new Error(data.message || "Unknown error");
+            } else {
+              setProgress(data);
+            }
+          } catch {
+            // ignore parse errors
+          }
+        }
+      }
+    } catch (err) {
+      if ((err as Error).name !== "AbortError") {
+        console.error("SSE error:", err);
+      }
+    } finally {
+      setRunning(false);
+    }
+  }, [running]);
+
+  const stop = useCallback(() => {
+    abortRef.current?.abort();
+    setRunning(false);
+  }, []);
+
+  return { running, progress, done, start, stop };
+}
+
+/* ─────────────────────────────────────────────────── */
+/* Progress Bar                                        */
+/* ─────────────────────────────────────────────────── */
+function ProgressBar({ value, max, color = "bg-accent" }: { value: number; max: number; color?: string }) {
+  const pct = max > 0 ? Math.round((value / max) * 100) : 0;
+  return (
+    <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+      <motion.div
+        className={`h-full rounded-full ${color}`}
+        initial={{ width: 0 }}
+        animate={{ width: `${pct}%` }}
+        transition={{ duration: 0.3 }}
+      />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────── */
+/* Admin Panel                                         */
+/* ─────────────────────────────────────────────────── */
+function CatalogAdminPanel({
+  isRTL,
+  docsStats,
+  status,
+  onRefreshed,
+}: {
+  isRTL: boolean;
+  docsStats: DocsStats | undefined;
+  status: StatusItem | undefined;
+  onRefreshed: () => void;
+}) {
+  const { toast } = useToast();
+  const [open, setOpen] = useState(false);
+  const [refreshingCatalog, setRefreshingCatalog] = useState(false);
+  const fetchOp = useSSEOperation();
+  const translateOp = useSSEOperation();
+
+  async function authedFetch(path: string, init?: RequestInit) {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...getAuthHeader(),
+      ...(init?.headers as Record<string, string> | undefined),
+    };
+    return fetch(`${API_BASE}${path}`, { ...init, headers, credentials: "include" });
+  }
+
+  async function refreshCatalog() {
+    setRefreshingCatalog(true);
+    try {
+      const r = await authedFetch(`/catalog/refresh`, { method: "POST" });
+      const j = await r.json();
+      if (j.success) {
+        toast({
+          title: isRTL ? "تم تحديث الكتالوج ✅" : "Catalog refreshed ✅",
+          description: isRTL ? `إجمالي العقد: ${j.data.status.totalNodes}` : `Total nodes: ${j.data.status.totalNodes}`,
+        });
+        onRefreshed();
+      } else {
+        toast({ title: isRTL ? "فشل التحديث" : "Refresh failed", description: j.error?.message, variant: "destructive" });
+      }
+    } catch (err) {
+      toast({ title: isRTL ? "خطأ" : "Error", description: String(err), variant: "destructive" });
+    } finally {
+      setRefreshingCatalog(false);
+    }
+  }
+
+  function handleFetchDone() {
+    toast({
+      title: isRTL ? "اكتمل جلب التوثيقات ✅" : "Documentation fetch complete ✅",
+      description: isRTL
+        ? `جُلب ${fetchOp.done?.fetched ?? 0} من ${fetchOp.done?.total ?? 0} عقدة`
+        : `Fetched ${fetchOp.done?.fetched ?? 0} of ${fetchOp.done?.total ?? 0} nodes`,
+    });
+    onRefreshed();
+  }
+
+  function handleTranslateDone() {
+    toast({
+      title: isRTL ? "اكتملت الترجمة ✅" : "Translation complete ✅",
+      description: isRTL
+        ? `تُرجم ${translateOp.done?.fetched ?? 0} من ${translateOp.done?.total ?? 0} عقدة`
+        : `Translated ${translateOp.done?.fetched ?? 0} of ${translateOp.done?.total ?? 0} nodes`,
+    });
+    onRefreshed();
+  }
+
+  const pct = (v: number, t: number) => t > 0 ? `${Math.round((v / t) * 100)}%` : "0%";
+
+  return (
+    <Card className="border-accent/30 overflow-hidden">
+      {/* Header */}
+      <button
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
+        onClick={() => setOpen((v) => !v)}
+      >
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+          <Database size={16} className="text-accent" />
+          {isRTL ? "لوحة تحكم التوثيق (مدير)" : "Documentation Control Panel (Admin)"}
+          {(fetchOp.running || translateOp.running || refreshingCatalog) && (
+            <span className="inline-flex items-center gap-1 text-[10px] text-accent bg-accent/10 rounded-full px-2 py-0.5">
+              <Loader2 size={9} className="animate-spin" />
+              {isRTL ? "جاري التنفيذ..." : "Running..."}
+            </span>
+          )}
+        </div>
+        {open ? <ChevronUp size={16} className="text-muted-foreground" /> : <ChevronDown size={16} className="text-muted-foreground" />}
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 space-y-4 border-t border-border pt-4">
+              {/* Stats Grid */}
+              {docsStats && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <StatCard
+                    icon={<Package size={16} className="text-accent" />}
+                    label={isRTL ? "إجمالي العقد" : "Total Nodes"}
+                    value={docsStats.totalNodes}
+                    isRTL={isRTL}
+                  />
+                  <StatCard
+                    icon={<BookOpen size={16} className="text-emerald-500" />}
+                    label={isRTL ? "توثيقات EN" : "EN Docs"}
+                    value={docsStats.enFetched}
+                    total={docsStats.totalNodes}
+                    color="bg-emerald-500"
+                    isRTL={isRTL}
+                  />
+                  <StatCard
+                    icon={<Languages size={16} className="text-blue-500" />}
+                    label={isRTL ? "مترجم AR" : "AR Translated"}
+                    value={docsStats.arTranslated}
+                    total={docsStats.enFetched}
+                    color="bg-blue-500"
+                    isRTL={isRTL}
+                  />
+                  <StatCard
+                    icon={<HardDrive size={16} className="text-purple-500" />}
+                    label={isRTL ? "ملفات محلية" : "Local Files"}
+                    value={docsStats.localFiles.en + docsStats.localFiles.ar}
+                    subtitle={`EN: ${docsStats.localFiles.en} · AR: ${docsStats.localFiles.ar}`}
+                    isRTL={isRTL}
+                  />
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+
+                {/* 1: Refresh Catalog */}
+                <ActionCard
+                  icon={<RefreshCw size={14} />}
+                  title={isRTL ? "تحديث قائمة العقد" : "Update Node List"}
+                  description={isRTL
+                    ? "يجلب أحدث قائمة عقد من مستودع n8n الرسمي"
+                    : "Fetches the latest node list from the official n8n repo"}
+                  buttonLabel={isRTL ? "تحديث الآن" : "Update Now"}
+                  running={refreshingCatalog}
+                  disabled={fetchOp.running || translateOp.running}
+                  onAction={refreshCatalog}
+                  isRTL={isRTL}
+                />
+
+                {/* 2: Fetch English Docs */}
+                <ActionCard
+                  icon={<FileText size={14} />}
+                  title={isRTL ? "جلب التوثيقات الإنجليزية" : "Fetch English Docs"}
+                  description={isRTL
+                    ? "يجلب التوثيق من GitHub ويحفظه في DB والملفات المحلية"
+                    : "Fetches docs from GitHub and saves to DB + local files"}
+                  buttonLabel={fetchOp.running ? (isRTL ? "جاري الجلب..." : "Fetching...") : (isRTL ? "جلب التوثيقات" : "Fetch Docs")}
+                  running={fetchOp.running}
+                  disabled={refreshingCatalog || translateOp.running}
+                  onAction={() => fetchOp.start("/catalog/docs/fetch-all-stream", handleFetchDone)}
+                  onStop={fetchOp.stop}
+                  progress={fetchOp.progress}
+                  progressColor="bg-emerald-500"
+                  isRTL={isRTL}
+                />
+
+                {/* 3: Translate to Arabic */}
+                <ActionCard
+                  icon={<Languages size={14} />}
+                  title={isRTL ? "ترجمة التوثيقات للعربية" : "Translate to Arabic"}
+                  description={isRTL
+                    ? "يترجم جميع التوثيقات للعربية ويحفظها محلياً"
+                    : "Translates all docs to Arabic and saves locally"}
+                  buttonLabel={translateOp.running ? (isRTL ? "جاري الترجمة..." : "Translating...") : (isRTL ? "ترجمة الكل" : "Translate All")}
+                  running={translateOp.running}
+                  disabled={refreshingCatalog || fetchOp.running}
+                  onAction={() => translateOp.start("/catalog/docs/translate-all-stream", handleTranslateDone)}
+                  onStop={translateOp.stop}
+                  progress={translateOp.progress}
+                  progressColor="bg-blue-500"
+                  isRTL={isRTL}
+                />
+              </div>
+
+              {/* Local files notice */}
+              <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 border border-border">
+                <FolderOpen size={13} className="shrink-0 mt-0.5 text-accent" />
+                <span>
+                  {isRTL
+                    ? "يتم حفظ التوثيقات محلياً في مجلد lib/n8n-nodes-catalog/docs/ بصيغة Markdown لكل لغة على حدة، مما يتيح الوصول دون اتصال بالإنترنت."
+                    : "Documentation is saved locally under lib/n8n-nodes-catalog/docs/ as Markdown files per language, enabling offline access."}
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Card>
+  );
+}
+
+function StatCard({
+  icon, label, value, total, subtitle, color = "bg-accent", isRTL,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+  total?: number;
+  subtitle?: string;
+  color?: string;
+  isRTL: boolean;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5">
+      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        {icon}{label}
+      </div>
+      <div className="text-xl font-bold text-foreground">{value.toLocaleString()}</div>
+      {total != null && (
+        <ProgressBar value={value} max={total} color={color} />
+      )}
+      {subtitle && (
+        <div className="text-[10px] text-muted-foreground">{subtitle}</div>
+      )}
+    </div>
+  );
+}
+
+function ActionCard({
+  icon, title, description, buttonLabel, running, disabled,
+  onAction, onStop, progress, progressColor = "bg-accent", isRTL,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  buttonLabel: string;
+  running: boolean;
+  disabled?: boolean;
+  onAction: () => void;
+  onStop?: () => void;
+  progress?: BulkProgress | null;
+  progressColor?: string;
+  isRTL: boolean;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-background p-3 space-y-2.5 flex flex-col">
+      <div className="flex items-start gap-2">
+        <div className="p-1.5 rounded-md bg-muted text-muted-foreground shrink-0">{icon}</div>
+        <div className="min-w-0">
+          <div className="text-xs font-semibold text-foreground">{title}</div>
+          <div className="text-[11px] text-muted-foreground leading-relaxed">{description}</div>
+        </div>
+      </div>
+
+      {running && progress && (
+        <div className="space-y-1">
+          <ProgressBar value={progress.attempted} max={progress.total} color={progressColor} />
+          <div className="flex justify-between items-center text-[10px] text-muted-foreground">
+            <span>{progress.attempted} / {progress.total}</span>
+            <span className="text-emerald-500">{progress.fetched} ✓</span>
+            {progress.failed > 0 && <span className="text-red-500">{progress.failed} ✗</span>}
+          </div>
+          {progress.current && (
+            <div className="text-[10px] text-muted-foreground truncate font-mono" title={progress.current} dir="ltr">
+              ↳ {progress.current}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="flex gap-2 mt-auto">
+        <Button
+          size="sm"
+          variant={running ? "secondary" : "outline"}
+          className="flex-1 gap-1.5 text-xs h-7"
+          disabled={disabled && !running}
+          onClick={onAction}
+        >
+          {running ? <Loader2 size={12} className="animate-spin" /> : icon}
+          {buttonLabel}
+        </Button>
+        {running && onStop && (
+          <Button size="sm" variant="ghost" className="h-7 px-2 text-muted-foreground hover:text-foreground" onClick={onStop}>
+            <X size={12} />
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────── */
+/* Main Page                                           */
+/* ─────────────────────────────────────────────────── */
 export default function NodesCatalogPage() {
   const { language } = useAppStore();
   const { user } = useAuthStore();
@@ -71,8 +485,6 @@ export default function NodesCatalogPage() {
   const [category, setCategory] = useState<string>("all");
   const [triggerFilter, setTriggerFilter] = useState<"all" | "trigger" | "regular">("all");
   const [page, setPage] = useState(1);
-  const [refreshingCatalog, setRefreshingCatalog] = useState(false);
-  const [refreshingDocs, setRefreshingDocs] = useState(false);
   const [openNodeType, setOpenNodeType] = useState<string | null>(null);
 
   useEffect(() => {
@@ -116,7 +528,7 @@ export default function NodesCatalogPage() {
     },
   });
 
-  const { data: docsStats } = useQuery<DocsStats>({
+  const { data: docsStats, refetch: refetchStats } = useQuery<DocsStats>({
     queryKey: ["docs-stats"],
     queryFn: async () => {
       const r = await apiRequest<{ success: boolean; data: DocsStats }>(`/catalog/docs/stats`);
@@ -124,7 +536,7 @@ export default function NodesCatalogPage() {
     },
   });
 
-  const { data: coverage } = useQuery<DocCoverageEntry[]>({
+  const { data: coverage, refetch: refetchCoverage } = useQuery<DocCoverageEntry[]>({
     queryKey: ["docs-coverage"],
     queryFn: async () => {
       const r = await apiRequest<{ success: boolean; data: { coverage: DocCoverageEntry[] } }>(`/catalog/docs/coverage`);
@@ -140,64 +552,12 @@ export default function NodesCatalogPage() {
 
   const totalPages = list ? Math.max(1, Math.ceil(list.total / PAGE_SIZE)) : 1;
 
-  async function authedFetch(path: string, init?: RequestInit) {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-      ...getAuthHeader(),
-      ...(init?.headers as Record<string, string> | undefined),
-    };
-    return fetch(`${API_BASE}${path}`, { ...init, headers, credentials: "include" });
-  }
-
-  async function refreshCatalog() {
-    setRefreshingCatalog(true);
-    try {
-      const r = await authedFetch(`/catalog/refresh`, { method: "POST" });
-      const j = await r.json();
-      if (j.success) {
-        toast({
-          title: isRTL ? "تم تحديث الكتالوج ✅" : "Catalog refreshed ✅",
-          description: isRTL ? `إجمالي العقد: ${j.data.status.totalNodes}` : `Total nodes: ${j.data.status.totalNodes}`,
-        });
-        await qc.invalidateQueries({ queryKey: ["catalog"] });
-        await qc.invalidateQueries({ queryKey: ["catalog-status"] });
-        await qc.invalidateQueries({ queryKey: ["catalog-categories"] });
-      } else {
-        toast({ title: isRTL ? "فشل التحديث" : "Refresh failed", description: j.error?.message, variant: "destructive" });
-      }
-    } catch (err) {
-      toast({ title: isRTL ? "خطأ" : "Error", description: String(err), variant: "destructive" });
-    } finally {
-      setRefreshingCatalog(false);
-    }
-  }
-
-  async function refreshAllDocs(force = false) {
-    setRefreshingDocs(true);
-    toast({
-      title: isRTL ? "جاري جلب التوثيقات..." : "Fetching documentation...",
-      description: isRTL ? "قد يستغرق ذلك دقيقة أو دقيقتين" : "This may take a minute or two",
-    });
-    try {
-      const r = await authedFetch(`/catalog/docs/refresh-all?force=${force}`, { method: "POST" });
-      const j = await r.json();
-      if (j.success) {
-        toast({
-          title: isRTL ? "تم جلب التوثيقات ✅" : "Documentation fetched ✅",
-          description: isRTL
-            ? `تمت محاولة ${j.data.attempted}، نجح ${j.data.fetched}، فشل ${j.data.failed}`
-            : `Attempted ${j.data.attempted}, fetched ${j.data.fetched}, failed ${j.data.failed}`,
-        });
-        await qc.invalidateQueries({ queryKey: ["docs-stats"] });
-        await qc.invalidateQueries({ queryKey: ["docs-coverage"] });
-      } else {
-        toast({ title: isRTL ? "فشل جلب التوثيقات" : "Docs fetch failed", description: j.error?.message, variant: "destructive" });
-      }
-    } catch (err) {
-      toast({ title: isRTL ? "خطأ" : "Error", description: String(err), variant: "destructive" });
-    } finally {
-      setRefreshingDocs(false);
-    }
+  function invalidateAll() {
+    qc.invalidateQueries({ queryKey: ["catalog"] });
+    qc.invalidateQueries({ queryKey: ["catalog-status"] });
+    qc.invalidateQueries({ queryKey: ["catalog-categories"] });
+    qc.invalidateQueries({ queryKey: ["docs-stats"] });
+    qc.invalidateQueries({ queryKey: ["docs-coverage"] });
   }
 
   return (
@@ -216,62 +576,49 @@ export default function NodesCatalogPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {status && (
-            <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 border border-border">
-              <div className="flex items-center gap-3">
-                <span><strong className="text-foreground">{status.totalNodes}</strong> {isRTL ? "عقدة" : "nodes"}</span>
-                {docsStats && (
-                  <>
-                    <span className="opacity-50">·</span>
-                    <span title={isRTL ? "وثائق إنجليزية مخزنة" : "Cached English docs"}>
-                      <FileText size={11} className="inline -mt-0.5 me-1" />
-                      {docsStats.enFetched}
+        {status && (
+          <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 border border-border">
+            <div className="flex items-center gap-3">
+              <span><strong className="text-foreground">{status.totalNodes}</strong> {isRTL ? "عقدة" : "nodes"}</span>
+              {docsStats && (
+                <>
+                  <span className="opacity-50">·</span>
+                  <span title={isRTL ? "وثائق إنجليزية مخزنة" : "Cached English docs"}>
+                    <FileText size={11} className="inline -mt-0.5 me-1" />
+                    {docsStats.enFetched}
+                  </span>
+                  <span title={isRTL ? "ترجمات عربية مخزنة" : "Cached Arabic translations"}>
+                    <Languages size={11} className="inline -mt-0.5 me-1" />
+                    {docsStats.arTranslated}
+                  </span>
+                  {docsStats.localFiles && (
+                    <span title={isRTL ? "ملفات محلية" : "Local files"}>
+                      <HardDrive size={11} className="inline -mt-0.5 me-1" />
+                      {docsStats.localFiles.en + docsStats.localFiles.ar}
                     </span>
-                    <span title={isRTL ? "ترجمات عربية مخزنة" : "Cached Arabic translations"}>
-                      <Languages size={11} className="inline -mt-0.5 me-1" />
-                      {docsStats.arTranslated}
-                    </span>
-                  </>
-                )}
-              </div>
-              {status.fetchedAt && (
-                <div className="opacity-70 mt-0.5">
-                  {isRTL ? "آخر تحديث: " : "Updated: "}
-                  {new Date(status.fetchedAt).toLocaleDateString()}
-                </div>
+                  )}
+                </>
               )}
             </div>
-          )}
-
-          {isAdmin && (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={refreshCatalog}
-                disabled={refreshingCatalog}
-                className="gap-2"
-                title={isRTL ? "إعادة جلب قائمة العقد من المستودع" : "Re-fetch node list from repo"}
-              >
-                {refreshingCatalog ? <Loader2 className="animate-spin" size={14} /> : <RefreshCw size={14} />}
-                {isRTL ? "تحديث الكتالوج" : "Refresh catalog"}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => refreshAllDocs(false)}
-                disabled={refreshingDocs}
-                className="gap-2"
-                title={isRTL ? "تنزيل التوثيق الكامل لكل العقد المفقودة" : "Download full docs for all missing nodes"}
-              >
-                {refreshingDocs ? <Loader2 className="animate-spin" size={14} /> : <FileText size={14} />}
-                {isRTL ? "جلب كل التوثيقات" : "Fetch all docs"}
-              </Button>
-            </>
-          )}
-        </div>
+            {status.fetchedAt && (
+              <div className="opacity-70 mt-0.5">
+                {isRTL ? "آخر تحديث: " : "Updated: "}
+                {new Date(status.fetchedAt).toLocaleDateString()}
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Admin Panel */}
+      {isAdmin && (
+        <CatalogAdminPanel
+          isRTL={isRTL}
+          docsStats={docsStats}
+          status={status}
+          onRefreshed={invalidateAll}
+        />
+      )}
 
       {/* Filters */}
       <Card className="p-4 space-y-3">
@@ -322,7 +669,7 @@ export default function NodesCatalogPage() {
         )}
       </Card>
 
-      {/* List */}
+      {/* Node Grid */}
       {isLoading ? (
         <div className="flex justify-center py-16">
           <Loader2 className="animate-spin text-accent" size={32} />
@@ -382,7 +729,7 @@ export default function NodesCatalogPage() {
 }
 
 /* ─────────────────────────────────────────────────── */
-/* Card                                                */
+/* Node Card                                           */
 /* ─────────────────────────────────────────────────── */
 function NodeCard({
   node, isRTL, cov, onOpen,
@@ -784,4 +1131,3 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
     </div>
   );
 }
-

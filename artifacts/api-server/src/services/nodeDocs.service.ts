@@ -2,14 +2,23 @@
  * nodeDocs.service.ts
  *
  * Fetches, caches, and translates the full Markdown documentation for n8n nodes.
- * - English source: n8n-io/n8n-docs on GitHub (raw.githubusercontent.com).
- * - Arabic translation: lazy, via OpenAI, persisted in node_docs(language='ar').
+ *
+ * Storage strategy (dual-layer):
+ *  1. Database (node_docs table) — primary cache, fast SQL queries.
+ *  2. Local filesystem (lib/n8n-nodes-catalog/docs/{en|ar}/) — offline resilience,
+ *     survives DB resets, and makes the docs readable as plain files.
+ *
+ * Languages:
+ *  - English source: n8n-io/n8n-docs on GitHub (raw.githubusercontent.com).
+ *  - Arabic translation: lazy (or bulk) via OpenAI gpt-4o-mini.
  *
  * The service derives the GitHub raw URL from the node's `primaryDocsUrl`
  * (e.g. https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.slack/
  *  → docs/integrations/builtin/app-nodes/n8n-nodes-base.slack.md)
  * and tries 2 layouts (`<slug>.md` and `<slug>/index.md`) before giving up.
  */
+import fs from "fs/promises";
+import path from "path";
 import { db, nodeCatalogTable, nodeDocsTable, systemSettingsTable } from "@workspace/db";
 import { eq, and, sql } from "drizzle-orm";
 import { logger } from "../lib/logger";
@@ -17,6 +26,12 @@ import { decryptApiKey } from "./encryption.service";
 
 const DOCS_REPO_RAW = "https://raw.githubusercontent.com/n8n-io/n8n-docs/main";
 const DOCS_API = "https://api.github.com/repos/n8n-io/n8n-docs/contents";
+
+/**
+ * Local docs directory — sibling to the n8n-nodes-catalog package.
+ * process.cwd() = artifacts/api-server when running dev/prod.
+ */
+const LOCAL_DOCS_DIR = path.resolve(process.cwd(), "../../lib/n8n-nodes-catalog/docs");
 
 export type DocLang = "en" | "ar";
 
@@ -27,7 +42,72 @@ export interface DocResult {
   sourceUrl: string | null;
   fetchedAt: string | null;
   fromCache: boolean;
+  localFile?: string | null;
   error?: string;
+}
+
+export interface BulkFetchProgress {
+  total: number;
+  attempted: number;
+  fetched: number;
+  failed: number;
+  current?: string;
+}
+
+export type ProgressCallback = (progress: BulkFetchProgress) => void;
+
+/* ───────────────────────── Local file helpers ───────────────────────── */
+
+/** Convert a node type string to a safe filename (no slashes / special chars). */
+function nodeTypeToFilename(nodeType: string): string {
+  return nodeType.replace(/\//g, "__").replace(/@/g, "_at_") + ".md";
+}
+
+/** Ensure the docs/{lang} directory exists. */
+async function ensureDocsDir(lang: DocLang): Promise<string> {
+  const dir = path.join(LOCAL_DOCS_DIR, lang);
+  await fs.mkdir(dir, { recursive: true });
+  return dir;
+}
+
+/** Persist a markdown string to the local filesystem. */
+async function saveDocToFile(
+  nodeType: string,
+  lang: DocLang,
+  markdown: string
+): Promise<string> {
+  const dir = await ensureDocsDir(lang);
+  const filePath = path.join(dir, nodeTypeToFilename(nodeType));
+  await fs.writeFile(filePath, markdown, "utf-8");
+  return filePath;
+}
+
+/** Load a markdown doc from the local filesystem. Returns null if not found. */
+async function loadDocFromFile(
+  nodeType: string,
+  lang: DocLang
+): Promise<string | null> {
+  try {
+    const filePath = path.join(LOCAL_DOCS_DIR, lang, nodeTypeToFilename(nodeType));
+    return await fs.readFile(filePath, "utf-8");
+  } catch {
+    return null;
+  }
+}
+
+/** Count the number of markdown files saved locally per language. */
+export async function getLocalFilesStats(): Promise<{ en: number; ar: number }> {
+  async function countDir(lang: DocLang): Promise<number> {
+    try {
+      const dir = path.join(LOCAL_DOCS_DIR, lang);
+      const files = await fs.readdir(dir);
+      return files.filter((f) => f.endsWith(".md")).length;
+    } catch {
+      return 0;
+    }
+  }
+  const [en, ar] = await Promise.all([countDir("en"), countDir("ar")]);
+  return { en, ar };
 }
 
 /* ───────────────────────── URL derivation ───────────────────────── */
@@ -40,7 +120,6 @@ function docsUrlToRepoPath(docsUrl: string): string | null {
   try {
     const u = new URL(docsUrl);
     if (!u.hostname.includes("docs.n8n.io")) return null;
-    // /integrations/builtin/app-nodes/n8n-nodes-base.slack/  →  integrations/builtin/app-nodes/n8n-nodes-base.slack
     let p = u.pathname.replace(/^\/+/, "").replace(/\/+$/, "");
     if (!p) return null;
     return `docs/${p}`;
@@ -80,7 +159,7 @@ async function fetchMarkdownFromGithub(
 
 /**
  * Returns the English doc for a node. If not cached, fetches from GitHub
- * and persists it. Returns null markdown if no doc is available upstream.
+ * and persists it (DB + local file). Returns null markdown if not available.
  */
 export async function getEnglishDoc(nodeType: string, force = false): Promise<DocResult> {
   const node = (
@@ -132,13 +211,7 @@ export async function getEnglishDoc(nodeType: string, force = false): Promise<Do
 
   const fetched = await fetchMarkdownFromGithub(node.primaryDocsUrl);
   if (!fetched) {
-    await upsertDoc({
-      nodeType,
-      language: "en",
-      markdown: null,
-      sourceUrl: null,
-      error: "Doc not found in n8n-docs repo",
-    });
+    await upsertDoc({ nodeType, language: "en", markdown: null, sourceUrl: null, error: "Doc not found in n8n-docs repo" });
     return {
       nodeType,
       language: "en",
@@ -167,7 +240,7 @@ export async function getEnglishDoc(nodeType: string, force = false): Promise<Do
   };
 }
 
-/* ───────────────────────── Translation (lazy, OpenAI) ───────────────────────── */
+/* ───────────────────────── Translation (lazy or bulk, OpenAI) ───────────────────────── */
 
 const TRANSLATE_GLOSSARY = `
 You are translating n8n workflow-automation docs to Arabic for technical users.
@@ -214,8 +287,6 @@ async function translateMarkdownToArabic(markdown: string): Promise<string> {
   const OpenAI = (await import("openai")).default;
   const openai = new OpenAI({ apiKey: key, timeout: 90_000 });
 
-  // For very long docs, do simple chunking by Markdown headings to keep
-  // each request well within model limits while preserving structure.
   const chunks = chunkMarkdown(markdown, 6000);
   const out: string[] = [];
   for (const chunk of chunks) {
@@ -299,13 +370,7 @@ export async function getArabicDoc(nodeType: string, force = false): Promise<Doc
     translated = await translateMarkdownToArabic(en.markdown);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await upsertDoc({
-      nodeType,
-      language: "ar",
-      markdown: null,
-      sourceUrl: en.sourceUrl,
-      error: msg,
-    });
+    await upsertDoc({ nodeType, language: "ar", markdown: null, sourceUrl: en.sourceUrl, error: msg });
     return {
       nodeType,
       language: "ar",
@@ -334,22 +399,17 @@ export async function getArabicDoc(nodeType: string, force = false): Promise<Doc
   };
 }
 
-/* ───────────────────────── Bulk operations ───────────────────────── */
-
-export interface BulkFetchProgress {
-  total: number;
-  attempted: number;
-  fetched: number;
-  failed: number;
-}
+/* ───────────────────────── Bulk: fetch English docs ───────────────────────── */
 
 /**
  * Fetches English docs for ALL nodes in catalog that don't already have one.
- * Concurrency-limited to be polite to GitHub. Skips rows with stored errors
- * unless `force` is true.
+ * Concurrency-limited to be polite to GitHub.
+ * Reports real-time progress via the optional `onProgress` callback (called
+ * approximately every 5 nodes to reduce overhead).
  */
 export async function bulkFetchEnglishDocs(
-  opts: { force?: boolean; concurrency?: number } = {}
+  opts: { force?: boolean; concurrency?: number } = {},
+  onProgress?: ProgressCallback
 ): Promise<BulkFetchProgress> {
   const concurrency = opts.concurrency ?? 6;
 
@@ -361,7 +421,10 @@ export async function bulkFetchEnglishDocs(
 
   if (!opts.force) {
     const existing = await db
-      .select({ nodeType: nodeDocsTable.nodeType, error: nodeDocsTable.error, hasMd: sql<boolean>`(${nodeDocsTable.markdown} IS NOT NULL)` })
+      .select({
+        nodeType: nodeDocsTable.nodeType,
+        hasMd: sql<boolean>`(${nodeDocsTable.markdown} IS NOT NULL)`,
+      })
       .from(nodeDocsTable)
       .where(eq(nodeDocsTable.language, "en"));
     const haveMd = new Set(existing.filter((e) => e.hasMd).map((e) => e.nodeType));
@@ -375,13 +438,15 @@ export async function bulkFetchEnglishDocs(
     failed: 0,
   };
 
-  // Simple concurrency-limited pool
+  onProgress?.({ ...progress });
+
   let idx = 0;
   async function worker() {
     while (idx < target.length) {
       const i = idx++;
       const node = target[i];
       progress.attempted++;
+      progress.current = node.nodeType;
       try {
         const r = await getEnglishDoc(node.nodeType, opts.force);
         if (r.markdown) progress.fetched++;
@@ -390,11 +455,83 @@ export async function bulkFetchEnglishDocs(
         progress.failed++;
         logger.warn({ err, nodeType: node.nodeType }, "bulk doc fetch error");
       }
+      // Emit progress every 5 nodes or at end
+      if (progress.attempted % 5 === 0 || progress.attempted === target.length) {
+        onProgress?.({ ...progress });
+      }
     }
   }
   await Promise.all(Array.from({ length: concurrency }, () => worker()));
 
+  progress.current = undefined;
+  onProgress?.({ ...progress });
   logger.info(progress, "Bulk English docs fetch complete");
+  return progress;
+}
+
+/* ───────────────────────── Bulk: translate to Arabic ───────────────────────── */
+
+/**
+ * Translates English docs to Arabic for all nodes that have English docs
+ * but no Arabic translation yet. Concurrency is low (2) to respect OpenAI limits.
+ */
+export async function bulkTranslateArabicDocs(
+  opts: { force?: boolean; concurrency?: number } = {},
+  onProgress?: ProgressCallback
+): Promise<BulkFetchProgress> {
+  const concurrency = opts.concurrency ?? 2;
+
+  // Get nodes that have English docs
+  const enDocs = await db
+    .select({ nodeType: nodeDocsTable.nodeType })
+    .from(nodeDocsTable)
+    .where(and(eq(nodeDocsTable.language, "en"), sql`${nodeDocsTable.markdown} IS NOT NULL`));
+
+  let target = enDocs.map((r) => r.nodeType);
+
+  if (!opts.force) {
+    const arDocs = await db
+      .select({ nodeType: nodeDocsTable.nodeType })
+      .from(nodeDocsTable)
+      .where(and(eq(nodeDocsTable.language, "ar"), sql`${nodeDocsTable.markdown} IS NOT NULL`));
+    const translated = new Set(arDocs.map((r) => r.nodeType));
+    target = target.filter((t) => !translated.has(t));
+  }
+
+  const progress: BulkFetchProgress = {
+    total: target.length,
+    attempted: 0,
+    fetched: 0,
+    failed: 0,
+  };
+
+  onProgress?.({ ...progress });
+
+  let idx = 0;
+  async function worker() {
+    while (idx < target.length) {
+      const i = idx++;
+      const nodeType = target[i];
+      progress.attempted++;
+      progress.current = nodeType;
+      try {
+        const r = await getArabicDoc(nodeType, opts.force);
+        if (r.markdown) progress.fetched++;
+        else progress.failed++;
+      } catch (err) {
+        progress.failed++;
+        logger.warn({ err, nodeType }, "bulk Arabic translation error");
+      }
+      if (progress.attempted % 3 === 0 || progress.attempted === target.length) {
+        onProgress?.({ ...progress });
+      }
+    }
+  }
+  await Promise.all(Array.from({ length: concurrency }, () => worker()));
+
+  progress.current = undefined;
+  onProgress?.({ ...progress });
+  logger.info(progress, "Bulk Arabic translation complete");
   return progress;
 }
 
@@ -407,6 +544,7 @@ export interface DocsStats {
   arTranslated: number;
   arPending: number;
   lastFetchedAt: string | null;
+  localFiles: { en: number; ar: number };
 }
 
 export async function getDocsStats(): Promise<DocsStats> {
@@ -432,6 +570,8 @@ export async function getDocsStats(): Promise<DocsStats> {
 
   const enFetched = enRows[0]?.withMd ?? 0;
   const arTranslated = arRows[0]?.withMd ?? 0;
+  const localFiles = await getLocalFilesStats();
+
   return {
     totalNodes,
     enFetched,
@@ -439,6 +579,7 @@ export async function getDocsStats(): Promise<DocsStats> {
     arTranslated,
     arPending: Math.max(0, enFetched - arTranslated),
     lastFetchedAt: enRows[0]?.lastAt ? enRows[0].lastAt.toISOString() : null,
+    localFiles,
   };
 }
 
@@ -493,6 +634,16 @@ async function upsertDoc(input: {
       },
     })
     .returning();
+
+  // Also persist to local filesystem when we have content
+  if (input.markdown) {
+    try {
+      await saveDocToFile(input.nodeType, input.language, input.markdown);
+    } catch (err) {
+      logger.warn({ err, nodeType: input.nodeType, lang: input.language }, "Failed to save doc to local file");
+    }
+  }
+
   return inserted[0];
 }
 
@@ -501,7 +652,6 @@ async function upsertDoc(input: {
 /**
  * Simple keyword scoring over the cached docs for a given node — returns the
  * top-N most relevant ~80-line slices for an agent to consume.
- * Cheap and effective when full embeddings are not yet wired up.
  */
 export async function searchWithinNodeDoc(
   nodeType: string,
@@ -514,7 +664,6 @@ export async function searchWithinNodeDoc(
   if (!doc.markdown) return { snippets: [], sourceUrl: doc.sourceUrl };
 
   const lines = doc.markdown.split("\n");
-  // Slice around headings into sections, score each by keyword hits.
   const sections: { title: string; body: string; start: number }[] = [];
   let curTitle = "(intro)";
   let curBody: string[] = [];
