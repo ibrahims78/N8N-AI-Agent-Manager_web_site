@@ -18,3 +18,9 @@ id = "BvIo0UhIoFAkgEyftpC3z"
 uri = "file://agent-issues-and-improvements.md"
 type = "text"
 title = "التقرير المحدث — مقترحات التنفيذ للنقاط المعلقة"
+
+[[outputs]]
+id = "a-9oJp0iScG3sRFlERnqn"
+uri = "file://N8N_CATALOG_INTEGRATION.txt"
+type = "text"
+title = "n8n Catalog Integration — Implementation Report"

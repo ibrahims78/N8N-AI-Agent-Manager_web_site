@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard, Workflow, MessageSquare, FileText, History,
-  Users, Settings, LogOut, ChevronLeft, ChevronRight, Sun, Moon, User,
+  Users, Settings, LogOut, ChevronLeft, ChevronRight, Sun, Moon, User, Package,
 } from "lucide-react";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -38,6 +38,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     { icon: Workflow, label: t("app.workflows"), path: "/workflows" },
     { icon: MessageSquare, label: t("app.chat"), path: "/chat" },
     { icon: FileText, label: t("app.templates"), path: "/templates" },
+    { icon: Package, label: isRTL ? "كتالوج العقد" : "Nodes Catalog", path: "/nodes-catalog" },
     { icon: History, label: t("app.history"), path: "/history" },
     { icon: Users, label: t("app.users"), path: "/users", adminOnly: true },
     { icon: Settings, label: t("app.settings"), path: "/settings" },

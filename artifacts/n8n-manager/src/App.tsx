@@ -11,6 +11,7 @@ import DashboardPage from "@/pages/dashboard";
 import WorkflowsPage from "@/pages/workflows";
 import ChatPage from "@/pages/chat";
 import TemplatesPage from "@/pages/templates";
+import NodesCatalogPage from "@/pages/nodes-catalog";
 import HistoryPage from "@/pages/history";
 import UsersPage from "@/pages/users";
 import SettingsPage from "@/pages/settings";
@@ -80,6 +81,13 @@ function AppRoutes() {
         <ProtectedRoute>
           <AppLayout>
             <TemplatesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/nodes-catalog">
+        <ProtectedRoute>
+          <AppLayout>
+            <NodesCatalogPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

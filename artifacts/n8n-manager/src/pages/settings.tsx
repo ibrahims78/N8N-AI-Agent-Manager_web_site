@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { CheckCircle2, XCircle, Loader2, Eye, EyeOff, AlertTriangle, Trash2, RotateCcw, KeyRound } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, Eye, EyeOff, AlertTriangle, Trash2, RotateCcw, KeyRound, Package, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getAuthHeader, API_BASE } from "@/lib/api";
 import { useGetN8nSettings, useTestN8nConnection, useSaveN8nSettings, useSaveOpenAiKey, useTestOpenAI, useSaveGeminiKey, useTestGemini, useGetSystemStatus } from "@workspace/api-client-react";
@@ -325,6 +325,9 @@ export default function SettingsPage() {
             </div>
           </div>
 
+          {/* n8n Node Catalog */}
+          {isAdmin && <CatalogCard isRTL={isRTL} authHeader={authHeader} />}
+
           {/* Danger Zone */}
           {isAdmin && (
             <motion.div
@@ -461,5 +464,98 @@ export default function SettingsPage() {
         </>
       )}
     </div>
+  );
+}
+
+function CatalogCard({ isRTL, authHeader }: { isRTL: boolean; authHeader: Record<string, string> }) {
+  const { toast } = useToast();
+  const [status, setStatus] = useState<{ totalNodes: number; branch: string; fetchedAt: string | null } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const loadStatus = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/catalog/status`, { headers: authHeader });
+      const data = await res.json() as { success: boolean; data?: { totalNodes: number; branch: string; fetchedAt: string | null } };
+      if (data.success && data.data) setStatus(data.data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { loadStatus(); }, []);
+
+  const refresh = async () => {
+    setRefreshing(true);
+    try {
+      const headers: Record<string, string> = { ...authHeader, "Content-Type": "application/json" };
+      const res = await fetch(`${API_BASE}/catalog/refresh`, { method: "POST", headers });
+      const data = await res.json() as { success: boolean; data?: { fetched: number; inserted: number; updated: number }; error?: { message: string } };
+      if (data.success && data.data) {
+        toast({
+          title: isRTL ? "تم تحديث الكتالوج ✅" : "Catalog refreshed ✅",
+          description: isRTL
+            ? `تم جلب ${data.data.fetched} عقدة (جديد: ${data.data.inserted}، محدث: ${data.data.updated})`
+            : `Fetched ${data.data.fetched} nodes (new: ${data.data.inserted}, updated: ${data.data.updated})`,
+        });
+        await loadStatus();
+      } else {
+        toast({ title: isRTL ? "فشل التحديث" : "Refresh failed", description: data.error?.message, variant: "destructive" });
+      }
+    } catch (err) {
+      toast({ title: isRTL ? "خطأ في الشبكة" : "Network error", description: String(err), variant: "destructive" });
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-card rounded-xl p-5 border border-border"
+    >
+      <div className="flex items-center gap-2 mb-4">
+        <Package size={16} className="text-accent" />
+        <h2 className="text-sm font-semibold text-foreground">
+          {isRTL ? "كتالوج عقد n8n" : "n8n Nodes Catalog"}
+        </h2>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="text-xs text-muted-foreground space-y-1">
+          {loading ? (
+            <span className="flex items-center gap-2"><Loader2 className="animate-spin" size={12} /> {isRTL ? "جاري التحميل..." : "Loading..."}</span>
+          ) : status ? (
+            <>
+              <div>
+                <strong className="text-foreground">{status.totalNodes}</strong>{" "}
+                {isRTL ? `عقدة محملة من فرع` : `nodes loaded from branch`}{" "}
+                <code className="bg-muted px-1.5 py-0.5 rounded text-[10px]">{status.branch}</code>
+              </div>
+              <div className="opacity-70">
+                {isRTL ? "آخر تحديث: " : "Last updated: "}
+                {status.fetchedAt ? new Date(status.fetchedAt).toLocaleString() : (isRTL ? "غير معروف" : "unknown")}
+              </div>
+            </>
+          ) : (
+            <span>{isRTL ? "لا يوجد كتالوج" : "No catalog loaded"}</span>
+          )}
+        </div>
+        <button
+          onClick={refresh}
+          disabled={refreshing}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent text-white text-xs hover:bg-accent/90 transition-colors disabled:opacity-50"
+        >
+          {refreshing ? <Loader2 className="animate-spin" size={14} /> : <RefreshCw size={14} />}
+          {isRTL ? "تحديث الآن" : "Refresh Now"}
+        </button>
+      </div>
+      <p className="text-[11px] text-muted-foreground mt-3 opacity-70">
+        {isRTL
+          ? "يجلب أحدث بيانات العقد من المستودع الرسمي n8n على GitHub."
+          : "Fetches the latest node metadata from the official n8n GitHub repository."}
+      </p>
+    </motion.div>
   );
 }

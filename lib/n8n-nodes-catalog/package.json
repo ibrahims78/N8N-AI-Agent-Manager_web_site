@@ -1,0 +1,14 @@
+{
+  "name": "@workspace/n8n-nodes-catalog",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./data": "./data/catalog.json"
+  },
+  "scripts": {
+    "fetch": "node ./scripts/fetch.mjs"
+  },
+  "dependencies": {}
+}

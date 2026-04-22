@@ -513,3 +513,11 @@ GPT-4o يحلل الخطأ + يصحح JSON
 ```
 
 يُخزَّن في جدول `messages.tokensUsed` ويُعرض في لوحة التحكم.
+
+## n8n Node Catalog (added 2026-04-22)
+- Package `@workspace/n8n-nodes-catalog` ships static seed of 430 nodes from ibrahims78/n8n.
+- DB tables: `node_catalog`, `node_catalog_meta` (Drizzle).
+- API: `/api/catalog` (status, categories, list, lookup/:q, refresh — admin).
+- Frontend route: `/nodes-catalog` (browse), Settings → "n8n Nodes Catalog" (refresh).
+- AI agent tool: `lookup_node_catalog` for alias/folder/type resolution + docs links.
+- Updater: `pnpm --filter @workspace/n8n-nodes-catalog run fetch`.

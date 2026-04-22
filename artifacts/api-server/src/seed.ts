@@ -2,6 +2,7 @@ import { db, usersTable, userPermissionsTable, templatesTable, ALL_PERMISSIONS }
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { logger } from "./lib/logger";
+import { seedNodeCatalog } from "./services/nodeCatalog.service";
 
 const SYSTEM_TEMPLATES = [
   {
@@ -530,6 +531,18 @@ export async function seedDatabase() {
       });
       logger.info({ name: template.name }, "Template seeded");
     }
+  }
+
+  // ─── n8n Node Catalog ────────────────────────────────────────────────────────
+  try {
+    const catalogResult = await seedNodeCatalog();
+    if (catalogResult.inserted > 0) {
+      logger.info(catalogResult, "Node catalog seeded");
+    } else {
+      logger.info({ total: catalogResult.total }, "Node catalog already up to date");
+    }
+  } catch (err) {
+    logger.error({ err: err instanceof Error ? err.message : String(err) }, "Node catalog seeding failed");
   }
 
   logger.info("Seed completed successfully.");

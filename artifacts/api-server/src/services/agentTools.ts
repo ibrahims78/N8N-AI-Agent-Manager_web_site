@@ -25,6 +25,7 @@ import {
   getDynamicNodeSchema,
   searchDynamicNodeTypes,
 } from "./dynamicNodeSchema.service";
+import { lookupNode, searchCatalogDb } from "./nodeCatalog.service";
 import { logger } from "../lib/logger";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -193,6 +194,26 @@ export const AGENT_TOOL_DEFINITIONS: OpenAI.Chat.ChatCompletionTool[] = [
   {
     type: "function",
     function: {
+      name: "lookup_node_catalog",
+      description:
+        "Look up rich metadata for an n8n node from the official catalog: categories, aliases (alternative search terms), official documentation links, credential docs, and example workflow URLs from n8n.io blog. Use this when the user mentions an integration by an unusual name (e.g. 'human approval' for Slack, 'database' for Postgres) or to fetch documentation links for the user.",
+      parameters: {
+        type: "object",
+        properties: {
+          query: {
+            type: "string",
+            description:
+              "Either a node type (e.g. 'n8n-nodes-base.slack'), folder name (e.g. 'Slack'), alias (e.g. 'human approval'), or category (e.g. 'Communication').",
+          },
+        },
+        required: ["query"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "get_execution_errors",
       description:
         "Get recent execution errors for a specific workflow. Useful when diagnosing why a workflow is failing.",
@@ -253,6 +274,9 @@ export async function executeToolCall(
         break;
       case "validate_workflow_json":
         result = executeValidateWorkflow(args.workflow_json as Record<string, unknown>);
+        break;
+      case "lookup_node_catalog":
+        result = await executeLookupCatalog(String(args.query ?? ""));
         break;
       case "get_execution_errors":
         result = await executeGetExecutionErrors(
@@ -642,4 +666,51 @@ async function executeGetExecutionErrors(workflowId: string, limit: number): Pro
       note: "Could not fetch execution errors — n8n may not be configured or workflow not found.",
     };
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Tool 7: lookup_node_catalog (n8n codex catalog metadata)
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function executeLookupCatalog(query: string): Promise<unknown> {
+  const q = query.trim();
+  if (!q) return { found: false, message: "query is required." };
+
+  // Try direct lookup first
+  const direct = await lookupNode(q);
+  if (direct) {
+    return {
+      found: true,
+      node: {
+        nodeType: direct.nodeType,
+        displayName: direct.displayName,
+        isTrigger: direct.isTrigger,
+        categories: direct.categories,
+        subcategories: direct.subcategories,
+        aliases: direct.aliases,
+        primaryDocsUrl: direct.primaryDocsUrl,
+        credentialDocsUrl: direct.credentialDocsUrl,
+        examples: direct.examples.slice(0, 5),
+        iconUrl: direct.iconUrl,
+      },
+    };
+  }
+
+  // Fallback: search
+  const matches = await searchCatalogDb(q, 10);
+  if (matches.length === 0) {
+    return { found: false, message: `No catalog match for "${q}".` };
+  }
+
+  return {
+    found: true,
+    matched: matches.length,
+    nodes: matches.map((n) => ({
+      nodeType: n.nodeType,
+      displayName: n.displayName,
+      categories: n.categories,
+      aliases: n.aliases,
+      primaryDocsUrl: n.primaryDocsUrl,
+    })),
+  };
 }
