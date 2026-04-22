@@ -52,10 +52,16 @@ function pickLang(q: unknown): DocLang {
   return q === "ar" ? "ar" : "en";
 }
 
+function pickSearchLang(q: unknown): DocLang | "any" {
+  if (q === "ar") return "ar";
+  if (q === "en") return "en";
+  return "any";
+}
+
 /* ─────────────── Search ─────────────── */
 router.get("/search", authenticate, async (req: Request, res: Response): Promise<void> => {
   const q = String(req.query.q ?? "").trim();
-  const lang = pickLang(req.query.lang);
+  const lang = pickSearchLang(req.query.lang);
   const limit = Math.min(Math.max(Number(req.query.limit ?? 20), 1), 100);
   if (!q) {
     res.json({ success: true, data: { hits: [], query: "" } });

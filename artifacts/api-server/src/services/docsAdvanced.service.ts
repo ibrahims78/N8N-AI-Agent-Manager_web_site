@@ -93,17 +93,22 @@ export interface GlobalSearchHit {
  */
 export async function globalDocsSearch(
   query: string,
-  language: DocLang = "en",
+  language: DocLang | "any" = "en",
   limit = 20
 ): Promise<GlobalSearchHit[]> {
   const queryTokens = tokenize(query);
   if (queryTokens.length === 0) return [];
 
-  const sections = await db
-    .select()
-    .from(nodeDocSectionsTable)
-    .where(eq(nodeDocSectionsTable.language, language));
+  // First try the requested language. If that has no rows (e.g. AR not yet
+  // translated), automatically fall back to ALL languages so the user always
+  // gets relevant hits — Arabic UI users can still search the English corpus.
+  let sections = language === "any"
+    ? await db.select().from(nodeDocSectionsTable)
+    : await db.select().from(nodeDocSectionsTable).where(eq(nodeDocSectionsTable.language, language));
 
+  if (sections.length === 0 && language !== "any") {
+    sections = await db.select().from(nodeDocSectionsTable);
+  }
   if (sections.length === 0) return [];
 
   // Compute IDF
@@ -456,6 +461,7 @@ export async function fetchAllGuides(
     let done = 0;
     onProgress?.({ total, done: 0, current: "", phase: "translate" });
 
+    let lastErrorMsg = "";
     const worker = async () => {
       while (idx < targets.length) {
         const i = idx++;
@@ -466,6 +472,7 @@ export async function fetchAllGuides(
           else translateFailed++;
         } catch (err) {
           translateFailed++;
+          lastErrorMsg = err instanceof Error ? err.message : String(err);
           logger.warn({ err, slug }, "translate guide failed");
         }
         done++;
@@ -474,9 +481,13 @@ export async function fetchAllGuides(
     };
     await Promise.all(Array.from({ length: concurrency }, () => worker()));
     onProgress?.({ total, done: total, current: "", phase: "translate" });
+    // Surface a friendly flag the UI can show as a single big banner instead
+    // of N identical toasts.
+    const aiKeyMissing = /لا يوجد مفتاح AI|no ai key|api key/i.test(lastErrorMsg);
+    return { total, fetched, failed, translated, translateFailed, aiKeyMissing, lastErrorMsg };
   }
 
-  return { total, fetched, failed, translated, translateFailed };
+  return { total, fetched, failed, translated, translateFailed, aiKeyMissing: false, lastErrorMsg: "" };
 }
 
 export async function listGuides(language: DocLang = "en") {

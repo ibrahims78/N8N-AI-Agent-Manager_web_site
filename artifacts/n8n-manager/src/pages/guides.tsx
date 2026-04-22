@@ -207,9 +207,29 @@ export default function GuidesPage() {
           } else if (evt.type === "done") {
             const enLine = `${evt.fetched}/${evt.total}` + (evt.failed ? ` (${evt.failed} ${t("فشل","failed")})` : "");
             const arLine = translate ? ` — ${t("ترجمة","AR")}: ${evt.translated ?? 0}/${evt.total}` : "";
+            // If the AR phase failed entirely because no AI key is configured,
+            // show a single actionable banner pointing to Settings instead of
+            // a vague "translation failed" line.
+            if (translate && evt.aiKeyMissing) {
+              toast({
+                title: t("لم تعمل الترجمة — مطلوب مفتاح ذكاء اصطناعي", "Translation skipped — AI key required"),
+                description: t(
+                  "تم جلب النسخ الإنجليزية بنجاح. لتفعيل الترجمة الآلية للعربية أضف مفتاح OpenAI أو Anthropic أو Gemini من صفحة الإعدادات → تكامل الذكاء الاصطناعي.",
+                  "English sources fetched successfully. To enable Arabic translation, add an OpenAI / Anthropic / Gemini key from Settings → AI Integrations."
+                ),
+                variant: "destructive",
+              });
+            } else {
+              toast({
+                title: t("اكتمل تحديث الأدلة", "Guides refreshed"),
+                description: enLine + arLine,
+              });
+            }
+          } else if (evt.type === "error") {
             toast({
-              title: t("اكتمل تحديث الأدلة", "Guides refreshed"),
-              description: enLine + arLine,
+              title: t("فشل التحديث", "Refresh failed"),
+              description: String(evt.error ?? ""),
+              variant: "destructive",
             });
           }
         }
