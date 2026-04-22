@@ -362,57 +362,119 @@ export async function getEnglishDoc(nodeType: string, force = false): Promise<Do
 /* ───────────────────────── Translation (lazy or bulk, OpenAI) ───────────────────────── */
 
 const TRANSLATE_GLOSSARY = `
-You are translating n8n workflow-automation docs to Arabic for technical users.
+أنت مترجم تقني متخصص في ترجمة توثيق منصة n8n لأتمتة سير العمل إلى اللغة العربية الفصحى المتخصصة. مستخدموك مطورون ومهندسون متمرسون.
 
-STRICT RULES:
-- Output VALID Markdown that mirrors the source structure (headings, lists, tables, code fences, links, frontmatter).
-- DO NOT translate code inside fenced code blocks (\`\`\`...\`\`\`) or inline code (\`...\`).
-- DO NOT translate URLs, file paths, identifiers, parameter names, JSON keys, environment variable names.
-- DO NOT translate node names, operation names, or n8n UI labels that the user must click in the English UI — keep them in English, but you MAY add a parenthetical Arabic gloss the FIRST time, e.g. "Webhook (ويب هوك)".
-- Preserve all MkDocs-style admonitions ("!!! note", "??? tip") — translate body text only, not the admonition keywords.
-- Preserve frontmatter YAML keys (title, description, contentType) but you MAY translate their string values.
-- Use these standard translations:
-  Workflow → سير العمل
-  Trigger → المُحفِّز
-  Node → العقدة
-  Credential → بيانات الاعتماد
-  Webhook → ويب هوك
-  Authentication → المصادقة
-  Operation → العملية
-  Resource → المورد
-  Execution → التنفيذ
-  Item → العنصر
-  Expression → التعبير
-  Required → مطلوب
-  Optional → اختياري
+قواعد صارمة يجب الالتزام بها حرفياً:
 
-Output ONLY the translated Markdown, with no preamble or wrapping fences.
+1. بنية Markdown:
+   - احتفظ بالبنية الكاملة: العناوين، القوائم، الجداول، كتل الكود، الروابط، frontmatter.
+   - لا تحذف أي محتوى موجود في المصدر.
+   - الاتجاه دائماً من اليمين لليسار.
+
+2. لا تترجم أبداً:
+   - الكود داخل code blocks (triple backtick) أو inline code (backtick).
+   - روابط URL ومسارات الملفات.
+   - أسماء المعاملات (parameters) ومفاتيح JSON وأسماء متغيرات البيئة.
+   - أسماء العقد (Node names) مثل: Postgres, Slack, GitHub — لكن أضف تعريباً بين قوسين في أول مرة.
+
+3. مصطلحات موحّدة إلزامية (استخدمها دائماً):
+   Workflow → سير العمل
+   Trigger → المُحفِّز
+   Node → العقدة
+   Credential → بيانات الاعتماد
+   Webhook → ويب هوك
+   Authentication → المصادقة
+   Operation → العملية
+   Resource → المورد
+   Execution → التنفيذ
+   Item → العنصر
+   Expression → التعبير
+   Required → مطلوب
+   Optional → اختياري
+   Schema → المخطط
+   Table → الجدول
+   Query → الاستعلام
+   Connection → الاتصال
+   Integration → التكامل
+   Parameter → المعامل
+   Output → المخرجات
+   Input → المدخلات
+   Error → الخطأ
+   Template → القالب
+   Instance → النسخة
+   Deploy → النشر
+   Environment → البيئة
+   API Key → مفتاح API
+   Timeout → مهلة الانتهاء
+   Retry → إعادة المحاولة
+   Batch → دفعة
+   Transaction → معاملة (قاعدة البيانات)
+
+4. أسلوب الترجمة:
+   - عربية فصحى تقنية واضحة ودقيقة.
+   - الجمل قصيرة ومباشرة.
+   - استخدم المبني للمجهول حيث يكون أكثر طبيعية في التوثيق التقني.
+   - احتفظ بنبرة الوثيقة الرسمية.
+   - اقرأ الجملة كاملة قبل الترجمة للحفاظ على السياق.
+
+أخرج فقط Markdown المُترجَم كاملاً بدون أي مقدمات أو تعليقات.
 `.trim();
 
-async function getOpenaiKey(): Promise<string | null> {
-  const s = (await db.select().from(systemSettingsTable).limit(1))[0];
-  if (!s?.openaiKeyEncrypted || !s?.openaiKeyIv) return null;
-  try {
-    return decryptApiKey(s.openaiKeyEncrypted, s.openaiKeyIv);
-  } catch {
-    return null;
+interface AiClient {
+  apiKey: string;
+  baseURL?: string;
+  model: string;
+}
+
+/**
+ * Resolve an AI client configuration.
+ * Priority:
+ *   1. Replit AI Integrations proxy (AI_INTEGRATIONS_OPENAI_API_KEY) — no user key needed
+ *   2. System-settings OpenAI key (user-configured encrypted key)
+ */
+async function resolveAiClient(): Promise<AiClient> {
+  // 1. Replit AI Integrations proxy
+  const replitKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+  const replitBase = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+  if (replitKey) {
+    return {
+      apiKey: replitKey,
+      baseURL: replitBase,
+      model: "gpt-5-mini",
+    };
   }
+
+  // 2. User-configured key from system settings
+  const s = (await db.select().from(systemSettingsTable).limit(1))[0];
+  if (s?.openaiKeyEncrypted && s?.openaiKeyIv) {
+    try {
+      const key = decryptApiKey(s.openaiKeyEncrypted, s.openaiKeyIv);
+      if (key) return { apiKey: key, model: "gpt-4o-mini" };
+    } catch {
+      // ignore decrypt error, fall through
+    }
+  }
+
+  throw new Error(
+    "لا يوجد مفتاح AI متوفر. يرجى التحقق من إعدادات النظام أو تكوين Replit AI Integrations."
+  );
 }
 
 async function translateMarkdownToArabic(markdown: string): Promise<string> {
-  const key = await getOpenaiKey();
-  if (!key) throw new Error("OpenAI API key not configured in system settings");
-
+  const client = await resolveAiClient();
   const OpenAI = (await import("openai")).default;
-  const openai = new OpenAI({ apiKey: key, timeout: 90_000 });
+  const openai = new OpenAI({
+    apiKey: client.apiKey,
+    baseURL: client.baseURL,
+    timeout: 120_000,
+  });
 
   const chunks = chunkMarkdown(markdown, 6000);
   const out: string[] = [];
   for (const chunk of chunks) {
     const resp = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.2,
-      max_tokens: 4096,
+      model: client.model,
+      temperature: 0.1,
       messages: [
         { role: "system", content: TRANSLATE_GLOSSARY },
         { role: "user", content: chunk },
