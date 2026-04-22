@@ -1,6 +1,10 @@
+# HTTP Request node documentation
+
+> Learn how to use the HTTP Request node in n8n. Follow technical documentation to integrate HTTP Request node into your workflows.
+
 # HTTP Request node
 
-The HTTP Request node is one of the most versatile nodes in n8n. It allows you to make HTTP requests to query data from any app or service with a REST API. You can use the HTTP Request node a regular node or attached to an [AI agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/tools-agent.md) to use as a [tool](/advanced-ai/examples/understand-tools.md){ data-preview }.
+The HTTP Request node is one of the most versatile nodes in n8n. It allows you to make HTTP requests to query data from any app or service with a REST API. You can use the HTTP Request node a regular node or attached to an [AI agent](https://docs.n8n.io/n8n-nodes-langchain.agent/tools-agent/) to use as a [tool](/advanced-ai/examples/understand-tools.md){ data-preview }.
 
 When using this node, you're creating a REST API call. You need some understanding of basic API terminology and concepts.
 
@@ -238,7 +242,7 @@ Enter the **Timeout** time to wait in milliseconds.
 
 ## Tool-only options
 
-The following options are only available when attached to an [AI agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/tools-agent.md) as a [tool](/advanced-ai/examples/understand-tools.md){ data-preview }.
+The following options are only available when attached to an [AI agent](https://docs.n8n.io/n8n-nodes-langchain.agent/tools-agent/) as a [tool](/advanced-ai/examples/understand-tools.md){ data-preview }.
 
 ### Optimize Response
 
@@ -295,22 +299,27 @@ Import a curl command:
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for http-request at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/)
+
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common Issues](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # HTTP Request node common issues
 
-Here are some common errors and issues with the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [HTTP Request node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Bad request - please check your parameters
 
 This error displays when the node receives a 400 error indicating a bad request. This error most often occurs because:
 
 * You're using an invalid name or value in a **Query Parameter**.
-* You're passing array values in a **Query Parameter** but the array isn't formatted correctly. Try using the [**Array Format in Query Parameters**](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md#array-format-in-query-parameters) option.
+* You're passing array values in a **Query Parameter** but the array isn't formatted correctly. Try using the [**Array Format in Query Parameters**](https://docs.n8n.io//#array-format-in-query-parameters) option.
 
 Review the API documentation for your service to format your query parameters.
 

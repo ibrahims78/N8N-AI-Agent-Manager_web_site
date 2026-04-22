@@ -14,6 +14,7 @@
  */
 import { Router } from "express";
 import type { Request, Response } from "express";
+import fs from "fs";
 import { authenticate, requireAdmin } from "../middleware/auth.middleware";
 import {
   getEnglishDoc,
@@ -26,8 +27,63 @@ import {
   searchWithinNodeDoc,
   type BulkFetchProgress,
 } from "../services/nodeDocs.service";
+import {
+  resolveAssetPath,
+  refreshRepoTree,
+  getAssetsStats,
+} from "../services/nodeDocsPipeline.service";
 
 const router: Router = Router();
+
+/* ──────────────── Static asset serving (images for docs) ────────────────
+ * Serves images that the pipeline downloaded from n8n-docs to
+ * `lib/n8n-nodes-catalog/docs/_assets/<safeNode>/<file>`.
+ *
+ * Public on purpose — these are upstream public images from n8n-docs and
+ * <img> requests inside markdown can't carry custom auth headers.
+ */
+router.get(
+  "/assets/:safeNode/:filename",
+  async (req: Request, res: Response): Promise<void> => {
+    const file = await resolveAssetPath(req.params.safeNode, req.params.filename);
+    if (!file) {
+      res.status(404).end();
+      return;
+    }
+    const ext = file.toLowerCase().split(".").pop() || "";
+    const mime: Record<string, string> = {
+      png: "image/png",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      gif: "image/gif",
+      webp: "image/webp",
+      svg: "image/svg+xml",
+      ico: "image/x-icon",
+    };
+    res.setHeader("Content-Type", mime[ext] ?? "application/octet-stream");
+    res.setHeader("Cache-Control", "public, max-age=2592000, immutable");
+    fs.createReadStream(file).pipe(res);
+  }
+);
+
+router.get(
+  "/assets-stats",
+  authenticate,
+  async (_req: Request, res: Response): Promise<void> => {
+    const stats = await getAssetsStats();
+    res.json({ success: true, data: stats });
+  }
+);
+
+router.post(
+  "/refresh-tree",
+  authenticate,
+  requireAdmin,
+  async (_req: Request, res: Response): Promise<void> => {
+    const count = await refreshRepoTree();
+    res.json({ success: true, data: { paths: count } });
+  }
+);
 
 /* ──────────────── Stats & Coverage ──────────────── */
 

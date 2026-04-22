@@ -1,3 +1,7 @@
+# Postgres node documentation
+
+> Learn how to use the Postgres node in n8n. Follow technical documentation to integrate Postgres node into your workflows.
+
 # Postgres node
 
 Use the Postgres node to automate work in Postgres, and integrate Postgres with other applications. n8n has built-in support for a wide range of Postgres features, including executing queries, as well as inserting and updating rows in a database. 
@@ -194,6 +198,8 @@ Enter these parameters:
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for postgres at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.postgres/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.postgres/)
+
 ## Related resources
 
 n8n provides a trigger node for Postgres. You can find the trigger node docs [here](/integrations/builtin/trigger-nodes/n8n-nodes-base.postgrestrigger.md).
@@ -234,13 +240,16 @@ Then in **Query Parameters**, provide the field values to use. You can provide f
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/app-nodes/n8n-nodes-base.postgres/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Postgres node common issues
 
-Here are some common errors and issues with the [Postgres node](/integrations/builtin/app-nodes/n8n-nodes-base.postgres/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Postgres node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Dynamically populate SQL `IN` groups with parameters
 
@@ -250,7 +259,7 @@ In Postgres, you can use the SQL [`IN` comparison construct](https://www.postgre
 SELECT color, shirt_size FROM shirts WHERE shirt_size IN ('small', 'medium', 'large');
 ```
 
-While you can use n8n [expressions](/data/expressions.md) in your query to dynamically populate the values in an `IN` group, combining this with [query parameters](/integrations/builtin/app-nodes/n8n-nodes-base.postgres/index.md#use-query-parameters) provides extra protection by automatically sanitizing input.
+While you can use n8n [expressions](/data/expressions.md) in your query to dynamically populate the values in an `IN` group, combining this with [query parameters](https://docs.n8n.io//#use-query-parameters) provides extra protection by automatically sanitizing input.
 
 To construct an `IN` group query with query parameters:
 

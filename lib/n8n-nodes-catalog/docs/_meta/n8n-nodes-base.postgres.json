@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.postgres",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.postgres/index.md",
+  "fetchedAt": "2026-04-22T18:08:09.028Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Postgres node documentation",
+      "description": "Learn how to use the Postgres node in n8n. Follow technical documentation to integrate Postgres node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "critical"
+    },
+    "title": "Postgres node documentation",
+    "description": "Learn how to use the Postgres node in n8n. Follow technical documentation to integrate Postgres node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "common-issues.md"
+  ],
+  "assets": []
+}

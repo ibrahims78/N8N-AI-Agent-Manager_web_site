@@ -1,20 +1,20 @@
 # عقدة Pinecone Vector Store
 
-استخدم عقدة Pinecone للتفاعل مع قاعدة بيانات Pinecone الخاصة بك كمخزن متجهات (vector store). يمكنك إدراج المستندات في قاعدة بيانات متجهات، أو الحصول على المستندات من قاعدة بيانات متجهات، أو استرداد المستندات لتزويدها لمسترد متصل بسلسلة (chain)، أو الاتصال مباشرة بوكيل (agent) كأداة (tool). يمكنك أيضًا تحديث عنصر في قاعدة بيانات متجهات باستخدام معرّفه (ID).
+استخدم عقدة Pinecone للتفاعل مع قاعدة بيانات Pinecone الخاصة بك كـ [متجر متجهات](/glossary.md#ai-vector-store). يمكنك إدراج المستندات في قاعدة بيانات متجهات، أو الحصول على مستندات من قاعدة بيانات متجهات، أو استرداد المستندات لتوفيرها لمسترد متصل بـ [سلسلة](/glossary.md#ai-chain)، أو الاتصال مباشرة بـ [وكيل](/glossary.md#ai-agent) كـ [أداة](/glossary.md#ai-tool). يمكنك أيضًا تحديث عنصر في قاعدة بيانات متجهات باستخدام معرّفه.
 
-في هذه الصفحة، ستجد معاملات العقدة (node parameters) لعقدة Pinecone، وروابط لموارد إضافية.
+في هذه الصفحة، ستجد معاملات العقدة لعقدة Pinecone، وروابط لموارد إضافية.
 
-> **بيانات الاعتماد (Credentials)**
+> **بيانات الاعتماد**
 >
-> يمكنك العثور على معلومات المصادقة (authentication) لهذه العقدة [هنا](/integrations/builtin/credentials/pinecone.md).
+> يمكنك العثور على معلومات المصادقة لهذه العقدة [هنا](/integrations/builtin/credentials/pinecone.md).
 
 > **حل المعاملات في العقد الفرعية**
 >
-> تتصرف العقد الفرعية (sub-nodes) بشكل مختلف عن العقد الأخرى عند معالجة عناصر متعددة باستخدام تعبير (expression).
+> تتصرف العقد الفرعية بشكل مختلف عن العقد الأخرى عند معالجة عناصر متعددة باستخدام تعبير.
 >
-> تأخذ معظم العقد، بما في ذلك العقد الجذرية (root nodes)، أي عدد من العناصر كمدخلات (input)، وتعالج هذه العناصر، وتخرج النتائج (output). يمكنك استخدام التعبيرات للإشارة إلى عناصر المدخلات، وتقوم العقدة بحل التعبير لكل عنصر على حدة. على سبيل المثال، بالنظر إلى مدخلات من خمس قيم `name`، يحل التعبير `` إلى كل اسم على حدة.
+> تأخذ معظم العقد، بما في ذلك العقد الجذرية، أي عدد من العناصر كمدخلات، وتعالج هذه العناصر، وتخرج النتائج. يمكنك استخدام التعبيرات للإشارة إلى عناصر المدخلات، وتقوم العقدة بحل التعبير لكل عنصر على حدة. على سبيل المثال، عند إعطاء مدخلات بخمس قيم `name`، يتم حل التعبير `` لكل اسم على حدة.
 >
-> في العقد الفرعية، يحل التعبير دائمًا إلى العنصر الأول. على سبيل المثال، بالنظر إلى مدخلات من خمس قيم `name`، يحل التعبير `` دائمًا إلى الاسم الأول.
+> في العقد الفرعية، يتم حل التعبير دائمًا إلى العنصر الأول. على سبيل المثال، عند إعطاء مدخلات بخمس قيم `name`، يتم حل التعبير `` دائمًا إلى الاسم الأول.
 
 ## أنماط استخدام العقدة
 
@@ -22,39 +22,37 @@
 
 ### الاستخدام كعقدة عادية لإدراج المستندات وتحديثها واستردادها
 
-يمكنك استخدام Pinecone Vector Store كعقدة عادية لإدراج المستندات أو تحديثها أو الحصول عليها. يضع هذا النمط عقدة Pinecone Vector Store في تدفق الاتصال العادي دون استخدام وكيل.
+يمكنك استخدام Pinecone Vector Store كعقدة عادية لإدراج المستندات أو تحديثها أو الحصول عليها. يضع هذا النمط Pinecone Vector Store في تدفق الاتصال العادي دون استخدام وكيل.
 
 يمكنك رؤية مثال على ذلك في السيناريو 1 من [هذا القالب](https://n8n.io/workflows/2165-chat-with-pdf-docs-using-ai-quoting-sources/).
 
 ### الاتصال مباشرة بوكيل ذكاء اصطناعي كأداة
 
-يمكنك توصيل عقدة Pinecone Vector Store مباشرة بموصل الأداة (tool connector) لوكيل ذكاء اصطناعي (AI agent) لاستخدام مخزن متجهات كمورد عند الإجابة على الاستعلامات (queries).
+يمكنك توصيل عقدة Pinecone Vector Store مباشرة بموصل الأداة لوكيل [ذكاء اصطناعي](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md) لاستخدام متجر المتجهات كمورد عند الإجابة على الاستعلامات.
 
 هنا، سيكون الاتصال: وكيل ذكاء اصطناعي (موصل الأدوات) -> عقدة Pinecone Vector Store.
 
 ### استخدام مُسترد لجلب المستندات
 
-يمكنك استخدام العقدة [Vector Store Retriever](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.retrievervectorstore.md) مع عقدة Pinecone Vector Store لجلب المستندات من عقدة Pinecone Vector Store. يُستخدم هذا غالبًا مع العقدة [Question and Answer Chain](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainretrievalqa/index.md) لجلب المستندات من مخزن المتجهات التي تتطابق مع مدخلات الدردشة المعطاة.
+يمكنك استخدام عقدة [Vector Store Retriever](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.retrievervectorstore.md) مع عقدة Pinecone Vector Store لجلب المستندات من عقدة Pinecone Vector Store. يُستخدم هذا غالبًا مع عقدة [Question and Answer Chain](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainretrievalqa/index.md) لجلب المستندات من مخزن المتجهات التي تتطابق مع مدخلات الدردشة المعطاة.
 
-سيكون [مثال على تدفق الاتصال](https://n8n.io/workflows/1960-ask-questions-about-a-pdf-using-ai/) كالتالي: Question and Answer Chain (موصل المُسترد) -> Vector Store Retriever (موصل مخزن المتجهات) -> Pinecone Vector Store.
+[مثال على تدفق الاتصال](https://n8n.io/workflows/1960-ask-questions-about-a-pdf-using-ai/) سيكون: Question and Answer Chain (موصل المُسترد) -> Vector Store Retriever (موصل مخزن المتجهات) -> Pinecone Vector Store.
 
 ### استخدام أداة Vector Store Question Answer Tool للإجابة على الأسئلة
 
-نمط آخر يستخدم [أداة Vector Store Question Answer Tool](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolvectorstore.md) لتلخيص النتائج والإجابة على الأسئلة من عقدة Pinecone Vector Store. بدلاً من ربط Pinecone Vector Store مباشرة كأداة، يستخدم هذا النمط أداة مصممة خصيصًا لتلخيص البيانات في مخزن المتجهات.
+يستخدم نمط آخر [أداة Vector Store Question Answer Tool](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolvectorstore.md) لتلخيص النتائج والإجابة على الأسئلة من عقدة Pinecone Vector Store. بدلاً من ربط Pinecone Vector Store مباشرة كأداة، يستخدم هذا النمط أداة مصممة خصيصًا لتلخيص البيانات في مخزن المتجهات.
 
-سيبدو [تدفق الاتصالات](https://n8n.io/workflows/2705-chat-with-github-api-documentation-rag-powered-chatbot-with-pinecone-and-openai/) في هذه الحالة كالتالي: وكيل الذكاء الاصطناعي (موصل الأدوات) -> Vector Store Question Answer Tool (موصل مخزن المتجهات) -> Pinecone Vector store.
+[تدفق الاتصالات](https://n8n.io/workflows/2705-chat-with-github-api-documentation-rag-powered-chatbot-with-pinecone-and-openai/) في هذه الحالة سيبدو كالتالي: AI agent (موصل الأدوات) -> Vector Store Question Answer Tool (موصل مخزن المتجهات) -> Pinecone Vector store.
 
 ## معاملات العقدة
 
-### Operation Mode
+### وضع العملية
 
-تحتوي عقدة مخزن المتجهات هذه على خمسة أوضاع: **Get Many**، **Insert Documents**، **Retrieve Documents (As Vector Store for Chain/Tool)**، **Retrieve Documents (As Tool for AI Agent)**، و **Update Documents**. يحدد الوضع الذي تختاره العمليات التي يمكنك إجراؤها باستخدام العقدة وما هي المدخلات والمخرجات المتاحة.
+تحتوي عقدة مخزن المتجهات هذه على خمسة أوضاع: **Get Many**، **Insert Documents**، **Retrieve Documents (As Vector Store for Chain/Tool)**، **Retrieve Documents (As Tool for AI Agent)**، و **Update Documents**. يحدد الوضع الذي تختاره العمليات التي يمكنك إجراؤها باستخدام العقدة، وما هي المدخلات والمخرجات المتاحة.
 
-<!-- vale off -->
-#### Get Many
+#### جلب العديد
 
-في هذا الوضع، يمكنك استرداد مستندات متعددة من قاعدة بيانات المتجهات الخاصة بك عن طريق توفير موجه. سيتم تضمين الموجه واستخدامه للبحث عن التشابه. ستُرجع العقدة المستندات الأكثر تشابهًا مع الموجه مرفقة بدرجة التشابه الخاصة بها. هذا مفيد إذا كنت ترغب في استرداد قائمة بالمستندات المتشابهة وتمريرها إلى وكيل كسياق إضافي.
-<!-- vale on -->
+في هذا الوضع، يمكنك استرداد مستندات متعددة من قاعدة بيانات المتجهات الخاصة بك عن طريق توفير موجه. سيتم تضمين الموجه واستخدامه للبحث عن التشابه. ستُرجع العقدة المستندات الأكثر تشابهًا مع الموجه، بالإضافة إلى درجة التشابه الخاصة بها. هذا مفيد إذا كنت ترغب في استرداد قائمة بالمستندات المتشابهة وتمريرها إلى وكيل كـ سياق إضافي.
 
 #### إدراج المستندات
 
@@ -74,46 +72,46 @@
 
 ### إعادة ترتيب النتائج
 
-يمكّن [إعادة الترتيب](/glossary.md#ai-reranking). إذا قمت بتمكين هذا الخيار، يجب عليك ربط عقدة إعادة ترتيب بمخزن المتجهات. ستتولى تلك العقدة بعد ذلك إعادة ترتيب النتائج للاستعلامات. يمكنك استخدام هذا الخيار مع أوضاع `Get Many`، و`Retrieve Documents (As Vector Store for Chain/Tool)`، و`Retrieve Documents (As Tool for AI Agent)`.
+يُمكّن [إعادة الترتيب](/glossary.md#ai-reranking). إذا قمت بتمكين هذا الخيار، يجب عليك ربط عقدة إعادة ترتيب بمخزن المتجهات. ستقوم تلك العقدة بعد ذلك بإعادة ترتيب النتائج للاستعلامات. يمكنك استخدام هذا الخيار مع أوضاع `Get Many`، و`Retrieve Documents (As Vector Store for Chain/Tool)`، و`Retrieve Documents (As Tool for AI Agent)`.
 
 <!-- vale from-write-good.Weasel = NO -->
 ### معاملات Get Many
 <!-- vale from-write-good.Weasel = YES -->
 
-*   **Pinecone Index**: حدد أو أدخل Pinecone Index المراد استخدامه.
+*   **Pinecone Index**: حدد أو أدخل مؤشر Pinecone المراد استخدامه.
 *   **Prompt**: أدخل استعلام البحث الخاص بك.
 *   **Limit**: أدخل عدد النتائج المراد استردادها من مخزن المتجهات. على سبيل المثال، اضبط هذا على `10` للحصول على أفضل عشر نتائج.
 
-### معاملات Insert Documents
+### معاملات إدراج المستندات
 
-*   **Pinecone Index**: حدد أو أدخل Pinecone Index المراد استخدامه.
+*   **Pinecone Index**: حدد أو أدخل مؤشر Pinecone المراد استخدامه.
 
-### معاملات Retrieve Documents (As Vector Store for Chain/Tool)
+### معاملات استرداد المستندات (كمخزن متجهات للسلسلة/الأداة)
 
-*   **Pinecone Index**: حدد أو أدخل Pinecone Index المراد استخدامه.
+*   **Pinecone Index**: حدد أو أدخل مؤشر Pinecone المراد استخدامه.
 
-### معاملات Retrieve Documents (As Tool for AI Agent)
+### معاملات استرداد المستندات (كأداة لوكيل الذكاء الاصطناعي)
 
 *   **Name**: اسم مخزن المتجهات.
-*   **Description**: اشرح لنموذج اللغة الكبير (LLM) ما تفعله هذه الأداة. يتيح الوصف الجيد والمحدد لنموذج اللغة الكبير إنتاج النتائج المتوقعة بشكل متكرر.
-*   **Pinecone Index**: حدد أو أدخل Pinecone Index المراد استخدامه.
+*   **Description**: اشرح لنموذج اللغة الكبير (LLM) ما تفعله هذه الأداة. يسمح الوصف الجيد والمحدد لنموذج اللغة الكبير (LLM) بإنتاج النتائج المتوقعة بشكل متكرر.
+*   **Pinecone Index**: حدد أو أدخل مؤشر Pinecone المراد استخدامه.
 *   **Limit**: أدخل عدد النتائج المراد استردادها من مخزن المتجهات. على سبيل المثال، اضبط هذا على `10` للحصول على أفضل عشر نتائج.
 
-### المعاملات لـ **تحديث المستندات**
+### المعاملات الخاصة بـ **تحديث المستندات**
 
-* ID
+*   ID
 
 ## خيارات العقدة
 
 ### مساحة اسم Pinecone
 
-خيار آخر للفصل لكيفية تخزين بياناتك داخل الفهرس.
+خيار فصل آخر لكيفية تخزين بياناتك داخل الفهرس.
 
 ### مُصفّي البيانات الوصفية
 
 متاح في وضع **الحصول على العديد**. عند البحث عن البيانات، استخدم هذا للمطابقة مع البيانات الوصفية المرتبطة بالمستند.
 
-هذا `استعلام` من نوع `AND`. إذا حددت أكثر من حقل واحد لمُصفّي البيانات الوصفية، فيجب أن تتطابق جميعها.
+هذا `استعلام AND`. إذا حددت أكثر من حقل واحد لمُصفّي البيانات الوصفية، فيجب أن تتطابق جميعها.
 
 عند إدراج البيانات، يتم تعيين البيانات الوصفية باستخدام مُحمّل المستندات. ارجع إلى [مُحمّل البيانات الافتراضي](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.documentdefaultdataloader.md) لمزيد من المعلومات حول تحميل المستندات.
 
@@ -129,7 +127,7 @@
 
 ارجع إلى [توثيق Pinecone الخاص بـ LangChain](https://js.langchain.com/docs/integrations/vectorstores/pinecone/) لمزيد من المعلومات حول الخدمة.
 
-اطلع على توثيق [الذكاء الاصطناعي المتقدم](/advanced-ai/index.md) الخاص بـ n8n.
+اطلع على توثيق n8n الخاص بـ [الذكاء الاصطناعي المتقدم](/advanced-ai/index.md).
 
 ### ابحث عن فهرس Pinecone ومساحة الاسم الخاصة بك
 

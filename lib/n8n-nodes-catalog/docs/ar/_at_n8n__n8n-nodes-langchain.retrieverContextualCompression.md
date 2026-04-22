@@ -1,6 +1,6 @@
-# العقدة Contextual Compression Retriever
+# عقدة Contextual Compression Retriever
 
-تعمل العقدة Contextual Compression Retriever على تحسين الإجابات المُعادَة من عمليات البحث عن تشابه المستندات في [متجر المتجهات](/glossary.md#ai-vector-store) من خلال الأخذ في الاعتبار السياق من الاستعلام.
+تعمل عقدة Contextual Compression Retriever على تحسين الإجابات المُرجَعة من عمليات البحث عن تشابه المستندات في [متجر المتجهات](/glossary.md#ai-vector-store) من خلال الأخذ في الاعتبار السياق من الاستعلام.
 
 > **حل المعاملات في العقد الفرعية**
 >

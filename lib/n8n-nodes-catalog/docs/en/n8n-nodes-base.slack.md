@@ -1,3 +1,7 @@
+# Slack node documentation
+
+> Learn how to use the Slack node in n8n. Follow technical documentation to integrate Slack node into your workflows.
+
 # Slack node
 
 Use the Slack node to automate work in Slack, and integrate Slack with other applications. n8n has built-in support for a wide range of Slack features, including creating, archiving, and closing channels, getting users and files, as well as deleting messages.
@@ -68,6 +72,8 @@ On this page, you'll find a list of operations the Slack node supports and links
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for slack at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.slack/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.slack/)
+
 ## Related resources
 
 Refer to [Slack's documentation](https://api.slack.com/) for more information about the service.
@@ -129,7 +135,7 @@ If those aren't enough, use the table below to look up the resource and operatio
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.googleSheets",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.googlesheets/index.md",
+  "fetchedAt": "2026-04-22T18:08:59.811Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Google Sheets",
+      "description": "Documentation for the Google Sheets node in n8n, a workflow automation platform. Includes details of operations and configuration, and links to examples and credentials information.",
+      "contentType": "[integration, reference]",
+      "priority": "critical"
+    },
+    "title": "Google Sheets",
+    "description": "Documentation for the Google Sheets node in n8n, a workflow automation platform. Includes details of operations and configuration, and links to examples and credentials information.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "document-operations.md",
+    "common-issues.md",
+    "sheet-operations.md"
+  ],
+  "assets": [
+    "test-sheet-after.png",
+    "test-sheet-before.png",
+    "workflow.png"
+  ]
+}

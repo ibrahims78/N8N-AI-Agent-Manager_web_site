@@ -23,6 +23,19 @@ import { db, nodeCatalogTable, nodeDocsTable, systemSettingsTable } from "@works
 import { eq, and, sql } from "drizzle-orm";
 import { logger } from "../lib/logger";
 import { decryptApiKey } from "./encryption.service";
+import {
+  discoverSiblings,
+  resolveSnippetPath,
+  extractFrontmatter,
+  frontmatterToHeader,
+  rewriteMkDocsWidgets,
+  findImages,
+  downloadImagesForNode,
+  rewriteImageUrls,
+  rewriteRelativeMdLinks,
+  saveNodeMeta,
+  type Frontmatter,
+} from "./nodeDocsPipeline.service";
 
 const DOCS_REPO_RAW = "https://raw.githubusercontent.com/n8n-io/n8n-docs/main";
 const DOCS_API = "https://api.github.com/repos/n8n-io/n8n-docs/contents";
@@ -260,6 +273,10 @@ function githubApiHeaders(): Record<string, string> {
 /**
  * Resolve MkDocs --8<-- snippet includes in-place.
  * Pattern: --8<-- "some/path.md"  or  --8<-- 'some/path.md'
+ *
+ * Uses the cached n8n-docs repo tree (see nodeDocsPipeline) to find the
+ * authoritative file path before fetching, so includes never silently
+ * disappear due to a wrong base-path guess.
  */
 async function resolveSnippets(markdown: string): Promise<string> {
   const includeRe = /--8<--\s+["']([^"']+)["']/g;
@@ -269,26 +286,28 @@ async function resolveSnippets(markdown: string): Promise<string> {
   let result = markdown;
   await Promise.all(
     matches.map(async (m) => {
-      const snippetPath = m[1]; // e.g. "_snippets/integrations/builtin/app-nodes/ai-tools.md"
-      // n8n-docs configures MkDocs base_path so snippets resolve from repo root
-      // (NOT from docs/). Try repo-root first, then docs/, then a few common
-      // alternative roots, before giving up.
-      const candidates = [
-        `${DOCS_REPO_RAW}/${snippetPath}`,
-        `${DOCS_REPO_RAW}/docs/${snippetPath}`,
-        `${DOCS_REPO_RAW}/${snippetPath.replace(/^_snippets\//, "snippets/")}`,
-      ];
+      const snippetPath = m[1];
+      const resolvedPath = await resolveSnippetPath(snippetPath);
       let snippetContent: string | null = null;
-      for (const url of candidates) {
-        snippetContent = await fetchRaw(url);
-        if (snippetContent) break;
+      if (resolvedPath) {
+        snippetContent = await fetchRaw(`${DOCS_REPO_RAW}/${resolvedPath}`);
+      }
+      // Last-resort fallback if the tree wasn't available.
+      if (!snippetContent) {
+        const candidates = [
+          `${DOCS_REPO_RAW}/${snippetPath}`,
+          `${DOCS_REPO_RAW}/docs/${snippetPath}`,
+          `${DOCS_REPO_RAW}/${snippetPath.replace(/^_snippets\//, "snippets/")}`,
+        ];
+        for (const url of candidates) {
+          snippetContent = await fetchRaw(url);
+          if (snippetContent) break;
+        }
       }
       if (snippetContent) {
-        // Recursively resolve nested snippet includes
         const resolved = await resolveSnippets(snippetContent.trim());
         result = result.replace(m[0], resolved);
       } else {
-        // Remove the unresolvable directive silently
         result = result.replace(m[0], "");
       }
     })
@@ -369,61 +388,80 @@ function cleanMkDocsDirectives(markdown: string): string {
  *     back to probing a curated list of well-known sibling filenames over
  *     raw.githubusercontent.com (which has no rate limit).
  */
-async function fetchSiblingPages(indexUrl: string): Promise<string> {
-  // indexUrl looks like: https://raw.githubusercontent.com/.../app-nodes/n8n-nodes-base.postgres/index.md
-  if (!indexUrl.endsWith("/index.md")) return "";
+async function fetchSiblingPages(
+  indexUrl: string
+): Promise<{ md: string; siblings: string[] }> {
+  if (!indexUrl.endsWith("/index.md")) return { md: "", siblings: [] };
+  const dirRawBase = indexUrl.slice(0, -"index.md".length);
 
-  const dirRawBase = indexUrl.slice(0, -"index.md".length); // trailing slash included
-  const apiUrl = indexUrl
-    .replace("https://raw.githubusercontent.com/", "https://api.github.com/repos/")
-    .replace("/main/", "/contents/")
-    .replace("/index.md", "");
+  // Authoritative list from the cached repo tree (no rate-limit issues).
+  let siblingNames = await discoverSiblings(indexUrl);
 
-  // Step 1: try the contents API.
-  let siblingNames: string[] | null = null;
-  try {
-    const r = await fetch(apiUrl, {
-      signal: AbortSignal.timeout(10_000),
-      headers: githubApiHeaders(),
-    });
-    if (r.ok) {
-      const files: Array<{ name: string; type: string }> = await r.json();
-      siblingNames = files
-        .filter((f) => f.type === "file" && f.name.endsWith(".md") && f.name !== "index.md")
-        .map((f) => f.name);
-    } else if (r.status === 403 || r.status === 429) {
-      logger.warn(
-        { apiUrl, status: r.status, hasToken: !!process.env["GITHUB_TOKEN"] },
-        "GitHub API rate-limited — falling back to known sibling filenames. Set GITHUB_TOKEN to raise the limit."
-      );
-    } else {
-      logger.debug({ apiUrl, status: r.status }, "GitHub contents API non-ok");
+  // Fallback to the legacy contents-API → known-names probing if the tree
+  // wasn't available (offline / first boot before tree is cached).
+  if (siblingNames.length === 0) {
+    const apiUrl = indexUrl
+      .replace("https://raw.githubusercontent.com/", "https://api.github.com/repos/")
+      .replace("/main/", "/contents/")
+      .replace("/index.md", "");
+    try {
+      const r = await fetch(apiUrl, {
+        signal: AbortSignal.timeout(10_000),
+        headers: githubApiHeaders(),
+      });
+      if (r.ok) {
+        const files: Array<{ name: string; type: string }> = await r.json();
+        siblingNames = files
+          .filter(
+            (f) => f.type === "file" && f.name.endsWith(".md") && f.name !== "index.md"
+          )
+          .map((f) => f.name);
+      } else if (r.status === 403 || r.status === 429) {
+        logger.warn(
+          { apiUrl, status: r.status, hasToken: !!process.env["GITHUB_TOKEN"] },
+          "GitHub contents API rate-limited — falling back to known sibling filenames"
+        );
+      }
+    } catch (err) {
+      logger.debug({ err, apiUrl }, "GitHub contents API failed");
     }
-  } catch (err) {
-    logger.debug({ err, apiUrl }, "GitHub contents API failed");
+    if (siblingNames.length === 0) siblingNames = COMMON_SIBLING_FILENAMES;
   }
+  if (siblingNames.length === 0) return { md: "", siblings: [] };
 
-  // Step 2: fallback — probe the well-known names over raw URLs.
-  if (siblingNames === null) {
-    siblingNames = COMMON_SIBLING_FILENAMES;
-  }
-  if (siblingNames.length === 0) return "";
-
+  const fetched: string[] = [];
   const parts = await Promise.all(
     siblingNames.map(async (name) => {
       const content = await fetchRaw(`${dirRawBase}${name}`);
       if (!content) return "";
-      // Strip front-matter from sibling pages
-      const stripped = content.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "").trim();
-      return stripped ? `\n\n---\n\n${stripped}` : "";
+      // Drop frontmatter from each sibling and prepend a section anchor.
+      const stripped = content
+        .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "")
+        .trim();
+      if (!stripped) return "";
+      fetched.push(name);
+      const headingTitle = name
+        .replace(/\.md$/, "")
+        .replace(/[-_]/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase());
+      return `\n\n---\n\n<!-- sibling:${name} -->\n## ${headingTitle}\n\n${stripped}`;
     })
   );
-  return parts.filter(Boolean).join("");
+  return { md: parts.filter(Boolean).join(""), siblings: fetched };
+}
+
+interface FetchResult {
+  markdown: string;
+  sourceUrl: string;
+  frontmatter: Frontmatter;
+  siblings: string[];
+  assetsSaved: string[];
 }
 
 async function fetchMarkdownFromGithub(
+  nodeType: string,
   docsUrl: string
-): Promise<{ markdown: string; sourceUrl: string } | null> {
+): Promise<FetchResult | null> {
   const repoPath = docsUrlToRepoPath(docsUrl);
   if (!repoPath) return null;
 
@@ -431,25 +469,57 @@ async function fetchMarkdownFromGithub(
     const raw = await fetchRaw(url);
     if (!raw) continue;
 
-    // 1. Strip YAML frontmatter from the top of the doc
-    let md = stripFrontmatter(raw);
+    // 1. Extract YAML frontmatter (kept structured, NOT silently dropped).
+    const { body, frontmatter } = extractFrontmatter(raw);
+    let md = body;
 
-    // 2. Resolve --8<-- snippet includes
+    // 2. Resolve --8<-- snippet includes against the cached repo tree.
     md = await resolveSnippets(md);
 
-    // 3. Append sibling pages (common-issues.md, etc.) if this is an index.md.
-    //    Note: `extra` already has frontmatter stripped from each sibling
-    //    inside fetchSiblingPages — append it as-is.
-    const extra = await fetchSiblingPages(url);
-    if (extra) md += extra;
+    // 3. Append every sibling .md the n8n-docs directory has.
+    const sib = await fetchSiblingPages(url);
+    if (sib.md) md += sib.md;
 
-    // 4. Convert MkDocs admonitions (/// note ... ///) to blockquotes
+    // 4. Convert MkDocs admonitions to blockquotes.
     md = convertAdmonitions(md);
 
-    // 5. Strip remaining MkDocs shortcodes that don't render in plain Markdown
+    // 5. Replace MkDocs widget shortcodes with friendly links instead of
+    //    silently erasing them.
+    md = rewriteMkDocsWidgets(md, frontmatter.title ? docsUrl : null);
+
+    // 6. Remaining cleanup (multi-blank lines, leftover Jinja, etc.)
     md = cleanMkDocsDirectives(md);
 
-    if (md.length > 20) return { markdown: md, sourceUrl: url };
+    // 7. Inject a generated title/description header from the frontmatter.
+    md = frontmatterToHeader(frontmatter) + md;
+
+    // 8. Rewrite relative *.md links to docs.n8n.io URLs.
+    md = rewriteRelativeMdLinks(md, url);
+
+    // 9. Discover, download & rewrite all images.
+    const refs = findImages(md, url);
+    const { map: imageMap, saved } = await downloadImagesForNode(nodeType, refs);
+    md = rewriteImageUrls(md, imageMap);
+
+    if (md.length > 20) {
+      const result: FetchResult = {
+        markdown: md,
+        sourceUrl: url,
+        frontmatter,
+        siblings: sib.siblings,
+        assetsSaved: saved,
+      };
+      // 10. Persist a per-node manifest for diagnostics & re-syncs.
+      await saveNodeMeta({
+        nodeType,
+        sourceUrl: url,
+        fetchedAt: new Date().toISOString(),
+        frontmatter,
+        siblings: sib.siblings,
+        assets: saved,
+      });
+      return result;
+    }
   }
   return null;
 }
@@ -541,7 +611,7 @@ export async function getEnglishDoc(nodeType: string, force = false): Promise<Do
     };
   }
 
-  const fetched = await fetchMarkdownFromGithub(node.primaryDocsUrl);
+  const fetched = await fetchMarkdownFromGithub(nodeType, node.primaryDocsUrl);
   if (!fetched) {
     await upsertDoc({ nodeType, language: "en", markdown: null, sourceUrl: null, error: "Doc not found in n8n-docs repo" });
     return {
@@ -1263,4 +1333,9 @@ export async function searchWithinNodeDoc(
 }
 
 /** Discover the GitHub raw URL for a docs.n8n.io URL — exported for testing. */
-export const _internal = { docsUrlToRepoPath, candidateRawUrls, fetchMarkdownFromGithub };
+export const _internal = {
+  docsUrlToRepoPath,
+  candidateRawUrls,
+  fetchMarkdownFromGithub,
+  stripFrontmatter,
+};

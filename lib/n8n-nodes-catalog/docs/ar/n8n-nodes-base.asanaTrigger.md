@@ -1,6 +1,6 @@
-# عقدة مُحفِّز Asana
+# عقدة Asana Trigger
 
-[Asana](https://asana.com/) هو تطبيق ويب وهاتف محمول مصمم لمساعدة الفرق على تنظيم عملهم وتتبعه وإدارته.
+[Asana](https://asana.com/) هو تطبيق ويب وجوال مصمم لمساعدة الفرق على تنظيم عملهم وتتبعه وإدارته.
 
 > **بيانات الاعتماد**
 >
@@ -18,6 +18,6 @@
 
 توفر n8n عقدة تطبيق لـ Asana. يمكنك العثور على وثائق العقدة [هنا](/integrations/builtin/app-nodes/n8n-nodes-base.asana.md).
 
-اعرض [سير العمل والمحتوى ذي الصلة](https://n8n.io/integrations/asana-trigger/) على موقع n8n الإلكتروني.
+اعرض [أمثلة سير العمل والمحتوى ذي الصلة](https://n8n.io/integrations/asana-trigger/) على موقع n8n الإلكتروني.
 
-ارجع إلى [وثائق Asana](https://developers.asana.com/reference/rest-api-reference) للحصول على تفاصيل حول واجهة برمجة التطبيقات (API) الخاصة بهم.
+ارجع إلى [وثائق Asana](https://developers.asana.com/reference/rest-api-reference) للحصول على تفاصيل حول API الخاص بها.

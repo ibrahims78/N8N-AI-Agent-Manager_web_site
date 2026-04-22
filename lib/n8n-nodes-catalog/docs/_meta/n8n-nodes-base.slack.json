@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.slack",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.slack.md",
+  "fetchedAt": "2026-04-22T18:08:21.653Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Slack node documentation",
+      "description": "Learn how to use the Slack node in n8n. Follow technical documentation to integrate Slack node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Slack node documentation",
+    "description": "Learn how to use the Slack node in n8n. Follow technical documentation to integrate Slack node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}
