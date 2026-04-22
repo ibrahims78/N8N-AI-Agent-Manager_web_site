@@ -637,16 +637,64 @@ interface AiClient {
   apiKey: string;
   baseURL?: string;
   model: string;
+  /** Identifier for logs / UX so we can show the user which provider was used. */
+  provider: "gemini" | "openai";
 }
 
 /**
+ * Gemini exposes an OpenAI-compatible REST endpoint, so we can keep using the
+ * `openai` SDK and just swap the baseURL + model.
+ * Ref: https://ai.google.dev/gemini-api/docs/openai
+ */
+const GEMINI_OPENAI_BASE = "https://generativelanguage.googleapis.com/v1beta/openai/";
+const GEMINI_DEFAULT_MODEL = "gemini-2.5-flash";
+
+/**
  * Resolve an AI client configuration.
- * Priority:
- *   1. Replit AI Integrations proxy (AI_INTEGRATIONS_OPENAI_API_KEY) — no user key needed
- *   2. System-settings OpenAI key (user-configured encrypted key)
+ *
+ * Priority (Gemini-first by user request):
+ *   1. User-configured Gemini key in system_settings.
+ *   2. Replit AI Integrations Gemini proxy (AI_INTEGRATIONS_GEMINI_*).
+ *   3. Replit AI Integrations OpenAI proxy (AI_INTEGRATIONS_OPENAI_*).
+ *   4. User-configured OpenAI key in system_settings.
+ *
+ * The first available provider wins. If a configured Gemini key fails at
+ * call time (network/quota), individual callers can catch and fall back to
+ * `resolveAiClientOpenAIOnly()` for a one-shot retry on OpenAI.
  */
 async function resolveAiClient(): Promise<AiClient> {
-  // 1. Replit AI Integrations proxy
+  const s = (await db.select().from(systemSettingsTable).limit(1))[0];
+
+  // 1. User-configured Gemini key (highest priority).
+  if (s?.geminiKeyEncrypted && s?.geminiKeyIv) {
+    try {
+      const key = decryptApiKey(s.geminiKeyEncrypted, s.geminiKeyIv);
+      if (key) {
+        return {
+          apiKey: key,
+          baseURL: GEMINI_OPENAI_BASE,
+          model: GEMINI_DEFAULT_MODEL,
+          provider: "gemini",
+        };
+      }
+    } catch {
+      // decrypt error → fall through
+    }
+  }
+
+  // 2. Replit AI Integrations Gemini proxy.
+  const replitGeminiKey = process.env.AI_INTEGRATIONS_GEMINI_API_KEY;
+  const replitGeminiBase = process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
+  if (replitGeminiKey && replitGeminiBase) {
+    return {
+      apiKey: replitGeminiKey,
+      baseURL: replitGeminiBase,
+      model: GEMINI_DEFAULT_MODEL,
+      provider: "gemini",
+    };
+  }
+
+  // 3. Replit AI Integrations OpenAI proxy.
   const replitKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
   const replitBase = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
   if (replitKey) {
@@ -654,53 +702,112 @@ async function resolveAiClient(): Promise<AiClient> {
       apiKey: replitKey,
       baseURL: replitBase,
       model: "gpt-5-nano",
+      provider: "openai",
     };
   }
 
-  // 2. User-configured key from system settings
-  const s = (await db.select().from(systemSettingsTable).limit(1))[0];
+  // 4. User-configured OpenAI key.
   if (s?.openaiKeyEncrypted && s?.openaiKeyIv) {
     try {
       const key = decryptApiKey(s.openaiKeyEncrypted, s.openaiKeyIv);
-      if (key) return { apiKey: key, model: "gpt-4o-mini" };
+      if (key) return { apiKey: key, model: "gpt-4o-mini", provider: "openai" };
     } catch {
-      // ignore decrypt error, fall through
+      // ignore decrypt error
     }
   }
 
   throw new Error(
-    "لا يوجد مفتاح AI متوفر. يرجى التحقق من إعدادات النظام أو تكوين Replit AI Integrations."
+    "لا يوجد مفتاح AI متوفر. أضف مفتاح Gemini أو OpenAI من الإعدادات → تكامل الذكاء الاصطناعي."
   );
 }
 
-export async function translateMarkdownToArabic(markdown: string): Promise<string> {
-  const client = await resolveAiClient();
+/**
+ * Resolve an OpenAI-only client (skips Gemini). Used as a fallback when a
+ * Gemini call fails mid-translation so we don't lose the whole batch.
+ * Returns null if no OpenAI provider is configured.
+ */
+async function resolveOpenAIFallbackClient(): Promise<AiClient | null> {
+  const replitKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+  const replitBase = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+  if (replitKey) {
+    return {
+      apiKey: replitKey,
+      baseURL: replitBase,
+      model: "gpt-5-nano",
+      provider: "openai",
+    };
+  }
+  const s = (await db.select().from(systemSettingsTable).limit(1))[0];
+  if (s?.openaiKeyEncrypted && s?.openaiKeyIv) {
+    try {
+      const key = decryptApiKey(s.openaiKeyEncrypted, s.openaiKeyIv);
+      if (key) return { apiKey: key, model: "gpt-4o-mini", provider: "openai" };
+    } catch {
+      // ignore
+    }
+  }
+  return null;
+}
+
+/**
+ * Build an OpenAI-SDK-compatible client for a given AiClient config.
+ * Works for both real OpenAI and Gemini (via its OpenAI-compat endpoint).
+ */
+async function buildSdkClient(client: AiClient) {
   const OpenAI = (await import("openai")).default;
-  const openai = new OpenAI({
+  return new OpenAI({
     apiKey: client.apiKey,
     baseURL: client.baseURL,
     timeout: 120_000,
   });
+}
 
-  const chunks = chunkMarkdown(markdown, 3500);
-  // gpt-5 family models only allow temperature=1 (default). Older models accept custom values.
+/**
+ * Translate one markdown chunk using the given client. Throws on failure.
+ */
+async function translateChunkWith(client: AiClient, chunk: string): Promise<string> {
+  const sdk = await buildSdkClient(client);
+  // gpt-5 family only accepts the default temperature; everything else accepts 0.1.
   const supportsCustomTemperature = !/^gpt-5/i.test(client.model);
+  const params: Record<string, unknown> = {
+    model: client.model,
+    messages: [
+      { role: "system", content: TRANSLATE_GLOSSARY },
+      { role: "user", content: chunk },
+    ],
+  };
+  if (supportsCustomTemperature) params.temperature = 0.1;
+  const resp = await sdk.chat.completions.create(
+    params as Parameters<typeof sdk.chat.completions.create>[0]
+  );
+  return resp.choices[0]?.message?.content?.trim() ?? "";
+}
 
+export async function translateMarkdownToArabic(markdown: string): Promise<string> {
+  const primary = await resolveAiClient();
+  // Pre-resolve a fallback only if primary is Gemini — saves a DB hit otherwise.
+  const fallback = primary.provider === "gemini"
+    ? await resolveOpenAIFallbackClient()
+    : null;
+
+  let usedFallback = false;
   const translateOne = async (chunk: string): Promise<string> => {
-    const params: Record<string, unknown> = {
-      model: client.model,
-      messages: [
-        { role: "system", content: TRANSLATE_GLOSSARY },
-        { role: "user", content: chunk },
-      ],
-    };
-    if (supportsCustomTemperature) params.temperature = 0.1;
-    const resp = await openai.chat.completions.create(
-      params as Parameters<typeof openai.chat.completions.create>[0]
-    );
-    return resp.choices[0]?.message?.content?.trim() ?? "";
+    try {
+      return await translateChunkWith(primary, chunk);
+    } catch (err) {
+      if (!fallback) throw err;
+      if (!usedFallback) {
+        usedFallback = true;
+        logger.warn(
+          { err: err instanceof Error ? err.message : String(err) },
+          "Gemini translation failed — falling back to OpenAI for remaining chunks"
+        );
+      }
+      return await translateChunkWith(fallback, chunk);
+    }
   };
 
+  const chunks = chunkMarkdown(markdown, 3500);
   // Translate chunks in parallel (bounded) so a long doc doesn't take N×latency.
   const concurrency = 4;
   const out: string[] = new Array(chunks.length);
