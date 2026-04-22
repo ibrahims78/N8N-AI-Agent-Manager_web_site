@@ -1364,6 +1364,21 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
               }
             />
           ) : (
+            <>
+              {/* Banner: Arabic translation unavailable, showing English fallback */}
+              {lang === "ar" && data.error && data.markdown && (
+                <div
+                  className="mb-4 flex items-start gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm"
+                  dir="rtl"
+                >
+                  <AlertCircle size={16} className="mt-0.5 shrink-0 text-amber-500" />
+                  <div className="leading-relaxed">
+                    <strong>الترجمة العربية غير متوفرة لهذه العقدة.</strong>{" "}
+                    يُعرض المحتوى الإنجليزي الكامل أدناه. لتمكين الترجمة، أضف مفتاح Gemini أو OpenAI من{" "}
+                    <span className="font-semibold">الإعدادات → تكامل الذكاء الاصطناعي</span>.
+                  </div>
+                </div>
+              )}
             <article
               className={`prose prose-sm dark:prose-invert max-w-none
                 prose-headings:scroll-mt-16 prose-headings:font-semibold
@@ -1388,6 +1403,7 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
                 {data.markdown}
               </ReactMarkdown>
             </article>
+            </>
           )}
         </div>
       </ScrollArea>

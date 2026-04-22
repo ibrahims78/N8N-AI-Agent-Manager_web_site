@@ -883,6 +883,9 @@ export async function getArabicDoc(nodeType: string, force = false): Promise<Doc
       }
       logger.info({ nodeType }, "Re-translating Arabic doc to resolve stale artifacts");
     }
+    // Fall through if cached.markdown is null (previous translation failed) —
+    // we'll attempt translation again now that the user may have added a new
+    // AI provider (e.g. Gemini key).
   }
 
   // Need EN first (force refresh if cached EN looks stale too)
@@ -905,10 +908,13 @@ export async function getArabicDoc(nodeType: string, force = false): Promise<Doc
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     await upsertDoc({ nodeType, language: "ar", markdown: null, sourceUrl: en.sourceUrl, error: msg });
+    // Graceful UX fallback: surface the English markdown so the user actually
+    // sees the full doc instead of an empty error state. The `error` field
+    // signals that this is fallback content and the UI can show a small banner.
     return {
       nodeType,
       language: "ar",
-      markdown: null,
+      markdown: en.markdown,
       sourceUrl: en.sourceUrl,
       fetchedAt: null,
       fromCache: false,
