@@ -551,7 +551,7 @@ async function translateMarkdownToArabic(markdown: string): Promise<string> {
     timeout: 120_000,
   });
 
-  const chunks = chunkMarkdown(markdown, 6000);
+  const chunks = chunkMarkdown(markdown, 3500);
   // gpt-5 family models only allow temperature=1 (default). Older models accept custom values.
   const supportsCustomTemperature = !/^gpt-5/i.test(client.model);
 
@@ -775,7 +775,7 @@ export async function bulkTranslateArabicDocs(
   opts: { force?: boolean; concurrency?: number } = {},
   onProgress?: ProgressCallback
 ): Promise<BulkFetchProgress> {
-  const concurrency = opts.concurrency ?? 2;
+  const concurrency = opts.concurrency ?? 8;
 
   // Get nodes that have English docs
   const enDocs = await db
