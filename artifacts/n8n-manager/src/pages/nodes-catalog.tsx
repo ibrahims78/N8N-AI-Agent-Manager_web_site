@@ -1,3 +1,15 @@
+/**
+ * nodes-catalog.tsx — صفحة كتالوج عقد n8n الاحترافية.
+ *
+ * تتضمّن:
+ *  - ترويسة مع شريط إحصاءات مرئي لكل المستخدمين (لا فقط الأدمن).
+ *  - شريطَي بحث متمايزَين بوضوح:
+ *      • بحث ذكي شامل في محتوى التوثيقات (BM25 على الخادم).
+ *      • فلتر سريع للكتالوج بالاسم/الفئة/الاسم البديل.
+ *  - شبكة بطاقات عقد متجاوبة مع شارات صحّة (EN/AR/Auth/Examples).
+ *  - حوار تفاصيل بـ 3 تبويبات: معلومات، أمثلة، توثيق (EN/AR + تحرير + إصدارات).
+ *  - لوحة تحكم الأدمن: تحديث الكتالوج، جلب التوثيقات، الترجمة، المزامنة الدورية، التصدير.
+ */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -8,7 +20,8 @@ import {
   Search, ExternalLink, BookOpen, KeyRound, Filter, Loader2,
   Zap, Package, ChevronLeft, ChevronRight, Tag, RefreshCw, Globe,
   Languages, FileText, CheckCircle2, AlertCircle, Database,
-  HardDrive, FolderOpen, ChevronDown, ChevronUp, X,
+  HardDrive, FolderOpen, ChevronDown, ChevronUp, X, SlidersHorizontal,
+  Sparkles,
 } from "lucide-react";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -247,8 +260,6 @@ function CatalogAdminPanel({
     onRefreshed();
   }
 
-  const pct = (v: number, t: number) => t > 0 ? `${Math.round((v / t) * 100)}%` : "0%";
-
   return (
     <Card className="border-accent/30 overflow-hidden">
       {/* Header */}
@@ -383,6 +394,37 @@ function CatalogAdminPanel({
         )}
       </AnimatePresence>
     </Card>
+  );
+}
+
+/** Compact stat tile used in the page hero (visible to all users). */
+function HeroStat({
+  icon, label, value, footer, color, progress,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+  footer?: string;
+  color?: string;
+  progress?: number;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-background/70 backdrop-blur-sm p-3 space-y-1.5">
+      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        {icon}{label}
+      </div>
+      <div className="text-2xl font-bold text-foreground leading-tight">
+        {value.toLocaleString()}
+      </div>
+      {progress != null && (
+        <div className="w-full bg-muted rounded-full h-1 overflow-hidden">
+          <div className={`h-full rounded-full ${color ?? "bg-accent"}`} style={{ width: `${progress}%` }} />
+        </div>
+      )}
+      {footer && (
+        <div className="text-[10px] text-muted-foreground font-mono">{footer}</div>
+      )}
+    </div>
   );
 }
 
@@ -537,7 +579,7 @@ export default function NodesCatalogPage() {
     },
   });
 
-  const { data: docsStats, refetch: refetchStats } = useQuery<DocsStats>({
+  const { data: docsStats } = useQuery<DocsStats>({
     queryKey: ["docs-stats"],
     queryFn: async () => {
       const r = await apiRequest<{ success: boolean; data: DocsStats }>(`/catalog/docs/stats`);
@@ -545,7 +587,7 @@ export default function NodesCatalogPage() {
     },
   });
 
-  const { data: coverage, refetch: refetchCoverage } = useQuery<DocCoverageEntry[]>({
+  const { data: coverage } = useQuery<DocCoverageEntry[]>({
     queryKey: ["docs-coverage"],
     queryFn: async () => {
       const r = await apiRequest<{ success: boolean; data: { coverage: DocCoverageEntry[] } }>(`/catalog/docs/coverage`);
@@ -569,57 +611,74 @@ export default function NodesCatalogPage() {
     qc.invalidateQueries({ queryKey: ["docs-coverage"] });
   }
 
+  // Coverage % helpers (used in the header strip).
+  const enPct = docsStats && docsStats.totalNodes > 0
+    ? Math.round((docsStats.enFetched / docsStats.totalNodes) * 100) : 0;
+  const arPct = docsStats && docsStats.enFetched > 0
+    ? Math.round((docsStats.arTranslated / docsStats.enFetched) * 100) : 0;
+
   return (
-    <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
-      {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Package className="text-accent" size={24} />
-            {isRTL ? "كتالوج عقد n8n" : "n8n Nodes Catalog"}
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            {isRTL
-              ? "مرجع شامل لجميع عقد n8n مع التوثيق الكامل بالعربية والإنجليزية"
-              : "Complete reference for all n8n nodes with full docs in Arabic & English"}
-          </p>
+    <div className="space-y-5" dir={isRTL ? "rtl" : "ltr"}>
+      {/* ─── Hero header ─── */}
+      <div className="rounded-xl border border-border bg-gradient-to-br from-accent/10 via-background to-background p-5 md:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2.5">
+              <span className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-accent/15 text-accent">
+                <Package size={22} />
+              </span>
+              {isRTL ? "كتالوج عقد n8n" : "n8n Nodes Catalog"}
+            </h2>
+            <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
+              {isRTL
+                ? "مرجع احترافي شامل لجميع عقد n8n مع توثيق كامل بالعربية والإنجليزية، عمليات فرعية، إصدارات، تحرير يدوي، ومزامنة دورية مع المستودع الرسمي."
+                : "Professional reference for every n8n node with full docs in Arabic & English, sub-operations, version history, manual editing, and periodic sync with the official repo."}
+            </p>
+          </div>
+          {status?.fetchedAt && (
+            <div className="text-[11px] text-muted-foreground bg-background/60 rounded-md px-3 py-1.5 border border-border">
+              <CheckCircle2 size={11} className="inline -mt-0.5 me-1 text-emerald-500" />
+              {isRTL ? "آخر مزامنة: " : "Last sync: "}
+              <strong className="text-foreground">
+                {new Date(status.fetchedAt).toLocaleString(isRTL ? "ar" : "en")}
+              </strong>
+            </div>
+          )}
         </div>
 
-        {status && (
-          <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 border border-border">
-            <div className="flex items-center gap-3">
-              <span><strong className="text-foreground">{status.totalNodes}</strong> {isRTL ? "عقدة" : "nodes"}</span>
-              {docsStats && (
-                <>
-                  <span className="opacity-50">·</span>
-                  <span title={isRTL ? "وثائق إنجليزية مخزنة" : "Cached English docs"}>
-                    <FileText size={11} className="inline -mt-0.5 me-1" />
-                    {docsStats.enFetched}
-                  </span>
-                  <span title={isRTL ? "ترجمات عربية مخزنة" : "Cached Arabic translations"}>
-                    <Languages size={11} className="inline -mt-0.5 me-1" />
-                    {docsStats.arTranslated}
-                  </span>
-                  {docsStats.localFiles && (
-                    <span title={isRTL ? "ملفات محلية" : "Local files"}>
-                      <HardDrive size={11} className="inline -mt-0.5 me-1" />
-                      {docsStats.localFiles.en + docsStats.localFiles.ar}
-                    </span>
-                  )}
-                </>
-              )}
-            </div>
-            {status.fetchedAt && (
-              <div className="opacity-70 mt-0.5">
-                {isRTL ? "آخر تحديث: " : "Updated: "}
-                {new Date(status.fetchedAt).toLocaleDateString()}
-              </div>
-            )}
-          </div>
-        )}
+        {/* ─── Header stats strip (visible to everyone) ─── */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 mt-5">
+          <HeroStat
+            icon={<Package size={14} className="text-accent" />}
+            label={isRTL ? "إجمالي العقد" : "Total Nodes"}
+            value={status?.totalNodes ?? docsStats?.totalNodes ?? 0}
+          />
+          <HeroStat
+            icon={<FileText size={14} className="text-emerald-500" />}
+            label={isRTL ? "تغطية التوثيق EN" : "EN coverage"}
+            value={docsStats?.enFetched ?? 0}
+            footer={`${enPct}%`}
+            color="bg-emerald-500"
+            progress={enPct}
+          />
+          <HeroStat
+            icon={<Languages size={14} className="text-blue-500" />}
+            label={isRTL ? "ترجمة AR" : "AR translation"}
+            value={docsStats?.arTranslated ?? 0}
+            footer={`${arPct}%`}
+            color="bg-blue-500"
+            progress={arPct}
+          />
+          <HeroStat
+            icon={<HardDrive size={14} className="text-purple-500" />}
+            label={isRTL ? "ملفات محلية" : "Local files"}
+            value={(docsStats?.localFiles?.en ?? 0) + (docsStats?.localFiles?.ar ?? 0)}
+            footer={`EN ${docsStats?.localFiles?.en ?? 0} · AR ${docsStats?.localFiles?.ar ?? 0}`}
+          />
+        </div>
       </div>
 
-      {/* Admin Panel */}
+      {/* ─── Admin Panel ─── */}
       {isAdmin && (
         <CatalogAdminPanel
           isRTL={isRTL}
@@ -629,8 +688,20 @@ export default function NodesCatalogPage() {
         />
       )}
 
-      {/* Global Docs Search (BM25 over all docs) */}
-      <Card className="p-3">
+      {/* ─── Global content search (BM25) ─── */}
+      <Card className="p-4 space-y-2">
+        <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
+          <Sparkles size={14} className="text-accent" />
+          {isRTL ? "بحث ذكي في محتوى التوثيقات" : "Smart docs content search"}
+          <span className="text-[10px] font-normal text-muted-foreground bg-muted rounded px-1.5 py-0.5 ms-1">
+            BM25
+          </span>
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          {isRTL
+            ? "ابحث داخل نصّ كل التوثيقات (إنجليزية أو عربية) مع ترتيب احترافي للنتائج وعرض مقاطع. اختَر نتيجة لينتقل الفلتر تلقائياً."
+            : "Search inside the body of every cached doc (EN or AR) with ranked results and snippets. Pick a result to drop it into the filter below."}
+        </p>
         <GlobalDocsSearch
           isRTL={isRTL}
           lang={isRTL ? "ar" : "en"}
@@ -638,24 +709,38 @@ export default function NodesCatalogPage() {
         />
       </Card>
 
-      {/* Filters */}
+      {/* ─── Filter / browse ─── */}
       <Card className="p-4 space-y-3">
+        <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
+          <SlidersHorizontal size={14} className="text-muted-foreground" />
+          {isRTL ? "تصفية الكتالوج" : "Browse & filter"}
+        </div>
         <div className="flex flex-col md:flex-row gap-3">
           <div className="relative flex-1">
             <Search size={16} className={`absolute top-1/2 -translate-y-1/2 text-muted-foreground ${isRTL ? "right-3" : "left-3"}`} />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={isRTL ? "ابحث بالاسم أو الفئة أو الاسم البديل..." : "Search by name, category, or alias..."}
+              placeholder={isRTL ? "ابحث بالاسم أو الفئة أو الاسم البديل..." : "Filter by name, category, or alias..."}
               className={isRTL ? "pr-9" : "pl-9"}
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                className={`absolute top-1/2 -translate-y-1/2 ${isRTL ? "left-3" : "right-3"} text-muted-foreground hover:text-foreground`}
+                title={isRTL ? "مسح" : "Clear"}
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
           <select
             value={triggerFilter}
             onChange={(e) => setTriggerFilter(e.target.value as "all" | "trigger" | "regular")}
             className="bg-background border border-input rounded-md px-3 py-2 text-sm h-9"
           >
-            <option value="all">{isRTL ? "الكل" : "All types"}</option>
+            <option value="all">{isRTL ? "كل الأنواع" : "All types"}</option>
             <option value="trigger">{isRTL ? "محفزات فقط" : "Triggers only"}</option>
             <option value="regular">{isRTL ? "بدون محفزات" : "Regular nodes"}</option>
           </select>
@@ -663,7 +748,7 @@ export default function NodesCatalogPage() {
 
         {cats && cats.length > 0 && (
           <div className="flex flex-wrap gap-1.5 items-center pt-2 border-t border-border">
-            <Filter size={14} className="text-muted-foreground" />
+            <Filter size={14} className="text-muted-foreground shrink-0" />
             <button
               onClick={() => setCategory("all")}
               className={`text-xs rounded-full px-3 py-1 transition-colors ${
@@ -687,16 +772,46 @@ export default function NodesCatalogPage() {
         )}
       </Card>
 
-      {/* Node Grid */}
+      {/* ─── Results meta + grid ─── */}
       {isLoading ? (
-        <div className="flex justify-center py-16">
-          <Loader2 className="animate-spin text-accent" size={32} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="p-4 h-[148px] animate-pulse space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-md bg-muted" />
+                <div className="flex-1 space-y-1.5">
+                  <div className="h-3 bg-muted rounded w-3/4" />
+                  <div className="h-2 bg-muted rounded w-1/2" />
+                </div>
+              </div>
+              <div className="flex gap-1.5">
+                <div className="h-4 bg-muted rounded w-12" />
+                <div className="h-4 bg-muted rounded w-16" />
+              </div>
+            </Card>
+          ))}
         </div>
       ) : list && list.items.length > 0 ? (
         <>
-          <div className="text-xs text-muted-foreground">
-            {isRTL ? `${list.total} نتيجة` : `${list.total} results`}
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+            <span>
+              {isRTL
+                ? <>عرض <strong className="text-foreground">{list.items.length}</strong> من إجمالي <strong className="text-foreground">{list.total.toLocaleString()}</strong> عقدة</>
+                : <>Showing <strong className="text-foreground">{list.items.length}</strong> of <strong className="text-foreground">{list.total.toLocaleString()}</strong> nodes</>}
+              {(debouncedSearch || category !== "all" || triggerFilter !== "all") && (
+                <button
+                  className="ms-3 text-accent hover:underline"
+                  onClick={() => { setSearch(""); setCategory("all"); setTriggerFilter("all"); }}
+                >
+                  {isRTL ? "مسح المرشحات" : "Reset filters"}
+                </button>
+              )}
+            </span>
+            {totalPages > 1 && (
+              <span>{isRTL ? `صفحة ${page} من ${totalPages}` : `Page ${page} of ${totalPages}`}</span>
+            )}
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {list.items.map((node) => (
               <NodeCard
@@ -715,14 +830,16 @@ export default function NodesCatalogPage() {
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="p-2 rounded-md border border-border hover:bg-muted disabled:opacity-40"
+                title={isRTL ? "السابق" : "Previous"}
               >
                 {isRTL ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
               </button>
-              <span className="text-sm text-muted-foreground px-3">{page} / {totalPages}</span>
+              <span className="text-sm text-muted-foreground px-3 tabular-nums">{page} / {totalPages}</span>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className="p-2 rounded-md border border-border hover:bg-muted disabled:opacity-40"
+                title={isRTL ? "التالي" : "Next"}
               >
                 {isRTL ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
               </button>
@@ -730,9 +847,21 @@ export default function NodesCatalogPage() {
           )}
         </>
       ) : (
-        <div className="text-center text-muted-foreground py-16">
-          {isRTL ? "لا توجد نتائج" : "No results found"}
-        </div>
+        <Card className="p-12 text-center">
+          <Search size={36} className="mx-auto mb-3 text-muted-foreground/50" />
+          <div className="text-sm font-medium text-foreground">
+            {isRTL ? "لا توجد نتائج تطابق البحث" : "No results match your filters"}
+          </div>
+          <div className="text-xs text-muted-foreground mt-1">
+            {isRTL ? "جرّب تعديل المرشحات أو مسحها." : "Try adjusting or clearing your filters."}
+          </div>
+          <Button
+            variant="outline" size="sm" className="mt-4"
+            onClick={() => { setSearch(""); setCategory("all"); setTriggerFilter("all"); }}
+          >
+            {isRTL ? "مسح المرشحات" : "Reset filters"}
+          </Button>
+        </Card>
       )}
 
       {/* Detail dialog */}
@@ -767,10 +896,11 @@ function NodeCard({
       transition={{ duration: 0.18 }}
     >
       <Card
-        className="p-4 h-full flex flex-col gap-3 hover:border-accent/50 transition-colors cursor-pointer"
+        className="p-4 h-full flex flex-col gap-3 hover:border-accent/60 hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         onClick={onOpen}
         role="button"
         tabIndex={0}
+        aria-label={isRTL ? `فتح ${node.displayName}` : `Open ${node.displayName}`}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(); } }}
       >
         <div className="flex items-start gap-3">
@@ -1162,7 +1292,18 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
             />
           ) : (
             <article
-              className={`prose prose-sm dark:prose-invert max-w-none ${lang === "ar" ? "prose-headings:font-arabic" : ""}`}
+              className={`prose prose-sm dark:prose-invert max-w-none
+                prose-headings:scroll-mt-16 prose-headings:font-semibold
+                prose-h1:text-xl prose-h1:border-b prose-h1:border-border prose-h1:pb-2
+                prose-h2:text-lg prose-h2:mt-6
+                prose-a:text-accent hover:prose-a:underline
+                prose-code:before:content-none prose-code:after:content-none
+                prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+                prose-pre:bg-muted prose-pre:border prose-pre:border-border
+                prose-blockquote:border-accent prose-blockquote:bg-accent/5
+                prose-img:rounded prose-img:border prose-img:border-border
+                prose-table:text-xs prose-th:bg-muted/50
+                ${lang === "ar" ? "leading-[1.85] text-[15px]" : ""}`}
             >
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
