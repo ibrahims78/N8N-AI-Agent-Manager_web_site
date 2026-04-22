@@ -96,17 +96,27 @@ const PAGE_SIZE = 24;
 /* ─────────────────────────────────────────────────── */
 /* SSE streaming hook                                  */
 /* ─────────────────────────────────────────────────── */
+interface SSEError { message: string; code?: string }
+
 function useSSEOperation() {
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<BulkProgress | null>(null);
   const [done, setDone] = useState<BulkProgress | null>(null);
+  const [error, setError] = useState<SSEError | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  const start = useCallback(async (url: string, onDone?: () => void) => {
+  const start = useCallback(async (
+    url: string,
+    onDone?: (result: { done: BulkProgress | null; error: SSEError | null }) => void
+  ) => {
     if (running) return;
     setRunning(true);
     setProgress(null);
     setDone(null);
+    setError(null);
+
+    let finalDone: BulkProgress | null = null;
+    let finalError: SSEError | null = null;
 
     abortRef.current = new AbortController();
     try {
@@ -141,13 +151,14 @@ function useSSEOperation() {
           }
           if (!dataStr) continue;
           try {
-            const data = JSON.parse(dataStr) as BulkProgress & { message?: string };
+            const data = JSON.parse(dataStr) as BulkProgress & { message?: string; code?: string };
             if (eventType === "done") {
+              finalDone = data;
               setDone(data);
               setProgress(data);
-              onDone?.();
             } else if (eventType === "error") {
-              throw new Error(data.message || "Unknown error");
+              finalError = { message: data.message || "Unknown error", code: data.code };
+              setError(finalError);
             } else {
               setProgress(data);
             }
@@ -158,10 +169,13 @@ function useSSEOperation() {
       }
     } catch (err) {
       if ((err as Error).name !== "AbortError") {
+        finalError = { message: (err as Error).message || String(err) };
+        setError(finalError);
         console.error("SSE error:", err);
       }
     } finally {
       setRunning(false);
+      onDone?.({ done: finalDone, error: finalError });
     }
   }, [running]);
 
@@ -170,7 +184,7 @@ function useSSEOperation() {
     setRunning(false);
   }, []);
 
-  return { running, progress, done, start, stop };
+  return { running, progress, done, error, start, stop };
 }
 
 /* ─────────────────────────────────────────────────── */
@@ -240,22 +254,81 @@ function CatalogAdminPanel({
     }
   }
 
-  function handleFetchDone() {
+  function handleFetchDone(result: { done: BulkProgress | null; error: SSEError | null }) {
+    if (result.error) {
+      toast({
+        title: isRTL ? "فشل جلب التوثيقات" : "Documentation fetch failed",
+        description: result.error.message,
+        variant: "destructive",
+      });
+      onRefreshed();
+      return;
+    }
+    const d = result.done;
+    const fetched = d?.fetched ?? 0;
+    const total = d?.total ?? 0;
+    const failed = d?.failed ?? 0;
     toast({
       title: isRTL ? "اكتمل جلب التوثيقات ✅" : "Documentation fetch complete ✅",
       description: isRTL
-        ? `جُلب ${fetchOp.done?.fetched ?? 0} من ${fetchOp.done?.total ?? 0} عقدة`
-        : `Fetched ${fetchOp.done?.fetched ?? 0} of ${fetchOp.done?.total ?? 0} nodes`,
+        ? `جُلب ${fetched} من ${total} عقدة${failed ? ` (فشل ${failed})` : ""}`
+        : `Fetched ${fetched} of ${total} nodes${failed ? ` (${failed} failed)` : ""}`,
+      variant: failed > 0 && fetched === 0 ? "destructive" : undefined,
     });
     onRefreshed();
   }
 
-  function handleTranslateDone() {
+  function handleTranslateDone(result: { done: BulkProgress | null; error: SSEError | null }) {
+    // Distinguish three states:
+    //   1. Pre-flight error (no AI key) — actionable, send the user to Settings
+    //   2. All attempts failed — likely AI/quota issue mid-run
+    //   3. Real success (full or partial)
+    if (result.error) {
+      const isNoKey = result.error.code === "no_ai_key";
+      toast({
+        title: isNoKey
+          ? (isRTL ? "لم تبدأ الترجمة — مفتاح AI مفقود" : "Translation didn't start — AI key missing")
+          : (isRTL ? "فشلت الترجمة" : "Translation failed"),
+        description: isNoKey
+          ? (isRTL
+              ? "أضف مفتاح OpenAI من صفحة الإعدادات → تكامل الذكاء الاصطناعي ثم أعد المحاولة."
+              : "Add an OpenAI key from Settings → AI Integrations and try again.")
+          : result.error.message,
+        variant: "destructive",
+      });
+      onRefreshed();
+      return;
+    }
+    const d = result.done;
+    const translated = d?.fetched ?? 0;
+    const total = d?.total ?? 0;
+    const failed = d?.failed ?? 0;
+    if (total === 0) {
+      toast({
+        title: isRTL ? "لا يوجد ما يُترجم" : "Nothing to translate",
+        description: isRTL
+          ? "كل التوثيقات الإنجليزية المتوفرة مترجمة بالفعل."
+          : "All available English docs are already translated.",
+      });
+      onRefreshed();
+      return;
+    }
+    if (translated === 0) {
+      toast({
+        title: isRTL ? "لم تنجح الترجمة" : "Translation didn't succeed",
+        description: isRTL
+          ? `فشلت ${failed} محاولة من ${total}. تحقق من مفتاح AI وحصة الاستخدام.`
+          : `${failed} of ${total} attempts failed. Check your AI key and quota.`,
+        variant: "destructive",
+      });
+      onRefreshed();
+      return;
+    }
     toast({
       title: isRTL ? "اكتملت الترجمة ✅" : "Translation complete ✅",
       description: isRTL
-        ? `تُرجم ${translateOp.done?.fetched ?? 0} من ${translateOp.done?.total ?? 0} عقدة`
-        : `Translated ${translateOp.done?.fetched ?? 0} of ${translateOp.done?.total ?? 0} nodes`,
+        ? `تُرجم ${translated} من ${total}${failed ? ` (فشل ${failed})` : ""}`
+        : `Translated ${translated} of ${total}${failed ? ` (${failed} failed)` : ""}`,
     });
     onRefreshed();
   }

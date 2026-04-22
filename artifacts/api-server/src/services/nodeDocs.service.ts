@@ -112,6 +112,80 @@ export async function getLocalFilesStats(): Promise<{ en: number; ar: number }> 
   return { en, ar };
 }
 
+/** Reverse of `nodeTypeToFilename` — returns null if the filename is malformed. */
+function filenameToNodeType(file: string): string | null {
+  if (!file.endsWith(".md")) return null;
+  return file.slice(0, -3).replace(/_at_/g, "@").replace(/__/g, "/");
+}
+
+/**
+ * Hydrate the database from local markdown files for a given language.
+ * Useful after a DB reset / migration so previously-translated content on
+ * disk is re-imported instead of being lost or re-translated unnecessarily.
+ *
+ * Only writes when the corresponding DB row has no markdown yet (or is missing
+ * entirely) — never overwrites existing DB content.
+ */
+export async function hydrateDocsFromLocalFiles(
+  lang: DocLang
+): Promise<{ scanned: number; imported: number; skipped: number }> {
+  const dir = path.join(LOCAL_DOCS_DIR, lang);
+  let files: string[];
+  try {
+    files = (await fs.readdir(dir)).filter((f) => f.endsWith(".md"));
+  } catch {
+    return { scanned: 0, imported: 0, skipped: 0 };
+  }
+  if (files.length === 0) return { scanned: 0, imported: 0, skipped: 0 };
+
+  // Pull existing DB rows once for an O(1) lookup.
+  const existingRows = await db
+    .select({
+      nodeType: nodeDocsTable.nodeType,
+      hasMd: sql<boolean>`(${nodeDocsTable.markdown} IS NOT NULL)`,
+      sourceUrl: nodeDocsTable.sourceUrl,
+    })
+    .from(nodeDocsTable)
+    .where(eq(nodeDocsTable.language, lang));
+  const existing = new Map(existingRows.map((r) => [r.nodeType, r]));
+
+  let imported = 0;
+  let skipped = 0;
+  for (const file of files) {
+    const nodeType = filenameToNodeType(file);
+    if (!nodeType) { skipped++; continue; }
+    const cur = existing.get(nodeType);
+    if (cur?.hasMd) { skipped++; continue; }
+    try {
+      const md = await fs.readFile(path.join(dir, file), "utf-8");
+      if (!md || md.length < 10) { skipped++; continue; }
+      // Look up sourceUrl from the EN row if we have one (best effort).
+      const sourceUrl = cur?.sourceUrl ?? null;
+      await upsertDoc({
+        nodeType,
+        language: lang,
+        markdown: md,
+        sourceUrl,
+        error: null,
+      });
+      imported++;
+    } catch (err) {
+      logger.warn({ err, nodeType, lang }, "hydrateDocsFromLocalFiles: failed to import file");
+      skipped++;
+    }
+  }
+  return { scanned: files.length, imported, skipped };
+}
+
+/**
+ * Verify an AI client is available without making an actual API call. Throws
+ * with the same message used by `resolveAiClient` so callers can surface a
+ * clear, actionable error before kicking off a long bulk job.
+ */
+export async function ensureAiClientAvailable(): Promise<void> {
+  await resolveAiClient();
+}
+
 /* ───────────────────────── URL derivation ───────────────────────── */
 
 /**

@@ -20,6 +20,7 @@ import {
   getArabicDoc,
   bulkFetchEnglishDocs,
   bulkTranslateArabicDocs,
+  ensureAiClientAvailable,
   getDocsStats,
   getDocsCoverage,
   searchWithinNodeDoc,
@@ -197,6 +198,18 @@ router.post(
     };
 
     try {
+      // Pre-flight: fail fast with a clear message if no AI key is configured
+      // — otherwise the loop would attempt 500+ nodes that all fail silently.
+      try {
+        await ensureAiClientAvailable();
+      } catch (err) {
+        send("error", {
+          message: err instanceof Error ? err.message : String(err),
+          code: "no_ai_key",
+        });
+        res.end();
+        return;
+      }
       const result = await bulkTranslateArabicDocs(
         { force, concurrency },
         (p: BulkFetchProgress) => send("progress", p)

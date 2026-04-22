@@ -5,6 +5,7 @@ import {
   ensureSectionsIndexBootstrap,
   setupSyncScheduler,
 } from "./services/docsAdvanced.service";
+import { hydrateDocsFromLocalFiles } from "./services/nodeDocs.service";
 
 const rawPort = process.env["PORT"];
 
@@ -26,9 +27,24 @@ async function start() {
   // ميزات نظام التوثيقات الاحترافي:
   // - تأكَّد أن فهرس الأقسام مبني (مرة واحدة عند أول إقلاع بعد التحديث)
   // - شغِّل جدولة المزامنة الدورية (تتفعَّل فقط إن طلب المستخدم)
-  ensureSectionsIndexBootstrap().catch((err) =>
-    logger.warn({ err }, "ensureSectionsIndexBootstrap failed (non-fatal)")
-  );
+  // Re-import any markdown files that exist on disk but are missing from the
+  // DB (typical after a `drizzle push` reset). This restores translated
+  // content without re-calling the AI provider. Reindex sections after.
+  Promise.all([
+    hydrateDocsFromLocalFiles("en"),
+    hydrateDocsFromLocalFiles("ar"),
+  ])
+    .then(([en, ar]) => {
+      if (en.imported || ar.imported) {
+        logger.info({ en, ar }, "Hydrated docs from local files");
+      }
+    })
+    .catch((err) => logger.warn({ err }, "hydrateDocsFromLocalFiles failed (non-fatal)"))
+    .finally(() => {
+      ensureSectionsIndexBootstrap().catch((err) =>
+        logger.warn({ err }, "ensureSectionsIndexBootstrap failed (non-fatal)")
+      );
+    });
   setupSyncScheduler();
 
   app.listen(port, (err?: Error) => {
