@@ -35,10 +35,44 @@ import {
   getArabicDoc,
   bulkFetchEnglishDocs,
   bulkTranslateArabicDocs,
+  translateMarkdownToArabic,
   type DocLang,
 } from "./nodeDocs.service";
+import path from "path";
+import { promises as fs } from "fs";
 
 const DOCS_REPO_RAW = "https://raw.githubusercontent.com/n8n-io/n8n-docs/main";
+
+/** المجلد المحلّي لحفظ نُسخ الأدلة (مثل توثيقات العقد). */
+const LOCAL_GUIDES_DIR = path.resolve(process.cwd(), "../../lib/n8n-nodes-catalog/guides");
+
+async function saveGuideToFile(slug: string, lang: DocLang, markdown: string): Promise<void> {
+  const dir = path.join(LOCAL_GUIDES_DIR, lang);
+  await fs.mkdir(dir, { recursive: true });
+  await fs.writeFile(path.join(dir, `${slug}.md`), markdown, "utf-8");
+}
+
+async function loadGuideFromFile(slug: string, lang: DocLang): Promise<string | null> {
+  try {
+    return await fs.readFile(path.join(LOCAL_GUIDES_DIR, lang, `${slug}.md`), "utf-8");
+  } catch {
+    return null;
+  }
+}
+
+export async function getLocalGuideFilesStats(): Promise<{ en: number; ar: number }> {
+  async function countDir(lang: DocLang): Promise<number> {
+    try {
+      const dir = path.join(LOCAL_GUIDES_DIR, lang);
+      const files = await fs.readdir(dir);
+      return files.filter((f) => f.endsWith(".md")).length;
+    } catch {
+      return 0;
+    }
+  }
+  const [en, ar] = await Promise.all([countDir("en"), countDir("ar")]);
+  return { en, ar };
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    1+9. البحث الشامل عبر كل التوثيقات (Global Search)
@@ -298,19 +332,111 @@ export async function fetchGuide(slug: string, force = false): Promise<GuidesDoc
       },
     })
     .returning();
+
+  // Persist EN to local file mirror so guides survive DB resets and can be
+  // diff'd / shipped with the repo (mirrors the per-node docs convention).
+  if (result?.markdown) {
+    try {
+      await saveGuideToFile(slug, "en", result.markdown);
+    } catch (err) {
+      logger.warn({ err, slug }, "Failed to save EN guide to local file");
+    }
+  }
+
   return inserted[0];
 }
 
+/**
+ * Get the Arabic translation of a guide. Translates on-demand from EN if
+ * missing. Persists to DB + local file. Mirrors getArabicDoc() for nodes.
+ */
+export async function fetchArabicGuide(slug: string, force = false): Promise<GuidesDoc | null> {
+  const meta = CORE_GUIDE_PAGES.find((g) => g.slug === slug);
+  if (!meta) return null;
+
+  if (!force) {
+    const cached = (
+      await db
+        .select()
+        .from(guidesDocsTable)
+        .where(and(eq(guidesDocsTable.slug, slug), eq(guidesDocsTable.language, "ar")))
+        .limit(1)
+    )[0];
+    if (cached?.markdown) return cached;
+  }
+
+  // Need the EN source first (fetch if not present).
+  const en = await fetchGuide(slug, false);
+  if (!en?.markdown) {
+    return null;
+  }
+
+  let translated: string | null = null;
+  let errorMsg: string | null = null;
+  try {
+    translated = await translateMarkdownToArabic(en.markdown);
+  } catch (err) {
+    errorMsg = err instanceof Error ? err.message : String(err);
+    logger.warn({ err, slug }, "Arabic guide translation failed");
+  }
+
+  const inserted = await db
+    .insert(guidesDocsTable)
+    .values({
+      slug,
+      language: "ar",
+      title: meta.title,
+      category: meta.category,
+      markdown: translated,
+      sourceUrl: en.sourceUrl,
+      sourceSha: en.sourceSha,
+      error: errorMsg,
+      fetchedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: [guidesDocsTable.slug, guidesDocsTable.language],
+      set: {
+        title: meta.title,
+        category: meta.category,
+        markdown: translated,
+        sourceUrl: en.sourceUrl,
+        sourceSha: en.sourceSha,
+        error: errorMsg,
+        fetchedAt: new Date(),
+      },
+    })
+    .returning();
+
+  if (translated) {
+    try {
+      await saveGuideToFile(slug, "ar", translated);
+    } catch (err) {
+      logger.warn({ err, slug }, "Failed to save AR guide to local file");
+    }
+  }
+  return inserted[0];
+}
+
+/**
+ * Bulk-fetch guides. When `translate=true`, also produces Arabic translations
+ * for every successfully-fetched guide (translation runs in parallel, bounded).
+ */
 export async function fetchAllGuides(
   force = false,
-  onProgress?: (p: { total: number; done: number; current: string }) => void
-): Promise<{ total: number; fetched: number; failed: number }> {
+  onProgress?: (p: { total: number; done: number; current: string; phase?: "fetch" | "translate" }) => void,
+  opts: { translate?: boolean; concurrency?: number } = {}
+): Promise<{ total: number; fetched: number; failed: number; translated: number; translateFailed: number }> {
+  const total = CORE_GUIDE_PAGES.length;
   let fetched = 0;
   let failed = 0;
-  const total = CORE_GUIDE_PAGES.length;
+  let translated = 0;
+  let translateFailed = 0;
+
+  // Phase 1: fetch all English guides (sequential — GitHub raw is fast and we
+  // want deterministic progress events).
   for (let i = 0; i < CORE_GUIDE_PAGES.length; i++) {
     const g = CORE_GUIDE_PAGES[i];
-    onProgress?.({ total, done: i, current: g.slug });
+    onProgress?.({ total, done: i, current: g.slug, phase: "fetch" });
     try {
       const r = await fetchGuide(g.slug, force);
       if (r?.markdown) fetched++;
@@ -320,8 +446,37 @@ export async function fetchAllGuides(
       logger.warn({ err, slug: g.slug }, "fetch guide failed");
     }
   }
-  onProgress?.({ total, done: total, current: "" });
-  return { total, fetched, failed };
+  onProgress?.({ total, done: total, current: "", phase: "fetch" });
+
+  // Phase 2 (optional): translate each fetched guide to Arabic, in parallel.
+  if (opts.translate) {
+    const concurrency = opts.concurrency ?? 4;
+    const targets = CORE_GUIDE_PAGES.map((g) => g.slug);
+    let idx = 0;
+    let done = 0;
+    onProgress?.({ total, done: 0, current: "", phase: "translate" });
+
+    const worker = async () => {
+      while (idx < targets.length) {
+        const i = idx++;
+        const slug = targets[i];
+        try {
+          const r = await fetchArabicGuide(slug, force);
+          if (r?.markdown) translated++;
+          else translateFailed++;
+        } catch (err) {
+          translateFailed++;
+          logger.warn({ err, slug }, "translate guide failed");
+        }
+        done++;
+        onProgress?.({ total, done, current: slug, phase: "translate" });
+      }
+    };
+    await Promise.all(Array.from({ length: concurrency }, () => worker()));
+    onProgress?.({ total, done: total, current: "", phase: "translate" });
+  }
+
+  return { total, fetched, failed, translated, translateFailed };
 }
 
 export async function listGuides(language: DocLang = "en") {

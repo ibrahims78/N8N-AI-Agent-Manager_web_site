@@ -33,6 +33,7 @@ import {
   listGuides,
   getGuide,
   fetchGuide,
+  fetchArabicGuide,
   getSyncSettings,
   updateSyncSettings,
   runAutoSync,
@@ -148,7 +149,10 @@ router.get("/guides/:slug", authenticate, async (req: Request, res: Response): P
   const force = req.query.force === "true";
   let g = await getGuide(req.params.slug, lang);
   if (!g || force || !g.markdown) {
-    const fetched = await fetchGuide(req.params.slug, force);
+    const fetched =
+      lang === "ar"
+        ? await fetchArabicGuide(req.params.slug, force)
+        : await fetchGuide(req.params.slug, force);
     if (!fetched) {
       res.status(404).json({ success: false, error: "Guide not registered" });
       return;
@@ -164,14 +168,20 @@ router.post(
   requireAdmin,
   async (req: Request, res: Response): Promise<void> => {
     const force = req.query.force === "true";
+    // ?translate=true also produces Arabic translations after the EN fetch.
+    const translate = req.query.translate === "true";
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
     res.flushHeaders?.();
     try {
-      const summary = await fetchAllGuides(force, (p) => {
-        res.write(`data: ${JSON.stringify({ type: "progress", ...p })}\n\n`);
-      });
+      const summary = await fetchAllGuides(
+        force,
+        (p) => {
+          res.write(`data: ${JSON.stringify({ type: "progress", ...p })}\n\n`);
+        },
+        { translate }
+      );
       res.write(`data: ${JSON.stringify({ type: "done", ...summary })}\n\n`);
     } catch (err) {
       res.write(

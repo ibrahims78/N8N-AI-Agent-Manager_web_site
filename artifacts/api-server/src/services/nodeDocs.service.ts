@@ -542,7 +542,7 @@ async function resolveAiClient(): Promise<AiClient> {
   );
 }
 
-async function translateMarkdownToArabic(markdown: string): Promise<string> {
+export async function translateMarkdownToArabic(markdown: string): Promise<string> {
   const client = await resolveAiClient();
   const OpenAI = (await import("openai")).default;
   const openai = new OpenAI({

@@ -51,26 +51,35 @@ export default function GuidesPage() {
   const [loadingDoc, setLoadingDoc] = useState(false);
   const [filter, setFilter] = useState("");
   const [refreshAll, setRefreshAll] = useState(false);
-  const [progress, setProgress] = useState<{ done: number; total: number; current: string } | null>(null);
+  const [progress, setProgress] = useState<{
+    done: number;
+    total: number;
+    current: string;
+    phase?: "fetch" | "translate";
+  } | null>(null);
 
   async function loadList() {
     setLoadingList(true);
     try {
       const r = await apiRequest<{ success: boolean; data: { guides: GuideListItem[] } }>(
-        `/catalog/docs-advanced/guides`
+        `/catalog/docs-advanced/guides?lang=${lang}`
       );
       setList(r.data.guides);
     } finally { setLoadingList(false); }
   }
-  useEffect(() => { loadList(); }, []);
+  // Reload list whenever the active language changes so EN/AR stay in sync.
+  useEffect(() => { loadList(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [lang]);
 
   async function loadDoc(slug: string, force = false) {
     setSelectedSlug(slug);
     setLoadingDoc(true);
     setDoc(null);
     try {
+      const params = new URLSearchParams();
+      params.set("lang", lang);
+      if (force) params.set("force", "true");
       const r = await apiRequest<{ success: boolean; data: GuideDoc }>(
-        `/catalog/docs-advanced/guides/${slug}${force ? "?force=true" : ""}`
+        `/catalog/docs-advanced/guides/${slug}?${params.toString()}`
       );
       setDoc(r.data);
     } catch (err) {
@@ -78,17 +87,27 @@ export default function GuidesPage() {
     } finally { setLoadingDoc(false); }
   }
 
-  async function refreshAllGuides() {
+  /**
+   * Fetch (and optionally translate to Arabic) every guide. Streams progress
+   * events from the server with a `phase` field so we can show the user
+   * whether we're currently fetching English or translating to Arabic.
+   */
+  async function refreshAllGuides(translate: boolean) {
     if (!isAdmin) return;
     setRefreshAll(true);
-    setProgress({ done: 0, total: 0, current: "" });
+    setProgress({ done: 0, total: 0, current: "", phase: translate ? "fetch" : "fetch" });
     try {
       const auth = getAuthHeader().Authorization;
-      const res = await fetch(`${API_BASE}/catalog/docs-advanced/guides/refresh-all?force=true`, {
-        method: "POST",
-        headers: auth ? { Authorization: auth } : {},
-        credentials: "include",
-      });
+      const params = new URLSearchParams({ force: "true" });
+      if (translate) params.set("translate", "true");
+      const res = await fetch(
+        `${API_BASE}/catalog/docs-advanced/guides/refresh-all?${params.toString()}`,
+        {
+          method: "POST",
+          headers: auth ? { Authorization: auth } : {},
+          credentials: "include",
+        }
+      );
       const reader = res.body?.getReader();
       if (!reader) throw new Error("no stream");
       const dec = new TextDecoder();
@@ -104,9 +123,21 @@ export default function GuidesPage() {
           if (!m) continue;
           const evt = JSON.parse(m[1]);
           if (evt.type === "progress") {
-            setProgress({ done: evt.done, total: evt.total, current: evt.current });
+            setProgress({
+              done: evt.done,
+              total: evt.total,
+              current: evt.current,
+              phase: evt.phase,
+            });
           } else if (evt.type === "done") {
-            toast({ title: isRTL ? "اكتمل تحديث الأدلة" : "Guides refreshed", description: `${evt.fetched}/${evt.total}` });
+            const enLine = `${evt.fetched}/${evt.total}` + (evt.failed ? ` (${evt.failed} failed)` : "");
+            const arLine = translate
+              ? ` — ${isRTL ? "ترجمة" : "AR"}: ${evt.translated ?? 0}/${evt.total}`
+              : "";
+            toast({
+              title: isRTL ? "اكتمل تحديث الأدلة" : "Guides refreshed",
+              description: enLine + arLine,
+            });
           }
         }
       }
@@ -153,16 +184,25 @@ export default function GuidesPage() {
           />
         </div>
         {isAdmin && (
-          <Button size="sm" onClick={refreshAllGuides} disabled={refreshAll}>
-            {refreshAll ? <Loader2 size={14} className="animate-spin me-1" /> : <RefreshCw size={14} className="me-1" />}
-            {isRTL ? "جلب/تحديث الكل" : "Fetch all"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => refreshAllGuides(false)} disabled={refreshAll}>
+              {refreshAll ? <Loader2 size={14} className="animate-spin me-1" /> : <RefreshCw size={14} className="me-1" />}
+              {isRTL ? "جلب الكل (إنجليزي)" : "Fetch all (EN)"}
+            </Button>
+            <Button size="sm" onClick={() => refreshAllGuides(true)} disabled={refreshAll}>
+              {refreshAll ? <Loader2 size={14} className="animate-spin me-1" /> : <RefreshCw size={14} className="me-1" />}
+              {isRTL ? "جلب + ترجمة للعربية" : "Fetch + Translate AR"}
+            </Button>
+          </div>
         )}
       </div>
 
       {progress && (
         <div className="px-4 py-2 bg-amber-500/10 border-b border-amber-500/30 text-xs">
-          {isRTL ? "جاري:" : "In progress:"} {progress.current} ({progress.done}/{progress.total})
+          {progress.phase === "translate"
+            ? (isRTL ? "ترجمة للعربية:" : "Translating to Arabic:")
+            : (isRTL ? "جلب من المصدر:" : "Fetching from source:")}{" "}
+          {progress.current} ({progress.done}/{progress.total})
         </div>
       )}
 
