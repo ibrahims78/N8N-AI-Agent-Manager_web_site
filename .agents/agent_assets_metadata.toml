@@ -36,3 +36,9 @@ id = "g3be2ZRG42vFItnu5LkHW"
 uri = "file://DOCUMENTATION_FEATURE_CHANGES.txt"
 type = "text"
 title = "Implementation Summary — Docs Caching & Translation"
+
+[[outputs]]
+id = "FRQF3PvD054uSIoOE0xWg"
+uri = "file://docs/شرح-آلية-عمل-التوثيقات.md"
+type = "text"
+title = "شرح آلية عمل نظام التوثيقات"
