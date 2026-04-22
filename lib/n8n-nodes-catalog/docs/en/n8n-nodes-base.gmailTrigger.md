@@ -44,13 +44,3 @@ Refer to [Google's Gmail API documentation](https://developers.google.com/gmail/
 ## Common issues
 
 For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/trigger-nodes/n8n-nodes-base.gmailtrigger/common-issues.md).
-
-# Gmail Trigger node Poll Mode options
-
-Use the [Gmail Trigger node's](/integrations/builtin/trigger-nodes/n8n-nodes-base.gmailtrigger/index.md) **Poll Time** parameter to set how often to trigger the poll. Your **Mode** selection will add or remove relevant fields.
-
-## Poll mode options
-
-Refer to the sections below for details on using each **Mode**.
-
---8<-- "_snippets/integrations/builtin/poll-modes.md"

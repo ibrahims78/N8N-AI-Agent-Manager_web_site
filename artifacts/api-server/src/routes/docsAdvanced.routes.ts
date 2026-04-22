@@ -34,6 +34,10 @@ import {
   getGuide,
   fetchGuide,
   fetchArabicGuide,
+  getGuidesStats,
+  setGuideManualOverride,
+  clearGuideManualOverride,
+  searchGuides,
   getSyncSettings,
   updateSyncSettings,
   runAutoSync,
@@ -144,11 +148,26 @@ router.get("/guides", authenticate, async (req: Request, res: Response): Promise
   res.json({ success: true, data: { guides: list } });
 });
 
+router.get("/guides/stats", authenticate, async (_req: Request, res: Response): Promise<void> => {
+  const stats = await getGuidesStats();
+  res.json({ success: true, data: stats });
+});
+
+router.get("/guides/search", authenticate, async (req: Request, res: Response): Promise<void> => {
+  const q = String(req.query.q ?? "").trim();
+  const lang = pickLang(req.query.lang);
+  const limit = Math.min(Math.max(Number(req.query.limit ?? 25), 1), 100);
+  const hits = await searchGuides(q, lang, limit);
+  res.json({ success: true, data: { query: q, language: lang, hits } });
+});
+
 router.get("/guides/:slug", authenticate, async (req: Request, res: Response): Promise<void> => {
   const lang = pickLang(req.query.lang);
   const force = req.query.force === "true";
   let g = await getGuide(req.params.slug, lang);
-  if (!g || force || !g.markdown) {
+  // Only auto-fetch if the guide has no content at all (no override and no
+  // upstream markdown) or the caller explicitly forces a refresh.
+  if (!g || force || !g.effectiveMarkdown) {
     const fetched =
       lang === "ar"
         ? await fetchArabicGuide(req.params.slug, force)
@@ -157,10 +176,44 @@ router.get("/guides/:slug", authenticate, async (req: Request, res: Response): P
       res.status(404).json({ success: false, error: "Guide not registered" });
       return;
     }
-    g = fetched;
+    // Re-read through getGuide so we always include effectiveMarkdown +
+    // override metadata in the response shape.
+    g = await getGuide(req.params.slug, lang);
   }
   res.json({ success: true, data: g });
 });
+
+router.put(
+  "/guides/:slug/manual",
+  authenticate,
+  requireAdmin,
+  async (req: Request, res: Response): Promise<void> => {
+    const lang = pickLang(req.query.lang);
+    const { markdown, note } = req.body as { markdown?: string; note?: string };
+    if (!markdown || markdown.length < 5) {
+      res.status(400).json({ success: false, error: "markdown is required" });
+      return;
+    }
+    const userId = (req as Request & { user?: { id: number } }).user?.id ?? 0;
+    const r = await setGuideManualOverride(req.params.slug, lang, markdown, userId, note);
+    if (!r.success) {
+      res.status(404).json({ success: false, error: "Guide not registered" });
+      return;
+    }
+    res.json({ success: true });
+  }
+);
+
+router.delete(
+  "/guides/:slug/manual",
+  authenticate,
+  requireAdmin,
+  async (req: Request, res: Response): Promise<void> => {
+    const lang = pickLang(req.query.lang);
+    const r = await clearGuideManualOverride(req.params.slug, lang);
+    res.json({ success: r.success });
+  }
+);
 
 router.post(
   "/guides/refresh-all",

@@ -480,27 +480,221 @@ export async function fetchAllGuides(
 }
 
 export async function listGuides(language: DocLang = "en") {
-  return db
+  const rows = await db
     .select({
       slug: guidesDocsTable.slug,
       title: guidesDocsTable.title,
       category: guidesDocsTable.category,
-      hasMarkdown: sql<boolean>`(${guidesDocsTable.markdown} IS NOT NULL)`,
+      hasMarkdown: sql<boolean>`(${guidesDocsTable.markdown} IS NOT NULL OR ${guidesDocsTable.manualOverrideMarkdown} IS NOT NULL)`,
+      hasOverride: sql<boolean>`(${guidesDocsTable.manualOverrideMarkdown} IS NOT NULL)`,
+      length: sql<number>`coalesce(length(${guidesDocsTable.manualOverrideMarkdown}), length(${guidesDocsTable.markdown}), 0)`,
       sourceUrl: guidesDocsTable.sourceUrl,
+      error: guidesDocsTable.error,
       fetchedAt: guidesDocsTable.fetchedAt,
+      updatedAt: guidesDocsTable.updatedAt,
     })
     .from(guidesDocsTable)
     .where(eq(guidesDocsTable.language, language));
+  // Stable order: by category, then by title for predictable UI.
+  return rows.sort((a, b) =>
+    a.category === b.category
+      ? a.title.localeCompare(b.title)
+      : a.category.localeCompare(b.category)
+  );
+}
+
+/** Lightweight stats for the header (counts EN/AR coverage + overrides). */
+export async function getGuidesStats(): Promise<{
+  total: number;
+  en: number;
+  ar: number;
+  overrides: number;
+  lastUpdated: Date | null;
+}> {
+  const total = CORE_GUIDE_PAGES.length;
+  const rows = await db
+    .select({
+      language: guidesDocsTable.language,
+      hasMarkdown: sql<boolean>`(${guidesDocsTable.markdown} IS NOT NULL OR ${guidesDocsTable.manualOverrideMarkdown} IS NOT NULL)`,
+      hasOverride: sql<boolean>`(${guidesDocsTable.manualOverrideMarkdown} IS NOT NULL)`,
+      updatedAt: guidesDocsTable.updatedAt,
+    })
+    .from(guidesDocsTable);
+  let en = 0, ar = 0, overrides = 0;
+  let lastUpdated: Date | null = null;
+  for (const r of rows) {
+    if (r.hasMarkdown) {
+      if (r.language === "en") en++;
+      else if (r.language === "ar") ar++;
+    }
+    if (r.hasOverride) overrides++;
+    if (r.updatedAt && (!lastUpdated || r.updatedAt > lastUpdated)) lastUpdated = r.updatedAt;
+  }
+  return { total, en, ar, overrides, lastUpdated };
 }
 
 export async function getGuide(slug: string, language: DocLang = "en") {
-  return (
+  const row = (
     await db
       .select()
       .from(guidesDocsTable)
       .where(and(eq(guidesDocsTable.slug, slug), eq(guidesDocsTable.language, language)))
       .limit(1)
   )[0];
+  if (!row) return undefined;
+  // Effective markdown = manual override (if any) wins over the raw fetch/translation.
+  const effectiveMarkdown = row.manualOverrideMarkdown ?? row.markdown;
+  return { ...row, effectiveMarkdown, markdown: effectiveMarkdown };
+}
+
+/**
+ * Save a manual edit for a guide. Mostly used for the AR translation so admins
+ * can polish wording. Stored separately from the auto-fetched markdown so a
+ * future re-fetch never overwrites human edits.
+ */
+export async function setGuideManualOverride(
+  slug: string,
+  language: DocLang,
+  markdown: string,
+  userId: number,
+  note?: string
+): Promise<{ success: boolean }> {
+  const meta = CORE_GUIDE_PAGES.find((g) => g.slug === slug);
+  if (!meta) return { success: false };
+  const cur = (
+    await db
+      .select()
+      .from(guidesDocsTable)
+      .where(and(eq(guidesDocsTable.slug, slug), eq(guidesDocsTable.language, language)))
+      .limit(1)
+  )[0];
+  if (!cur) {
+    await db.insert(guidesDocsTable).values({
+      slug,
+      language,
+      title: meta.title,
+      category: meta.category,
+      markdown: null,
+      manualOverrideMarkdown: markdown,
+      manualOverrideAt: new Date(),
+      manualOverrideBy: userId,
+      manualOverrideNote: note ?? null,
+    });
+  } else {
+    await db
+      .update(guidesDocsTable)
+      .set({
+        manualOverrideMarkdown: markdown,
+        manualOverrideAt: new Date(),
+        manualOverrideBy: userId,
+        manualOverrideNote: note ?? null,
+        error: null,
+      })
+      .where(eq(guidesDocsTable.id, cur.id));
+  }
+  // Mirror to local file so manual edits also persist on disk.
+  try {
+    await saveGuideToFile(slug, language, markdown);
+  } catch (err) {
+    logger.warn({ err, slug, language }, "Failed to save guide override to file");
+  }
+  return { success: true };
+}
+
+export async function clearGuideManualOverride(
+  slug: string,
+  language: DocLang
+): Promise<{ success: boolean }> {
+  const cur = (
+    await db
+      .select()
+      .from(guidesDocsTable)
+      .where(and(eq(guidesDocsTable.slug, slug), eq(guidesDocsTable.language, language)))
+      .limit(1)
+  )[0];
+  if (!cur) return { success: false };
+  await db
+    .update(guidesDocsTable)
+    .set({
+      manualOverrideMarkdown: null,
+      manualOverrideAt: null,
+      manualOverrideBy: null,
+      manualOverrideNote: null,
+    })
+    .where(eq(guidesDocsTable.id, cur.id));
+  // Re-mirror the upstream markdown to file (keeps disk consistent with DB).
+  if (cur.markdown) {
+    try {
+      await saveGuideToFile(slug, language, cur.markdown);
+    } catch {}
+  }
+  return { success: true };
+}
+
+/**
+ * Full-text search across guide bodies (case-insensitive substring with rank
+ * by hit count). Returns snippets ready for UI display.
+ */
+export interface GuideSearchHit {
+  slug: string;
+  title: string;
+  category: string;
+  snippet: string;
+  hits: number;
+}
+
+export async function searchGuides(
+  query: string,
+  language: DocLang = "en",
+  limit = 25
+): Promise<GuideSearchHit[]> {
+  const q = query.trim();
+  if (!q) return [];
+  const rows = await db
+    .select({
+      slug: guidesDocsTable.slug,
+      title: guidesDocsTable.title,
+      category: guidesDocsTable.category,
+      markdown: guidesDocsTable.markdown,
+      override: guidesDocsTable.manualOverrideMarkdown,
+    })
+    .from(guidesDocsTable)
+    .where(eq(guidesDocsTable.language, language));
+
+  const needle = q.toLowerCase();
+  const out: GuideSearchHit[] = [];
+  for (const r of rows) {
+    const body = (r.override ?? r.markdown ?? "").toString();
+    if (!body) continue;
+    const hay = body.toLowerCase();
+    let count = 0;
+    let idx = 0;
+    while ((idx = hay.indexOf(needle, idx)) !== -1) {
+      count++;
+      idx += needle.length;
+      if (count > 50) break;
+    }
+    const titleMatch = r.title.toLowerCase().includes(needle);
+    if (count === 0 && !titleMatch) continue;
+    // Snippet around first hit.
+    const firstIdx = hay.indexOf(needle);
+    let snippet = "";
+    if (firstIdx >= 0) {
+      const start = Math.max(0, firstIdx - 80);
+      const end = Math.min(body.length, firstIdx + 200);
+      snippet = (start > 0 ? "…" : "") + body.slice(start, end).replace(/\s+/g, " ").trim() + (end < body.length ? "…" : "");
+    } else {
+      snippet = body.slice(0, 200).replace(/\s+/g, " ").trim() + (body.length > 200 ? "…" : "");
+    }
+    out.push({
+      slug: r.slug,
+      title: r.title,
+      category: r.category,
+      snippet,
+      hits: titleMatch ? count + 5 : count, // boost title matches
+    });
+  }
+  return out.sort((a, b) => b.hits - a.hits).slice(0, limit);
 }
 
 type GuidesDoc = typeof guidesDocsTable.$inferSelect;
