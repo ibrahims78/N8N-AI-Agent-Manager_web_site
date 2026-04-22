@@ -336,7 +336,7 @@ function CatalogAdminPanel({
                   buttonLabel={fetchOp.running ? (isRTL ? "جاري الجلب..." : "Fetching...") : (isRTL ? "جلب التوثيقات" : "Fetch Docs")}
                   running={fetchOp.running}
                   disabled={refreshingCatalog || translateOp.running}
-                  onAction={() => fetchOp.start("/catalog/docs/fetch-all-stream", handleFetchDone)}
+                  onAction={() => fetchOp.start("/catalog/docs/fetch-all-stream?force=true", handleFetchDone)}
                   onStop={fetchOp.stop}
                   progress={fetchOp.progress}
                   progressColor="bg-emerald-500"
@@ -353,7 +353,7 @@ function CatalogAdminPanel({
                   buttonLabel={translateOp.running ? (isRTL ? "جاري الترجمة..." : "Translating...") : (isRTL ? "ترجمة الكل" : "Translate All")}
                   running={translateOp.running}
                   disabled={refreshingCatalog || fetchOp.running}
-                  onAction={() => translateOp.start("/catalog/docs/translate-all-stream", handleTranslateDone)}
+                  onAction={() => translateOp.start("/catalog/docs/translate-all-stream?force=true", handleTranslateDone)}
                   onStop={translateOp.stop}
                   progress={translateOp.progress}
                   progressColor="bg-blue-500"

@@ -471,15 +471,20 @@ async function translateMarkdownToArabic(markdown: string): Promise<string> {
 
   const chunks = chunkMarkdown(markdown, 6000);
   const out: string[] = [];
+  // gpt-5 family models only allow temperature=1 (default). Older models accept custom values.
+  const supportsCustomTemperature = !/^gpt-5/i.test(client.model);
   for (const chunk of chunks) {
-    const resp = await openai.chat.completions.create({
+    const params: Record<string, unknown> = {
       model: client.model,
-      temperature: 0.1,
       messages: [
         { role: "system", content: TRANSLATE_GLOSSARY },
         { role: "user", content: chunk },
       ],
-    });
+    };
+    if (supportsCustomTemperature) params.temperature = 0.1;
+    const resp = await openai.chat.completions.create(
+      params as Parameters<typeof openai.chat.completions.create>[0]
+    );
     const txt = resp.choices[0]?.message?.content?.trim() ?? "";
     out.push(txt);
   }
