@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.embeddingsAzureOpenAi",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingsazureopenai.md",
+  "fetchedAt": "2026-04-22T18:36:11.735Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Embeddings Azure OpenAI node documentation",
+      "description": "Learn how to use the Embeddings Azure OpenAI node in n8n. Follow technical documentation to integrate Embeddings Azure OpenAI node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Embeddings Azure OpenAI node documentation",
+    "description": "Learn how to use the Embeddings Azure OpenAI node in n8n. Follow technical documentation to integrate Embeddings Azure OpenAI node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

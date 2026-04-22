@@ -1,3 +1,7 @@
+# HubSpot Trigger node documentation
+
+> Learn how to use the HubSpot Trigger node in n8n. Follow technical documentation to integrate HubSpot Trigger node into your workflows.
+
 # HubSpot Trigger node
 
 [HubSpot](https://www.hubspot.com/) provides tools for social media marketing, content management, web analytics, landing pages, customer support, and search engine optimization.

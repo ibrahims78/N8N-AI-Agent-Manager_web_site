@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.venafiTlsProtectCloud",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.venafitlsprotectcloud.md",
+  "fetchedAt": "2026-04-22T18:36:10.185Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Venafi TLS Protect Cloud node documentation",
+      "description": "Learn how to use the Venafi TLS Protect Cloud node in n8n. Follow technical documentation to integrate Venafi TLS Protect Cloud node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Venafi TLS Protect Cloud node documentation",
+    "description": "Learn how to use the Venafi TLS Protect Cloud node in n8n. Follow technical documentation to integrate Venafi TLS Protect Cloud node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

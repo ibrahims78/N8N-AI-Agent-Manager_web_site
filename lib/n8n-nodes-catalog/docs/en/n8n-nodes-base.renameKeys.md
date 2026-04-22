@@ -1,5 +1,9 @@
 # Rename Keys
 
+> Documentation for the Rename Keys node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Rename Keys
+
 Use the Rename Keys node to rename the keys of a key-value pair in n8n.
 
 ## Node parameters
@@ -28,3 +32,5 @@ Choose whether to use a **Regex** regular expression to identify keys to rename.
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for rename-keys at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.renamekeys/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.renamekeys/)

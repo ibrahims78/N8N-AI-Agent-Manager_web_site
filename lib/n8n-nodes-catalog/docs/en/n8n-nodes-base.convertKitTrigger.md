@@ -1,3 +1,7 @@
+# ConvertKit Trigger node documentation
+
+> Learn how to use the ConvertKit Trigger node in n8n. Follow technical documentation to integrate ConvertKit Trigger node into your workflows.
+
 # ConvertKit Trigger node
 
 [ConvertKit](https://www.convertkit.com/) is a fully featured email marketing platform. Use ConvertKit to build an email list, send email broadcasts, automate sequences, create segments, and build landing pages.

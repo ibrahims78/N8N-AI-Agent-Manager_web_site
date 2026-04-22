@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.gitlabTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.gitlabtrigger.md",
+  "fetchedAt": "2026-04-22T18:36:02.833Z",
+  "frontmatter": {
+    "raw": {
+      "title": "GitLab Trigger node documentation",
+      "description": "Learn how to use the GitLab Trigger node in n8n. Follow technical documentation to integrate GitLab Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "GitLab Trigger node documentation",
+    "description": "Learn how to use the GitLab Trigger node in n8n. Follow technical documentation to integrate GitLab Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

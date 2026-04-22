@@ -1,3 +1,7 @@
+# Baserow node documentation
+
+> Learn how to use the Baserow node in n8n. Follow technical documentation to integrate Baserow node into your workflows.
+
 # Baserow node
 
 Use the Baserow node to automate work in Baserow, and integrate Baserow with other applications. n8n has built-in support for a wide range of Baserow features, including creating, getting, retrieving, and updating rows.
@@ -27,3 +31,5 @@ On this page, you'll find a list of operations the Baserow node supports and lin
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for baserow at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.baserow/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.baserow/)

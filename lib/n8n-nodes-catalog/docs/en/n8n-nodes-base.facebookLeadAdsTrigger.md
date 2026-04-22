@@ -1,3 +1,7 @@
+# Facebook Lead Ads Trigger node documentation
+
+> Learn how to use the Facebook Lead Ads Trigger node in n8n. Follow technical documentation to integrate Facebook Lead Ads Trigger node into your workflows.
+
 # Facebook Lead Ads Trigger node
 
 Use the Facebook Lead Ads Trigger node to respond to events in [Facebook Lead Ads](https://www.facebook.com/business/ads/lead-ads/) and integrate Facebook Lead Ads with other applications. n8n has built-in support for responding to new leads.

@@ -1,3 +1,7 @@
+# Eventbrite Trigger node documentation
+
+> Learn how to use the Eventbrite Trigger node in n8n. Follow technical documentation to integrate Eventbrite Trigger node into your workflows.
+
 # Eventbrite Trigger node
 
 [Eventbrite](https://www.eventbrite.com/) is an event management and ticketing website. The service allows users to browse, create, and promote local events.

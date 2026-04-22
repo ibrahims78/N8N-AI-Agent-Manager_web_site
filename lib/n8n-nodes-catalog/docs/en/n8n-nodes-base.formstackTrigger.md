@@ -1,3 +1,7 @@
+# Formstack Trigger node documentation
+
+> Learn how to use the Formstack Trigger node in n8n. Follow technical documentation to integrate Formstack Trigger node into your workflows.
+
 # Formstack Trigger node
 
 [Formstack](https://www.formstack.com/) is a workplace productivity platform that helps organizations streamline digital work through no-code online forms, documents, and signatures.

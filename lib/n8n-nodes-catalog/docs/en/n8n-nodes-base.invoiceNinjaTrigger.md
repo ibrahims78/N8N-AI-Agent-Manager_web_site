@@ -1,3 +1,7 @@
+# Invoice Ninja Trigger node documentation
+
+> Learn how to use the Invoice Ninja Trigger node in n8n. Follow technical documentation to integrate Invoice Ninja Trigger node into your workflows.
+
 # Invoice Ninja Trigger node
 
 [Invoice Ninja](https://www.invoiceninja.com/) is a free open-source online invoicing app for freelancers & businesses. It offers invoicing, payments, expense tracking, & time-tasks.

@@ -1,3 +1,7 @@
+# MongoDB node documentation
+
+> Learn how to use the MongoDB node in n8n. Follow technical documentation to integrate MongoDB node into your workflows.
+
 # MongoDB node
 
 Use the MongoDB node to automate work in MongoDB, and integrate MongoDB with other applications. n8n has built-in support for a wide range of MongoDB features, including aggregating, updating, finding, deleting, and getting documents as well as creating, updating, listing, and dropping search indexes.  All operations in this Node make use of the [MongoDB Node driver](https://www.mongodb.com/docs/drivers/node/current/).
@@ -31,3 +35,5 @@ On this page, you'll find a list of operations the MongoDB node supports and lin
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for mongodb at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mongodb/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mongodb/)

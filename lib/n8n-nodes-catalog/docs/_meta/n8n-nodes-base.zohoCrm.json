@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.zohoCrm",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.zohocrm.md",
+  "fetchedAt": "2026-04-22T18:36:10.918Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Zoho CRM node documentation",
+      "description": "Learn how to use the Zoho CRM node in n8n. Follow technical documentation to integrate Zoho CRM node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Zoho CRM node documentation",
+    "description": "Learn how to use the Zoho CRM node in n8n. Follow technical documentation to integrate Zoho CRM node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

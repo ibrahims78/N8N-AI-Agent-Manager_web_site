@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.rerankerCohere",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.rerankercohere.md",
+  "fetchedAt": "2026-04-22T18:36:13.196Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Reranker Cohere",
+      "description": "Learn how to use the Reranker Cohere node in n8n. Follow technical documentation to integrate Cohere reranking into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Reranker Cohere",
+    "description": "Learn how to use the Reranker Cohere node in n8n. Follow technical documentation to integrate Cohere reranking into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

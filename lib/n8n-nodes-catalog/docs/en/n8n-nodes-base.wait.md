@@ -1,5 +1,9 @@
 # Wait
 
+> Documentation for the Wait node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Wait
+
 Use the Wait node pause your workflow's execution. When the workflow pauses it offloads the execution data to the database. When the resume condition is met, the workflow reloads the data and the execution continues.
 
 ## Operations
@@ -55,11 +59,11 @@ Select if and how incoming resume-webhook-requests to `$execution.resumeUrl` sho
 
 > **Auth reference**
 >
-> Refer to the [Webhook node | Authentication documentation](/integrations/builtin/core-nodes/n8n-nodes-base.webhook/index.md#supported-authentication-methods) for more information on each auth type.
+> Refer to the [Webhook node | Authentication documentation](https://docs.n8n.io//#supported-authentication-methods) for more information on each auth type.
 
 #### HTTP Method
 
-Select the HTTP method the webhook should use. Refer to the [Webhook node | HTTP Method documentation](/integrations/builtin/core-nodes/n8n-nodes-base.webhook/index.md#http-method) for more information.
+Select the HTTP method the webhook should use. Refer to the [Webhook node | HTTP Method documentation](https://docs.n8n.io//#http-method) for more information.
 
 #### Response Code
 
@@ -163,6 +167,8 @@ If turned on, also set:
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for wait at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.wait/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.wait/)
 
 ## Time-based operations
 

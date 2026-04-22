@@ -1,3 +1,7 @@
+# Discord node documentation
+
+> Learn how to use the Discord node in n8n. Follow technical documentation to integrate Discord node into your workflows.
+
 # Discord node
 
 Use the Discord node to automate work in Discord, and integrate Discord with other applications. n8n has built-in support for a wide range of Discord features, including sending messages in a Discord channel and managing channels.
@@ -79,13 +83,15 @@ You'll also be able to customize the message button label, the form title and de
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for discord at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.discord/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.discord/)
+
 ## Related resources
 
 Refer to [Discord's documentation](https://discord.com/developers/docs/intro) for more information about the service.
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -97,13 +103,16 @@ Refer to [Custom API operations](/integrations/custom-operations.md) for more in
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](/integrations/builtin/app-nodes/n8n-nodes-base.discord/common-issues.md).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Discord node common issues
 
-Here are some common errors and issues with the [Discord node](/integrations/builtin/app-nodes/n8n-nodes-base.discord/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Discord node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Add extra fields to embeds
 
@@ -134,7 +143,7 @@ For example, to include `footer` and `fields`, neither of which are available us
 
 You can learn more about embeds in [Using Webhooks and Embeds | Discord](https://discord.com/safety/using-webhooks-and-embeds).
 
-If you experience issues when working with embeds with the Discord node, you can use the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) with your existing Discord credentials to `POST` to the following URL:
+If you experience issues when working with embeds with the Discord node, you can use the [HTTP Request](https://docs.n8n.io//) with your existing Discord credentials to `POST` to the following URL:
 
 ```
 https://discord.com/api/v10/channels/<CHANNEL_ID>/messages

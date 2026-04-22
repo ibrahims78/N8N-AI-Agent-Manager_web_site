@@ -1,3 +1,7 @@
+# Lemlist Trigger node documentation
+
+> Learn how to use the Lemlist Trigger node in n8n. Follow technical documentation to integrate Lemlist Trigger node into your workflows.
+
 # Lemlist Trigger node
 
 [Lemlist](https://Lemlist.com) is an email outreach platform that allows you to automatically generate personalized images and videos and send personalized cold emails.

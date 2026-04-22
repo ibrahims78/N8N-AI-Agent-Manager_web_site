@@ -1,3 +1,7 @@
+# Telegram Trigger node documentation
+
+> Learn how to use the Telegram Trigger node in n8n. Follow technical documentation to integrate Telegram Trigger node into your workflows.
+
 # Telegram Trigger node
 
 [Telegram](https://telegram.org/) is a cloud-based instant messaging and voice over IP service. Users can send messages and exchange photos, videos, stickers, audio, and files of any type. On this page, you'll find a list of events the Telegram Trigger node can respond to and links to more resources.
@@ -56,13 +60,16 @@ Refer to [Telegram's API documentation](https://core.telegram.org/bots/api) for 
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Telegram Trigger node common issues
 
-Here are some common errors and issues with the [Telegram Trigger node](/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Telegram Trigger node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Stuck waiting for trigger event
 

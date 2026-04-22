@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.messageBird",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.messagebird.md",
+  "fetchedAt": "2026-04-22T18:36:05.782Z",
+  "frontmatter": {
+    "raw": {
+      "title": "MessageBird node documentation",
+      "description": "Learn how to use the MessageBird node in n8n. Follow technical documentation to integrate MessageBird node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "MessageBird node documentation",
+    "description": "Learn how to use the MessageBird node in n8n. Follow technical documentation to integrate MessageBird node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

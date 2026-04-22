@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.haloPSA",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.halopsa.md",
+  "fetchedAt": "2026-04-22T18:36:04.124Z",
+  "frontmatter": {
+    "raw": {
+      "title": "HaloPSA node documentation",
+      "description": "Learn how to use the HaloPSA node in n8n. Follow technical documentation to integrate HaloPSA node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "HaloPSA node documentation",
+    "description": "Learn how to use the HaloPSA node in n8n. Follow technical documentation to integrate HaloPSA node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

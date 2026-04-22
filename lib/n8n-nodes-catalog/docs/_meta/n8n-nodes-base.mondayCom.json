@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.mondayCom",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.mondaycom.md",
+  "fetchedAt": "2026-04-22T18:36:06.399Z",
+  "frontmatter": {
+    "raw": {
+      "title": "monday.com node documentation",
+      "description": "Learn how to use the monday.com node in n8n. Follow technical documentation to integrate monday.com node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "monday.com node documentation",
+    "description": "Learn how to use the monday.com node in n8n. Follow technical documentation to integrate monday.com node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

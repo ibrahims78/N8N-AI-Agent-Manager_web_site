@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.apiTemplateIo",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.apitemplateio.md",
+  "fetchedAt": "2026-04-22T18:35:59.401Z",
+  "frontmatter": {
+    "raw": {
+      "title": "APITemplate.io node documentation",
+      "description": "Learn how to use the APITemplate.io node in n8n. Follow technical documentation to integrate APITemplate.io node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "APITemplate.io node documentation",
+    "description": "Learn how to use the APITemplate.io node in n8n. Follow technical documentation to integrate APITemplate.io node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

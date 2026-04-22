@@ -1,3 +1,7 @@
+# Character Text Splitter node documentation
+
+> Learn how to use the Character Text Splitter node in n8n. Follow technical documentation to integrate Character Text Splitter node into your workflows.
+
 # Character Text Splitter node
 
 Use the Character Text Splitter node to split document data based on characters.
@@ -21,6 +25,8 @@ On this page, you'll find the node parameters for the Character Text Splitter no
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for character-text-splitter at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.textsplittercharactertextsplitter/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.textsplittercharactertextsplitter/)
 
 ## Related resources
 

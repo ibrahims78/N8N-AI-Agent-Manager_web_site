@@ -1,3 +1,7 @@
+# Perplexity node documentation
+
+> Learn how to use the Perplexity node in n8n. Follow technical documentation to integrate Perplexity node into your workflows.
+
 # Perplexity node
 
 Use the Perplexity node to automate work in Perplexity and integrate Perplexity with other applications. n8n has built-in support for messaging a model.
@@ -16,6 +20,8 @@ On this page, you'll find a list of operations the Perplexity node supports, and
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for perplexity at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.perplexity/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.perplexity/)
+
 ## Related resources
 
 <!-- add a link to the service's documentation. This should usually go direct to the API docs -->
@@ -23,7 +29,7 @@ Refer to [Perplexity's documentation](https://docs.perplexity.ai/home) for more 
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

@@ -1,3 +1,7 @@
+# Lemonade Model node documentation
+
+> Learn how to use the Lemonade Model node in n8n. Follow technical documentation to integrate Lemonade Model node into your workflows.
+
 # Lemonade Model node
 
 Use the Lemonade Model node to generate text completions using language models hosted and managed by a Lemonade server. This node is a simple LangChain-compatible language model root node suitable for text completion tasks within n8n workflows.
@@ -91,6 +95,8 @@ Comma-separated list of sequences where the model will stop generating text.
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for lemonade-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmlemonade/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmlemonade/)
 
 ## Related resources
 

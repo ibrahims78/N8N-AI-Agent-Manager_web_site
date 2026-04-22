@@ -1,3 +1,7 @@
+# Netlify Trigger node documentation
+
+> Learn how to use the Netlify Trigger node in n8n. Follow technical documentation to integrate Netlify Trigger node into your workflows.
+
 # Netlify Trigger node
 
 [Netlify](https://netlify.com/) offers hosting and serverless backend services for web applications and static websites.

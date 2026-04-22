@@ -1,5 +1,9 @@
 # Extract From File
 
+> Documentation for the Extract From File node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Extract From File
+
 A common pattern in n8n workflows is to receive a file, either from an [HTTP Request node][] (for files you are fetching from a website), a [Webhook Node][] (for files which are sent to your workflow from elsewhere), or from a local source. Data obtained in this way is often in a binary format, for example a spreadsheet or PDF.
 
 The Extract From File node extracts data from a binary format file and converts it to JSON, which can then be easily manipulated by the rest of your workflow. For converting JSON back into a binary file type, please see the [Convert to File](/integrations/builtin/core-nodes/n8n-nodes-base.converttofile.md) node.
@@ -61,6 +65,8 @@ This parameter is only available for these operations:
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for extract-from-file at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.extractfromfile/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.extractfromfile/)
 
 [HTTP Request Node]: /integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md
 [Webhook Node]: /integrations/builtin/core-nodes/n8n-nodes-base.webhook/index.md

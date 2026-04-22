@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.pushover",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.pushover.md",
+  "fetchedAt": "2026-04-22T18:36:07.716Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Pushover node documentation",
+      "description": "Learn how to use the Pushover node in n8n. Follow technical documentation to integrate Pushover node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Pushover node documentation",
+    "description": "Learn how to use the Pushover node in n8n. Follow technical documentation to integrate Pushover node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

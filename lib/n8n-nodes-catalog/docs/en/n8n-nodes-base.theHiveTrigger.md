@@ -1,3 +1,7 @@
+# TheHive Trigger node documentation
+
+> Learn how to use the TheHive Trigger node in n8n. Follow technical documentation to integrate TheHive Trigger node into your workflows.
+
 # TheHive Trigger node
 
 On this page, you'll find a list of events the TheHive Trigger node can respond to and links to more resources.

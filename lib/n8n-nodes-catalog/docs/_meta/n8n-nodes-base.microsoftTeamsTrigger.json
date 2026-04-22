@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.microsoftTeamsTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.microsoftteamstrigger.md",
+  "fetchedAt": "2026-04-22T18:36:06.241Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Microsoft Teams Trigger node documentation",
+      "description": "Learn how to use the Microsoft Teams Trigger node in n8n. Follow technical documentation to integrate Microsoft Teams Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Microsoft Teams Trigger node documentation",
+    "description": "Learn how to use the Microsoft Teams Trigger node in n8n. Follow technical documentation to integrate Microsoft Teams Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

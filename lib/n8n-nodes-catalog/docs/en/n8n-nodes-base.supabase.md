@@ -1,3 +1,7 @@
+# Supabase node documentation
+
+> Learn how to use the Supabase node in n8n. Follow technical documentation to integrate Supabase node into your workflows.
+
 # Supabase node
 
 Use the Supabase node to automate work in Supabase, and integrate Supabase with other applications. n8n has built-in support for a wide range of Supabase features, including creating, deleting, and getting rows. 
@@ -31,9 +35,11 @@ In the new **Schema** field, provide the custom schema the Supabase node should 
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for supabase at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.supabase/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.supabase/)
+
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -45,13 +51,16 @@ Refer to [Custom API operations](/integrations/custom-operations.md) for more in
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common issues](/integrations/builtin/app-nodes/n8n-nodes-base.supabase/common-issues.md).
+For common errors or issues and suggested resolution steps, refer to [Common issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Supabase node common issues
 
-Here are some common errors and issues with the [Supabase node](/integrations/builtin/app-nodes/n8n-nodes-base.supabase/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Supabase node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Filtering rows by metadata
 
@@ -93,7 +102,7 @@ When configuring [Supabase credentials](/integrations/builtin/credentials/supaba
 
 ## Records are accessible through Postgres but not Supabase
 
-If queries for records return empty using the Supabase node, but are available through the [Postgres](/integrations/builtin/app-nodes/n8n-nodes-base.postgres/index.md) node or with a Postgres client, there may be a conflict with Supabase's [Row Level Security (RLS)](https://supabase.com/docs/guides/database/postgres/row-level-security) policy.
+If queries for records return empty using the Supabase node, but are available through the [Postgres](https://docs.n8n.io//) node or with a Postgres client, there may be a conflict with Supabase's [Row Level Security (RLS)](https://supabase.com/docs/guides/database/postgres/row-level-security) policy.
 
 Supabase always enables RLS when you create a table in a public schema with the Table Editor. When RLS is active, the API doesn't return any data with the public `anon` key until you create policies. This is a security measure to ensure that you only expose data you intend to.
 

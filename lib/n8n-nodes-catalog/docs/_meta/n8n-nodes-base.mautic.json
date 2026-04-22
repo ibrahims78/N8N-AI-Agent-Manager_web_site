@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.mautic",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.mautic.md",
+  "fetchedAt": "2026-04-22T18:36:05.800Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Mautic node documentation",
+      "description": "Learn how to use the Mautic node in n8n. Follow technical documentation to integrate Mautic node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Mautic node documentation",
+    "description": "Learn how to use the Mautic node in n8n. Follow technical documentation to integrate Mautic node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

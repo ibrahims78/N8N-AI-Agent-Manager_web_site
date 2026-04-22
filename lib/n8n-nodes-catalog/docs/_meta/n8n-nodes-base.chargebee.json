@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.chargebee",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.chargebee.md",
+  "fetchedAt": "2026-04-22T18:36:00.204Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Chargebee node documentation",
+      "description": "Learn how to use the Chargebee node in n8n. Follow technical documentation to integrate Chargebee node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Chargebee node documentation",
+    "description": "Learn how to use the Chargebee node in n8n. Follow technical documentation to integrate Chargebee node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

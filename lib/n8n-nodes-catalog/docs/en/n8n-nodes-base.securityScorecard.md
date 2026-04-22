@@ -1,3 +1,7 @@
+# SecurityScorecard node documentation
+
+> Learn how to use the SecurityScorecard node in n8n. Follow technical documentation to integrate SecurityScorecard node into your workflows.
+
 # SecurityScorecard node
 
 Use the SecurityScorecard node to automate work in SecurityScorecard, and integrate SecurityScorecard with other applications. n8n has built-in support for a wide range of SecurityScorecard features, including creating, updating, deleting, and getting portfolio, as well as getting a company's data.
@@ -39,3 +43,5 @@ On this page, you'll find a list of operations the SecurityScorecard node suppor
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for securityscorecard at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.securityscorecard/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.securityscorecard/)

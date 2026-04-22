@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.travisCi",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.travisci.md",
+  "fetchedAt": "2026-04-22T18:36:09.889Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Travis CI node documentation",
+      "description": "Learn how to use the Travis CI node in n8n. Follow technical documentation to integrate Travis CI node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Travis CI node documentation",
+    "description": "Learn how to use the Travis CI node in n8n. Follow technical documentation to integrate Travis CI node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.invoiceNinja",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.invoiceninja.md",
+  "fetchedAt": "2026-04-22T18:36:04.560Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Invoice Ninja node documentation",
+      "description": "Learn how to use the Invoice Ninja node in n8n. Follow technical documentation to integrate Invoice Ninja node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Invoice Ninja node documentation",
+    "description": "Learn how to use the Invoice Ninja node in n8n. Follow technical documentation to integrate Invoice Ninja node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

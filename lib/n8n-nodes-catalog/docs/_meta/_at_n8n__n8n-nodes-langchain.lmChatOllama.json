@@ -1,0 +1,20 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatOllama",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatollama/index.md",
+  "fetchedAt": "2026-04-22T18:36:12.326Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Ollama Chat Model node documentation",
+      "description": "Learn how to use the Ollama Chat Model node in n8n. Follow technical documentation to integrate Ollama Chat Model node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Ollama Chat Model node documentation",
+    "description": "Learn how to use the Ollama Chat Model node in n8n. Follow technical documentation to integrate Ollama Chat Model node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "common-issues.md"
+  ],
+  "assets": []
+}

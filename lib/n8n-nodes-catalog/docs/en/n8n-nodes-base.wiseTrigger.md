@@ -1,3 +1,7 @@
+# Wise Trigger node documentation
+
+> Learn how to use the Wise Trigger node in n8n. Follow technical documentation to integrate Wise Trigger node into your workflows.
+
 # Wise Trigger node
 
 [Wise](https://wise.com) allows you to transfer money abroad with low-cost money transfers, receive money with international account details, and track transactions on your phone.

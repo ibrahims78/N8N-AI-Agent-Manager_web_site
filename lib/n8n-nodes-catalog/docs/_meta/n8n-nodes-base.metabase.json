@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.metabase",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.metabase.md",
+  "fetchedAt": "2026-04-22T18:36:05.844Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Metabase node documentation",
+      "description": "Learn how to use the Metabase node in n8n. Follow technical documentation to integrate Metabase node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Metabase node documentation",
+    "description": "Learn how to use the Metabase node in n8n. Follow technical documentation to integrate Metabase node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

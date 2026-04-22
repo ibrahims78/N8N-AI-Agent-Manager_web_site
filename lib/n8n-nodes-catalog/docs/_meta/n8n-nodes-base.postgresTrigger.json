@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.postgresTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.postgrestrigger.md",
+  "fetchedAt": "2026-04-22T18:36:07.554Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Postgres Trigger node documentation",
+      "description": "Learn how to use the Postgres Trigger node in n8n. Follow technical documentation to integrate Postgres Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Postgres Trigger node documentation",
+    "description": "Learn how to use the Postgres Trigger node in n8n. Follow technical documentation to integrate Postgres Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,3 +1,7 @@
+# Facebook Trigger
+
+> Learn how to use the Facebook Trigger node in n8n. Follow technical documentation to integrate Facebook Trigger node into your workflows.
+
 # Facebook Trigger node
 
 [Facebook](https://www.facebook.com/) is a social networking site to connect and share with family and friends online.
@@ -14,23 +18,23 @@ Use the Facebook Trigger node to trigger a workflow when events occur in Faceboo
 
 ## Objects
 
-- [**Ad Account**](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/ad-account.md): Get updates for certain ads changes.
-- [**Application**](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/application.md): Get updates sent to the application.
-- [**Certificate Transparency**](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/certificate-transparency.md): Get updates when new security certificates are generated for your subscribed domains, including new certificates and potential phishing attempts.
-- Activity and events in a [**Group**](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/group.md)
-- [**Instagram**](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/instagram.md): Get updates when someone comments on the Media objects of your app users; @mentions your app users; or when Stories of your app users expire.
-- [**Link**](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/link.md): Get updates about the links for rich previews by an external provider
-- [**Page**](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/page.md) updates
-- [**Permissions**](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/permissions.md): Updates when granting or revoking permissions
-- [**User**](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/user.md) profile updates
-- [**WhatsApp Business Account**](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/whatsapp.md)
+- [**Ad Account**](https://docs.n8n.io/ad-account/): Get updates for certain ads changes.
+- [**Application**](https://docs.n8n.io/application/): Get updates sent to the application.
+- [**Certificate Transparency**](https://docs.n8n.io/certificate-transparency/): Get updates when new security certificates are generated for your subscribed domains, including new certificates and potential phishing attempts.
+- Activity and events in a [**Group**](https://docs.n8n.io/group/)
+- [**Instagram**](https://docs.n8n.io/instagram/): Get updates when someone comments on the Media objects of your app users; @mentions your app users; or when Stories of your app users expire.
+- [**Link**](https://docs.n8n.io/link/): Get updates about the links for rich previews by an external provider
+- [**Page**](https://docs.n8n.io/page/) updates
+- [**Permissions**](https://docs.n8n.io/permissions/): Updates when granting or revoking permissions
+- [**User**](https://docs.n8n.io/user/) profile updates
+- [**WhatsApp Business Account**](https://docs.n8n.io/whatsapp/)
     
     > **Use WhatsApp Trigger**
 >
 > n8n recommends using the [WhatsApp Trigger node](/integrations/builtin/trigger-nodes/n8n-nodes-base.whatsapptrigger.md) with the [WhatsApp credentials](/integrations/builtin/credentials/whatsapp.md) instead of the Facebook Trigger node for these events. The WhatsApp Trigger node has more events to listen to.
 >     ///
 > 
-> - [**Workplace Security**](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/workplace-security.md)
+> - [**Workplace Security**](https://docs.n8n.io/workplace-security/)
 > 
 > For each **Object**, use the **Field Names or IDs** dropdown to select more details on what data to receive. Refer to the linked pages for more details.
 > 
@@ -43,9 +47,12 @@ Use the Facebook Trigger node to trigger a workflow when events occur in Faceboo
 > 
 > ---
 > 
+> <!-- sibling:ad-account.md -->
+> ## Ad Account
+> 
 > # Facebook Trigger Ad Account object
 > 
-> Use this object to receive updates on certain ads changes in an Ad Account. Refer to [Facebook Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md) for more information on the trigger itself. note | Credentials
+> Use this object to receive updates on certain ads changes in an Ad Account. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself. note | Credentials
 You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
 ///
 
@@ -71,9 +78,12 @@ Refer to [Webhooks for Ad Accounts](https://developers.facebook.com/docs/graph-a
 
 ---
 
+<!-- sibling:application.md -->
+## Application
+
 # Facebook Trigger Application object
 
-Use this object to receive updates sent to a specific app. Refer to [Facebook Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md) for more information on the trigger itself.
+Use this object to receive updates sent to a specific app. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
 
 > **Credentials**
 >
@@ -107,9 +117,12 @@ Refer to Meta's [Application](https://developers.facebook.com/docs/graph-api/web
 
 ---
 
+<!-- sibling:certificate-transparency.md -->
+## Certificate Transparency
+
 # Facebook Trigger Certificate Transparency object
 
-Use this object to receive updates about newly issued certificates for any domains that you have subscribed for certificate alerts or phishing alerts. Refer to [Facebook Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md) for more information on the trigger itself.
+Use this object to receive updates about newly issued certificates for any domains that you have subscribed for certificate alerts or phishing alerts. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
 
 > **Credentials**
 >
@@ -142,9 +155,12 @@ Refer to [Webhooks for Certificate Transparency](https://developers.facebook.com
 
 ---
 
+<!-- sibling:group.md -->
+## Group
+
 # Facebook Trigger Group object
 
-Use this object to receive updates about activities and events in a group. Refer to [Facebook Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md) for more information on the trigger itself.
+Use this object to receive updates about activities and events in a group. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
 
 > **Credentials**
 >
@@ -170,9 +186,12 @@ Refer to Meta's [Groups](https://developers.facebook.com/docs/workplace/referenc
 
 ---
 
+<!-- sibling:instagram.md -->
+## Instagram
+
 # Facebook Trigger Instagram object
 
-Use this object to receive updates when someone comments on the Media objects of your app users; @mentions your app users; or when Stories of your app users expire. Refer to [Facebook Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md) for more information on the trigger itself.
+Use this object to receive updates when someone comments on the Media objects of your app users; @mentions your app users; or when Stories of your app users expire. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
 
 > **Credentials**
 >
@@ -205,9 +224,12 @@ Refer to [Webhooks for Instagram](https://developers.facebook.com/docs/graph-api
 
 ---
 
+<!-- sibling:link.md -->
+## Link
+
 # Facebook Trigger Link object
 
-Use this object to receive updates about links for rich previews by an external provider. Refer to [Facebook Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md) for more information on the trigger itself.
+Use this object to receive updates about links for rich previews by an external provider. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
 
 > **Credentials**
 >
@@ -233,9 +255,12 @@ Refer to Meta's [Links](https://developers.facebook.com/docs/workplace/reference
 
 ---
 
+<!-- sibling:page.md -->
+## Page
+
 # Facebook Trigger Page object
 
-Use this object to receive updates when updates to your page profile fields or profile settings occur or someone mentions your page. Refer to [Facebook Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md) for more information on the trigger itself.
+Use this object to receive updates when updates to your page profile fields or profile settings occur or someone mentions your page. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
 
 > **Credentials**
 >
@@ -283,9 +308,12 @@ Refer to [Webhooks for Pages](https://developers.facebook.com/docs/graph-api/web
 
 ---
 
+<!-- sibling:permissions.md -->
+## Permissions
+
 # Facebook Trigger Permissions object
 
-Use this object to receive updates when a user grants or revokes a permission for your app. Refer to [Facebook Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md) for more information on the trigger itself.
+Use this object to receive updates when a user grants or revokes a permission for your app. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
 
 > **Credentials**
 >
@@ -311,9 +339,12 @@ Refer to Meta's [Permissions](https://developers.facebook.com/docs/graph-api/web
 
 ---
 
+<!-- sibling:user.md -->
+## User
+
 # Facebook Trigger User object
 
-Use this object to receive updates when changes to a user's profile occur. Refer to [Facebook Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md) for more information on the trigger itself.
+Use this object to receive updates when changes to a user's profile occur. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
 
 > **Credentials**
 >
@@ -339,9 +370,12 @@ Refer to Meta's [User](https://developers.facebook.com/docs/graph-api/webhooks/r
 
 ---
 
+<!-- sibling:whatsapp.md -->
+## Whatsapp
+
 # Facebook Trigger WhatsApp Business Account object
 
-Use this object to receive updates when your WhatsApp Business Account (WABA) changes. Refer to [Facebook Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md) for more information on the trigger itself.
+Use this object to receive updates when your WhatsApp Business Account (WABA) changes. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
 
 > **Use WhatsApp trigger**
 >
@@ -381,9 +415,12 @@ Refer to [Webhooks for WhatsApp Business Accounts](https://developers.facebook.c
 
 ---
 
+<!-- sibling:workplace-security.md -->
+## Workplace Security
+
 # Facebook Trigger Workplace Security object
 
-Use this object to receive updates when Workplace security events occur, like adding or removing admins, users joining or leaving a Workplace, and more. Refer to [Facebook Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md) for more information on the trigger itself.
+Use this object to receive updates when Workplace security events occur, like adding or removing admins, users joining or leaving a Workplace, and more. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
 
 > **Credentials**
 >

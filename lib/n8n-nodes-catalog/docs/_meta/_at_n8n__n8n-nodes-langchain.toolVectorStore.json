@@ -1,0 +1,19 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.toolVectorStore",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolvectorstore.md",
+  "fetchedAt": "2026-04-22T18:36:13.790Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Vector Store Question Answer Tool node documentation",
+      "description": "Learn how to use the Vector Store Question Answer Tool node in n8n. Follow technical documentation to integrate Vector Store Question Answer Tool node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Vector Store Question Answer Tool node documentation",
+    "description": "Learn how to use the Vector Store Question Answer Tool node in n8n. Follow technical documentation to integrate Vector Store Question Answer Tool node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": [
+    "name-characters-error.png"
+  ]
+}

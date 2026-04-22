@@ -1,3 +1,7 @@
+# Sentiment Analysis node documentation
+
+> Learn how to use the Sentiment Analysis node in n8n. Follow technical documentation to integrate Sentiment Analysis node into your workflows.
+
 # Sentiment Analysis node
 
 Use the Sentiment Analysis node to analyze the sentiment of incoming text data.

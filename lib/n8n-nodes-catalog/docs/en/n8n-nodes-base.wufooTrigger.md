@@ -1,3 +1,7 @@
+# Wufoo Trigger node documentation
+
+> Learn how to use the Wufoo Trigger node in n8n. Follow technical documentation to integrate Wufoo Trigger node into your workflows.
+
 # Wufoo Trigger node
 
 [Wufoo](https://wufoo.com) is an online form builder that helps you create custom HTML forms without writing code.

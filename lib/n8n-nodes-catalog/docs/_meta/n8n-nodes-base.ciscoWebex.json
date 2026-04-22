@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.ciscoWebex",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.ciscowebex.md",
+  "fetchedAt": "2026-04-22T18:36:00.258Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Webex by Cisco node documentation",
+      "description": "Learn how to use the Webex by Cisco node in n8n. Follow technical documentation to integrate Webex by Cisco node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Webex by Cisco node documentation",
+    "description": "Learn how to use the Webex by Cisco node in n8n. Follow technical documentation to integrate Webex by Cisco node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

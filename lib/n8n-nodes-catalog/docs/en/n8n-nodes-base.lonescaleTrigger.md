@@ -1,3 +1,7 @@
+# LoneScale Trigger node documentation
+
+> Learn how to use the LoneScale Trigger node in n8n. Follow technical documentation to integrate LoneScale Trigger node into your workflows.
+
 # LoneScale Trigger node
 
 Use the LoneScale Trigger node to respond to workflow events in [LoneScale](https://www.lonescale.com/) and integrate LoneScale with other applications.

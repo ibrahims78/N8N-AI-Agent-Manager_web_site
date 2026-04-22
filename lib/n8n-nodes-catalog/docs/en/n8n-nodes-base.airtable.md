@@ -1,3 +1,7 @@
+# Airtable node documentation
+
+> Learn how to use the Airtable node in n8n. Follow technical documentation to integrate Airtable node into your workflows.
+
 # Airtable node
 
 Use the Airtable node to automate work in Airtable, and integrate Airtable with other applications. n8n has built-in support for a wide range of Airtable features, including creating, reading, listing, updating and deleting tables.
@@ -20,6 +24,8 @@ On this page, you'll find a list of operations the Airtable node supports and li
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for airtable at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.airtable/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.airtable/)
+
 ## Related resources
 
 n8n provides a trigger node for Airtable. You can find the trigger node docs [here](/integrations/builtin/trigger-nodes/n8n-nodes-base.airtabletrigger.md).
@@ -28,7 +34,7 @@ Refer to [Airtable's documentation](https://airtable.com/developers/web/api/intr
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -67,13 +73,16 @@ Refer to the Airtable [documentation](https://support.airtable.com/hc/en-us/arti
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](/integrations/builtin/app-nodes/n8n-nodes-base.airtable/common-issues.md).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Airtable node common issues
 
-Here are some common errors and issues with the [Airtable node](/integrations/builtin/app-nodes/n8n-nodes-base.airtable/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Airtable node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Forbidden - perhaps check your credentials
 

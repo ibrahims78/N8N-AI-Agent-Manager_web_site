@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.netlifyTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.netlifytrigger.md",
+  "fetchedAt": "2026-04-22T18:36:06.572Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Netlify Trigger node documentation",
+      "description": "Learn how to use the Netlify Trigger node in n8n. Follow technical documentation to integrate Netlify Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Netlify Trigger node documentation",
+    "description": "Learn how to use the Netlify Trigger node in n8n. Follow technical documentation to integrate Netlify Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.filemaker",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.filemaker.md",
+  "fetchedAt": "2026-04-22T18:36:02.129Z",
+  "frontmatter": {
+    "raw": {
+      "title": "FileMaker node documentation",
+      "description": "Learn how to use the FileMaker node in n8n. Follow technical documentation to integrate FileMaker node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "FileMaker node documentation",
+    "description": "Learn how to use the FileMaker node in n8n. Follow technical documentation to integrate FileMaker node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

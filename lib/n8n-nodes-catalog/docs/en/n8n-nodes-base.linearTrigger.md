@@ -1,3 +1,7 @@
+# Linear Trigger node documentation
+
+> Learn how to use the Linear Trigger node in n8n. Follow technical documentation to integrate Linear Trigger node into your workflows.
+
 # Linear Trigger node
 
 [Linear](https://linear.app/) is a SaaS issue tracking tool.

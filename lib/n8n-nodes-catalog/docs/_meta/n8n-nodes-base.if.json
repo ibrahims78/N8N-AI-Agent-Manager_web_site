@@ -1,0 +1,22 @@
+{
+  "nodeType": "n8n-nodes-base.if",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.if.md",
+  "fetchedAt": "2026-04-22T18:36:04.782Z",
+  "frontmatter": {
+    "raw": {
+      "title": "If",
+      "description": "Documentation for the If node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]",
+      "priority": "critical",
+      "tags": "",
+      "hide": ""
+    },
+    "title": "If",
+    "description": "Documentation for the If node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": [
+    "if-merge-node.png"
+  ]
+}

@@ -1,5 +1,9 @@
 # FTP
 
+> Documentation for the FTP node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# FTP
+
 The FTP node is useful to access and upload files to an FTP or SFTP server.
 
 > **Credentials**
@@ -18,7 +22,7 @@ To connect to an SFTP server, use an SFTP credential. Refer to [FTP credentials]
 
 > **Uploading files**
 >
-> To attach a file for upload, you'll need to use an extra node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node to pass the file as a data property.
+> To attach a file for upload, you'll need to use an extra node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](https://docs.n8n.io//) node to pass the file as a data property.
 
 ## Delete
 
@@ -70,8 +74,10 @@ Configure this operation with these parameters:
 
 > **Uploading files**
 >
-> To attach a file for upload, you'll need to use an extra node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node to pass the file as a data property.
+> To attach a file for upload, you'll need to use an extra node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](https://docs.n8n.io//) node to pass the file as a data property.
 
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for ftp at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.ftp/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.ftp/)

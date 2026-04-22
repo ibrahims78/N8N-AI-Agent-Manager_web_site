@@ -1,3 +1,7 @@
+# n8n Trigger node documentation
+
+> Learn how to use the n8n Trigger node in n8n. Follow technical documentation to integrate n8n Trigger node into your workflows.
+
 # n8n Trigger node
 
 The n8n Trigger node triggers when the workflow containing this node updates or gets published, or when the n8n instance starts or restarts. This node only responds to events in its own workflow; changes to other workflows won't trigger it. 
@@ -15,3 +19,5 @@ You can select one or more of these events.
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for n8n-trigger at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.n8ntrigger/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.n8ntrigger/)

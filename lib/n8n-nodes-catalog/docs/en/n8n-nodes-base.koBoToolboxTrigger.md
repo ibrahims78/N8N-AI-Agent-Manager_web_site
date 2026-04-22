@@ -1,3 +1,7 @@
+# KoboToolbox Trigger node documentation
+
+> Learn how to use the KoboToolbox Trigger node in n8n. Follow technical documentation to integrate KoboToolbox Trigger node into your workflows.
+
 # KoboToolbox Trigger node
 
 [KoboToolbox](https://www.kobotoolbox.org/) is a field survey and data collection tool to design interactive forms to be completed offline from mobile devices. It's available both as a free cloud solution or as a self-hosted version.

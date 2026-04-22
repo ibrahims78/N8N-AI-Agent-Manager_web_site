@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.spotify",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.spotify.md",
+  "fetchedAt": "2026-04-22T18:36:08.781Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Spotify node documentation",
+      "description": "Learn how to use the Spotify node in n8n. Follow technical documentation to integrate Spotify node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Spotify node documentation",
+    "description": "Learn how to use the Spotify node in n8n. Follow technical documentation to integrate Spotify node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

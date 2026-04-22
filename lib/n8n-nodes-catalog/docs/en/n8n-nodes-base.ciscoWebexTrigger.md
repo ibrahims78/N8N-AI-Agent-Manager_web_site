@@ -1,3 +1,7 @@
+# Webex by Cisco Trigger node documentation
+
+> Learn how to use the Webex by Cisco Trigger node in n8n. Follow technical documentation to integrate Webex by Cisco Trigger node into your workflows.
+
 # Webex by Cisco Trigger node
 
 [Webex by Cisco](https://webex.com/) is a web conferencing and videoconferencing application.

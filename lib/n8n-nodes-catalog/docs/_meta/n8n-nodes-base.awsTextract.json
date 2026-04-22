@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.awsTextract",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.awstextract.md",
+  "fetchedAt": "2026-04-22T18:35:59.829Z",
+  "frontmatter": {
+    "raw": {
+      "title": "AWS Textract node documentation",
+      "description": "Learn how to use the AWS Textract node in n8n. Follow technical documentation to integrate AWS Textract node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "AWS Textract node documentation",
+    "description": "Learn how to use the AWS Textract node in n8n. Follow technical documentation to integrate AWS Textract node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

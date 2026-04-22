@@ -1,3 +1,7 @@
+# SerpApi (Google Search) node documentation
+
+> Learn how to use the SerpApi (Google Search) node in n8n. Follow technical documentation to integrate SerpApi (Google Search) node into your workflows.
+
 # SerpApi (Google Search) node
 
 The SerpAPI node allows an [agent](/glossary.md#ai-agent) in your workflow to call Google's Search API.
@@ -27,6 +31,8 @@ On this page, you'll find the node parameters for the SerpAPI node, and links to
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for serpapi at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolserpapi/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolserpapi/)
 
 ## Related resources
 

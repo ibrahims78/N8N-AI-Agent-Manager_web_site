@@ -1,3 +1,7 @@
+# Motorhead node documentation
+
+> Learn how to use the Motorhead node in n8n. Follow technical documentation to integrate Motorhead node into your workflows.
+
 # Motorhead node
 
 > **Deprecated**
@@ -29,6 +33,8 @@ On this page, you'll find a list of operations the Motorhead node supports, and 
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for motorhead at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memorymotorhead/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memorymotorhead/)
 
 ## Related resources
 

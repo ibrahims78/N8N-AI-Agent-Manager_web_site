@@ -1,0 +1,22 @@
+{
+  "nodeType": "n8n-nodes-base.cron",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/index.md",
+  "fetchedAt": "2026-04-22T18:36:01.264Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Schedule Trigger node documentation",
+      "description": "Learn how to use the Schedule Trigger node in n8n. Follow technical documentation to integrate Schedule Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "critical"
+    },
+    "title": "Schedule Trigger node documentation",
+    "description": "Learn how to use the Schedule Trigger node in n8n. Follow technical documentation to integrate Schedule Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "common-issues.md"
+  ],
+  "assets": [
+    "three-dots-horizontal.png"
+  ]
+}

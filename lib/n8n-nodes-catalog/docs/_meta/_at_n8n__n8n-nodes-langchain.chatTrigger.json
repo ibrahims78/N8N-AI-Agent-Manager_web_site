@@ -1,0 +1,22 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.chatTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/index.md",
+  "fetchedAt": "2026-04-22T18:36:14.139Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Chat Trigger node documentation",
+      "description": "Learn how to use the Chat Trigger node in n8n. Follow technical documentation to integrate Chat Trigger node into your workflows.",
+      "priority": "critical"
+    },
+    "title": "Chat Trigger node documentation",
+    "description": "Learn how to use the Chat Trigger node in n8n. Follow technical documentation to integrate Chat Trigger node into your workflows."
+  },
+  "siblings": [
+    "common-issues.md"
+  ],
+  "assets": [
+    "connect-memory.png",
+    "new-conversation-button.png",
+    "hosted-text-elements.png"
+  ]
+}

@@ -1,3 +1,7 @@
+# Think Tool node documentation
+
+> Learn how to use the Think Tool node in n8n. Follow technical documentation to integrate the Tool Think node into your workflows.
+
 # Think Tool node
 
 The Think Tool node is a [tool](/glossary.md#ai-tool) that invites an [agent](/glossary.md#ai-agent) to do some thinking before answering. Essentially, it allows the agent to reflect on the question by talking to itself before providing an answer. In particular, this is useful for complex queries that require a thoughtful response.
@@ -13,6 +17,8 @@ The Think Tool node is a [tool](/glossary.md#ai-tool) that invites an [agent](/g
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for think-tool at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolthink/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolthink/)
 
 ### Prompting example
 

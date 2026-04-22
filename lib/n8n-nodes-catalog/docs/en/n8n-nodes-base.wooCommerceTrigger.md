@@ -1,3 +1,7 @@
+# WooCommerce Trigger node documentation
+
+> Learn how to use the WooCommerce Trigger node in n8n. Follow technical documentation to integrate WooCommerce Trigger node into your workflows.
+
 # WooCommerce Trigger node
 
 [WooCommerce](https://woocommerce.com/) is a customizable, open-source e-commerce plugin for WordPress.

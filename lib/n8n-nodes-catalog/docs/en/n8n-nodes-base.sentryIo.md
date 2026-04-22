@@ -1,3 +1,7 @@
+# Sentry.io node documentation
+
+> Learn how to use the Sentry.io node in n8n. Follow technical documentation to integrate Sentry.io node into your workflows.
+
 # Sentry.io node
 
 Use the Sentry.io node to automate work in Sentry.io, and integrate Sentry.io with other applications. n8n has built-in support for a wide range of Sentry.io features, including creating, updating, deleting, and getting, issues, projects, and releases, as well as getting all events.
@@ -46,13 +50,15 @@ On this page, you'll find a list of operations the Sentry.io node supports and l
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for sentryio at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.sentryio/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.sentryio/)
+
 ## Related resources
 
 Refer to [Sentry.io's documentation](https://docs.sentry.io/api/) for more information about the service.
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

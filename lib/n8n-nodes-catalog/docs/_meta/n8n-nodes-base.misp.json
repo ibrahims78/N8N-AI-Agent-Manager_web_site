@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.misp",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.misp.md",
+  "fetchedAt": "2026-04-22T18:36:06.369Z",
+  "frontmatter": {
+    "raw": {
+      "title": "MISP node documentation",
+      "description": "Learn how to use the MISP node in n8n. Follow technical documentation to integrate MISP node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "MISP node documentation",
+    "description": "Learn how to use the MISP node in n8n. Follow technical documentation to integrate MISP node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

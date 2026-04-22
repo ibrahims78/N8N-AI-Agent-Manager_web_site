@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.mqtt",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.mqtt.md",
+  "fetchedAt": "2026-04-22T18:36:05.384Z",
+  "frontmatter": {
+    "raw": {
+      "title": "MQTT node documentation",
+      "description": "Learn how to use the MQTT node in n8n. Follow technical documentation to integrate MQTT node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "MQTT node documentation",
+    "description": "Learn how to use the MQTT node in n8n. Follow technical documentation to integrate MQTT node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

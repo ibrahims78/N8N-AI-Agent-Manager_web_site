@@ -1,3 +1,7 @@
+# Redis Trigger node documentation
+
+> Learn how to use the Redis Trigger node in n8n. Follow technical documentation to integrate Redis Trigger node into your workflows.
+
 # Redis Trigger node
 
 [Redis](https://redis.io/) is an open-source, in-memory data structure store, used as a database, cache and message broker.

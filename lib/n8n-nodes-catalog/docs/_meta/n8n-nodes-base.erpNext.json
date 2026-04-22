@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.erpNext",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.erpnext.md",
+  "fetchedAt": "2026-04-22T18:36:01.416Z",
+  "frontmatter": {
+    "raw": {
+      "title": "ERPNext node documentation",
+      "description": "Learn how to use the ERPNext node in n8n. Follow technical documentation to integrate ERPNext node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "ERPNext node documentation",
+    "description": "Learn how to use the ERPNext node in n8n. Follow technical documentation to integrate ERPNext node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

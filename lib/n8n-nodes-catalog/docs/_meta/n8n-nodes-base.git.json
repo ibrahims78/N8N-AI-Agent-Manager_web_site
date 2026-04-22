@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.git",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.git.md",
+  "fetchedAt": "2026-04-22T18:36:02.642Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Git",
+      "description": "Documentation for the Git node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Git",
+    "description": "Documentation for the Git node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

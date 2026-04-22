@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.github",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.github.md",
+  "fetchedAt": "2026-04-22T18:36:02.719Z",
+  "frontmatter": {
+    "raw": {
+      "title": "GitHub node documentation",
+      "description": "Learn how to use the GitHub node in n8n. Follow technical documentation to integrate GitHub node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "GitHub node documentation",
+    "description": "Learn how to use the GitHub node in n8n. Follow technical documentation to integrate GitHub node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

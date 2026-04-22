@@ -1,5 +1,9 @@
 # Markdown
 
+> Documentation for the Markdown node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Markdown
+
 The Markdown node converts between Markdown and HTML formats.
 
 ## Operations
@@ -77,6 +81,8 @@ The node's **Options** depend on the **Mode** selected.
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for markdown at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.markdown/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.markdown/)
 
 ## Parsers
 

@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.wait",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.wait.md",
+  "fetchedAt": "2026-04-22T18:36:10.324Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Wait",
+      "description": "Documentation for the Wait node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]",
+      "priority": "critical"
+    },
+    "title": "Wait",
+    "description": "Documentation for the Wait node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

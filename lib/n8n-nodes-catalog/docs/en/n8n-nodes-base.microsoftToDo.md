@@ -1,3 +1,7 @@
+# Microsoft To Do node documentation
+
+> Learn how to use the Microsoft To Do node in n8n. Follow technical documentation to integrate Microsoft To Do node into your workflows.
+
 # Microsoft To Do node
 
 Use the Microsoft To Do node to automate work in Microsoft To Do, and integrate Microsoft To Do with other applications. n8n has built-in support for a wide range of Microsoft To Do features, including creating, updating, deleting, and getting linked resources, lists, and tasks. 
@@ -41,9 +45,11 @@ On this page, you'll find a list of operations the Microsoft To Do node supports
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for microsoft-to-do at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsofttodo/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsofttodo/)
+
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

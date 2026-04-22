@@ -1,3 +1,7 @@
+# Trello node documentation
+
+> Learn how to use the Trello node in n8n. Follow technical documentation to integrate Trello node into your workflows.
+
 # Trello node
 
 Use the Trello node to automate work in Trello, and integrate Trello with other applications. n8n has built-in support for a wide range of Trello features, including creating and updating cards, and adding and removing members. 
@@ -68,9 +72,11 @@ On this page, you'll find a list of operations the Trello node supports and link
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for trello at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.trello/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.trello/)
+
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

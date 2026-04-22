@@ -1,5 +1,9 @@
 # Git
 
+> Documentation for the Git node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Git
+
 [Git](https://git-scm.com/) is a free and open-source distributed version control system designed to handle everything from small to large projects with speed and efficiency.
 
 > **Credentials**
@@ -140,3 +144,5 @@ This operation only prompts you to enter the local path of the git repository in
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for git at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.git/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.git/)

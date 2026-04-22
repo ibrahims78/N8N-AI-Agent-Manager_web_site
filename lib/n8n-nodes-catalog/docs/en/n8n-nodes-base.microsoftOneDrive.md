@@ -1,3 +1,7 @@
+# Microsoft OneDrive node documentation
+
+> Learn how to use the Microsoft OneDrive node in n8n. Follow technical documentation to integrate Microsoft OneDrive node into your workflows.
+
 # Microsoft OneDrive node
 
 Use the Microsoft OneDrive node to automate work in Microsoft OneDrive, and integrate Microsoft OneDrive with other applications. n8n has built-in support for a wide range of Microsoft OneDrive features, including creating, updating, deleting, and getting files, and folders.
@@ -38,6 +42,8 @@ On this page, you'll find a list of operations the Microsoft OneDrive node suppo
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for microsoft-onedrive at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftonedrive/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftonedrive/)
 
 ## Related resources
 

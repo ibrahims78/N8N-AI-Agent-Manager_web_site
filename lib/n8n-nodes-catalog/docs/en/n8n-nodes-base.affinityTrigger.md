@@ -1,3 +1,7 @@
+# Affinity Trigger node documentation
+
+> Learn how to use the Affinity Trigger node in n8n. Follow technical documentation to integrate Affinity Trigger node into your workflows.
+
 # Affinity Trigger node
 
 [Affinity](https://www.affinity.co/) is a powerful relationship intelligence platform enabling teams to leverage their network to close the next big deal.

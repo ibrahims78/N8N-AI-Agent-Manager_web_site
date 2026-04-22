@@ -1,8 +1,12 @@
+# Chat Trigger node documentation
+
+> Learn how to use the Chat Trigger node in n8n. Follow technical documentation to integrate Chat Trigger node into your workflows.
+
 # Chat Trigger node
 
 Use the Chat Trigger node when building AI workflows for chatbots and other chat interfaces. You can configure how users access the chat, using one of n8n's provided interfaces, or your own. You can add authentication.
 
-You must connect either an agent or chain [root node](/integrations/builtin/cluster-nodes/root-nodes/index.md).
+You must connect either an agent or chain [root node](https://docs.n8n.io//).
 
 > **Workflow execution usage**
 >
@@ -69,7 +73,7 @@ Use `*` (default) to allow all origins.
 Enter the text for these elements in the chat interface.
 
 ??? Details "View screenshot"
-	![Customizable text elements](/_images/integrations/builtin/core-nodes/chat-trigger/hosted-text-elements.png)
+	![Customizable text elements](/api/catalog/docs/assets/_at_n8n__n8n-nodes-langchain.manualChatTrigger/hosted-text-elements.png)
 
 #### Load Previous Session
 
@@ -78,7 +82,7 @@ Select whether to load chat messages from a previous chat session.
 If you select any option other than **Off**, you must connect the Chat trigger and the Agent you're using to a memory sub-node. The memory connector on the Chat trigger appears when you set **Load Previous Session** to **From Memory**. n8n recommends connecting both the Chat trigger and Agent to the same memory sub-node, as this ensures a single source of truth for both nodes.
 
 ??? Details "View screenshot"
-	![Connect nodes to memory](/_images/integrations/builtin/core-nodes/chat-trigger/connect-memory.png)
+	![Connect nodes to memory](/api/catalog/docs/assets/_at_n8n__n8n-nodes-langchain.manualChatTrigger/connect-memory.png)
 
 #### Response Mode
 
@@ -90,14 +94,14 @@ Use this option when building a workflow with steps after the agent or chain tha
 > **Using Response Nodes**
 >
 > This mode replaces the 'Using Respond to Webhook Node' mode from version 1.2 of the Chat Trigger node.
-* **Streaming response**: Enables real-time data streaming back to the user as the workflow processes. Requires nodes with streaming support in the workflow (for example, the [AI agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md) node).
+* **Streaming response**: Enables real-time data streaming back to the user as the workflow processes. Requires nodes with streaming support in the workflow (for example, the [AI agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) node).
 
 #### Require Button Click to Start Chat
 
 Set whether to display a **New Conversation** button on the chat interface (turned on) or not (turned off).
 
 ??? Details "View screenshot"
-	![New Conversation button](/_images/integrations/builtin/core-nodes/chat-trigger/new-conversation-button.png)
+	![New Conversation button](/api/catalog/docs/assets/_at_n8n__n8n-nodes-langchain.manualChatTrigger/new-conversation-button.png)
 
 ### Embedded chat options
 
@@ -114,7 +118,7 @@ Select whether to load chat messages from a previous chat session.
 If you select any option other than **Off**, you must connect the Chat trigger and the Agent you're using to a memory sub-node. The memory connector on the Chat trigger appears when you set **Load Previous Session** to **From Memory**. n8n recommends connecting both the Chat trigger and Agent to the same memory sub-node, as this ensures a single source of truth for both nodes.
 
 ??? Details "View screenshot"
-	![Connect nodes to memory](/_images/integrations/builtin/core-nodes/chat-trigger/connect-memory.png)
+	![Connect nodes to memory](/api/catalog/docs/assets/_at_n8n__n8n-nodes-langchain.manualChatTrigger/connect-memory.png)
 
 #### Response Mode
 
@@ -131,6 +135,8 @@ Use this option when building a workflow with steps after the agent or chain tha
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for chat-trigger at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/)
 
 ## Related resources
 
@@ -150,13 +156,16 @@ If you need to manually create the response sent to the user, you must create a 
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common Issues](/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Chat Trigger node common issues
 
-Here are some common errors and issues with the [Chat Trigger node](/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Chat Trigger node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Pass data from a website to an embedded Chat Trigger node
 
@@ -179,7 +188,7 @@ The `metadata` field can contain arbitrary data that will appear in the Chat Tri
 
 When you configure a Chat Trigger node, you might experience problems fetching previous messages if you aren't careful about how you configure session loading. This often manifests as a `workflow could not be started!` error.
 
-In Chat Triggers, the **Load Previous Session** option retrieves previous chat messages for a session using the `sessionID`. When you set the **Load Previous Session** option to **From memory**, it's almost always best to [connect the same memory node](/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/index.md#load-previous-session) to both the Chat Trigger and the Agent in your workflow:
+In Chat Triggers, the **Load Previous Session** option retrieves previous chat messages for a session using the `sessionID`. When you set the **Load Previous Session** option to **From memory**, it's almost always best to [connect the same memory node](https://docs.n8n.io//#load-previous-session) to both the Chat Trigger and the Agent in your workflow:
 
 1. In your **Chat Trigger** node, set the **Load Previous Session** option to **From Memory**. This is only visible if you've made the chat publicly available.
 2. Attach a **Simple Memory** node to the **Memory** connector.

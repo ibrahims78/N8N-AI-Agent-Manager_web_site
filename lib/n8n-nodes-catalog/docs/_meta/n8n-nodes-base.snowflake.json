@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.snowflake",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.snowflake.md",
+  "fetchedAt": "2026-04-22T18:36:08.634Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Snowflake node documentation",
+      "description": "Learn how to use the Snowflake node in n8n. Follow technical documentation to integrate Snowflake node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Snowflake node documentation",
+    "description": "Learn how to use the Snowflake node in n8n. Follow technical documentation to integrate Snowflake node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,3 +1,7 @@
+# Guardrails node documentation
+
+> Documentation for the Guardrails node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
 # Guardrails node
 
 Use the Guardrails node to enforce safety, security, and content policies on text. You can use it to validate user input _before_ sending it to an AI model, or to check the _output_ from an AI model before using it in your workflow.

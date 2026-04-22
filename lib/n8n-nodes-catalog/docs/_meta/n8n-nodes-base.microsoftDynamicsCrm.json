@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.microsoftDynamicsCrm",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.microsoftdynamicscrm.md",
+  "fetchedAt": "2026-04-22T18:36:05.923Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Microsoft Dynamics CRM node documentation",
+      "description": "Learn how to use the Microsoft Dynamics CRM node in n8n. Follow technical documentation to integrate Microsoft Dynamics CRM node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Microsoft Dynamics CRM node documentation",
+    "description": "Learn how to use the Microsoft Dynamics CRM node in n8n. Follow technical documentation to integrate Microsoft Dynamics CRM node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

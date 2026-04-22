@@ -1,3 +1,7 @@
+# Vector Store Retriever node documentation
+
+> Learn how to use the Vector Store Retriever node in n8n. Follow technical documentation to integrate Vector Store Retriever node into your workflows.
+
 # Vector Store Retriever node
 
 Use the Vector Store Retriever node to retrieve documents from a [vector store](/glossary.md#ai-vector-store).
@@ -19,6 +23,8 @@ On this page, you'll find the node parameters for the Vector Store Retriever nod
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for vector-store-retriever at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.retrievervectorstore/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.retrievervectorstore/)
 
 ## Related resources
 

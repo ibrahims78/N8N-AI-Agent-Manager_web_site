@@ -1,0 +1,20 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatgooglegemini.md",
+  "fetchedAt": "2026-04-22T18:36:12.653Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Google Gemini Chat Model node documentation",
+      "description": "Learn how to use the Google Gemini Chat Model node in n8n. Follow technical documentation to integrate Google Gemini Chat Model node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Google Gemini Chat Model node documentation",
+    "description": "Learn how to use the Google Gemini Chat Model node in n8n. Follow technical documentation to integrate Google Gemini Chat Model node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": [
+    "google-gemini-proxy-config.png"
+  ]
+}

@@ -1,5 +1,9 @@
 # Read/Write Files from Disk
 
+> Documentation for the Read/Write Files from Disk node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Read/Write Files from Disk
+
 Use the Read/Write Files from Disk node to read and write files from/to the machine where n8n is running.
 
 > **Self-hosted n8n only**
@@ -51,6 +55,8 @@ This operation includes a single option, whether to **Append** data to an existi
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for readwrite-files-from-disk at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile/)
 
 ## File locations
 

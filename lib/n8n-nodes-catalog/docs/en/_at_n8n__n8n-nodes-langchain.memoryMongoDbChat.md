@@ -1,3 +1,7 @@
+# MongoDB Chat Memory node documentation
+
+> Learn how to use the MongoDB Chat Memory node in n8n. Follow technical documentation to integrate MongoDB Chat Memory node into your workflows.
+
 # MongoDB Chat Memory node
 
 Use the MongoDB Chat Memory node to use MongoDB as a [memory](/glossary.md#ai-memory) server for storing chat history.

@@ -1,3 +1,7 @@
+# SurveyMonkey Trigger node documentation
+
+> Learn how to use the SurveyMonkey Trigger node in n8n. Follow technical documentation to integrate SurveyMonkey Trigger node into your workflows.
+
 # SurveyMonkey Trigger node
 
 [SurveyMonkey](https://www.surveymonkey.com/) is an online cloud-based SaaS survey platform that also provides a suite of paid back-end programs.

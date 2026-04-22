@@ -1,5 +1,9 @@
 # JWT
 
+> Documentation for the JWT node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# JWT
+
 Work with JSON web tokens in your n8n workflows.
 
 > **Credentials**
@@ -93,3 +97,5 @@ This operation includes several node options:
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for jwt at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.jwt/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.jwt/)

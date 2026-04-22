@@ -1,3 +1,7 @@
+# LangChain Code node documentation
+
+> Learn how to use the LangChain Code node in n8n. Follow technical documentation to integrate LangChain Code node into your workflows.
+
 # LangChain Code node
 
 Use the LangChain Code node to import LangChain. This means if there is functionality you need that n8n hasn't created a node for, you can still use it. By configuring the LangChain Code node connectors you can use it as a normal node, root node or sub-node.
@@ -14,7 +18,7 @@ On this page, you'll find the node parameters, guidance on configuring the node,
 
 Add your custom code. Choose either **Execute** or **Supply Data** mode. You can only use one mode.
 
-Unlike the [Code node](/integrations/builtin/core-nodes/n8n-nodes-base.code/index.md), the LangChain Code node doesn't support Python.
+Unlike the [Code node](https://docs.n8n.io//), the LangChain Code node doesn't support Python.
 
 * **Execute**: use the LangChain Code node like n8n's own Code node. This takes input data from the workflow, processes it, and returns it as the node output. This mode requires a main input and output. You must create these connections in **Inputs** and **Outputs**.
 * **Supply Data**: use the LangChain Code node as a sub-node, sending data to a root node. This uses an output other than main.
@@ -37,11 +41,11 @@ The main output is the normal connector found in all n8n workflows. If you have 
 
 By configuring the LangChain Code node connectors (inputs and outputs) you can use it as an app node, root node or sub-node.
 
-![Screenshot of a workflow with four LangChain nodes, configured as different node types](/_images/integrations/builtin/cluster-nodes/langchaincode/create-node-types.png)
+![Screenshot of a workflow with four LangChain nodes, configured as different node types](/api/catalog/docs/assets/_at_n8n__n8n-nodes-langchain.code/create-node-types.png)
 
 | Node type | Inputs | Outputs | Code mode |
 | --------- | ------ | ------- | --------- |
-| App node. Similar to the [Code node](/integrations/builtin/core-nodes/n8n-nodes-base.code/index.md). | Main | Main | Execute |
+| App node. Similar to the [Code node](https://docs.n8n.io//). | Main | Main | Execute |
 | Root node | Main; at least one other type | Main | Execute |
 | Sub-node | - | A type other than main. Must match the input type you want to connect to. | Supply Data |
 | Sub-node with sub-nodes | A type other than main |A type other than main. Must match the input type you want to connect to. | Supply Data |
@@ -63,6 +67,8 @@ n8n provides these methods to make it easier to perform common tasks in the Lang
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for langchain-code at [https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.code/](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.code/)
 
 ## Related resources
 

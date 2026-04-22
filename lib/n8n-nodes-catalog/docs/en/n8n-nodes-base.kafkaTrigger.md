@@ -1,3 +1,7 @@
+# Kafka Trigger node documentation
+
+> Learn how to use the Kafka Trigger node in n8n. Follow technical documentation to integrate Kafka Trigger node into your workflows.
+
 # Kafka Trigger node
 
 [Kafka](https://kafka.apache.org/) is an open-source distributed event streaming platform that one can use for high-performance data pipelines, streaming analytics, data integration, and mission-critical applications.

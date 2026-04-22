@@ -1,5 +1,9 @@
 # Date & Time
 
+> Documentation for the Date & Time node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Date & Time
+
 The Date & Time node manipulates date and time data and convert it to different formats.
 
 > **Timezone settings**
@@ -175,6 +179,8 @@ This operation has one option: **Include Input Fields**. If you'd like to includ
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for date-and-time at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datetime/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datetime/)
 
 ## Related resources
 

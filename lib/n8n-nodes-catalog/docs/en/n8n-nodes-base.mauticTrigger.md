@@ -1,3 +1,7 @@
+# Mautic Trigger node documentation
+
+> Learn how to use the Mautic Trigger node in n8n. Follow technical documentation to integrate Mautic Trigger node into your workflows.
+
 # Mautic Trigger node
 
 [Mautic](https://www.mautic.org/) is an open-source marketing automation software that helps online businesses automate their repetitive marketing tasks such as lead generation, contact scoring, contact segmentation, and marketing campaigns.

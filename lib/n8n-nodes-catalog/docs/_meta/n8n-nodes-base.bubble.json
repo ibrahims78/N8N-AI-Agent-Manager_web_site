@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.bubble",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.bubble.md",
+  "fetchedAt": "2026-04-22T18:36:00.088Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Bubble node documentation",
+      "description": "Learn how to use the Bubble node in n8n. Follow technical documentation to integrate Bubble node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Bubble node documentation",
+    "description": "Learn how to use the Bubble node in n8n. Follow technical documentation to integrate Bubble node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

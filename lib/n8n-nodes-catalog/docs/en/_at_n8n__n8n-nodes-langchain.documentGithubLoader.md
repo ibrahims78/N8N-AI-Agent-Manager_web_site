@@ -1,3 +1,7 @@
+# GitHub Document Loader node documentation
+
+> Learn how to use the GitHub Document Loader node in n8n. Follow technical documentation to integrate GitHub Document Loader node into your workflows.
+
 # GitHub Document Loader node
 
 > **Deprecated**
@@ -23,7 +27,7 @@ On this page, you'll find the node parameters for the GitHub Document Loader nod
 ## Node parameters
 
 * **Text Splitting**: Choose from:
-	* **Simple**: Uses the [Recursive Character Text Splitter](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.textsplitterrecursivecharactertextsplitter.md) with a chunk size of 1000 and an overlap of 200.
+	* **Simple**: Uses the [Recursive Character Text Splitter](https://docs.n8n.io/n8n-nodes-langchain.textsplitterrecursivecharactertextsplitter/) with a chunk size of 1000 and an overlap of 200.
     * **Custom**: Allows you to connect a text splitter of your choice.
 * **Repository Link**: Enter the URL of your GitHub repository.
 * **Branch**: Enter the branch name to use.
@@ -36,6 +40,8 @@ On this page, you'll find the node parameters for the GitHub Document Loader nod
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for github-document-loader at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.documentgithubloader/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.documentgithubloader/)
 
 ## Related resources
 

@@ -1,3 +1,7 @@
+# Home Assistant node documentation
+
+> Learn how to use the Home Assistant node in n8n. Follow technical documentation to integrate Home Assistant node into your workflows.
+
 # Home Assistant node
 
 Use the Home Assistant node to automate work in Home Assistant, and integrate Home Assistant with other applications. n8n has built-in support for a wide range of Home Assistant features, including getting, creating, and checking camera proxies, configurations, logs, services, and templates. 
@@ -38,6 +42,8 @@ On this page, you'll find a list of operations the Home Assistant node supports 
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for home-assistant at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.homeassistant/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.homeassistant/)
 
 ## Related resources
 

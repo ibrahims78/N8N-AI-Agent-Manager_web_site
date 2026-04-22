@@ -1,0 +1,20 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmOllama",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmollama/index.md",
+  "fetchedAt": "2026-04-22T18:36:12.324Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Ollama Model node documentation",
+      "description": "Learn how to use the Ollama Model node in n8n. Follow technical documentation to integrate Ollama Model node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Ollama Model node documentation",
+    "description": "Learn how to use the Ollama Model node in n8n. Follow technical documentation to integrate Ollama Model node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "common-issues.md"
+  ],
+  "assets": []
+}

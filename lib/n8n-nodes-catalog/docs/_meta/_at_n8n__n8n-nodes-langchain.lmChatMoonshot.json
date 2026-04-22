@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatMoonshot",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatmoonshot.md",
+  "fetchedAt": "2026-04-22T18:36:12.581Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Moonshot Kimi Chat Model node",
+      "description": "Integrate the Moonshot Kimi Chat Model into n8n workflows to generate chat responses for AI chains. Common uses include generating conversational replies, integrating with LangChain-style workflows, and tuning response behavior via temperature/top-p and token limits.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Moonshot Kimi Chat Model node",
+    "description": "Integrate the Moonshot Kimi Chat Model into n8n workflows to generate chat responses for AI chains. Common uses include generating conversational replies, integrating with LangChain-style workflows, and tuning response behavior via temperature/top-p and token limits.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

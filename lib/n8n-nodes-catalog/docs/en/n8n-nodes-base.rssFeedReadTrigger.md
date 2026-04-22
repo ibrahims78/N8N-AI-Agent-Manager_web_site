@@ -1,3 +1,7 @@
+# RSS Feed Trigger node documentation
+
+> Learn how to use the RSS Feed Trigger node in n8n. Follow technical documentation to integrate RSS Feed Trigger node into your workflows.
+
 # RSS Feed Trigger node
 
 The RSS Feed Trigger node allows you to start an n8n workflow when a new RSS feed item has been published.
@@ -71,6 +75,8 @@ The sixth asterisk in the Cron expression represents seconds. Setting this is op
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for rss-feed-trigger at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.rssfeedreadtrigger/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.rssfeedreadtrigger/)
 
 ## Related resources
 

@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.deepL",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.deepl.md",
+  "fetchedAt": "2026-04-22T18:36:01.053Z",
+  "frontmatter": {
+    "raw": {
+      "title": "DeepL node documentation",
+      "description": "Learn how to use the DeepL node in n8n. Follow technical documentation to integrate DeepL node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "DeepL node documentation",
+    "description": "Learn how to use the DeepL node in n8n. Follow technical documentation to integrate DeepL node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

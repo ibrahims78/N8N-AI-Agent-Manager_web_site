@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.notionTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.notiontrigger.md",
+  "fetchedAt": "2026-04-22T18:36:06.701Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Notion Trigger node documentation",
+      "description": "Learn how to use the Notion Trigger node in n8n. Follow technical documentation to integrate Notion Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Notion Trigger node documentation",
+    "description": "Learn how to use the Notion Trigger node in n8n. Follow technical documentation to integrate Notion Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.calendlyTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.calendlytrigger.md",
+  "fetchedAt": "2026-04-22T18:36:00.094Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Calendly Trigger node documentation",
+      "description": "Learn how to use the Calendly Trigger node in n8n. Follow technical documentation to integrate Calendly Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Calendly Trigger node documentation",
+    "description": "Learn how to use the Calendly Trigger node in n8n. Follow technical documentation to integrate Calendly Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,3 +1,7 @@
+# Cal Trigger node documentation
+
+> Learn how to use the Cal Trigger node in n8n. Follow technical documentation to integrate Cal Trigger node into your workflows.
+
 # Cal Trigger node
 
 [Cal](https://cal.com/) is the event-juggling scheduler for everyone. Focus on meeting, not making meetings.

@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.databricks",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.databricks.md",
+  "fetchedAt": "2026-04-22T18:36:00.964Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Databricks node documentation",
+      "description": "Learn how to use the Databricks node in n8n. Follow technical documentation to integrate Databricks node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Databricks node documentation",
+    "description": "Learn how to use the Databricks node in n8n. Follow technical documentation to integrate Databricks node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

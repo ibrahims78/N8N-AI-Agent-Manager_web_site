@@ -1,0 +1,18 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.outputParserItemList",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparseritemlist.md",
+  "fetchedAt": "2026-04-22T18:36:13.118Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Item List Output Parser node documentation",
+      "description": "Learn how to use the Item List Output Parser node in n8n. Follow technical documentation to integrate Item List Output Parser node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Item List Output Parser node documentation",
+    "description": "Learn how to use the Item List Output Parser node in n8n. Follow technical documentation to integrate Item List Output Parser node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

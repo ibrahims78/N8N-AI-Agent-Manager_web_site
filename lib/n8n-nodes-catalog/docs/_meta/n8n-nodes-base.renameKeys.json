@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.renameKeys",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.renamekeys.md",
+  "fetchedAt": "2026-04-22T18:36:07.929Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Rename Keys",
+      "description": "Documentation for the Rename Keys node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Rename Keys",
+    "description": "Documentation for the Rename Keys node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

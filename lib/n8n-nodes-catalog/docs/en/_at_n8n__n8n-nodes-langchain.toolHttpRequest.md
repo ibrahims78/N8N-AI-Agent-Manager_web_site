@@ -1,12 +1,16 @@
+# HTTP Request Tool node documentation
+
+> Learn how to use the HTTP Request Tool node in n8n. Follow technical documentation to integrate HTTP Request Tool node into your workflows.
+
 # HTTP Request Tool node
 
 > **Legacy tool version**
 >
-> New instances of the HTTP Request tool node that you add to workflows use the standard [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node as a tool. This page is describes the legacy, standalone HTTP Request tool node.
+> New instances of the HTTP Request tool node that you add to workflows use the standard [HTTP Request](https://docs.n8n.io//) node as a tool. This page is describes the legacy, standalone HTTP Request tool node.
 > 
 > You can identify which tool version is in your workflow by checking if the node has an **Add option** property when you open the node on the canvas. If that button is present, you're using the new version, not the one described on this page.
 
-The HTTP Request tool works just like the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node, but it's designed to be used with an [AI agent](/glossary.md#ai-agent) as a tool to collect information from a website or API.
+The HTTP Request tool works just like the [HTTP Request](https://docs.n8n.io//) node, but it's designed to be used with an [AI agent](/glossary.md#ai-agent) as a tool to collect information from a website or API.
 
 On this page, you'll find a list of operations the HTTP Request node supports and links to more resources.
 
@@ -25,6 +29,8 @@ On this page, you'll find a list of operations the HTTP Request node supports an
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for http-request-tool at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolhttprequest/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolhttprequest/)
 
 ## Related resources
 

@@ -1,3 +1,7 @@
+# Embeddings Google Vertex node documentation
+
+> Learn how to use the Embeddings Google Vertex node in n8n. Follow technical documentation to integrate Embeddings Google Gemini node into your workflows.
+
 # Embeddings Google Vertex node
 
 Use the Embeddings Google Vertex node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
@@ -6,7 +10,7 @@ On this page, you'll find the node parameters for the Embeddings Google Vertex n
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/google/service-account.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/service-account/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -25,6 +29,8 @@ Learn more about available embedding models in [Google VertexAI embeddings API d
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for embeddings-google-vertex at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingsgooglevertex/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingsgooglevertex/)
 
 ## Related resources
 

@@ -1,0 +1,24 @@
+{
+  "nodeType": "n8n-nodes-base.gmail",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.gmail/index.md",
+  "fetchedAt": "2026-04-22T18:40:16.491Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Gmail node documentation",
+      "description": "Learn how to use the Gmail node in n8n. Follow technical documentation to integrate Gmail node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Gmail node documentation",
+    "description": "Learn how to use the Gmail node in n8n. Follow technical documentation to integrate Gmail node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "draft-operations.md",
+    "common-issues.md",
+    "thread-operations.md",
+    "label-operations.md",
+    "message-operations.md"
+  ],
+  "assets": []
+}

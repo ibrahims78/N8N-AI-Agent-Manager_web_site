@@ -1,5 +1,9 @@
 # n8n
 
+> Documentation for the n8n node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# n8n
+
 A node to integrate with n8n itself. This node allows you to consume the [n8n API](/api/index.md) in your workflows.
 
 Refer to the [n8n REST API documentation](/api/index.md) for more information on using the n8n API. Refer to [API endpoint reference](/api/api-reference.md) for working with the API endpoints directly.
@@ -10,7 +14,7 @@ Refer to the [n8n REST API documentation](/api/index.md) for more information on
 
 > **SSL**
 >
-> This node doesn't support SSL. If your server requires an SSL connection, use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the [n8n API](/api/index.md).
+> This node doesn't support SSL. If your server requires an SSL connection, use the [HTTP Request node](https://docs.n8n.io//) to call the [n8n API](/api/index.md).
 > The HTTP Request node has options to [provide the SSL certificate](/integrations/builtin/credentials/httprequest.md#provide-an-ssl-certificate).
 
 ## Operations
@@ -164,3 +168,5 @@ Refer to the [n8n API | Update a workflow documentation](https://docs.n8n.io/api
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for n8n at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.n8n/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.n8n/)

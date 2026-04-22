@@ -1,3 +1,7 @@
+# Text Classifier node documentation
+
+> Learn how to use the Text Classifier node in n8n. Follow technical documentation to integrate Text Classifier node into your workflows.
+
 # Text Classifier node
 
 Use the Text Classifier node to classify (categorize) incoming data. Using the categories provided in the parameters (see below), each item is passed to the model to determine its category.

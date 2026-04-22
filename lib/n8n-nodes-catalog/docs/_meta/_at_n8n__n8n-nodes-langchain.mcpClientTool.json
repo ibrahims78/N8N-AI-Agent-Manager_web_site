@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.mcpClientTool",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolmcp.md",
+  "fetchedAt": "2026-04-22T18:36:12.752Z",
+  "frontmatter": {
+    "raw": {
+      "title": "MCP Client Tool node documentation",
+      "description": "Learn how to use the MCP Client Tool node in n8n. Follow technical documentation to integrate MCP Client Tool node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "MCP Client Tool node documentation",
+    "description": "Learn how to use the MCP Client Tool node in n8n. Follow technical documentation to integrate MCP Client Tool node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

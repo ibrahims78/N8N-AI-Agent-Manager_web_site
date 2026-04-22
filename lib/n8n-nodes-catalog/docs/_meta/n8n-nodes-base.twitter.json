@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.twitter",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.twitter.md",
+  "fetchedAt": "2026-04-22T18:36:10.052Z",
+  "frontmatter": {
+    "raw": {
+      "title": "X (Formerly Twitter) node documentation",
+      "description": "Learn how to use the X (Formerly Twitter) node in n8n. Follow technical documentation to integrate X (Formerly Twitter) node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "X (Formerly Twitter) node documentation",
+    "description": "Learn how to use the X (Formerly Twitter) node in n8n. Follow technical documentation to integrate X (Formerly Twitter) node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

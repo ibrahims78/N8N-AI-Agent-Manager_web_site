@@ -1,3 +1,7 @@
+# Notion node documentation
+
+> Learn how to use the Notion node in n8n. Follow technical documentation to integrate Notion node into your workflows.
+
 # Notion node
 
 Use the Notion node to automate work in Notion, and integrate Notion with other applications. n8n has built-in support for a wide range of Notion features, including getting and searching databases, creating pages, and getting users.
@@ -38,6 +42,8 @@ On this page, you'll find a list of operations the Notion node supports and link
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for notion at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.notion/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.notion/)
+
 ## Related resources
 
 n8n provides an app node for Notion. You can find the trigger node docs [here](/integrations/builtin/trigger-nodes/n8n-nodes-base.notiontrigger.md).
@@ -46,7 +52,7 @@ Refer to [Notion's documentation](https://developers.notion.com/) for details ab
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -58,13 +64,16 @@ Refer to [Custom API operations](/integrations/custom-operations.md) for more in
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common issues](/integrations/builtin/app-nodes/n8n-nodes-base.notion/common-issues.md).
+For common errors or issues and suggested resolution steps, refer to [Common issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Notion node common issues
 
-Here are some common errors and issues with the [Notion node](/integrations/builtin/app-nodes/n8n-nodes-base.notion/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Notion node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Relation property not displaying
 
@@ -72,7 +81,7 @@ The Notion node only supports displaying the data relation property for [two-way
 
 To enable two-way relations, edit the relation property in Notion and enable the **Show on [name of related database]** option to create a reverse relation. Select a name to use for the relation in the new context. The relation is now accessible in n8n when filtering or selecting.
 
-If you need to work with Notion databases with one-way relationship, you can use the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) with your existing Notion credentials. For example, to update a one-way relationship, you can send a `PATCH` request to the following URL:
+If you need to work with Notion databases with one-way relationship, you can use the [HTTP Request](https://docs.n8n.io//) with your existing Notion credentials. For example, to update a one-way relationship, you can send a `PATCH` request to the following URL:
 
 ```
 https://api.notion.com/v1/pages/<page_id>
@@ -105,7 +114,7 @@ You can work around this be creating a regular heading and then modifying it to 
 	* To add a new page with a heading, select the **Page** or **Database Page** resources with the **Create** operation.
 	* To add a heading to an existing page, select the **Block** resource with the **Append After** operation.
 3. Select **Add Block** and set the **Type Name or ID** to either **Heading 1**, **Heading 2**, or **Heading 3**.
-4. Add an [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node connected to the Notion node and select the `GET` method.
+4. Add an [HTTP Request](https://docs.n8n.io//) node connected to the Notion node and select the `GET` method.
 5. Set the **URL** to `https://api.notion.com/v1/blocks/<block_ID>`. For example, if your added the heading to an existing page, you could use the following URL: `https://api.notion.com/v1/blocks/`. If you created a new page instead of appending a block, you may need to discover the block ID by querying the page contents first.
 6. Select **Predefined Credential Type** and connect your existing Notion credentials.
 7. Add an [Edit Fields (Set)](/integrations/builtin/core-nodes/n8n-nodes-base.set.md) node after the HTTP Request node.

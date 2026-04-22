@@ -1,3 +1,7 @@
+# Taiga Trigger node documentation
+
+> Learn how to use the Taiga Trigger node in n8n. Follow technical documentation to integrate Taiga Trigger node into your workflows.
+
 # Taiga Trigger node
 
 [Taiga](https://www.taiga.io/) is a free and open-source project management platform for startups, agile developers, and designers.

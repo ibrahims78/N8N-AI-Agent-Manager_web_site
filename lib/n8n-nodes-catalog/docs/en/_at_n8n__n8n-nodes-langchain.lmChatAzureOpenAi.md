@@ -1,3 +1,7 @@
+# Azure OpenAI Chat Model node documentation
+
+> Learn how to use the Azure OpenAI Chat Model node in n8n. Follow technical documentation to integrate Azure OpenAI Chat Model node into your workflows.
+
 # Azure OpenAI Chat Model node
 
 Use the Azure OpenAI Chat Model node to use OpenAI's chat models with conversational [agents](/glossary.md#ai-agent).
@@ -38,6 +42,8 @@ This node doesn't support the [`NO_PROXY` environment variable](/hosting/configu
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for azure-openai-chat-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatazureopenai/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatazureopenai/)
 
 ## Related resources
 

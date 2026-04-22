@@ -1,3 +1,7 @@
+# Hacker News node documentation
+
+> Learn how to use the Hacker News node in n8n. Follow technical documentation to integrate Hacker News node into your workflows.
+
 # Hacker News node
 
 Use the Hacker News node to automate work in Hacker News, and integrate Hacker News with other applications. n8n has built-in support for a wide range of Hacker News features, including getting articles, and users. 
@@ -24,3 +28,5 @@ On this page, you'll find a list of operations the Hacker News node supports and
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for hacker-news at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.hackernews/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.hackernews/)

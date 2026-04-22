@@ -1,0 +1,28 @@
+{
+  "nodeType": "n8n-nodes-base.openAi",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/index.md",
+  "fetchedAt": "2026-04-22T18:40:17.474Z",
+  "frontmatter": {
+    "raw": {
+      "title": "OpenAI node documentation",
+      "description": "Learn how to use the OpenAI node in n8n. Follow technical documentation to integrate OpenAI node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "critical",
+      "search": ""
+    },
+    "title": "OpenAI node documentation",
+    "description": "Learn how to use the OpenAI node in n8n. Follow technical documentation to integrate OpenAI node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "audio-operations.md",
+    "file-operations.md",
+    "conversation-operations.md",
+    "assistant-operations.md",
+    "common-issues.md",
+    "video-operations.md",
+    "image-operations.md",
+    "text-operations.md"
+  ],
+  "assets": []
+}

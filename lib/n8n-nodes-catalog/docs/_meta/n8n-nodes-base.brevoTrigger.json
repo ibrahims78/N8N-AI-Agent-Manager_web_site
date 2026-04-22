@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.brevoTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.brevotrigger.md",
+  "fetchedAt": "2026-04-22T18:36:00.071Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Brevo Trigger node documentation",
+      "description": "Learn how to use the Brevo Trigger node in n8n. Follow technical documentation to integrate Brevo Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Brevo Trigger node documentation",
+    "description": "Learn how to use the Brevo Trigger node in n8n. Follow technical documentation to integrate Brevo Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

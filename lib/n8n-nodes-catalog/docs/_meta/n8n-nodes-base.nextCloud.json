@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.nextCloud",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.nextcloud.md",
+  "fetchedAt": "2026-04-22T18:36:06.675Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Nextcloud node documentation",
+      "description": "Learn how to use the Nextcloud node in n8n. Follow technical documentation to integrate Nextcloud node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Nextcloud node documentation",
+    "description": "Learn how to use the Nextcloud node in n8n. Follow technical documentation to integrate Nextcloud node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

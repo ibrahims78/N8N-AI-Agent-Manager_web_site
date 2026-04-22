@@ -1,5 +1,9 @@
 # XML
 
+> Documentation for the XML node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# XML
+
 Use the XML node to convert data from and to XML.
 
 > **Binary files**
@@ -47,3 +51,5 @@ These options only appear if you select **XML to JSON** as the **Mode**:
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for xml at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.xml/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.xml/)

@@ -1,3 +1,7 @@
+# Travis CI node documentation
+
+> Learn how to use the Travis CI node in n8n. Follow technical documentation to integrate Travis CI node into your workflows.
+
 # Travis CI node
 
 Use the Travis CI node to automate work in Travis CI, and integrate Travis CI with other applications. n8n has built-in support for a wide range of Travis CI features, including cancelling and getting builds. 
@@ -20,3 +24,5 @@ On this page, you'll find a list of operations the Travis CI node supports and l
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for travisci at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.travisci/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.travisci/)

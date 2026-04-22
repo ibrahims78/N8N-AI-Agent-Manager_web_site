@@ -1,10 +1,14 @@
+# Email Trigger (IMAP) node documentation
+
+> Learn how to use the Email Trigger (IMAP) Trigger node in n8n. Follow technical documentation to integrate Email Trigger (IMAP) Trigger node into your workflows.
+
 # Email Trigger (IMAP) node
 
 Use the IMAP Email node to receive emails using an IMAP email server. This node is a trigger node.
 
 > **Credential**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/imap/index.md).
+> You can find authentication information for this node [here](https://docs.n8n.io//).
 
 ## Operations
 
@@ -16,7 +20,7 @@ Configure the node using the following parameters.
 
 ### Credential to connect with
 
-Select or create an [IMAP credential](/integrations/builtin/credentials/imap/index.md) to connect to the server with.
+Select or create an [IMAP credential](https://docs.n8n.io//) to connect to the server with.
 
 ### Mailbox Name
 
@@ -55,3 +59,5 @@ Set an interval in minutes to force reconnection.
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for email-trigger-imap at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.emailimap/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.emailimap/)

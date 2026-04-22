@@ -1,5 +1,9 @@
 # Execute Sub-workflow
 
+> Documentation for the Execute Sub-workflow node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Execute Sub-workflow
+
 Use the Execute Sub-workflow node to run a different workflow on the host machine that runs n8n.
 
 ## Node parameters
@@ -41,6 +45,8 @@ This node includes one option: **Wait for Sub-Workflow Completion**. This lets y
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for execute-workflow at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executeworkflow/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executeworkflow/)
+
 ## Set up and use a sub-workflow
 
 This section walks through setting up both the parent workflow and sub-workflow.
@@ -57,11 +63,11 @@ This section walks through setting up both the parent workflow and sub-workflow.
 >     ///
 > 
 > 1. **Optional**: configure which workflows can call the sub-workflow:
-> 	1. Select the **Options** <span class="n8n-inline-image">![Options menu](/_images/common-icons/three-dot-options-menu.png){.off-glb}</span> menu > **Settings**. n8n opens the **Workflow settings** modal.
+> 	1. Select the **Options** <span class="n8n-inline-image">![Options menu](/api/catalog/docs/assets/n8n-nodes-base.executeWorkflow/three-dot-options-menu.png){.off-glb}</span> menu > **Settings**. n8n opens the **Workflow settings** modal.
 > 	1. Change the **This workflow can be called by** setting.	Refer to [Workflow settings](/workflows/settings.md) for more information on configuring your workflows.
 > 1. Add the **Execute Sub-workflow** trigger node (if you are searching under trigger nodes, this is also titled **When Executed by Another Workflow**).
 > 1. Set the **Input data mode** to choose how you will define the sub-workflow's input data:
-> 	* **Define using fields below**: Choose this mode to define individual input names and data types that the calling workflow needs to provide. The [Execute Sub-workflow node](/integrations/builtin/core-nodes/n8n-nodes-base.executeworkflow.md) or [Call n8n Workflow Tool node](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolworkflow.md) in the calling workflow will automatically pull in the fields defined here.
+> 	* **Define using fields below**: Choose this mode to define individual input names and data types that the calling workflow needs to provide. The [Execute Sub-workflow node](/integrations/builtin/core-nodes/n8n-nodes-base.executeworkflow.md) or [Call n8n Workflow Tool node](https://docs.n8n.io/n8n-nodes-langchain.toolworkflow/) in the calling workflow will automatically pull in the fields defined here.
 > 	* **Define using JSON example**: Choose this mode to provide an example JSON object that demonstrates the expected input items and their types.
 > 	* **Accept all data**: Choose this mode to accept all data unconditionally. The sub-workflow won't define any required input items. This sub-workflow must handle any input inconsistencies or missing values.
 > 1. Add other nodes as needed to build your sub-workflow functionality.

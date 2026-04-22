@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.splunk",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.splunk.md",
+  "fetchedAt": "2026-04-22T18:36:08.744Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Splunk node documentation",
+      "description": "Learn how to use the Splunk node in n8n. Follow technical documentation to integrate Splunk node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Splunk node documentation",
+    "description": "Learn how to use the Splunk node in n8n. Follow technical documentation to integrate Splunk node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.trello",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.trello.md",
+  "fetchedAt": "2026-04-22T18:36:09.877Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Trello node documentation",
+      "description": "Learn how to use the Trello node in n8n. Follow technical documentation to integrate Trello node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Trello node documentation",
+    "description": "Learn how to use the Trello node in n8n. Follow technical documentation to integrate Trello node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

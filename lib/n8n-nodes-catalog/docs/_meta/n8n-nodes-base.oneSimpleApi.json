@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.oneSimpleApi",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.onesimpleapi.md",
+  "fetchedAt": "2026-04-22T18:36:06.842Z",
+  "frontmatter": {
+    "raw": {
+      "title": "One Simple API node documentation",
+      "description": "Learn how to use the One Simple API node in n8n. Follow technical documentation to integrate One Simple API node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "One Simple API node documentation",
+    "description": "Learn how to use the One Simple API node in n8n. Follow technical documentation to integrate One Simple API node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

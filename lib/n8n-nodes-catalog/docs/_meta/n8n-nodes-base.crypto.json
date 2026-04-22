@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.crypto",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.crypto.md",
+  "fetchedAt": "2026-04-22T18:36:00.814Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Crypto",
+      "description": "Documentation for the Crypto node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Crypto",
+    "description": "Documentation for the Crypto node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

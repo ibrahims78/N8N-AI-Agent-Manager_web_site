@@ -1,3 +1,7 @@
+# Splunk node documentation
+
+> Learn how to use the Splunk node in n8n. Follow technical documentation to integrate Splunk node into your workflows.
+
 # Splunk node
 
 Use the Splunk node to automate work in Splunk, and integrate Splunk with other applications. n8n has built-in support for a wide range of Splunk features, including getting fired alerts reports, as well as deleting and getting search configuration. 
@@ -33,3 +37,5 @@ On this page, you'll find a list of operations the Splunk node supports and link
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for splunk at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.splunk/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.splunk/)

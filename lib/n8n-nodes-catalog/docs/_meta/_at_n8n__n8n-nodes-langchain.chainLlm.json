@@ -1,0 +1,18 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.chainLlm",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainllm.md",
+  "fetchedAt": "2026-04-22T18:36:11.239Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Basic LLM Chain node documentation",
+      "description": "Learn how to use the Basic LLM Chain node in n8n. Follow technical documentation to integrate Basic LLM Chain node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "critical"
+    },
+    "title": "Basic LLM Chain node documentation",
+    "description": "Learn how to use the Basic LLM Chain node in n8n. Follow technical documentation to integrate Basic LLM Chain node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

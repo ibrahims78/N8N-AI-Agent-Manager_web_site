@@ -1,3 +1,7 @@
+# Typeform Trigger node documentation
+
+> Learn how to use the Typeform Trigger node in n8n. Follow technical documentation to integrate Typeform Trigger node into your workflows.
+
 # Typeform Trigger node
 
 [Typeform](https://www.typeform.com/) is an online software as a service company that specializes in online form building and online surveys. Its main software creates dynamic forms based on user needs.

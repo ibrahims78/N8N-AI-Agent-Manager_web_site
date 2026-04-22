@@ -1,3 +1,7 @@
+# Google Gemini Chat Model node documentation
+
+> Learn how to use the Google Gemini Chat Model node in n8n. Follow technical documentation to integrate Google Gemini Chat Model node into your workflows.
+
 # Google Gemini Chat Model node
 
 Use the Google Gemini Chat Model node to use Google's Gemini chat models with conversational agents.
@@ -38,11 +42,13 @@ The Google Gemini Chat Model node uses Google's SDK, which doesn't support proxy
 
 If you need to proxy your connection, as a work around, you can set up a dedicated reverse proxy for Gemini requests and change the **Host** parameter in your [Google Gemini credentials](/integrations/builtin/credentials/googleai.md) to point to your proxy address:
 
-![Google Gemini credentials proxy configuration](/_images/integrations/builtin/cluster-nodes/google-gemini-proxy-config.png)
+![Google Gemini credentials proxy configuration](/api/catalog/docs/assets/_at_n8n__n8n-nodes-langchain.lmChatGoogleGemini/google-gemini-proxy-config.png)
 
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for google-gemini-chat-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatgooglegemini/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatgooglegemini/)
 
 ## Related resources
 

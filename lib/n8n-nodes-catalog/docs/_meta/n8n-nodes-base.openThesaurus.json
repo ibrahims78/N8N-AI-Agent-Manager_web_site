@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.openThesaurus",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.openthesaurus.md",
+  "fetchedAt": "2026-04-22T18:36:06.975Z",
+  "frontmatter": {
+    "raw": {
+      "title": "OpenThesaurus node documentation",
+      "description": "Learn how to use the OpenThesaurus node in n8n. Follow technical documentation to integrate OpenThesaurus node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "OpenThesaurus node documentation",
+    "description": "Learn how to use the OpenThesaurus node in n8n. Follow technical documentation to integrate OpenThesaurus node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,3 +1,7 @@
+# Microsoft Entra ID node documentation
+
+> Learn how to use the Microsoft Entra ID node in n8n. Follow technical documentation to integrate Microsoft Entra ID node into your workflows.
+
 # Microsoft Entra ID node
 
 Use the Microsoft Entra ID node to automate work in Microsoft Entra ID and integrate Microsoft Entra ID with other applications. n8n has built-in support for a wide range of Microsoft Entra ID features, which includes creating, getting, updating, and deleting users and groups, as well as adding users to and removing them from groups.
@@ -33,6 +37,8 @@ On this page, you'll find a list of operations the Microsoft Entra ID node suppo
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for microsoft-entra-id-azure-active-directory at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftentra/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftentra/)
+
 ## Related resources
 
 <!-- vale from-microsoft.We = NO -->
@@ -41,7 +47,7 @@ Refer to [Microsoft Entra ID's documentation](https://learn.microsoft.com/en-us/
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

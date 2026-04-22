@@ -1,5 +1,9 @@
 # Debug Helper
 
+> Documentation for the Debug Helper node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Debug Helper
+
 Use the Debug Helper node to trigger different error types or generate random datasets to help test n8n workflows.
 
 ## Operations
@@ -51,3 +55,5 @@ The Out of Memory Category adds one parameter, the **Memory Size to Generate**. 
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for debughelper at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.debughelper/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.debughelper/)

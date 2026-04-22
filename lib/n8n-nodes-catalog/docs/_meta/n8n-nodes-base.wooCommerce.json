@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.wooCommerce",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.woocommerce.md",
+  "fetchedAt": "2026-04-22T18:36:10.485Z",
+  "frontmatter": {
+    "raw": {
+      "title": "WooCommerce node documentation",
+      "description": "Learn how to use the WooCommerce node in n8n. Follow technical documentation to integrate WooCommerce node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "WooCommerce node documentation",
+    "description": "Learn how to use the WooCommerce node in n8n. Follow technical documentation to integrate WooCommerce node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

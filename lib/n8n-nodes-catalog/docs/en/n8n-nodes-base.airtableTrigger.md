@@ -1,3 +1,7 @@
+# Airtable Trigger node documentation
+
+> Learn how to use the Airtable Trigger node in n8n. Follow technical documentation to integrate Airtable Trigger node into your workflows.
+
 # Airtable Trigger node
 
 [Airtable](https://airtable.com/) is a spreadsheet-database hybrid, with the features of a database but applied to a spreadsheet. The fields in an Airtable table are similar to cells in a spreadsheet, but have types such as 'checkbox', 'phone number', and 'drop-down list', and can reference file attachments like images.
@@ -14,7 +18,7 @@ On this page, you'll find a list of events the Airtable Trigger node can respond
 
 ## Related resources
 
-n8n provides an app node for Airtable. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.airtable/index.md).
+n8n provides an app node for Airtable. You can find the node docs [here](https://docs.n8n.io//).
 
 View [example workflows and related content](https://n8n.io/integrations/airtable-trigger/) on n8n's website.
 

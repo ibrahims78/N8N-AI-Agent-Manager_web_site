@@ -1,3 +1,7 @@
+# MQTT node documentation
+
+> Learn how to use the MQTT node in n8n. Follow technical documentation to integrate MQTT node into your workflows.
+
 # MQTT node
 
 Use the MQTT node to automate work in MQTT, and integrate MQTT with other applications. n8n supports transporting messages with MQTT.
@@ -19,6 +23,8 @@ Use the MQTT node to send a message. You can set the message topic, and choose w
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for mqtt at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mqtt/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mqtt/)
 
 ## Related resources
 

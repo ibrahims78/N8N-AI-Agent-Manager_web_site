@@ -1,3 +1,7 @@
+# MistralAI node documentation
+
+> Learn how to use the Mistral AI node in n8n. Follow technical documentation to integrate Mistral AI node into your workflows.
+
 # Mistral AI node
 
 Use the Mistral AI node to automate work in Mistral AI and integrate Mistral AI with other applications. n8n has built-in support for extracting text with various models, file types, and input methods.
@@ -31,6 +35,8 @@ On this page, you'll find a list of operations the Mistral AI node supports, and
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for mistral-ai at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mistralai/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mistralai/)
+
 ## Related resources
 
 <!-- add a link to the service's documentation. This should usually go direct to the API docs -->
@@ -38,7 +44,7 @@ Refer to [Mistral AI's documentation](https://docs.mistral.ai/api/) for more inf
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

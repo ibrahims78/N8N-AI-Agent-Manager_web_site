@@ -1,3 +1,7 @@
+# seven node documentation
+
+> Learn how to use the seven node in n8n. Follow technical documentation to integrate seven node into your workflows.
+
 # seven node
 
 Use the seven node to automate work in seven, and integrate seven with other applications. n8n has built-in support for a wide range of seven features, including sending SMS, and converting text to voice. 
@@ -18,3 +22,5 @@ On this page, you'll find a list of operations the seven node supports and links
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for sms77 at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.sms77/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.sms77/)

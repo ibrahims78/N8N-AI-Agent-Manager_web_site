@@ -1,3 +1,7 @@
+# MQTT Trigger node documentation
+
+> Learn how to use the MQTT Trigger node in n8n. Follow technical documentation to integrate MQTT Trigger node into your workflows.
+
 # MQTT Trigger node
 
 [MQTT](https://mqtt.org) is an open OASIS and ISO standard lightweight, publish-subscribe network protocol that transports messages between devices.

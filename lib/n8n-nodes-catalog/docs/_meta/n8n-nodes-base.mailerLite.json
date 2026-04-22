@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.mailerLite",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.mailerlite.md",
+  "fetchedAt": "2026-04-22T18:36:05.525Z",
+  "frontmatter": {
+    "raw": {
+      "title": "MailerLite node documentation",
+      "description": "Learn how to use the MailerLite node in n8n. Follow technical documentation to integrate MailerLite node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "MailerLite node documentation",
+    "description": "Learn how to use the MailerLite node in n8n. Follow technical documentation to integrate MailerLite node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

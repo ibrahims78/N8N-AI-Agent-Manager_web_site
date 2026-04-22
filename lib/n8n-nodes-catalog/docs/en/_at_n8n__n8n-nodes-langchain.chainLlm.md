@@ -1,3 +1,7 @@
+# Basic LLM Chain node documentation
+
+> Learn how to use the Basic LLM Chain node in n8n. Follow technical documentation to integrate Basic LLM Chain node into your workflows.
+
 # Basic LLM Chain node
 
 Use the Basic LLM Chain node to set the prompt that the model will use along with setting an optional parser for the response.
@@ -23,9 +27,9 @@ Choose from:
 
 This parameter controls whether you want the node to require a specific output format. When turned on, n8n prompts you to connect one of these output parsers to the node:
 
-* [Auto-fixing Output Parser](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparserautofixing.md)
-* [Item List Output Parser](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparseritemlist.md)
-* [Structured Output Parser](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparserstructured/index.md)
+* [Auto-fixing Output Parser](https://docs.n8n.io/n8n-nodes-langchain.outputparserautofixing/)
+* [Item List Output Parser](https://docs.n8n.io/n8n-nodes-langchain.outputparseritemlist/)
+* [Structured Output Parser](https://docs.n8n.io/n8n-nodes-langchain.outputparserstructured/)
 
 ## Chat Messages
 
@@ -62,6 +66,8 @@ For both the **Image** types, select the **Image Details** to control how the mo
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for basic-llm-chain at [https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainllm/](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainllm/)
 
 ## Related resources
 

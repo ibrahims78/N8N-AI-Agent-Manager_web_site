@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.okta",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.okta.md",
+  "fetchedAt": "2026-04-22T18:36:06.840Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Okta node documentation",
+      "description": "Learn how to use the Okta node in n8n. Follow technical documentation to integrate Okta node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Okta node documentation",
+    "description": "Learn how to use the Okta node in n8n. Follow technical documentation to integrate Okta node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

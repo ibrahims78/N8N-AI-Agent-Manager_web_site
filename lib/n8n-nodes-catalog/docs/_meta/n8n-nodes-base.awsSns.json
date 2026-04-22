@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.awsSns",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.awssns.md",
+  "fetchedAt": "2026-04-22T18:35:59.530Z",
+  "frontmatter": {
+    "raw": {
+      "title": "AWS SNS node documentation",
+      "description": "Learn how to use the AWS SNS node in n8n. Follow technical documentation to integrate AWS SNS node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "AWS SNS node documentation",
+    "description": "Learn how to use the AWS SNS node in n8n. Follow technical documentation to integrate AWS SNS node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

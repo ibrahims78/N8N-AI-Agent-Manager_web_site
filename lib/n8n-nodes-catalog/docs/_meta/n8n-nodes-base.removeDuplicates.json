@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.removeDuplicates",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.removeduplicates/index.md",
+  "fetchedAt": "2026-04-22T18:36:09.844Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Remove Duplicates node documentation",
+      "description": "Documentation for the Remove Duplicates node in n8n, a workflow automation platform. Includes guidance on usage and links to examples.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Remove Duplicates node documentation",
+    "description": "Documentation for the Remove Duplicates node in n8n, a workflow automation platform. Includes guidance on usage and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "templates-and-examples.md"
+  ],
+  "assets": []
+}

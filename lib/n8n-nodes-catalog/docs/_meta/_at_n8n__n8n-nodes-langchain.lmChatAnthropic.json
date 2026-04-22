@@ -1,0 +1,18 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatanthropic.md",
+  "fetchedAt": "2026-04-22T18:36:11.885Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Anthropic Chat Model node documentation",
+      "description": "Learn how to use the Anthropic Chat Model node in n8n. Follow technical documentation to integrate Anthropic Chat Model node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Anthropic Chat Model node documentation",
+    "description": "Learn how to use the Anthropic Chat Model node in n8n. Follow technical documentation to integrate Anthropic Chat Model node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

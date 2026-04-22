@@ -1,0 +1,18 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.toolWorkflow",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolworkflow.md",
+  "fetchedAt": "2026-04-22T18:36:13.666Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Call n8n Workflow Tool node documentation",
+      "description": "Learn how to use the Call n8n Workflow Tool node in n8n. Follow technical documentation to integrate Call n8n Workflow Tool node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Call n8n Workflow Tool node documentation",
+    "description": "Learn how to use the Call n8n Workflow Tool node in n8n. Follow technical documentation to integrate Call n8n Workflow Tool node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,3 +1,7 @@
+# Venafi TLS Protect Cloud Trigger node documentation
+
+> Learn how to use the Venafi TLS Protect Cloud Trigger node in n8n. Follow technical documentation to integrate Venafi TLS Protect Cloud Trigger node into your workflows.
+
 # Venafi TLS Protect Cloud Trigger node
 
 [Venafi](https://www.venafi.com/) is a cybersecurity company providing services for machine identity management. They offer solutions to manage and protect identities for a wide range of machine types, delivering global visibility, lifecycle automation, and actionable intelligence.

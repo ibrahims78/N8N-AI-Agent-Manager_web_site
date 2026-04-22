@@ -1,3 +1,7 @@
+# TimescaleDB node documentation
+
+> Learn how to use the TimescaleDB node in n8n. Follow technical documentation to integrate TimescaleDB node into your workflows.
+
 # TimescaleDB node
 
 Use the TimescaleDB node to automate work in TimescaleDB, and integrate TimescaleDB with other applications. n8n has built-in support for a wide range of TimescaleDB features, including executing an SQL query, as well as inserting and updating rows in a database. 
@@ -17,6 +21,8 @@ On this page, you'll find a list of operations the TimescaleDB node supports and
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for timescaledb at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.timescaledb/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.timescaledb/)
 
 ## Specify a column's data type
 

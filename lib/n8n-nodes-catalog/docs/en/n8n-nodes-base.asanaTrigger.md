@@ -1,3 +1,7 @@
+# Asana Trigger node documentation
+
+> Learn how to use the Asana Trigger node in n8n. Follow technical documentation to integrate Asana Trigger node into your workflows.
+
 # Asana Trigger node
 
 [Asana](https://asana.com/) is a web and mobile application designed to help teams organize, track, and manage their work.

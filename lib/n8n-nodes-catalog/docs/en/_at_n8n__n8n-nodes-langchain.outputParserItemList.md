@@ -1,3 +1,7 @@
+# Item List Output Parser node documentation
+
+> Learn how to use the Item List Output Parser node in n8n. Follow technical documentation to integrate Item List Output Parser node into your workflows.
+
 # Item List Output Parser node
 
 Use the Item List Output Parser node to return a list of items with a specific length and separator.
@@ -18,6 +22,8 @@ Use the Item List Output Parser node to return a list of items with a specific l
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for item-list-output-parser at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparseritemlist/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparseritemlist/)
 
 ## Related resources
 

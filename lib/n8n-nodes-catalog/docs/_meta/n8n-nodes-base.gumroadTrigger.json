@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.gumroadTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.gumroadtrigger.md",
+  "fetchedAt": "2026-04-22T18:36:04.076Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Gumroad Trigger node documentation",
+      "description": "Learn how to use the Gumroad Trigger node in n8n. Follow technical documentation to integrate Gumroad Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Gumroad Trigger node documentation",
+    "description": "Learn how to use the Gumroad Trigger node in n8n. Follow technical documentation to integrate Gumroad Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

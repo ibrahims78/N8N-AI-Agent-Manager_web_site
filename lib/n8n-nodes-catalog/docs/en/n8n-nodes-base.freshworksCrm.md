@@ -1,3 +1,7 @@
+# Freshworks CRM node documentation
+
+> Learn how to use the Freshworks CRM node in n8n. Follow technical documentation to integrate Freshworks CRM node into your workflows.
+
 # Freshworks CRM node
 
 Use the Freshworks CRM node to automate work in Freshworks CRM, and integrate Freshworks CRM with other applications. n8n has built-in support for a wide range of Freshworks CRM features, including creating, updating, deleting, and retrieve, accounts, appointments, contacts, deals, notes, sales activity and more. 
@@ -52,9 +56,11 @@ On this page, you'll find a list of operations the Freshworks CRM node supports 
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for freshworks-crm at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.freshworkscrm/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.freshworkscrm/)
+
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

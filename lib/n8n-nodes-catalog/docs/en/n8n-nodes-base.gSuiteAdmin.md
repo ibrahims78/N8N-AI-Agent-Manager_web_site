@@ -1,3 +1,7 @@
+# Google Workspace Admin node documentation
+
+> Learn how to use the Google Workspace Admin node in n8n. Follow technical documentation to integrate Google Workspace Admin node into your workflows.
+
 # Google Workspace Admin node
 
 Use the Google Workspace Admin node to automate work in Google Workspace Admin, and integrate Google Workspace Admin with other applications. n8n has built-in support for a wide range of Google Workspace Admin features, including creating, updating, deleting, and getting users, groups, and ChromeOS devices. 
@@ -6,7 +10,7 @@ On this page, you'll find a list of operations the Google Workspace Admin node s
 
 > **Credentials**
 >
-> Refer to [Google credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication.
+> Refer to [Google credentials](https://docs.n8n.io//) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
@@ -37,6 +41,8 @@ On this page, you'll find a list of operations the Google Workspace Admin node s
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for google-workspace-admin at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gsuiteadmin/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gsuiteadmin/)
 
 ## How to control which custom fields to fetch for a user
 

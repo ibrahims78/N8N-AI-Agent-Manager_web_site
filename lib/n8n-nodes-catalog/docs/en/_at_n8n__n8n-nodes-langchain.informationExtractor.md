@@ -1,3 +1,7 @@
+# Information Extractor node documentation
+
+> Learn how to use the Information Extractor node in n8n. Follow technical documentation to integrate Information Extractor node into your workflows.
+
 # Information Extractor node
 
 Use the Information Extractor node to extract structured information from incoming data.

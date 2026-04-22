@@ -1,5 +1,9 @@
 # Moonshot Kimi Chat Model node
 
+> Integrate the Moonshot Kimi Chat Model into n8n workflows to generate chat responses for AI chains. Common uses include generating conversational replies, integrating with LangChain-style workflows, and tuning response behavior via temperature/top-p and token limits.
+
+# Moonshot Kimi Chat Model node
+
 Use the Moonshot Kimi Chat Model node to send chat requests to the Kimi chat API and generate conversational responses. Use it when you need an AI chat model in a workflow. For example, you can power assistants, build multi-step AI chains, or produce model-driven content with tunable sampling and token settings.
 
 > **Credentials**
@@ -36,6 +40,8 @@ Sends a chat request to the selected Kimi model and returns the model's response
 - **Top P** (type: number, field: `topP`): Nucleus sampling parameter controlling diversity. A value of zero point five means the model considers half of the likelihood-weighted options. We recommend changing either **Top P** or **Sampling Temperature**, don't change both. Default: `1`.
 
 ## Templates and examples
+
+> **🔗 Templates & examples:** browse ready-made workflows for moonshot-kimi-chat-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatmoonshot/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatmoonshot/)
 
 ## Related resources
 

@@ -1,3 +1,7 @@
+# Embeddings Ollama node documentation
+
+> Learn how to use the Embeddings Ollama node in n8n. Follow technical documentation to integrate Embeddings Ollama node into your workflows.
+
 # Embeddings Ollama node
 
 Use the Embeddings Ollama node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
@@ -27,6 +31,8 @@ Learn more about available models in [Ollama's models documentation](https://oll
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for embeddings-ollama at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingsollama/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingsollama/)
 
 ## Related resources
 

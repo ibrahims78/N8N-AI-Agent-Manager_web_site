@@ -1,3 +1,7 @@
+# xAI Grok Chat Model node documentation
+
+> Learn how to use the xAI Grok Chat Model node in n8n. Follow technical documentation to integrate xAI Grok Chat Model node into your workflows.
+
 # xAI Grok Chat Model node
 
 Use the xAI Grok Chat Model node to access xAI Grok's large language models for conversational AI and text generation tasks.
@@ -34,6 +38,8 @@ On this page, you'll find the node parameters for the xAI Grok Chat Model node, 
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for xai-grok-chat-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatxaigrok/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatxaigrok/)
 
 ## Related resources
 

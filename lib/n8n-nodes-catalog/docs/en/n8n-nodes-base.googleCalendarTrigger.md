@@ -1,10 +1,14 @@
+# Google Calendar Trigger node documentation
+
+> Learn how to use the Google Calendar Trigger node in n8n. Follow technical documentation to integrate Google Calendar Trigger node into your workflows.
+
 # Google Calendar Trigger node
 
 [Google Calendar](https://www.google.com/calendar/) is a time-management and scheduling calendar service developed by Google.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/google/index.md).
+> You can find authentication information for this node [here](https://docs.n8n.io//).
 
 > **Examples and templates**
 >
@@ -18,9 +22,11 @@
 - **Event Started**
 - **Event Updated**
 
+> **🔗 Templates & examples:** browse ready-made workflows for google-calendar-trigger at [https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.googlecalendartrigger/](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.googlecalendartrigger/)
+
 ## Related resources
 
-n8n provides an app node for Google Calendar. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/index.md).
+n8n provides an app node for Google Calendar. You can find the node docs [here](https://docs.n8n.io//).
 
 View [example workflows and related content](https://n8n.io/integrations/google-calendar-trigger/) on n8n's website.
 

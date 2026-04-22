@@ -1,3 +1,7 @@
+# RabbitMQ Trigger node documentation
+
+> Learn how to use the RabbitMQ Trigger node in n8n. Follow technical documentation to integrate RabbitMQ Trigger node into your workflows.
+
 # RabbitMQ Trigger node
 
 [RabbitMQ](https://www.rabbitmq.com) is an open-source message broker that accepts and forwards messages.

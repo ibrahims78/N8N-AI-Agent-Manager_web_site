@@ -1,3 +1,7 @@
+# Embeddings Google Gemini node documentation
+
+> Learn how to use the Embeddings Google Gemini node in n8n. Follow technical documentation to integrate Embeddings Google Gemini node into your workflows.
+
 # Embeddings Google Gemini node
 
 Use the Embeddings Google Gemini node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
@@ -25,6 +29,8 @@ Learn more about available models in [Google Gemini's models documentation](http
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for embeddings-google-gemini at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingsgooglegemini/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingsgooglegemini/)
 
 ## Related resources
 

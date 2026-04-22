@@ -1,3 +1,7 @@
+# Code node documentation
+
+> Documentation for the Code node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
 # Code node
 
 Use the Code node to write custom JavaScript or Python and run it as a step in your workflow.
@@ -59,7 +63,7 @@ The syntax to use the built-in methods and variables is `$variableName` or `$met
 
 ### Keyboard shortcuts
 
-The Code node editing environment supports time-saving and useful keyboard shortcuts for a range of operations from autocompletion to code-folding and using multiple-cursors. See the full list of [keyboard shortcuts](/integrations/builtin/core-nodes/n8n-nodes-base.code/keyboard-shortcuts.md).
+The Code node editing environment supports time-saving and useful keyboard shortcuts for a range of operations from autocompletion to code-folding and using multiple-cursors. See the full list of [keyboard shortcuts](https://docs.n8n.io/keyboard-shortcuts/).
 
 ## Python (Pyodide - legacy)
 
@@ -78,14 +82,14 @@ The syntax to use the built-in methods and variables is `_variableName` or `_met
 
 ### Keyboard shortcuts
 
-The Code node editing environment supports time-saving and useful keyboard shortcuts for a range of operations from autocompletion to code-folding and using multiple-cursors. See the full list of [keyboard shortcuts](/integrations/builtin/core-nodes/n8n-nodes-base.code/keyboard-shortcuts.md).
+The Code node editing environment supports time-saving and useful keyboard shortcuts for a range of operations from autocompletion to code-folding and using multiple-cursors. See the full list of [keyboard shortcuts](https://docs.n8n.io/keyboard-shortcuts/).
 
 ## File system and HTTP requests
 
 You can't access the file system or make HTTP requests. Use the following nodes instead:
 
 * [Read/Write File From Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md)
-* [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md)
+* [HTTP Request](https://docs.n8n.io//)
 
 ## Python (Native)
 
@@ -141,13 +145,16 @@ To use ChatGPT to generate code in the Code node:
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common Issues](/integrations/builtin/core-nodes/n8n-nodes-base.code/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Code node common issues
 
-Here are some common errors and issues with the [Code node](/integrations/builtin/core-nodes/n8n-nodes-base.code/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Code node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 <!-- vale off -->
 ## Code doesn't return items properly
@@ -258,7 +265,7 @@ To set, update, and retrieve data directly to a workflow, use the [static data](
 
 > **Use Remove Duplicates when possible**
 >
-> If you're interested in using variables to avoid processing the same data items more than once, consider using the [Remove Duplicates node](/integrations/builtin/core-nodes/n8n-nodes-base.removeduplicates/index.md) instead. The Remove Duplicates node can save information across executions to avoid processing the same items multiple times.
+> If you're interested in using variables to avoid processing the same data items more than once, consider using the [Remove Duplicates node](https://docs.n8n.io//) instead. The Remove Duplicates node can save information across executions to avoid processing the same items multiple times.
 
 ## Can't access credentials in a code node
 
@@ -266,7 +273,7 @@ By design, Code nodes can't access credentials. They don't have access to n8n’
 
 Attempts to reference credentials in a Code node using expressions or methods like `this.getCredentials()` or `$getCredentials()` will result in errors, such as `this.getCredentials is not a function` and `$getCredentials is not defined`. 
 
-If you need to make authenticated API calls, use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) which provides credential support.
+If you need to make authenticated API calls, use the [HTTP Request node](https://docs.n8n.io//) which provides credential support.
 
 To work with credentials dynamically, handle the credential selection logic outside of the Code node:
 
@@ -275,6 +282,9 @@ To work with credentials dynamically, handle the credential selection logic outs
 - Use an HTTP Request node with Custom Auth to dynamically set headers, query parameters, or body values using expressions.
 
 ---
+
+<!-- sibling:keyboard-shortcuts.md -->
+## Keyboard Shortcuts
 
 # Keyboard shortcuts when using the Code editor
 

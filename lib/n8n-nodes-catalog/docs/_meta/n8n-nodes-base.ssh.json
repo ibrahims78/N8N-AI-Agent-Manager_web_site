@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.ssh",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.ssh.md",
+  "fetchedAt": "2026-04-22T18:36:08.831Z",
+  "frontmatter": {
+    "raw": {
+      "title": "SSH",
+      "description": "Documentation for the SSH node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "SSH",
+    "description": "Documentation for the SSH node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

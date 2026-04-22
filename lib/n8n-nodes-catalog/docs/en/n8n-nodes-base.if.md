@@ -1,5 +1,9 @@
 # If
 
+> Documentation for the If node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# If
+
 Use the If node to split a workflow conditionally based on comparison operations.
 
 ## Add conditions
@@ -22,6 +26,8 @@ You can choose to keep data:
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for if at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.if/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.if/)
+
 ## Branch execution with If and Merge nodes
 
 > **0.236.0 and below**
@@ -33,7 +39,7 @@ One data stream triggers the Merge node, which then goes and executes the other 
 
 For example, in the screenshot below there's a workflow containing an Edit Fields node, If node, and Merge node. The standard If node behavior is to execute one data stream (in the screenshot, this is the **true** output). However, due to the Merge node, both data streams execute, despite the If node not sending any data down the **false** data stream.
 
-![Screenshot of a workflow. The workflow has an Edit Fields node, followed by an If node. It ends with a Merge node.](/_images/integrations/builtin/core-nodes/merge/if-merge-node.png)
+![Screenshot of a workflow. The workflow has an Edit Fields node, followed by an If node. It ends with a Merge node.](/api/catalog/docs/assets/n8n-nodes-base.if/if-merge-node.png)
 
 <!-- TODO: remove once v1 is mature -->
 

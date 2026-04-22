@@ -1,5 +1,9 @@
 # Filter
 
+> Documentation for the Filter node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Filter
+
 Filter items based on a condition. If the item meets the condition, the Filter node passes it on to the next node in the Filter node output. If the item doesn't meet the condition, the Filter node omits the item from its output.
 
 ## Node parameters
@@ -28,6 +32,8 @@ You can't create a mix of AND and OR rules.
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for filter at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.filter/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.filter/)
 
 ## Available data type comparisons
 <!-- vale off -->

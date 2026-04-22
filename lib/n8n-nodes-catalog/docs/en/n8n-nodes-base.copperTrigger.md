@@ -1,3 +1,7 @@
+# Copper Trigger node documentation
+
+> Learn how to use the Copper Trigger node in n8n. Follow technical documentation to integrate Copper Trigger node into your workflows.
+
 # Copper Trigger node
 
 [Copper](https://www.copper.com/) is a CRM that focuses on strong integration with Google Workspace. It's mainly targeted towards small and medium-sized businesses.

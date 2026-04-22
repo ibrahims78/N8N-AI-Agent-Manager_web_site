@@ -1,3 +1,7 @@
+# Workflow Trigger node documentation
+
+> Learn how to use the Workflow Trigger node in n8n. Follow technical documentation to integrate Workflow Trigger node into your workflows.
+
 # Workflow Trigger node
 
 The Workflow Trigger node gets triggered when a workflow is updated or activated.
@@ -24,3 +28,5 @@ You can select one or both of these events.
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for workflow-trigger at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.workflowtrigger/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.workflowtrigger/)

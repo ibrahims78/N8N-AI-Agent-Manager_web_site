@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.getResponseTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.getresponsetrigger.md",
+  "fetchedAt": "2026-04-22T18:36:02.617Z",
+  "frontmatter": {
+    "raw": {
+      "title": "GetResponse Trigger node documentation",
+      "description": "Learn how to use the GetResponse Trigger node in n8n. Follow technical documentation to integrate GetResponse Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "GetResponse Trigger node documentation",
+    "description": "Learn how to use the GetResponse Trigger node in n8n. Follow technical documentation to integrate GetResponse Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

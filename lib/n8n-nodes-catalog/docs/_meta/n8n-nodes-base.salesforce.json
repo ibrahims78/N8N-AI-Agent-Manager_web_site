@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.salesforce",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.salesforce.md",
+  "fetchedAt": "2026-04-22T18:36:08.149Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Salesforce node documentation",
+      "description": "Learn how to use the Salesforce node in n8n. Follow technical documentation to integrate Salesforce node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Salesforce node documentation",
+    "description": "Learn how to use the Salesforce node in n8n. Follow technical documentation to integrate Salesforce node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

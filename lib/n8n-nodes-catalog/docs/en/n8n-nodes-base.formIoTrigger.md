@@ -1,3 +1,7 @@
+# Form.io Trigger node documentation
+
+> Learn how to use the Form.io Trigger node in n8n. Follow technical documentation to integrate Form.io Trigger node into your workflows.
+
 # Form.io Trigger node
 
 [Form.io](https://www.form.io/) is an enterprise class combined form and API data management platform for building complex form-based business process applications.

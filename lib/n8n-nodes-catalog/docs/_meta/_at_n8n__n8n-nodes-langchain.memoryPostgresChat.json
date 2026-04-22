@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memorypostgreschat.md",
+  "fetchedAt": "2026-04-22T18:36:12.901Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Postgres Chat Memory node documentation",
+      "description": "Learn how to use the Postgres Chat Memory node in n8n. Follow technical documentation to integrate Postgres Chat Memory node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Postgres Chat Memory node documentation",
+    "description": "Learn how to use the Postgres Chat Memory node in n8n. Follow technical documentation to integrate Postgres Chat Memory node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

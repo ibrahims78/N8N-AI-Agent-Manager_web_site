@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.keapTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.keaptrigger.md",
+  "fetchedAt": "2026-04-22T18:36:05.055Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Keap Trigger node documentation",
+      "description": "Learn how to use the Keap Trigger node in n8n. Follow technical documentation to integrate Keap Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Keap Trigger node documentation",
+    "description": "Learn how to use the Keap Trigger node in n8n. Follow technical documentation to integrate Keap Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

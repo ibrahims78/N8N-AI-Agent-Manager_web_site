@@ -1,3 +1,7 @@
+# Microsoft Outlook Trigger node documentation
+
+> Learn how to use the Microsoft Outlook Trigger node in n8n. Follow technical documentation to integrate Microsoft Outlook Trigger node into your workflows.
+
 # Microsoft Outlook Trigger node
 
 Use the Microsoft Outlook Trigger node to respond to events in [Microsoft Outlook](https://www.microsoft.com/en-us/microsoft-365/outlook/email-and-calendar-software-microsoft-outlook) and integrate Microsoft Outlook with other applications.

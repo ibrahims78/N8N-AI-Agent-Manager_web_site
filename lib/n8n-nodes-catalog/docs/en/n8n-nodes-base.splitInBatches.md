@@ -1,3 +1,7 @@
+# Loop Over Items (Split in Batches)
+
+> Documentation for the Loop Over Items node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
 # Loop Over Items
 
 The Loop Over Items node helps you loop through data when needed.
@@ -39,6 +43,8 @@ When enabled, you can adjust the reset conditions by switching the parameter rep
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for split-in-batches at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.splitinbatches/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.splitinbatches/)
 
 ### Read RSS feed from two different sources
 

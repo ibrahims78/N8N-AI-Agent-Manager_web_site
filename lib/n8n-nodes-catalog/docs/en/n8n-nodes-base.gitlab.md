@@ -1,3 +1,7 @@
+# GitLab node documentation
+
+> Learn how to use the GitLab node in n8n. Follow technical documentation to integrate GitLab node into your workflows.
+
 # GitLab node
 
 Use the GitLab node to automate work in GitLab, and integrate GitLab with other applications. n8n has built-in support for a wide range of GitLab features, including creating, updating, deleting, and editing issues, repositories, releases and users. 
@@ -42,6 +46,8 @@ On this page, you'll find a list of operations the GitLab node supports and link
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for gitlab at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gitlab/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gitlab/)
+
 ## Related resources
 
 Refer to [GitLab's documentation](https://docs.gitlab.com/ee/api/rest/) for more information about the service.
@@ -50,7 +56,7 @@ n8n provides a trigger node for GitLab. You can find the trigger node docs [here
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

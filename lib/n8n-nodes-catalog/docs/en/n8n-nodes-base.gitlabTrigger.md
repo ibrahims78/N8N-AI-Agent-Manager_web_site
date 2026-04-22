@@ -1,3 +1,7 @@
+# GitLab Trigger node documentation
+
+> Learn how to use the GitLab Trigger node in n8n. Follow technical documentation to integrate GitLab Trigger node into your workflows.
+
 # GitLab Trigger node
 
 [GitLab](https://gitlab.com/) is a web-based DevOps lifecycle tool that provides a Git-repository manager providing wiki, issue-tracking, and continuous integration/continuous installation pipeline features.

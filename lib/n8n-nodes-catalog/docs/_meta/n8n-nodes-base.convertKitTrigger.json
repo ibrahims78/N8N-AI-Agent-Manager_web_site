@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.convertKitTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.convertkittrigger.md",
+  "fetchedAt": "2026-04-22T18:36:00.661Z",
+  "frontmatter": {
+    "raw": {
+      "title": "ConvertKit Trigger node documentation",
+      "description": "Learn how to use the ConvertKit Trigger node in n8n. Follow technical documentation to integrate ConvertKit Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "ConvertKit Trigger node documentation",
+    "description": "Learn how to use the ConvertKit Trigger node in n8n. Follow technical documentation to integrate ConvertKit Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

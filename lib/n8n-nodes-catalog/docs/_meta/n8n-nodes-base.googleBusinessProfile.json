@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.googleBusinessProfile",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.googlebusinessprofile.md",
+  "fetchedAt": "2026-04-22T18:36:03.018Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Google Business Profile node documentation",
+      "description": "Learn how to use the Google Business Profile node in n8n. Follow technical documentation to integrate Google Business Profile node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Google Business Profile node documentation",
+    "description": "Learn how to use the Google Business Profile node in n8n. Follow technical documentation to integrate Google Business Profile node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

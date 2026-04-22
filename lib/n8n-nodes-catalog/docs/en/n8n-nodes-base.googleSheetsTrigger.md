@@ -1,10 +1,14 @@
+# Google Sheets Trigger node documentation
+
+> Learn how to use the Google Sheets Trigger node in n8n. Follow technical documentation to integrate Google Sheets Trigger node into your workflows.
+
 # Google Sheets Trigger node
 
 [Google Sheets](https://www.google.com/sheets) is a web-based spreadsheet program that's part of Google's office software suite within its Google Drive service.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/google/index.md).
+> You can find authentication information for this node [here](https://docs.n8n.io//).
 
 > **Examples and templates**
 >
@@ -20,19 +24,22 @@
 
 Refer to [Google Sheet's API documentation](https://developers.google.com/sheets/api) for more information about the service.
 
-n8n provides an app node for Google Sheets. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.googlesheets/index.md).
+n8n provides an app node for Google Sheets. You can find the node docs [here](https://docs.n8n.io//).
 
 View [example workflows and related content](https://n8n.io/integrations/google-sheets-trigger/) on n8n's website.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/trigger-nodes/n8n-nodes-base.googlesheetstrigger/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Google Sheets Trigger node common issues
 
-Here are some common errors and issues with the [Google Sheets Trigger node](/integrations/builtin/trigger-nodes/n8n-nodes-base.googlesheetstrigger/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Google Sheets Trigger node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Stuck waiting for trigger event
 

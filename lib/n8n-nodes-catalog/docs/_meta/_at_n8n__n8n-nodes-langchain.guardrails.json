@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.guardrails",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-langchain.guardrails.md",
+  "fetchedAt": "2026-04-22T18:36:10.952Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Guardrails node documentation",
+      "description": "Documentation for the Guardrails node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Guardrails node documentation",
+    "description": "Documentation for the Guardrails node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

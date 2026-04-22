@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.eventbriteTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.eventbritetrigger.md",
+  "fetchedAt": "2026-04-22T18:36:01.696Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Eventbrite Trigger node documentation",
+      "description": "Learn how to use the Eventbrite Trigger node in n8n. Follow technical documentation to integrate Eventbrite Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Eventbrite Trigger node documentation",
+    "description": "Learn how to use the Eventbrite Trigger node in n8n. Follow technical documentation to integrate Eventbrite Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

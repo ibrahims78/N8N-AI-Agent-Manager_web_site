@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.localFileTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.localfiletrigger.md",
+  "fetchedAt": "2026-04-22T18:36:05.338Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Local File Trigger node documentation",
+      "description": "Learn how to use the Local File Trigger node in n8n. Follow technical documentation to integrate Local File Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Local File Trigger node documentation",
+    "description": "Learn how to use the Local File Trigger node in n8n. Follow technical documentation to integrate Local File Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

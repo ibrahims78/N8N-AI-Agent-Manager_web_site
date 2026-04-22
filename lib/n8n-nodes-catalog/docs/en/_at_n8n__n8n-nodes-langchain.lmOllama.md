@@ -1,10 +1,14 @@
+# Ollama Model node documentation
+
+> Learn how to use the Ollama Model node in n8n. Follow technical documentation to integrate Ollama Model node into your workflows.
+
 # Ollama Model node
 
 The Ollama Model node allows you use local Llama 2 models.
 
 On this page, you'll find the node parameters for the Ollama Model node, and links to more resources.
 
-This node lacks tools support, so it won't work with the [AI Agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md) node. Instead, connect it with the [Basic LLM Chain](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainllm.md) node.
+This node lacks tools support, so it won't work with the [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) node. Instead, connect it with the [Basic LLM Chain](https://docs.n8n.io/n8n-nodes-langchain.chainllm/) node.
 
 > **Credentials**
 >
@@ -38,6 +42,8 @@ Refer to the Ollama [Models Library documentation](https://ollama.com/library) f
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for ollama-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmollama/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmollama/)
+
 ## Related resources
 
 Refer to [LangChains's Ollama documentation](https://js.langchain.com/docs/integrations/llms/ollama/) for more information about the service.
@@ -46,7 +52,7 @@ View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmollama/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.lmollama/common-issues/).
 
 ## Self-hosted AI Starter Kit
 
@@ -54,9 +60,12 @@ New to working with AI and using self-hosted n8n? Try n8n's [self-hosted AI Star
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Ollama Model node common issues
 
-Here are some common errors and issues with the [Ollama Model node](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmollama/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Ollama Model node](https://docs.n8n.io/n8n-nodes-langchain.lmollama/) and steps to resolve or troubleshoot them.
 
 ## Processing parameters
 

@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.vectorStoreZepLoad",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.vectorstorezep.md",
+  "fetchedAt": "2026-04-22T18:36:14.295Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Zep Vector Store node documentation",
+      "description": "Learn how to use the Zep Vector Store node in n8n. Follow technical documentation to integrate Zep Vector Store node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Zep Vector Store node documentation",
+    "description": "Learn how to use the Zep Vector Store node in n8n. Follow technical documentation to integrate Zep Vector Store node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

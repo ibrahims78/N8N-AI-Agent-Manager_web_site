@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.httpRequest",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md",
-  "fetchedAt": "2026-04-22T18:08:23.122Z",
+  "fetchedAt": "2026-04-22T18:36:04.714Z",
   "frontmatter": {
     "raw": {
       "title": "HTTP Request node documentation",

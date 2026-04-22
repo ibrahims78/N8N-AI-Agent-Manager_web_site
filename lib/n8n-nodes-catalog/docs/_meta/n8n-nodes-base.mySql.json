@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.mySql",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.mysql/index.md",
+  "fetchedAt": "2026-04-22T18:36:06.740Z",
+  "frontmatter": {
+    "raw": {
+      "title": "MySQL node documentation",
+      "description": "Learn how to use the MySQL node in n8n. Follow technical documentation to integrate MySQL node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "MySQL node documentation",
+    "description": "Learn how to use the MySQL node in n8n. Follow technical documentation to integrate MySQL node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "common-issues.md"
+  ],
+  "assets": []
+}

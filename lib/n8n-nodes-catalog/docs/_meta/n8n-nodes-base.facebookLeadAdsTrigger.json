@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.facebookLeadAdsTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.facebookleadadstrigger.md",
+  "fetchedAt": "2026-04-22T18:36:02.034Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Facebook Lead Ads Trigger node documentation",
+      "description": "Learn how to use the Facebook Lead Ads Trigger node in n8n. Follow technical documentation to integrate Facebook Lead Ads Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Facebook Lead Ads Trigger node documentation",
+    "description": "Learn how to use the Facebook Lead Ads Trigger node in n8n. Follow technical documentation to integrate Facebook Lead Ads Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

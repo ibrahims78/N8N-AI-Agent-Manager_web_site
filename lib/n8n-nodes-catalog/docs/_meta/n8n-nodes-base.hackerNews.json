@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.hackerNews",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.hackernews.md",
+  "fetchedAt": "2026-04-22T18:36:04.102Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Hacker News node documentation",
+      "description": "Learn how to use the Hacker News node in n8n. Follow technical documentation to integrate Hacker News node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Hacker News node documentation",
+    "description": "Learn how to use the Hacker News node in n8n. Follow technical documentation to integrate Hacker News node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

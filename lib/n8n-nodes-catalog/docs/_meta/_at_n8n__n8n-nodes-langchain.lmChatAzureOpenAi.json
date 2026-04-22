@@ -1,0 +1,18 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatazureopenai.md",
+  "fetchedAt": "2026-04-22T18:36:12.364Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Azure OpenAI Chat Model node documentation",
+      "description": "Learn how to use the Azure OpenAI Chat Model node in n8n. Follow technical documentation to integrate Azure OpenAI Chat Model node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Azure OpenAI Chat Model node documentation",
+    "description": "Learn how to use the Azure OpenAI Chat Model node in n8n. Follow technical documentation to integrate Azure OpenAI Chat Model node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

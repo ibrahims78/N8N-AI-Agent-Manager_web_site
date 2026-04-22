@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.flowTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.flowtrigger.md",
+  "fetchedAt": "2026-04-22T18:36:02.274Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Flow Trigger node documentation",
+      "description": "Learn how to use the Flow Trigger node in n8n. Follow technical documentation to integrate Flow Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Flow Trigger node documentation",
+    "description": "Learn how to use the Flow Trigger node in n8n. Follow technical documentation to integrate Flow Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

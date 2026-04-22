@@ -1,10 +1,14 @@
 # Send Email
 
+> Documentation for the Send Email node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Send Email
+
 The Send Email node sends emails using an SMTP email server.
 
 > **Credential**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/sendemail/index.md).
+> You can find authentication information for this node [here](https://docs.n8n.io//).
 
 ## Node parameters
 
@@ -16,7 +20,7 @@ Configure this node using the following parameters.
 
 ### Credential to connect with
 
-Select or create an [SMTP account credential](/integrations/builtin/credentials/sendemail/index.md) for the node to use.
+Select or create an [SMTP account credential](https://docs.n8n.io//) for the node to use.
 
 ### Operation
 
@@ -63,7 +67,7 @@ Set whether to include the phrase `This email was sent automatically with n8n` a
 
 Enter the name of the binary properties that contain data to add as an attachment. Some tips on using this option:
 
-* Use the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node to upload the file to your workflow.
+* Use the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](https://docs.n8n.io//) node to upload the file to your workflow.
 * Add multiple attachments by entering a comma-separated list of binary properties.
 * Reference embedded images or other content within the body of an email message, for example `<img src="cid:image_1">`.
 
@@ -145,3 +149,5 @@ The Send Email (SMTP) node does not support setting headers like `In-Reply-To` a
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for send-email at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.sendemail/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.sendemail/)

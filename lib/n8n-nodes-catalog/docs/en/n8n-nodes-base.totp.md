@@ -1,5 +1,9 @@
 # TOTP
 
+> Documentation for the TOTP node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# TOTP
+
 The TOTP node provides a way to generate a TOTP (time-based one-time password).
 
 > **Credentials**
@@ -41,3 +45,5 @@ Enter how many seconds the TOTP is valid for. Default is `30`.
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for totp at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.totp/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.totp/)

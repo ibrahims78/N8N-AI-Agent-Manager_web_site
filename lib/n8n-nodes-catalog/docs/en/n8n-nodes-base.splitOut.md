@@ -1,5 +1,9 @@
 # Split Out
 
+> Documentation for the Split Out node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Split Out
+
 Use the Split Out node to separate a single data item containing a list into multiple items. For example, a list of customers, and you want to split them so that you have an item for each customer.
 
 ## Node parameters
@@ -40,6 +44,8 @@ Choose whether to include binary data from the input in the new output (turned o
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for split-out at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.splitout/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.splitout/)
 
 ## Related resources
 

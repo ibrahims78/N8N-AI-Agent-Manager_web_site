@@ -1,3 +1,7 @@
+# Embeddings Mistral Cloud node documentation
+
+> Learn how to use the Embeddings Mistral Cloud node in n8n. Follow technical documentation to integrate Embeddings Mistral Cloud node into your workflows.
+
 # Embeddings Mistral Cloud node
 
 Use the Embeddings Mistral Cloud node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
@@ -30,6 +34,8 @@ Learn more about available models in [Mistral's models documentation](https://do
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for embeddings-mistral-cloud at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingsmistralcloud/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingsmistralcloud/)
 
 ## Related resources
 

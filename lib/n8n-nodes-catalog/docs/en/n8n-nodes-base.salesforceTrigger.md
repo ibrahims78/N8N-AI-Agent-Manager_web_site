@@ -1,3 +1,7 @@
+# Salesforce Trigger node documentation
+
+> Learn how to use the Salesforce Trigger node in n8n. Follow technical documentation to integrate Salesforce Trigger node into your workflows.
+
 # Salesforce Trigger node
 
 Use the Salesforce Trigger node to respond to events in [Salesforce](https://login.salesforce.com/) and integrate Salesforce with other applications. n8n has built-in support for a wide range of Salesforce events.

@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.discourse",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.discourse.md",
+  "fetchedAt": "2026-04-22T18:36:01.187Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Discourse node documentation",
+      "description": "Learn how to use the Discourse node in n8n. Follow technical documentation to integrate Discourse node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Discourse node documentation",
+    "description": "Learn how to use the Discourse node in n8n. Follow technical documentation to integrate Discourse node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

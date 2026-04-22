@@ -1,3 +1,7 @@
+# SyncroMSP node documentation
+
+> Learn how to use the SyncroMSP node in n8n. Follow technical documentation to integrate SyncroMSP node into your workflows.
+
 # SyncroMSP node
 
 Use the SyncroMSP node to automate work in SyncroMSP, and integrate SyncroMSP with other applications. n8n has built-in support for a wide range of SyncroMSP features, including creating and deleting new customers, tickets, and contacts. 
@@ -38,3 +42,5 @@ On this page, you'll find a list of operations the SyncroMSP node supports and l
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for syncromsp at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.syncromsp/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.syncromsp/)

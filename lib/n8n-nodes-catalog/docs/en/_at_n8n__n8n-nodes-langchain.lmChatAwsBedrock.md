@@ -1,3 +1,7 @@
+# AWS Bedrock Chat Model node documentation
+
+> Learn how to use the AWS Bedrock Chat Model node in n8n. Follow technical documentation to integrate AWS Bedrock Chat Model node into your workflows.
+
 # AWS Bedrock Chat Model node
 
 The AWS Bedrock Chat Model node allows you use LLM models utilising AWS Bedrock platform.
@@ -34,6 +38,8 @@ This node doesn't support the [`NO_PROXY` environment variable](/hosting/configu
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for aws-bedrock-chat-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatawsbedrock/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatawsbedrock/)
 
 ## Related resources
 

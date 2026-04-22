@@ -1,3 +1,7 @@
+# Keap Trigger node documentation
+
+> Learn how to use the Keap Trigger node in n8n. Follow technical documentation to integrate Keap Trigger node into your workflows.
+
 # Keap Trigger node
 
 [Keap](https://keap.com/) is an e-mail marketing and sales platform for small businesses, including products to manage and optimize the customer lifecycle, customer relationship management, marketing automation, lead capture, and e-commerce.

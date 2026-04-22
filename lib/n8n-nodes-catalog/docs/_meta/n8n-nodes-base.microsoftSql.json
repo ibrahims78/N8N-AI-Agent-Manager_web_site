@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.microsoftSql",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.microsoftsql.md",
+  "fetchedAt": "2026-04-22T18:36:06.215Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Microsoft SQL node documentation",
+      "description": "Learn how to use the Microsoft SQL node in n8n. Follow technical documentation to integrate Microsoft SQL node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Microsoft SQL node documentation",
+    "description": "Learn how to use the Microsoft SQL node in n8n. Follow technical documentation to integrate Microsoft SQL node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

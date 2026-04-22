@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.chargebeeTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.chargebeetrigger.md",
+  "fetchedAt": "2026-04-22T18:36:00.191Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Chargebee Trigger node documentation",
+      "description": "Learn how to use the Chargebee Trigger node in n8n. Follow technical documentation to integrate Chargebee Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Chargebee Trigger node documentation",
+    "description": "Learn how to use the Chargebee Trigger node in n8n. Follow technical documentation to integrate Chargebee Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

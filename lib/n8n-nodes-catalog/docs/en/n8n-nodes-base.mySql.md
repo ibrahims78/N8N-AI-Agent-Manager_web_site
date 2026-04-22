@@ -1,3 +1,7 @@
+# MySQL node documentation
+
+> Learn how to use the MySQL node in n8n. Follow technical documentation to integrate MySQL node into your workflows.
+
 # MySQL node
 
 Use the MySQL node to automate work in MySQL, and integrate MySQL with other applications. n8n has built-in support for a wide range of MySQL features, including executing an SQL query, as well as inserting, and updating rows in a database.
@@ -24,6 +28,8 @@ On this page, you'll find a list of operations the MySQL node supports and links
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for mysql at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mysql/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mysql/)
 
 ## Related resources
 
@@ -67,13 +73,16 @@ users,
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common issues](/integrations/builtin/app-nodes/n8n-nodes-base.mysql/common-issues.md).
+For common errors or issues and suggested resolution steps, refer to [Common issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # MySQL node common issues
 
-Here are some common errors and issues with the [MySQL node](/integrations/builtin/app-nodes/n8n-nodes-base.mysql/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [MySQL node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Update rows by composite key
 

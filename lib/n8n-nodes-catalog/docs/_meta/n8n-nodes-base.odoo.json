@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.odoo",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.odoo.md",
+  "fetchedAt": "2026-04-22T18:36:06.819Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Odoo node documentation",
+      "description": "Learn how to use the Odoo node in n8n. Follow technical documentation to integrate Odoo node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Odoo node documentation",
+    "description": "Learn how to use the Odoo node in n8n. Follow technical documentation to integrate Odoo node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

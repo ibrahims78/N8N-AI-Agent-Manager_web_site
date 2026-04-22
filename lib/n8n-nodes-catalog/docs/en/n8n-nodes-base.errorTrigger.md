@@ -1,3 +1,7 @@
+# Error Trigger node documentation
+
+> Learn how to use the Error Trigger node in n8n. Follow technical documentation to integrate Error Trigger node into your workflows.
+
 # Error Trigger node
 
 You can use the Error Trigger node to create error workflows. When another linked workflow fails, this node gets details about the failed workflow and the errors, and runs the error workflow.
@@ -8,7 +12,7 @@ You can use the Error Trigger node to create error workflows. When another linke
 2. Give the workflow a name, for example `Error Handler`. 
 3. Select **Save**.
 4. In the workflow where you want to use this error workflow:
-	1. Select **Options** <span class="n8n-inline-image">![Options menu icon](/_images/common-icons/three-dot-options-menu.png){.off-glb}</span> > **Settings**.
+	1. Select **Options** <span class="n8n-inline-image">![Options menu icon](/api/catalog/docs/assets/n8n-nodes-base.errorTrigger/three-dot-options-menu.png){.off-glb}</span> > **Settings**.
 	2. In **Error workflow**, select the workflow you just created. For example, if you used the name Error Handler, select **Error handler**.
 	3. Select **Save**.
 	Now, when this workflow errors, the related error workflow runs.
@@ -22,6 +26,8 @@ Note the following:
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for error-trigger at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.errortrigger/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.errortrigger/)
 
 ## Related resources
 

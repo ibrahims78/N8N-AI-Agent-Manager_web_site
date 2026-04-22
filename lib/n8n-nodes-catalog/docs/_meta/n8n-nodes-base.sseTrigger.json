@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.sseTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.ssetrigger.md",
+  "fetchedAt": "2026-04-22T18:36:08.826Z",
+  "frontmatter": {
+    "raw": {
+      "title": "SSE Trigger node documentation",
+      "description": "Learn how to use the SSE Trigger node in n8n. Follow technical documentation to integrate SSE Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "SSE Trigger node documentation",
+    "description": "Learn how to use the SSE Trigger node in n8n. Follow technical documentation to integrate SSE Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

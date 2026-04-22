@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.netscalerAdc",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.netscaleradc.md",
+  "fetchedAt": "2026-04-22T18:36:06.665Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Netscaler ADC node documentation",
+      "description": "Learn how to use the Netscaler ADC node in n8n. Follow technical documentation to integrate Netscaler ADC node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Netscaler ADC node documentation",
+    "description": "Learn how to use the Netscaler ADC node in n8n. Follow technical documentation to integrate Netscaler ADC node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

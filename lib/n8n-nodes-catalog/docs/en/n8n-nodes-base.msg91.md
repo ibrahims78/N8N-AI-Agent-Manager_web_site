@@ -1,3 +1,7 @@
+# MSG91 node documentation
+
+> Learn how to use the MSG91 node in n8n. Follow technical documentation to integrate MSG91 node into your workflows.
+
 # MSG91 node
 
 Use the MSG91 node to automate work in MSG91, and integrate MSG91 with other applications. n8n supports sending SMS with MSG91.
@@ -16,6 +20,8 @@ On this page, you'll find a list of operations the MSG91 node supports and links
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for msg91 at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.msg91/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.msg91/)
 
 ## Find your Sender ID
 

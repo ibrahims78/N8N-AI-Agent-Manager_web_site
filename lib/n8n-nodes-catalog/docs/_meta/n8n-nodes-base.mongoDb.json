@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.mongoDb",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.mongodb.md",
+  "fetchedAt": "2026-04-22T18:36:06.376Z",
+  "frontmatter": {
+    "raw": {
+      "title": "MongoDB node documentation",
+      "description": "Learn how to use the MongoDB node in n8n. Follow technical documentation to integrate MongoDB node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "MongoDB node documentation",
+    "description": "Learn how to use the MongoDB node in n8n. Follow technical documentation to integrate MongoDB node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,3 +1,7 @@
+# Mailjet Trigger node documentation
+
+> Learn how to use the Mailjet Trigger node in n8n. Follow technical documentation to integrate Mailjet Trigger node into your workflows.
+
 # Mailjet Trigger node
 
 [Mailjet](https://www.mailjet.com/) is a cloud-based email sending and tracking system. The platform allows professionals to send both marketing emails and transactional emails. It includes tools for designing emails, sending massive volumes and tracking these messages.

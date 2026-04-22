@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.dropcontact",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.dropcontact.md",
+  "fetchedAt": "2026-04-22T18:36:01.385Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Dropcontact node documentation",
+      "description": "Learn how to use the Dropcontact node in n8n. Follow technical documentation to integrate Dropcontact node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Dropcontact node documentation",
+    "description": "Learn how to use the Dropcontact node in n8n. Follow technical documentation to integrate Dropcontact node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

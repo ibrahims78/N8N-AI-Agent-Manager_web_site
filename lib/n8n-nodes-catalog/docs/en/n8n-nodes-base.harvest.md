@@ -1,3 +1,7 @@
+# Harvest node documentation
+
+> Learn how to use the Harvest node in n8n. Follow technical documentation to integrate Harvest node into your workflows.
+
 # Harvest node
 
 Use the Harvest node to automate work in Harvest, and integrate Harvest with other applications. n8n has built-in support for a wide range of Harvest features, including creating, updating, deleting, and getting clients, contacts, invoices, tasks, expenses, users, and projects. 
@@ -76,9 +80,11 @@ On this page, you'll find a list of operations the Harvest node supports and lin
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for harvest at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.harvest/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.harvest/)
+
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

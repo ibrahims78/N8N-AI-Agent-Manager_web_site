@@ -1,3 +1,7 @@
+# Airtop node documentation
+
+> Learn how to use the Airtop node in n8n. Follow technical documentation to integrate Airtop node into your workflows.
+
 # Airtop node
 
 Use the Airtop node to automate work in Airtop, and integrate Airtop with other applications. n8n has built-in support for a wide range of Airtop features, enabling you to control a cloud-based web browser for tasks like querying, scraping, and interacting with web pages.
@@ -32,13 +36,15 @@ On this page, you'll find a list of operations the Airtop node supports, and lin
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for airtop at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.airtop/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.airtop/)
+
 ## Related resources
 
 Refer to [Airtop's documentation](https://docs.airtop.ai/api-reference/airtop-api) for more information about the service.
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

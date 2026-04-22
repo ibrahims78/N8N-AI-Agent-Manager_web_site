@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.surveyMonkeyTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.surveymonkeytrigger.md",
+  "fetchedAt": "2026-04-22T18:36:09.050Z",
+  "frontmatter": {
+    "raw": {
+      "title": "SurveyMonkey Trigger node documentation",
+      "description": "Learn how to use the SurveyMonkey Trigger node in n8n. Follow technical documentation to integrate SurveyMonkey Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "SurveyMonkey Trigger node documentation",
+    "description": "Learn how to use the SurveyMonkey Trigger node in n8n. Follow technical documentation to integrate SurveyMonkey Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,3 +1,7 @@
+# Brevo Trigger node documentation
+
+> Learn how to use the Brevo Trigger node in n8n. Follow technical documentation to integrate Brevo Trigger node into your workflows.
+
 # Brevo Trigger node
 
 [Brevo](https://www.brevo.com/) is a digital marketing platform to help users grow their business.

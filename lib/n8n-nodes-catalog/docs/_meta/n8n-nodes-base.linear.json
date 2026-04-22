@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.linear",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.linear.md",
+  "fetchedAt": "2026-04-22T18:36:05.213Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Linear node documentation",
+      "description": "Learn how to use the Linear node in n8n. Follow technical documentation to integrate Linear node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Linear node documentation",
+    "description": "Learn how to use the Linear node in n8n. Follow technical documentation to integrate Linear node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

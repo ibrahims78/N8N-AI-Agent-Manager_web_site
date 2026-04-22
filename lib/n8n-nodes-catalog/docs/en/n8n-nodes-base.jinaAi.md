@@ -1,3 +1,7 @@
+# Jina AI node documentation
+
+> Learn how to use the Jina AI node in n8n. Follow technical documentation to integrate Jina AI node into your workflows.
+
 # Jina AI node
 
 Use the Jina AI node to automate work in Jina AI and integrate Jina AI with other applications. n8n has built-in support for a wide range of Jina AI features.
@@ -20,13 +24,15 @@ On this page, you'll find a list of operations the Jina AI node supports, and li
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for jina-ai at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.jinaai/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.jinaai/)
+
 ## Related resources
 
 Refer to [Jina AI's reader API documentation](https://r.jina.ai/docs) and [Jina AI's search API documentation](https://s.jina.ai/docs) for more information about the service.
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

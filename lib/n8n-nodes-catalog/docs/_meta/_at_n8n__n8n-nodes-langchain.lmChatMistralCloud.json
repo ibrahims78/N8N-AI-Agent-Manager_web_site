@@ -1,0 +1,18 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatmistralcloud.md",
+  "fetchedAt": "2026-04-22T18:36:12.565Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Mistral Cloud Chat Model node documentation",
+      "description": "Learn how to use the Mistral Cloud Chat Model node in n8n. Follow technical documentation to integrate Mistral Cloud Chat Model node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Mistral Cloud Chat Model node documentation",
+    "description": "Learn how to use the Mistral Cloud Chat Model node in n8n. Follow technical documentation to integrate Mistral Cloud Chat Model node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

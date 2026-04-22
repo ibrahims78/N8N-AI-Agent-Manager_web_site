@@ -1,3 +1,7 @@
+# Microsoft Teams Trigger node documentation
+
+> Learn how to use the Microsoft Teams Trigger node in n8n. Follow technical documentation to integrate Microsoft Teams Trigger node into your workflows.
+
 # Microsoft Teams Trigger node
 
 Use the Microsoft Teams Trigger node to respond to events in [Microsoft Teams](https://www.microsoft.com/en-us/microsoft-teams/group-chat-software) and integrate Microsoft Teams with other applications.

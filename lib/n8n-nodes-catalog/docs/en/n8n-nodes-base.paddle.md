@@ -1,3 +1,7 @@
+# Paddle node documentation
+
+> Learn how to use the Paddle node in n8n. Follow technical documentation to integrate Paddle node into your workflows.
+
 # Paddle node
 
 Use the Paddle node to automate work in Paddle, and integrate Paddle with other applications. n8n has built-in support for a wide range of Paddle features, including creating, updating, and getting coupons, as well as getting plans, products, and users. 
@@ -28,3 +32,5 @@ On this page, you'll find a list of operations the Paddle node supports and link
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for paddle at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.paddle/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.paddle/)

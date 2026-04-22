@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.documentGithubLoader",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.documentgithubloader.md",
+  "fetchedAt": "2026-04-22T18:36:11.561Z",
+  "frontmatter": {
+    "raw": {
+      "title": "GitHub Document Loader node documentation",
+      "description": "Learn how to use the GitHub Document Loader node in n8n. Follow technical documentation to integrate GitHub Document Loader node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "GitHub Document Loader node documentation",
+    "description": "Learn how to use the GitHub Document Loader node in n8n. Follow technical documentation to integrate GitHub Document Loader node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

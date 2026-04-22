@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.azureStorage",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.azurestorage.md",
+  "fetchedAt": "2026-04-22T18:36:06.238Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Azure Storage node documentation",
+      "description": "Learn how to use the Azure Storage node in n8n. Follow technical documentation to integrate Azure Storage node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Azure Storage node documentation",
+    "description": "Learn how to use the Azure Storage node in n8n. Follow technical documentation to integrate Azure Storage node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

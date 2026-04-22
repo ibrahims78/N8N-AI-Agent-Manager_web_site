@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.acuitySchedulingTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.acuityschedulingtrigger.md",
+  "fetchedAt": "2026-04-22T18:35:58.625Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Acuity Scheduling Trigger node documentation",
+      "description": "Learn how to use the Acuity Scheduling Trigger node in n8n. Follow technical documentation to integrate Acuity Scheduling Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Acuity Scheduling Trigger node documentation",
+    "description": "Learn how to use the Acuity Scheduling Trigger node in n8n. Follow technical documentation to integrate Acuity Scheduling Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

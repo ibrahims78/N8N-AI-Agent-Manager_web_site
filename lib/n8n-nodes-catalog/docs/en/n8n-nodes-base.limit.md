@@ -1,5 +1,9 @@
 # Limit
 
+> Documentation for the Limit node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Limit
+
 Use the Limit node to remove items beyond a defined maximum number. You can choose whether n8n takes the items from the beginning or end of the input data.
 
 ## Node parameters
@@ -20,6 +24,8 @@ If the node has to remove items, select where it keeps the input items from:
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for limit at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.limit/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.limit/)
 
 ## Related resources
 

@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.demio",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.demio.md",
+  "fetchedAt": "2026-04-22T18:36:01.089Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Demio node documentation",
+      "description": "Learn how to use the Demio node in n8n. Follow technical documentation to integrate Demio node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Demio node documentation",
+    "description": "Learn how to use the Demio node in n8n. Follow technical documentation to integrate Demio node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

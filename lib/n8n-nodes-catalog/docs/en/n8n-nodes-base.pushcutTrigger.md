@@ -1,3 +1,7 @@
+# Pushcut Trigger node documentation
+
+> Learn how to use the Pushcut Trigger node in n8n. Follow technical documentation to integrate Pushcut Trigger node into your workflows.
+
 # Pushcut Trigger node
 
 [Pushcut](https://pushcut.io) is an app for iOS that lets you create smart notifications to kick off shortcuts, URLs, and online automation.

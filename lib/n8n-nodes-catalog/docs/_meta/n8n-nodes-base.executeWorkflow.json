@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.executeWorkflow",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.executeworkflow.md",
+  "fetchedAt": "2026-04-22T18:36:01.984Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Execute Sub-workflow",
+      "description": "Documentation for the Execute Sub-workflow node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Execute Sub-workflow",
+    "description": "Documentation for the Execute Sub-workflow node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": [
+    "three-dot-options-menu.png"
+  ]
+}

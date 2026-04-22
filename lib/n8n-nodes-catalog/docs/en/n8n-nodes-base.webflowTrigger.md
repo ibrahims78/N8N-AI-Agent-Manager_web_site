@@ -1,3 +1,7 @@
+# Webflow Trigger node documentation
+
+> Learn how to use the Webflow Trigger node in n8n. Follow technical documentation to integrate Webflow Trigger node into your workflows.
+
 # Webflow Trigger node
 
 [Webflow](https://webflow.com) is an application that allows you to build responsive websites with browser-based visual editing software.

@@ -1,3 +1,7 @@
+# OpenRouter Chat Model node documentation
+
+> Learn how to use the OpenRouter Chat Model node in n8n. Follow technical documentation to integrate OpenRouter Chat Model node into your workflows.
+
 # OpenRouter Chat Model node
 
 Use the OpenRouter Chat Model node to use OpenRouter's chat models with conversational agents.
@@ -63,6 +67,8 @@ Use this option to set the probability the completion should use. Use a lower va
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for openrouter-chat-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenrouter/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenrouter/)
 
 ## Related resources
 

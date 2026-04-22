@@ -1,3 +1,7 @@
+# AWS SES node documentation
+
+> Learn how to use the AWS SES node in n8n. Follow technical documentation to integrate AWS SES node into your workflows.
+
 # AWS SES node
 
 Use the AWS SES node to automate work in AWS SES, and integrate AWS SES with other applications. n8n has built-in support for a wide range of AWS SES features, including creating, getting, deleting, sending, updating, and adding templates and emails.
@@ -35,9 +39,11 @@ On this page, you'll find a list of operations the AWS SES node supports and lin
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for aws-ses at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.awsses/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.awsses/)
+
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

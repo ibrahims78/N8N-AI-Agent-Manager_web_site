@@ -1,10 +1,14 @@
+# AI Agent node documentation
+
+> Learn how to use the AI Agent node in n8n. Follow technical documentation to integrate AI Agent node into your workflows.
+
 # AI Agent node
 
 An [AI agent](/glossary.md#ai-agent) is an autonomous system that receives data, makes rational decisions, and acts within its environment to achieve specific goals. The AI agent's environment is everything the agent can access that isn't the agent itself. This agent uses external [tools](/glossary.md#ai-tool) and APIs to perform actions and retrieve information. It can understand the capabilities of different tools and determine which tool to use depending on the task. 
 
 > **Connect a tool**
 >
-> You must connect at least one tool [sub-node](/integrations/builtin/cluster-nodes/sub-nodes/index.md) to an AI Agent node.
+> You must connect at least one tool [sub-node](https://docs.n8n.io//) to an AI Agent node.
 
 > **Agent type**
 >
@@ -12,6 +16,8 @@ An [AI agent](/glossary.md#ai-agent) is an autonomous system that receives data,
 
 ## Templates and examples
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for agent at [https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/)
 
 ## Related resources
 
@@ -23,13 +29,16 @@ View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues.md).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # AI Agent node common issues
 
-Here are some common errors and issues with the [AI Agent node](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [AI Agent node](https://docs.n8n.io/n8n-nodes-langchain.agent/) and steps to resolve or troubleshoot them.
 
 ## Internal error: 400 Invalid value for 'content'
 
@@ -52,7 +61,7 @@ You might see this in one of two scenarios:
 
 ## Error in sub-node Simple Memory
 
-This error displays when n8n runs into an issue with the [Simple Memory](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memorybufferwindow/index.md) sub-node.
+This error displays when n8n runs into an issue with the [Simple Memory](https://docs.n8n.io/n8n-nodes-langchain.memorybufferwindow/) sub-node.
 
 It most often occurs when your workflow or the workflow template you copied uses an older version of the Simple memory node (previously known as "Window Buffer Memory").
 
@@ -66,11 +75,14 @@ To resolve this, click the + Chat Model button at the bottom of your screen when
 
 ## No prompt specified error
 
-This error occurs when the agent expects to get the prompt from the previous node automatically. Typically, this happens when you're using the [Chat Trigger Node](/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/index.md). 
+This error occurs when the agent expects to get the prompt from the previous node automatically. Typically, this happens when you're using the [Chat Trigger Node](https://docs.n8n.io//). 
 
 To resolve this issue, find the **Prompt** parameter of the AI Agent node and change it from **Connected Chat Trigger Node** to **Define below**. This allows you to manually build your prompt by referencing output data from other nodes or by adding static text.
 
 ---
+
+<!-- sibling:conversational-agent.md -->
+## Conversational Agent
 
 # Conversational AI Agent node
 
@@ -80,9 +92,9 @@ To resolve this issue, find the **Prompt** parameter of the AI Agent node and ch
 
 The Conversational Agent has human-like conversations. It can maintain context, understand user intent, and provide relevant answers. This agent is typically used for building chatbots, virtual assistants, and customer support systems.
 
-The Conversational Agent describes [tools](/glossary.md#ai-tool) in the system prompt and parses JSON responses for tool calls. If your preferred AI model doesn't support tool calling or you're handling simpler interactions, this agent is a good general option. It's more flexible but may be less accurate than the [Tools Agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/tools-agent.md).
+The Conversational Agent describes [tools](/glossary.md#ai-tool) in the system prompt and parses JSON responses for tool calls. If your preferred AI model doesn't support tool calling or you're handling simpler interactions, this agent is a good general option. It's more flexible but may be less accurate than the [Tools Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/tools-agent/).
 
-Refer to [AI Agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md) for more information on the AI Agent node itself.
+Refer to [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
 
 --8<-- "_snippets/integrations/builtin/cluster-nodes/use-with-chat-trigger.md"
 
@@ -149,25 +161,28 @@ Here is the user's input (remember to respond with a markdown code snippet of a 
 
 ## Templates and examples
 
-Refer to the main AI Agent node's [Templates and examples](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md#templates-and-examples) section.
+Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/n8n-nodes-langchain.agent/#templates-and-examples) section.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
 
 ---
+
+<!-- sibling:openai-functions-agent.md -->
+## Openai Functions Agent
 
 # OpenAI Functions Agent node
 
 Use the OpenAI Functions Agent node to use an [OpenAI functions model](https://platform.openai.com/docs/guides/function-calling). These are models that detect when a function should be called and respond with the inputs that should be passed to the function.
 
-Refer to [AI Agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md) for more information on the AI Agent node itself.
+Refer to [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
 
 --8<-- "_snippets/integrations/builtin/cluster-nodes/use-with-chat-trigger.md"
 
 > **OpenAI Chat Model required**
 >
-> You must use the [OpenAI Chat Model](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenai/index.md) with this agent.
+> You must use the [OpenAI Chat Model](https://docs.n8n.io/n8n-nodes-langchain.lmchatopenai/) with this agent.
 
 ## Node parameters
 
@@ -203,19 +218,22 @@ Refine the OpenAI Functions Agent node's behavior using these options:
 
 ## Templates and examples
 
-Refer to the main AI Agent node's [Templates and examples](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md#templates-and-examples) section.
+Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/n8n-nodes-langchain.agent/#templates-and-examples) section.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
 
 ---
 
+<!-- sibling:plan-execute-agent.md -->
+## Plan Execute Agent
+
 # Plan and Execute Agent node
 
-The Plan and Execute Agent is like the [ReAct agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/react-agent.md) but with a focus on planning. It first creates a high-level plan to solve the given task and then executes the plan step by step. This agent is most useful for tasks that require a structured approach and careful planning.
+The Plan and Execute Agent is like the [ReAct agent](https://docs.n8n.io/n8n-nodes-langchain.agent/react-agent/) but with a focus on planning. It first creates a high-level plan to solve the given task and then executes the plan step by step. This agent is most useful for tasks that require a structured approach and careful planning.
 
-Refer to [AI Agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md) for more information on the AI Agent node itself.
+Refer to [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
 
 ## Node parameters
 
@@ -249,13 +267,16 @@ Available LangChain expressions:
 
 ## Templates and examples
 
-Refer to the main AI Agent node's [Templates and examples](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md#templates-and-examples) section.
+Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/n8n-nodes-langchain.agent/#templates-and-examples) section.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
 
 ---
+
+<!-- sibling:react-agent.md -->
+## React Agent
 
 # ReAct AI Agent node
 
@@ -267,7 +288,7 @@ The ReAct Agent node implements [ReAct](https://react-lm.github.io/) logic. ReAc
 
 The ReAct Agent reasons about a given task, determines the necessary actions, and then executes them. It follows the cycle of reasoning and acting until it completes the task. The ReAct agent can break down complex tasks into smaller sub-tasks, prioritise them, and execute them one after the other.
 
-Refer to [AI Agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md) for more information on the AI Agent node itself.
+Refer to [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
 
 > **No memory**
 >
@@ -327,13 +348,16 @@ Refer to LangChain's [ReAct Agents](https://js.langchain.com/docs/concepts/agent
 
 ## Templates and examples
 
-Refer to the main AI Agent node's [Templates and examples](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md#templates-and-examples) section.
+Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/n8n-nodes-langchain.agent/#templates-and-examples) section.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
 
 ---
+
+<!-- sibling:sql-agent.md -->
+## Sql Agent
 
 # SQL AI Agent node
 
@@ -343,7 +367,7 @@ For common questions or issues and suggested solutions, refer to [Common issues]
 
 The SQL Agent uses a SQL database as a data source. It can understand natural language questions, convert them into SQL queries, execute the queries, and present the results in a user-friendly format. This agent is valuable for building natural language interfaces to databases.
 
-Refer to [AI Agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md) for more information on the AI Agent node itself.
+Refer to [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
 
 ## Node parameters
 
@@ -421,13 +445,16 @@ Default is `10`.
 
 ## Templates and examples
 
-Refer to the main AI Agent node's [Templates and examples](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md#templates-and-examples) section.
+Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/n8n-nodes-langchain.agent/#templates-and-examples) section.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
 
 ---
+
+<!-- sibling:tools-agent.md -->
+## Tools Agent
 
 # Tools AI Agent node
 
@@ -437,27 +464,27 @@ This agent has an enhanced ability to work with tools and can ensure a standard 
 
 The Tools Agent implements [Langchain's tool calling](https://js.langchain.com/docs/concepts/tool_calling/) interface. This interface describes available tools and their schemas. The agent also has improved output parsing capabilities, as it passes the parser to the model as a formatting tool.
 
-Refer to [AI Agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md) for more information on the AI Agent node itself.
+Refer to [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
 
 --8<-- "_snippets/integrations/builtin/cluster-nodes/use-with-chat-trigger.md"
 
 This agent supports the following chat models:
 
-* [OpenAI Chat Model](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenai/index.md)
-* [Groq Chat Model](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatgroq.md)
-* [Mistral Cloud Chat Model](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatmistralcloud.md)
-* [Anthropic Chat Model](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatanthropic.md)
-* [Azure OpenAI Chat Model](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatazureopenai.md)
+* [OpenAI Chat Model](https://docs.n8n.io/n8n-nodes-langchain.lmchatopenai/)
+* [Groq Chat Model](https://docs.n8n.io/n8n-nodes-langchain.lmchatgroq/)
+* [Mistral Cloud Chat Model](https://docs.n8n.io/n8n-nodes-langchain.lmchatmistralcloud/)
+* [Anthropic Chat Model](https://docs.n8n.io/n8n-nodes-langchain.lmchatanthropic/)
+* [Azure OpenAI Chat Model](https://docs.n8n.io/n8n-nodes-langchain.lmchatazureopenai/)
 
 ??? Details "The Tools Agent can use the following tools..."
-    * [Call n8n Workflow](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolworkflow.md)
-    * [Code](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolcode.md)
-    * [HTTP Request](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolhttprequest.md)
+    * [Call n8n Workflow](https://docs.n8n.io/n8n-nodes-langchain.toolworkflow/)
+    * [Code](https://docs.n8n.io/n8n-nodes-langchain.toolcode/)
+    * [HTTP Request](https://docs.n8n.io/n8n-nodes-langchain.toolhttprequest/)
     * [Action Network](/integrations/builtin/app-nodes/n8n-nodes-base.actionnetwork.md)
     * [ActiveCampaign](/integrations/builtin/app-nodes/n8n-nodes-base.activecampaign.md)
     * [Affinity](/integrations/builtin/app-nodes/n8n-nodes-base.affinity.md)
     * [Agile CRM](/integrations/builtin/app-nodes/n8n-nodes-base.agilecrm.md)
-    * [Airtable](/integrations/builtin/app-nodes/n8n-nodes-base.airtable/index.md)
+    * [Airtable](https://docs.n8n.io//)
     * [APITemplate.io](/integrations/builtin/app-nodes/n8n-nodes-base.apitemplateio.md)
     * [Asana](/integrations/builtin/app-nodes/n8n-nodes-base.asana.md)
     * [AWS Lambda](/integrations/builtin/app-nodes/n8n-nodes-base.awslambda.md)
@@ -467,14 +494,14 @@ This agent supports the following chat models:
     * [AWS Transcribe](/integrations/builtin/app-nodes/n8n-nodes-base.awstranscribe.md)
     * [Baserow](/integrations/builtin/app-nodes/n8n-nodes-base.baserow.md)
     * [Bubble](/integrations/builtin/app-nodes/n8n-nodes-base.bubble.md)
-    * [Calculator](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolcalculator.md)
+    * [Calculator](https://docs.n8n.io/n8n-nodes-langchain.toolcalculator/)
     * [ClickUp](/integrations/builtin/app-nodes/n8n-nodes-base.clickup.md)
     * [CoinGecko](/integrations/builtin/app-nodes/n8n-nodes-base.coingecko.md)
     * [Compression](/integrations/builtin/core-nodes/n8n-nodes-base.compression.md)
     * [Crypto](/integrations/builtin/core-nodes/n8n-nodes-base.crypto.md)
     * [DeepL](/integrations/builtin/app-nodes/n8n-nodes-base.deepl.md)
     * [DHL](/integrations/builtin/app-nodes/n8n-nodes-base.dhl.md)
-    * [Discord](/integrations/builtin/app-nodes/n8n-nodes-base.discord/index.md)
+    * [Discord](https://docs.n8n.io//)
     * [Dropbox](/integrations/builtin/app-nodes/n8n-nodes-base.dropbox.md)
     * [Elasticsearch](/integrations/builtin/app-nodes/n8n-nodes-base.elasticsearch.md)
     * [ERPNext](/integrations/builtin/app-nodes/n8n-nodes-base.erpnext.md)
@@ -484,17 +511,17 @@ This agent supports the following chat models:
     * [Git](/integrations/builtin/core-nodes/n8n-nodes-base.git.md)
     * [GitHub](/integrations/builtin/app-nodes/n8n-nodes-base.github.md)
     * [GitLab](/integrations/builtin/app-nodes/n8n-nodes-base.gitlab.md)
-    * [Gmail](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/index.md)
+    * [Gmail](https://docs.n8n.io//)
     * [Google Analytics](/integrations/builtin/app-nodes/n8n-nodes-base.googleanalytics.md)
     * [Google BigQuery](/integrations/builtin/app-nodes/n8n-nodes-base.googlebigquery.md)
-    * [Google Calendar](/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/index.md)
+    * [Google Calendar](https://docs.n8n.io//)
     * [Google Chat](/integrations/builtin/app-nodes/n8n-nodes-base.googlechat.md)
     * [Google Cloud Firestore](/integrations/builtin/app-nodes/n8n-nodes-base.googlecloudfirestore.md)
     * [Google Cloud Realtime Database](/integrations/builtin/app-nodes/n8n-nodes-base.googlecloudrealtimedatabase.md)
     * [Google Contacts](/integrations/builtin/app-nodes/n8n-nodes-base.googlecontacts.md)
     * [Google Docs](/integrations/builtin/app-nodes/n8n-nodes-base.googledocs.md)
-    * [Google Drive](/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/index.md)
-    * [Google Sheets](/integrations/builtin/app-nodes/n8n-nodes-base.googlesheets/index.md)
+    * [Google Drive](https://docs.n8n.io//)
+    * [Google Sheets](https://docs.n8n.io//)
     * [Google Slides](/integrations/builtin/app-nodes/n8n-nodes-base.googleslides.md)
     * [Google Tasks](/integrations/builtin/app-nodes/n8n-nodes-base.googletasks.md)
     * [Google Translate](/integrations/builtin/app-nodes/n8n-nodes-base.googletranslate.md)
@@ -526,15 +553,15 @@ This agent supports the following chat models:
     * [Monday.com](/integrations/builtin/app-nodes/n8n-nodes-base.mondaycom.md)
     * [MongoDB](/integrations/builtin/app-nodes/n8n-nodes-base.mongodb.md)
     * [MQTT](/integrations/builtin/app-nodes/n8n-nodes-base.mqtt.md)
-    * [MySQL](/integrations/builtin/app-nodes/n8n-nodes-base.mysql/index.md)
+    * [MySQL](https://docs.n8n.io//)
     * [NASA](/integrations/builtin/app-nodes/n8n-nodes-base.nasa.md)
     * [Nextcloud](/integrations/builtin/app-nodes/n8n-nodes-base.nextcloud.md)
     * [NocoDB](/integrations/builtin/app-nodes/n8n-nodes-base.nocodb.md)
-    * [Notion](/integrations/builtin/app-nodes/n8n-nodes-base.notion/index.md)
+    * [Notion](https://docs.n8n.io//)
     * [Odoo](/integrations/builtin/app-nodes/n8n-nodes-base.odoo.md)
     * [OpenWeatherMap](/integrations/builtin/app-nodes/n8n-nodes-base.openweathermap.md)
     * [Pipedrive](/integrations/builtin/app-nodes/n8n-nodes-base.pipedrive.md)
-    * [Postgres](/integrations/builtin/app-nodes/n8n-nodes-base.postgres/index.md)
+    * [Postgres](https://docs.n8n.io//)
     * [Pushover](/integrations/builtin/app-nodes/n8n-nodes-base.pushover.md)
     * [QuickBooks Online](/integrations/builtin/app-nodes/n8n-nodes-base.quickbooks.md)
     * [QuickChart](/integrations/builtin/app-nodes/n8n-nodes-base.quickchart.md)
@@ -546,22 +573,22 @@ This agent supports the following chat models:
     * [Salesforce](/integrations/builtin/app-nodes/n8n-nodes-base.salesforce.md)
     * [Send Email](/integrations/builtin/core-nodes/n8n-nodes-base.sendemail.md)
     * [SendGrid](/integrations/builtin/app-nodes/n8n-nodes-base.sendgrid.md)
-    * [SerpApi (Google Search)](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolserpapi.md)
+    * [SerpApi (Google Search)](https://docs.n8n.io/n8n-nodes-langchain.toolserpapi/)
     * [Shopify](/integrations/builtin/app-nodes/n8n-nodes-base.shopify.md)
     * [Slack](/integrations/builtin/app-nodes/n8n-nodes-base.slack.md)
     * [Spotify](/integrations/builtin/app-nodes/n8n-nodes-base.spotify.md)
     * [Stripe](/integrations/builtin/app-nodes/n8n-nodes-base.stripe.md)
-    * [Supabase](/integrations/builtin/app-nodes/n8n-nodes-base.supabase/index.md)
-    * [Telegram](/integrations/builtin/app-nodes/n8n-nodes-base.telegram/index.md)
+    * [Supabase](https://docs.n8n.io//)
+    * [Telegram](https://docs.n8n.io//)
     * [Todoist](/integrations/builtin/app-nodes/n8n-nodes-base.todoist.md)
     * [TOTP](/integrations/builtin/core-nodes/n8n-nodes-base.totp.md)
     * [Trello](/integrations/builtin/app-nodes/n8n-nodes-base.trello.md)
     * [Twilio](/integrations/builtin/app-nodes/n8n-nodes-base.twilio.md)
     * [urlscan.io](/integrations/builtin/app-nodes/n8n-nodes-base.urlscanio.md)
-    * [Vector Store](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolvectorstore.md)
+    * [Vector Store](https://docs.n8n.io/n8n-nodes-langchain.toolvectorstore/)
     * [Webflow](/integrations/builtin/app-nodes/n8n-nodes-base.webflow.md)
-    * [Wikipedia](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolwikipedia.md)
-    * [Wolfram|Alpha](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolwolframalpha.md)
+    * [Wikipedia](https://docs.n8n.io/n8n-nodes-langchain.toolwikipedia/)
+    * [Wolfram|Alpha](https://docs.n8n.io/n8n-nodes-langchain.toolwolframalpha/)
     * [WooCommerce](/integrations/builtin/app-nodes/n8n-nodes-base.woocommerce.md)
     * [Wordpress](/integrations/builtin/app-nodes/n8n-nodes-base.wordpress.md)
     * [X (Formerly Twitter)](/integrations/builtin/app-nodes/n8n-nodes-base.twitter.md)
@@ -614,11 +641,11 @@ When enabled, the AI Agent sends data back to the user in real-time as it genera
 
 > **Streaming requirements**
 >
-> For streaming to work, your workflow must use a trigger that supports streaming responses, such as the [Chat Trigger](/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/index.md) or [Webhook](/integrations/builtin/core-nodes/n8n-nodes-base.webhook/index.md) node with **Response Mode** set to **Streaming**.
+> For streaming to work, your workflow must use a trigger that supports streaming responses, such as the [Chat Trigger](https://docs.n8n.io//) or [Webhook](https://docs.n8n.io//) node with **Response Mode** set to **Streaming**.
 
 ## Templates and examples
 
-Refer to the main AI Agent node's [Templates and examples](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md#templates-and-examples) section.
+Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/n8n-nodes-langchain.agent/#templates-and-examples) section.
 
 ## Dynamic parameters for tools with `$fromAI()`
 
@@ -641,4 +668,4 @@ For detailed setup instructions and best practices, refer to [Human-in-the-loop 
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).

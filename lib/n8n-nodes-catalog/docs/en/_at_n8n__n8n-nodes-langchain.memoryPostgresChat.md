@@ -1,3 +1,7 @@
+# Postgres Chat Memory node documentation
+
+> Learn how to use the Postgres Chat Memory node in n8n. Follow technical documentation to integrate Postgres Chat Memory node into your workflows.
+
 # Postgres Chat Memory node
 
 Use the Postgres Chat Memory node to use Postgres as a [memory](/glossary.md#ai-memory) server for storing chat history.

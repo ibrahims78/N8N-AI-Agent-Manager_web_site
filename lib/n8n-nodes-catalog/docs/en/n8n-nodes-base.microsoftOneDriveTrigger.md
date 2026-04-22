@@ -1,3 +1,7 @@
+# Microsoft OneDrive Trigger node documentation
+
+> Learn how to use the Microsoft OneDrive Trigger node in n8n. Follow technical documentation to integrate Microsoft OneDrive Trigger node into your workflows.
+
 # Microsoft OneDrive Trigger node
 
 Use the Microsoft OneDrive Trigger node to respond to events in [Microsoft OneDrive](https://www.microsoft.com/en-us/microsoft-365/onedrive/online-cloud-storage) and integrate Microsoft OneDrive with other applications. n8n has built-in support for file and folder events in OneDrive.

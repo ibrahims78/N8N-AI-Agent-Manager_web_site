@@ -1,5 +1,9 @@
 # Switch
 
+> Documentation for the Switch node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Switch
+
 Use the Switch node to route a workflow conditionally based on comparison operations. It's similar to the [IF](/integrations/builtin/core-nodes/n8n-nodes-base.if.md) node, but supports multiple output routes.
 
 ## Node parameters
@@ -44,6 +48,8 @@ To configure the node with this operation, use these parameters:
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for switch at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.switch/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.switch/)
 
 ## Related resources
 

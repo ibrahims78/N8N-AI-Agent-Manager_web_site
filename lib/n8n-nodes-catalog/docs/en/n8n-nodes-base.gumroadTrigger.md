@@ -1,3 +1,7 @@
+# Gumroad Trigger node documentation
+
+> Learn how to use the Gumroad Trigger node in n8n. Follow technical documentation to integrate Gumroad Trigger node into your workflows.
+
 # Gumroad Trigger node
 
 [Gumroad](https://gumroad.com) is an online platform that enables creators to sell products directly to consumers.

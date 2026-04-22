@@ -1,5 +1,9 @@
 # Execute Command
 
+> Documentation for the Execute Command node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Execute Command
+
 The Execute Command node runs shell commands on the host machine that runs n8n.
 
 > **Security considerations**
@@ -49,7 +53,7 @@ Use one of two methods to run multiple commands in one Execute Command node:
 
 #### Run cURL command
 
-You can also use the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node to make a cURL request.
+You can also use the [HTTP Request](https://docs.n8n.io//) node to make a cURL request.
 
 If you want to run the curl command in the Execute Command node, you will have to build a Docker image based on the existing n8n image. The default n8n Docker image uses Alpine Linux. You will have to install the curl package.
 
@@ -76,15 +80,20 @@ If you want to run the curl command in the Execute Command node, you will have t
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for execute-command at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executecommand/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executecommand/)
+
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common Issues](/integrations/builtin/core-nodes/n8n-nodes-base.executecommand/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Execute Command node common issues
 
-Here are some common errors and issues with the [Execute Command node](/integrations/builtin/core-nodes/n8n-nodes-base.executecommand/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Execute Command node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 <!-- vale off -->
 ## Command failed: &lt;command&gt; /bin/sh: &lt;command&gt;: not found

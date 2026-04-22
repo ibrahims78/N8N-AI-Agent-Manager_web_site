@@ -1,3 +1,7 @@
+# KoboToolbox node documentation
+
+> Learn how to use the KoboToolbox node in n8n. Follow technical documentation to integrate KoboToolbox node into your workflows.
+
 # KoboToolbox node
 
 Use the KoboToolbox node to automate work in KoboToolbox, and integrate KoboToolbox with other applications. n8n has built-in support for a wide range of KoboToolbox features, including creating, updating, deleting, and getting files, forms, hooks, and submissions. 
@@ -35,6 +39,8 @@ On this page, you'll find a list of operations the KoboToolbox node supports and
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for kobotoolbox at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.kobotoolbox/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.kobotoolbox/)
 
 ## Options
 
@@ -178,7 +184,7 @@ With reformatting enabled, and the appropriate masks for multi-select and number
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

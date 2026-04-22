@@ -1,3 +1,7 @@
+# Autopilot Trigger node documentation
+
+> Learn how to use the Autopilot Trigger node in n8n. Follow technical documentation to integrate Autopilot Trigger node into your workflows.
+
 # Autopilot Trigger node
 
 [Autopilot](https://www.autopilothq.com/) is a visual marketing software that allows you to automate and personalize your marketing across the entire customer journey.

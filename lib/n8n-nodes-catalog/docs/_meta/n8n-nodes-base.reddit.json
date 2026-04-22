@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.reddit",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.reddit.md",
+  "fetchedAt": "2026-04-22T18:36:07.924Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Reddit node documentation",
+      "description": "Learn how to use the Reddit node in n8n. Follow technical documentation to integrate Reddit node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Reddit node documentation",
+    "description": "Learn how to use the Reddit node in n8n. Follow technical documentation to integrate Reddit node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

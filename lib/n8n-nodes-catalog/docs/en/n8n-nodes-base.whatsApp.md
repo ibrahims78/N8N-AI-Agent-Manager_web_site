@@ -1,3 +1,7 @@
+# WhatsApp Business Cloud node documentation
+
+> Learn how to use the WhatsApp Business Cloud node in n8n. Follow technical documentation to integrate WhatsApp Business Cloud node into your workflows.
+
 # WhatsApp Business Cloud node
 
 Use the WhatsApp Business Cloud node to automate work in WhatsApp Business, and integrate WhatsApp Business with other applications. n8n has built-in support for a wide range of WhatsApp Business features, including sending messages, and uploading, downloading, and deleting media. 
@@ -62,17 +66,19 @@ You'll also be able to customize the message button label, the form title and de
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for whatsapp-business-cloud at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.whatsapp/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.whatsapp/)
+
 ## Related resources
 
 Refer to [WhatsApp Business Platform's Cloud API documentation](https://developers.facebook.com/docs/whatsapp/cloud-api) for details about the operations.
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](/integrations/builtin/app-nodes/n8n-nodes-base.whatsapp/common-issues.md).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -84,9 +90,12 @@ Refer to [Custom API operations](/integrations/custom-operations.md) for more in
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # WhatsApp Business Cloud node common issues
 
-Here are some common errors and issues with the [WhatsApp Business Cloud node](/integrations/builtin/app-nodes/n8n-nodes-base.whatsapp/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [WhatsApp Business Cloud node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Bad request - please check your parameters
 

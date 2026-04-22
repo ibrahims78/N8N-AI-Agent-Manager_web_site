@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.mailjetTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.mailjettrigger.md",
+  "fetchedAt": "2026-04-22T18:36:05.621Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Mailjet Trigger node documentation",
+      "description": "Learn how to use the Mailjet Trigger node in n8n. Follow technical documentation to integrate Mailjet Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Mailjet Trigger node documentation",
+    "description": "Learn how to use the Mailjet Trigger node in n8n. Follow technical documentation to integrate Mailjet Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

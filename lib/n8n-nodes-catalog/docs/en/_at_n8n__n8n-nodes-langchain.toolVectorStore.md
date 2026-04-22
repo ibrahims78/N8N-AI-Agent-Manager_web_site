@@ -1,3 +1,7 @@
+# Vector Store Question Answer Tool node documentation
+
+> Learn how to use the Vector Store Question Answer Tool node in n8n. Follow technical documentation to integrate Vector Store Question Answer Tool node into your workflows.
+
 # Vector Store Question Answer Tool node
 
 The Vector Store Question Answer node is a [tool](/glossary.md#ai-tool) that allows an [agent](/glossary.md#ai-agent) to summarize results and answer questions based on chunks from a [vector store](/glossary.md#ai-vector-store). 
@@ -38,7 +42,7 @@ Spaces in the node name are converted to underscores in the tool description.
 >
 > Using special characters in the node name will cause errors when the agent runs:
 > 
-> ![model errors from special characters](/_images/integrations/builtin/cluster-nodes/toolvectorstore/name-characters-error.png)
+> ![model errors from special characters](/api/catalog/docs/assets/_at_n8n__n8n-nodes-langchain.toolVectorStore/name-characters-error.png)
 > 
 > Use only alphanumeric characters, spaces, dashes, and underscores in node names.
 

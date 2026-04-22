@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.grist",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.grist.md",
+  "fetchedAt": "2026-04-22T18:36:04.080Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Grist node documentation",
+      "description": "Learn how to use the Grist node in n8n. Follow technical documentation to integrate Grist node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Grist node documentation",
+    "description": "Learn how to use the Grist node in n8n. Follow technical documentation to integrate Grist node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

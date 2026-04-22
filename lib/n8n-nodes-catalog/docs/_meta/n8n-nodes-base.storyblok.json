@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.storyblok",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.storyblok.md",
+  "fetchedAt": "2026-04-22T18:36:08.927Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Storyblok node documentation",
+      "description": "Learn how to use the Storyblok node in n8n. Follow technical documentation to integrate Storyblok node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Storyblok node documentation",
+    "description": "Learn how to use the Storyblok node in n8n. Follow technical documentation to integrate Storyblok node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,3 +1,7 @@
+# Jenkins node documentation
+
+> Learn how to use the Jenkins node in n8n. Follow technical documentation to integrate Jenkins node into your workflows.
+
 # Jenkins node
 
 Use the Jenkins node to automate work in Jenkins, and integrate Jenkins with other applications. n8n has built-in support for a wide range of Jenkins features, including listing builds, managing instances, and creating and copying jobs. 
@@ -32,3 +36,5 @@ On this page, you'll find a list of operations the Jenkins node supports and lin
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for jenkins at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.jenkins/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.jenkins/)

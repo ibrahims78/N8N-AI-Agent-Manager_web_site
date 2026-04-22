@@ -1,3 +1,7 @@
+# Facebook Graph API node documentation
+
+> Learn how to use the Facebook Graph API node in n8n. Follow technical documentation to integrate Facebook Graph API node into your workflows.
+
 # Facebook Graph API node
 
 Use the Facebook Graph API node to automate work in Facebook Graph API, and integrate Facebook Graph API with other applications. n8n has built-in support for a wide range of Facebook Graph API features, including using queries GET POST DELETE for several parameters like host URL, request methods and much more.
@@ -42,3 +46,5 @@ On this page, you'll find a list of operations the Facebook Graph API node suppo
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for facebook-graph-api at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.facebookgraphapi/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.facebookgraphapi/)

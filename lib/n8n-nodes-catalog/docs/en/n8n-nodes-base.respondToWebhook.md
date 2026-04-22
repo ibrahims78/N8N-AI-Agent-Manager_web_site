@@ -1,6 +1,10 @@
 # Respond to Webhook
 
-Use the Respond to Webhook node to control the response to incoming webhooks. This node works with the [Webhook](/integrations/builtin/core-nodes/n8n-nodes-base.webhook/index.md) node.
+> Documentation for the Respond to Webhook node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Respond to Webhook
+
+Use the Respond to Webhook node to control the response to incoming webhooks. This node works with the [Webhook](https://docs.n8n.io//) node.
 
 > **Runs once for the first data item**
 >
@@ -10,7 +14,7 @@ Use the Respond to Webhook node to control the response to incoming webhooks. Th
 
 To use the Respond to Webhook node:
 
-1. Add a [Webhook](/integrations/builtin/core-nodes/n8n-nodes-base.webhook/index.md) node as the trigger node for the workflow.
+1. Add a [Webhook](https://docs.n8n.io//) node as the trigger node for the workflow.
 1. In the Webhook node, set **Respond** to **Using 'Respond to Webhook' node**.
 1. Add the Respond to Webhook node anywhere in your workflow. If you want it to return data from other nodes, place it after those nodes.
 
@@ -54,6 +58,8 @@ This has the following implications:
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for respond-to-webhook at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/)
 
 ## Workflow behavior
 

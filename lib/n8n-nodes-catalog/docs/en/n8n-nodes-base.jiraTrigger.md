@@ -1,3 +1,7 @@
+# Jira Trigger node documentation
+
+> Learn how to use the Jira Trigger node in n8n. Follow technical documentation to integrate Jira Trigger node into your workflows.
+
 # Jira Trigger node
 
 [Jira](https://www.atlassian.com/software/jira) is a proprietary issue tracking product developed by Atlassian that allows bug tracking and agile project management.

@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.elasticSecurity",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.elasticsecurity.md",
+  "fetchedAt": "2026-04-22T18:36:01.545Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Elastic Security node documentation",
+      "description": "Learn how to use the Elastic Security node in n8n. Follow technical documentation to integrate Elastic Security node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Elastic Security node documentation",
+    "description": "Learn how to use the Elastic Security node in n8n. Follow technical documentation to integrate Elastic Security node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

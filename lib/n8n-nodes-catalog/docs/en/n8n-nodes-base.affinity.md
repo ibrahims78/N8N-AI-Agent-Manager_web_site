@@ -1,3 +1,7 @@
+# Affinity node documentation
+
+> Learn how to use the Affinity node in n8n. Follow technical documentation to integrate Affinity node into your workflows.
+
 # Affinity node
 
 Use the Affinity node to automate work in Affinity, and integrate Affinity with other applications. n8n has built-in support for a wide range of Affinity features, including creating, getting, updating and deleting lists, entries, organization, and persons.
@@ -38,3 +42,5 @@ On this page, you'll find a list of operations the Affinity node supports and li
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for affinity at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.affinity/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.affinity/)

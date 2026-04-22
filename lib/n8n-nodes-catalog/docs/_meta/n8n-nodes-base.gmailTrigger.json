@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.gmailTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.gmailtrigger/index.md",
+  "fetchedAt": "2026-04-22T18:36:03.868Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Gmail Trigger node documentation",
+      "description": "Learn how to use the Gmail Trigger node in n8n. Follow technical documentation to integrate Gmail Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Gmail Trigger node documentation",
+    "description": "Learn how to use the Gmail Trigger node in n8n. Follow technical documentation to integrate Gmail Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "poll-mode-options.md",
+    "common-issues.md"
+  ],
+  "assets": []
+}

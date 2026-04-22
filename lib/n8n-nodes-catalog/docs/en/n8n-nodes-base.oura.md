@@ -1,3 +1,7 @@
+# Oura node documentation
+
+> Learn how to use the Oura node in n8n. Follow technical documentation to integrate Oura node into your workflows.
+
 # Oura node
 
 Use the Oura node to automate work in Oura, and integrate Oura with other applications. n8n has built-in support for a wide range of Oura features, including getting profiles, and summaries. 
@@ -20,3 +24,5 @@ On this page, you'll find a list of operations the Oura node supports and links 
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for oura at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.oura/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.oura/)

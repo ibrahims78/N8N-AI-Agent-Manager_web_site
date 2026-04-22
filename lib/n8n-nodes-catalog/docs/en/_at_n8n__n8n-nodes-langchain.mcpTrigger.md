@@ -1,3 +1,7 @@
+# MCP Server Trigger node documentation
+
+> Learn how to use the MCP Server Trigger node in n8n. Follow technical documentation to integrate the MCP Server Trigger node into your workflows.
+
 # MCP Server Trigger node
 
 Use the MCP Server Trigger node to allow n8n to act as a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server, making n8n tools and workflows available to MCP clients.
@@ -12,7 +16,7 @@ The MCP Server Trigger node acts as an entry point into n8n for MCP clients. It 
 
 Unlike conventional [trigger nodes](/glossary.md#trigger-node-n8n), which respond to events and pass their output to the next [connected node](/workflows/components/connections.md), the MCP Server Trigger node only connects to and executes [tool](/advanced-ai/examples/understand-tools.md) nodes. Clients can list the available tools and call individual tools to perform work.
 
-You can expose n8n workflows to clients by attaching them with the [Custom n8n Workflow Tool](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolworkflow.md) node.
+You can expose n8n workflows to clients by attaching them with the [Custom n8n Workflow Tool](https://docs.n8n.io/n8n-nodes-langchain.toolworkflow/) node.
 
 > **Server-Sent Events (SSE) and streamable HTTP support**
 >
@@ -49,6 +53,8 @@ You can manually specify a URL path, including adding route parameters. For exam
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for mcp-server-trigger at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/)
 
 ### Integrating with Claude Desktop
 
@@ -92,7 +98,7 @@ The MCP Server Trigger node relies on Server-Sent Events (SSE) or streamable HTT
 
 ## Related resources
 
-n8n also provides an [MCP Client Tool](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolmcp.md) node that allows you to connect your n8n AI agents to external tools.
+n8n also provides an [MCP Client Tool](https://docs.n8n.io/n8n-nodes-langchain.toolmcp/) node that allows you to connect your n8n AI agents to external tools.
 
 Refer to the [MCP documentation](https://modelcontextprotocol.io/introduction) and [MCP specification](https://modelcontextprotocol.io/specification/) for more details about the protocol, servers, and clients.
 

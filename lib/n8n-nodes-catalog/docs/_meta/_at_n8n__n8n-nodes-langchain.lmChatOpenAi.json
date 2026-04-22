@@ -1,0 +1,20 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenai/index.md",
+  "fetchedAt": "2026-04-22T18:36:12.285Z",
+  "frontmatter": {
+    "raw": {
+      "title": "OpenAI Chat Model node documentation",
+      "description": "Learn how to use the OpenAI Chat Model node in n8n. Follow technical documentation to integrate OpenAI Chat Model node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "OpenAI Chat Model node documentation",
+    "description": "Learn how to use the OpenAI Chat Model node in n8n. Follow technical documentation to integrate OpenAI Chat Model node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "common-issues.md"
+  ],
+  "assets": []
+}

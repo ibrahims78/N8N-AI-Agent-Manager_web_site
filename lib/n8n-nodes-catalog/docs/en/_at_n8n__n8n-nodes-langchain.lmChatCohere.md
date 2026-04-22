@@ -1,3 +1,7 @@
+# Cohere Chat Model node documentation
+
+> Learn how to use the Cohere Chat Model node in n8n. Follow technical documentation to integrate Cohere Chat Model node into your workflows.
+
 # Cohere Chat Model node
 
 Use the Cohere Chat Model node to access Cohere's large language models for conversational AI and text generation tasks.
@@ -28,6 +32,8 @@ On this page, you'll find the node parameters for the Cohere Chat Model node, an
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for cohere-chat-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatcohere/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatcohere/)
 
 ## Related resources
 

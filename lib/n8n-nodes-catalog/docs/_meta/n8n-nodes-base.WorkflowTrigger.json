@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.WorkflowTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.workflowtrigger.md",
+  "fetchedAt": "2026-04-22T18:36:10.615Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Workflow Trigger node documentation",
+      "description": "Learn how to use the Workflow Trigger node in n8n. Follow technical documentation to integrate Workflow Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Workflow Trigger node documentation",
+    "description": "Learn how to use the Workflow Trigger node in n8n. Follow technical documentation to integrate Workflow Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

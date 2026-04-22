@@ -1,3 +1,7 @@
+# Jotform Trigger node documentation
+
+> Learn how to use the Jotform Trigger node in n8n. Follow technical documentation to integrate Jotform Trigger node into your workflows.
+
 # Jotform Trigger node
 
 [Jotform](https://www.jotform.com/) is an online form building service. Jotform's software creates forms with a drag and drop creation tool and an option to encrypt user data.

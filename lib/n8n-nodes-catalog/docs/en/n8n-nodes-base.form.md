@@ -1,3 +1,7 @@
+# n8n Form node documentation
+
+> Documentation for the n8n Form node in n8n, a workflow automation platform. Includes guidance on usage and links to examples.
+
 # n8n Form node
 
 Use the n8n Form node to create user-facing forms with multiple steps. You can add other nodes with custom logic between to process user input. You must start the workflow with the [n8n Form Trigger node](/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger.md).
@@ -251,3 +255,5 @@ When working with a production URL, ensure that you have saved and published the
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for n8n-form at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.form/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.form/)

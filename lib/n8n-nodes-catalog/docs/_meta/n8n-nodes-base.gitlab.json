@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.gitlab",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.gitlab.md",
+  "fetchedAt": "2026-04-22T18:36:02.848Z",
+  "frontmatter": {
+    "raw": {
+      "title": "GitLab node documentation",
+      "description": "Learn how to use the GitLab node in n8n. Follow technical documentation to integrate GitLab node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "GitLab node documentation",
+    "description": "Learn how to use the GitLab node in n8n. Follow technical documentation to integrate GitLab node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

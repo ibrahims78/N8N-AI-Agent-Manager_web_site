@@ -1,3 +1,7 @@
+# Azure Cosmos DB node documentation
+
+> Learn how to use the Azure Cosmos DB node in n8n. Follow technical documentation to integrate Azure Cosmos DB node into your workflows.
+
 # Azure Cosmos DB node
 
 Use the Azure Cosmos DB node to automate work in Azure Cosmos DB and integrate Azure Cosmos DB with other applications. n8n has built-in support for a wide range of Azure Cosmos DB features, which includes creating, getting, updating, and deleting containers and items.
@@ -27,6 +31,8 @@ On this page, you'll find a list of operations the Azure Cosmos DB node supports
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for azure-cosmos-db at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.azurecosmosdb/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.azurecosmosdb/)
+
 ## Related resources
 
 <!-- vale Vale.Spelling = NO -->
@@ -35,7 +41,7 @@ Refer to [Azure Cosmos DB's documentation](https://learn.microsoft.com/en-us/res
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

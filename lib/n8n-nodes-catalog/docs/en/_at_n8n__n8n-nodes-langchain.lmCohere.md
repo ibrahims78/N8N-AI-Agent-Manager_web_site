@@ -1,10 +1,14 @@
+# Cohere Model node documentation
+
+> Learn how to use the Cohere Model node in n8n. Follow technical documentation to integrate Cohere Model node into your workflows.
+
 # Cohere Model node
 
 Use the Cohere Model node to use Cohere's models.
 
 On this page, you'll find the node parameters for the Cohere Model node, and links to more resources.
 
-This node lacks tools support, so it won't work with the [AI Agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md) node. Instead, connect it with the [Basic LLM Chain](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainllm.md) node.
+This node lacks tools support, so it won't work with the [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) node. Instead, connect it with the [Basic LLM Chain](https://docs.n8n.io/n8n-nodes-langchain.chainllm/) node.
 
 > **Credentials**
 >
@@ -26,6 +30,8 @@ This node lacks tools support, so it won't work with the [AI Agent](/integration
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for cohere-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmcohere/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmcohere/)
 
 ## Related resources
 

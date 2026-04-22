@@ -1,0 +1,24 @@
+{
+  "nodeType": "n8n-nodes-base.functionItem",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.code/index.md",
+  "fetchedAt": "2026-04-22T18:36:02.482Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Code node documentation",
+      "description": "Documentation for the Code node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]",
+      "priority": "critical",
+      "tags": "",
+      "hide": "",
+      "search": ""
+    },
+    "title": "Code node documentation",
+    "description": "Documentation for the Code node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "common-issues.md",
+    "keyboard-shortcuts.md"
+  ],
+  "assets": []
+}

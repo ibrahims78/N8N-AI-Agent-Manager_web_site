@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.formTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger.md",
+  "fetchedAt": "2026-04-22T18:36:02.568Z",
+  "frontmatter": {
+    "raw": {
+      "title": "n8n Form Trigger node documentation",
+      "description": "Learn how to use the n8n Form Trigger node in n8n. Follow technical documentation to integrate n8n Form Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "critical"
+    },
+    "title": "n8n Form Trigger node documentation",
+    "description": "Learn how to use the n8n Form Trigger node in n8n. Follow technical documentation to integrate n8n Form Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": [
+    "form-urls.png"
+  ]
+}

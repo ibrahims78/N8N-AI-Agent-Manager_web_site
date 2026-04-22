@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.taigaTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.taigatrigger.md",
+  "fetchedAt": "2026-04-22T18:36:09.157Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Taiga Trigger node documentation",
+      "description": "Learn how to use the Taiga Trigger node in n8n. Follow technical documentation to integrate Taiga Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Taiga Trigger node documentation",
+    "description": "Learn how to use the Taiga Trigger node in n8n. Follow technical documentation to integrate Taiga Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

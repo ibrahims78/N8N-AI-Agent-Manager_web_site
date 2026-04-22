@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.pipedriveTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.pipedrivetrigger.md",
+  "fetchedAt": "2026-04-22T18:36:07.415Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Pipedrive Trigger node documentation",
+      "description": "Learn how to use the Pipedrive Trigger node in n8n. Follow technical documentation to integrate Pipedrive Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Pipedrive Trigger node documentation",
+    "description": "Learn how to use the Pipedrive Trigger node in n8n. Follow technical documentation to integrate Pipedrive Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

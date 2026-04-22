@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.wise",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.wise.md",
+  "fetchedAt": "2026-04-22T18:36:09.885Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Wise node documentation",
+      "description": "Learn how to use the Wise node in n8n. Follow technical documentation to integrate Wise node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Wise node documentation",
+    "description": "Learn how to use the Wise node in n8n. Follow technical documentation to integrate Wise node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

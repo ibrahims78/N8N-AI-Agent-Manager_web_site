@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.facebookGraphApi",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.facebookgraphapi.md",
+  "fetchedAt": "2026-04-22T18:36:01.827Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Facebook Graph API node documentation",
+      "description": "Learn how to use the Facebook Graph API node in n8n. Follow technical documentation to integrate Facebook Graph API node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Facebook Graph API node documentation",
+    "description": "Learn how to use the Facebook Graph API node in n8n. Follow technical documentation to integrate Facebook Graph API node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

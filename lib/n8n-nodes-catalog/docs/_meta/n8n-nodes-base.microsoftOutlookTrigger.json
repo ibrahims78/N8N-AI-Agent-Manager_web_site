@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.microsoftOutlookTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.microsoftoutlooktrigger.md",
+  "fetchedAt": "2026-04-22T18:36:06.114Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Microsoft Outlook Trigger node documentation",
+      "description": "Learn how to use the Microsoft Outlook Trigger node in n8n. Follow technical documentation to integrate Microsoft Outlook Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Microsoft Outlook Trigger node documentation",
+    "description": "Learn how to use the Microsoft Outlook Trigger node in n8n. Follow technical documentation to integrate Microsoft Outlook Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

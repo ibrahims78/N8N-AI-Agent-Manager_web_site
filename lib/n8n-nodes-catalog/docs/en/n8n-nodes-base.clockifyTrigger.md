@@ -1,3 +1,7 @@
+# Clockify Trigger node documentation
+
+> Learn how to use the Clockify Trigger node in n8n. Follow technical documentation to integrate Clockify Trigger node into your workflows.
+
 # Clockify Trigger node
 
 [Clockify](https://clockify.me/) is a free time tracker and timesheet app for tracking work hours across projects.

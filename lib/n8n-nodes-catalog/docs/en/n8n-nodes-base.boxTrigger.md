@@ -1,3 +1,7 @@
+# Box Trigger node documentation
+
+> Learn how to use the Box Trigger node in n8n. Follow technical documentation to integrate Box Trigger node into your workflows.
+
 # Box Trigger node
 
 [Box](https://www.box.com/) is a cloud computing company which provides file sharing, collaborating, and other tools for working with files uploaded to its servers.

@@ -1,3 +1,7 @@
+# Calendly Trigger node documentation
+
+> Learn how to use the Calendly Trigger node in n8n. Follow technical documentation to integrate Calendly Trigger node into your workflows.
+
 # Calendly Trigger node
 
 [Calendly](https://calendly.com/) is an automated scheduling software that's designed to help find meeting times.

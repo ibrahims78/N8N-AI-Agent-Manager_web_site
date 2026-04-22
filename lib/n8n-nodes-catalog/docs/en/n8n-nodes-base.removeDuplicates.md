@@ -1,3 +1,7 @@
+# Remove Duplicates node documentation
+
+> Documentation for the Remove Duplicates node in n8n, a workflow automation platform. Includes guidance on usage and links to examples.
+
 # Remove Duplicates node
 
 Use the Remove Duplicates node to identify and delete items that are:
@@ -92,7 +96,7 @@ When using the **Clear Deduplication History** operation, the following option i
 
 ## Templates and examples
 
-For templates using the Remove Duplicates node and examples of how to use it, refer to [Templates and examples](/integrations/builtin/core-nodes/n8n-nodes-base.removeduplicates/templates-and-examples.md).
+For templates using the Remove Duplicates node and examples of how to use it, refer to [Templates and examples](https://docs.n8n.io/templates-and-examples/).
 
 ## Related resources
 
@@ -100,9 +104,12 @@ Learn more about [data structure and data flow](/data/index.md) in n8n workflows
 
 ---
 
+<!-- sibling:templates-and-examples.md -->
+## Templates And Examples
+
 # Templates and examples
 
-Here are some templates and examples for the [Remove Duplicates node](/integrations/builtin/core-nodes/n8n-nodes-base.removeduplicates/index.md).
+Here are some templates and examples for the [Remove Duplicates node](https://docs.n8n.io//).
 
 > **Continuous examples**
 >
@@ -111,6 +118,8 @@ Here are some templates and examples for the [Remove Duplicates node](/integrati
 ## Templates
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for remove-duplicates at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.removeduplicates/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.removeduplicates/)
 
 ## Set up sample data using the Code node
 

@@ -1,3 +1,7 @@
+# OpenAI Chat Model node documentation
+
+> Learn how to use the OpenAI Chat Model node in n8n. Follow technical documentation to integrate OpenAI Chat Model node into your workflows.
+
 # OpenAI Chat Model node
 
 Use the OpenAI Chat Model node to use OpenAI's chat models with conversational [agents](/glossary.md#ai-agent).
@@ -26,7 +30,7 @@ n8n dynamically loads models from OpenAI, and you'll only see the models availab
 
 ### Use Responses API
 OpenAI provides two endpoints for generating output from a model:
-- **Chat Completions**: The Chat Completions API endpoint generates a model response from a list of messages that comprise a conversation. The API requires the user to handle conversation state manually, for example by adding a [Simple Memory](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memorybufferwindow/index.md) subnode. For new projects, OpenAI recommends to use the Responses API.
+- **Chat Completions**: The Chat Completions API endpoint generates a model response from a list of messages that comprise a conversation. The API requires the user to handle conversation state manually, for example by adding a [Simple Memory](https://docs.n8n.io/n8n-nodes-langchain.memorybufferwindow/) subnode. For new projects, OpenAI recommends to use the Responses API.
 - **Responses**: The Responses API is an agentic loop, allowing the model to call multiple built-in tools within the span of one API request. It also supports persistent conversations by passing a `conversation_id`.
 
 Toggle to **Use Responses API** if you want the model to generate output using the Responses API. Otherwise, the OpenAI Chat Model node will default to using the Chat Completions API.
@@ -107,6 +111,8 @@ Configure the prompt filled with a unique ID, its version, and substitutable var
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for openai-chat-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenai/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenai/)
+
 ## Related resources
 
 Refer to [LangChains's OpenAI documentation](https://js.langchain.com/docs/integrations/chat/openai/) for more information about the service.
@@ -117,13 +123,16 @@ View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenai/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.lmchatopenai/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # OpenAI Chat Model node common issues
 
-Here are some common errors and issues with the [OpenAI Chat Model node](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenai/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [OpenAI Chat Model node](https://docs.n8n.io/n8n-nodes-langchain.lmchatopenai/) and steps to resolve or troubleshoot them.
 
 ## Processing parameters
 

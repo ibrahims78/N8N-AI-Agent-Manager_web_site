@@ -1,3 +1,7 @@
+# Schedule Trigger node documentation
+
+> Learn how to use the Schedule Trigger node in n8n. Follow technical documentation to integrate Schedule Trigger node into your workflows.
+
 # Schedule Trigger node
 
 Use the Schedule Trigger node to run workflows at fixed intervals and times. This works in a similar way to the Cron software utility in Unix-like systems.
@@ -113,15 +117,20 @@ The sixth asterisk in the Cron expression represents seconds. Setting this is op
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for schedule-trigger at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/)
+
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common Issues](/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Schedule Trigger node common issues
 
-Here are some common errors and issues with the [Schedule Trigger node](/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Schedule Trigger node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Invalid cron expression
 
@@ -129,8 +138,8 @@ This error occurs when you set **Trigger Interval** to **Custom (Cron)** and n8n
 
 To debug, check that the following:
 
-* That your cron expression follows the syntax used in the [cron examples](/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/index.md#custom-cron-interval)
-* That your cron expression (after removing the [seconds column](/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/index.md#why-there-are-six-asterisks-in-the-cron-expression)) validates on [crontab guru](https://crontab.guru/)
+* That your cron expression follows the syntax used in the [cron examples](https://docs.n8n.io//#custom-cron-interval)
+* That your cron expression (after removing the [seconds column](https://docs.n8n.io//#why-there-are-six-asterisks-in-the-cron-expression)) validates on [crontab guru](https://crontab.guru/)
 
 ## Scheduled workflows run at the wrong time
 
@@ -147,7 +156,7 @@ If you're [self hosting](/hosting/index.md), set your global timezone using the 
 To set the timezone for an individual workflow:
 
 1. Open the workflow on the canvas.
-1. Select the <span class="n8n-inline-image">![three dots menu](/_images/common-icons/three-dots-horizontal.png)</span> **Three dots icon** in the upper-right corner.
+1. Select the <span class="n8n-inline-image">![three dots menu](/api/catalog/docs/assets/n8n-nodes-base.scheduleTrigger/three-dots-horizontal.png)</span> **Three dots icon** in the upper-right corner.
 1. Select **Settings**.
 1. Change the **Timezone** setting.
 1. Select **Save**.

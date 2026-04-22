@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.limit",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.limit.md",
+  "fetchedAt": "2026-04-22T18:36:09.726Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Limit",
+      "description": "Documentation for the Limit node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Limit",
+    "description": "Documentation for the Limit node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

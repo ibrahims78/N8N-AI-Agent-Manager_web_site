@@ -1,3 +1,7 @@
+# Microsoft Excel 365 node documentation
+
+> Learn how to use the Microsoft Excel node in n8n. Follow technical documentation to integrate Microsoft Excel node into your workflows.
+
 # Microsoft Excel 365 node
 
 Use the Microsoft Excel node to automate work in Microsoft Excel, and integrate Microsoft Excel with other applications. n8n has built-in support for a wide range of Microsoft Excel features, including adding and retrieving lists of table data, and workbooks, as well as getting worksheets. 
@@ -34,9 +38,11 @@ On this page, you'll find a list of operations the Microsoft Excel node supports
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for microsoft-excel at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftexcel/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftexcel/)
+
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

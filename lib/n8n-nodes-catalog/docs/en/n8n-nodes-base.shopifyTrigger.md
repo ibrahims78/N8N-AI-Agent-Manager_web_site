@@ -1,3 +1,7 @@
+# Shopify Trigger node documentation
+
+> Learn how to use the Shopify Trigger node in n8n. Follow technical documentation to integrate Shopify Trigger node into your workflows.
+
 # Shopify Trigger node
 
 [Shopify](https://www.shopify.com/) is an e-commerce platform that allows users to set up an online store and sell their products.

@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.microsoftExcel",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.microsoftexcel.md",
+  "fetchedAt": "2026-04-22T18:36:05.949Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Microsoft Excel 365 node documentation",
+      "description": "Learn how to use the Microsoft Excel node in n8n. Follow technical documentation to integrate Microsoft Excel node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Microsoft Excel 365 node documentation",
+    "description": "Learn how to use the Microsoft Excel node in n8n. Follow technical documentation to integrate Microsoft Excel node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

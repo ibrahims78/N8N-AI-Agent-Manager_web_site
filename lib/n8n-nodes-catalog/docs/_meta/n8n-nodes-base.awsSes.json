@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.awsSes",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.awsses.md",
+  "fetchedAt": "2026-04-22T18:35:59.782Z",
+  "frontmatter": {
+    "raw": {
+      "title": "AWS SES node documentation",
+      "description": "Learn how to use the AWS SES node in n8n. Follow technical documentation to integrate AWS SES node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "AWS SES node documentation",
+    "description": "Learn how to use the AWS SES node in n8n. Follow technical documentation to integrate AWS SES node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,3 +1,7 @@
+# Embeddings Lemonade node documentation
+
+> Learn how to use the Embeddings Lemonade node in n8n. Follow technical documentation to integrate Embeddings Lemonade node into your workflows.
+
 # Embeddings Lemonade node
 
 Use the Embeddings Lemonade node to generate vector embeddings using models hosted and managed by a Lemonade server. This node is useful for workflows that perform semantic search, clustering, similarity matching, or any task that requires numerical vector representations of text.
@@ -25,6 +29,8 @@ Configure the node with the following parameters.
 The model which will generate the embeddings. Models are loaded and managed through the Lemonade server configured for this node. Select the desired model from the list of available options served by your Lemonade instance.
 
 ## Templates and examples
+
+> **🔗 Templates & examples:** browse ready-made workflows for embeddings-lemonade at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingslemonade/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingslemonade/)
 
 ## Related resources
 

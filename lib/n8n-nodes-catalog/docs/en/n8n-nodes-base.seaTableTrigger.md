@@ -1,3 +1,7 @@
+# SeaTable Trigger node documentation
+
+> Learn how to use the SeaTable Trigger node in n8n. Follow technical documentation to integrate SeaTable Trigger node into your workflows.
+
 # SeaTable Trigger node
 
 [SeaTable](https://seatable.com/) is a collaborative database application with a spreadsheet interface.

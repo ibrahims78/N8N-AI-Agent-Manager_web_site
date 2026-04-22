@@ -1,3 +1,7 @@
+# AWS Cognito node documentation
+
+> Learn how to use the AWS Cognito node in n8n. Follow technical documentation to integrate AWS Cognito node into your workflows.
+
 # AWS Cognito node
 
 Use the AWS Cognito node to automate work in AWS Cognito and integrate AWS Cognito with other applications. n8n has built-in support for a wide range of AWS Cognito features, which includes creating, retrieving, updating, and deleting groups, users, and user pools.
@@ -31,6 +35,8 @@ On this page, you'll find a list of operations the AWS Cognito node supports, an
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for aws-cognito at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.awscognito/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.awscognito/)
+
 ## Related resources
 
 <!-- add a link to the service's documentation. This should usually go direct to the API docs -->
@@ -38,7 +44,7 @@ Refer to [AWS Cognito's documentation](https://docs.aws.amazon.com/cognito/) for
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

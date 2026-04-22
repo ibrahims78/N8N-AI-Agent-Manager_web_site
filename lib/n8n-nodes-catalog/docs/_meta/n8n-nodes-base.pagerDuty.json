@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.pagerDuty",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.pagerduty.md",
+  "fetchedAt": "2026-04-22T18:36:07.151Z",
+  "frontmatter": {
+    "raw": {
+      "title": "PagerDuty node documentation",
+      "description": "Learn how to use the PagerDuty node in n8n. Follow technical documentation to integrate PagerDuty node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "PagerDuty node documentation",
+    "description": "Learn how to use the PagerDuty node in n8n. Follow technical documentation to integrate PagerDuty node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

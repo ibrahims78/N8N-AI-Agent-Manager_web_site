@@ -1,3 +1,7 @@
+# Help Scout Trigger node documentation
+
+> Learn how to use the Help Scout Trigger node in n8n. Follow technical documentation to integrate Help Scout Trigger node into your workflows.
+
 # Help Scout Trigger node
 
 [Help Scout](https://www.helpscout.com/) is a help desk software that provides an email-based customer support platform, knowledge base tool, and an embeddable search/contact widget for customer service professionals.

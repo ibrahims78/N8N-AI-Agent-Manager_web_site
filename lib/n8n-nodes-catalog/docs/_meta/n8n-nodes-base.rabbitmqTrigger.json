@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.rabbitmqTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.rabbitmqtrigger.md",
+  "fetchedAt": "2026-04-22T18:36:07.845Z",
+  "frontmatter": {
+    "raw": {
+      "title": "RabbitMQ Trigger node documentation",
+      "description": "Learn how to use the RabbitMQ Trigger node in n8n. Follow technical documentation to integrate RabbitMQ Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "RabbitMQ Trigger node documentation",
+    "description": "Learn how to use the RabbitMQ Trigger node in n8n. Follow technical documentation to integrate RabbitMQ Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

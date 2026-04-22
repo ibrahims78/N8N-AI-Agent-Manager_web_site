@@ -1,11 +1,15 @@
 # Edit Image
 
+> Documentation for the Edit Image node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Edit Image
+
 Use the Edit Image node to manipulate and edit images.
 
 > **Dependencies**
 >
 > 1. If you aren't running n8n on Docker, you need to install [GraphicsMagick](http://www.graphicsmagick.org/README.html).
-> 2. You need to use a node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node to pass the image file as a data property to the Edit Image node.
+> 2. You need to use a node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](https://docs.n8n.io//) node to pass the image file as a data property to the Edit Image node.
 
 ## Operations
 
@@ -190,3 +194,5 @@ The **Text** operation also includes the option for **Font Name or ID**. Select 
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for edit-image at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.editimage/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.editimage/)

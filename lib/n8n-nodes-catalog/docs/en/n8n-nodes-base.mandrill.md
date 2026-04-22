@@ -1,3 +1,7 @@
+# Mandrill node documentation
+
+> Learn how to use the Mandrill node in n8n. Follow technical documentation to integrate Mandrill node into your workflows.
+
 # Mandrill node
 
 Use the Mandrill node to automate work in Mandrill, and integrate Mandrill with other applications. n8n supports sending messages based on templates or HTML with Mandrill.
@@ -17,3 +21,5 @@ On this page, you'll find a list of operations the Mandrill node supports and li
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for mandrill at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mandrill/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mandrill/)

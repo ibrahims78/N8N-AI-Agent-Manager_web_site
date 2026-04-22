@@ -1,3 +1,7 @@
+# Flow Trigger node documentation
+
+> Learn how to use the Flow Trigger node in n8n. Follow technical documentation to integrate Flow Trigger node into your workflows.
+
 # Flow Trigger node
 
 [Flow](https://www.getflow.com/) is modern task and project management software for teams. It brings together tasks, projects, timelines, and conversations, and integrates with a lot of tools.

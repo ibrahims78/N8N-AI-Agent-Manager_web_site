@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.affinity",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.affinity.md",
+  "fetchedAt": "2026-04-22T18:35:58.637Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Affinity node documentation",
+      "description": "Learn how to use the Affinity node in n8n. Follow technical documentation to integrate Affinity node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Affinity node documentation",
+    "description": "Learn how to use the Affinity node in n8n. Follow technical documentation to integrate Affinity node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

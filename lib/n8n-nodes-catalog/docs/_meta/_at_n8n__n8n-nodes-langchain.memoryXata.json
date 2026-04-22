@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.memoryXata",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memoryxata.md",
+  "fetchedAt": "2026-04-22T18:36:13.085Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Xata node documentation",
+      "description": "Learn how to use the Xata node in n8n. Follow technical documentation to integrate Xata node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Xata node documentation",
+    "description": "Learn how to use the Xata node in n8n. Follow technical documentation to integrate Xata node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

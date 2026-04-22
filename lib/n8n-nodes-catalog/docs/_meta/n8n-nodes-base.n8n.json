@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.n8n",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.n8n.md",
+  "fetchedAt": "2026-04-22T18:36:06.544Z",
+  "frontmatter": {
+    "raw": {
+      "title": "n8n",
+      "description": "Documentation for the n8n node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "n8n",
+    "description": "Documentation for the n8n node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

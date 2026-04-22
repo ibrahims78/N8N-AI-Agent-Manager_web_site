@@ -1,3 +1,7 @@
+# Redis Chat Memory node documentation
+
+> Learn how to use the Redis Chat Memory node in n8n. Follow technical documentation to integrate Redis Chat Memory node into your workflows.
+
 # Redis Chat Memory node
 
 Use the Redis Chat Memory node to use Redis as a [memory](/glossary.md#ai-memory) server.
@@ -25,6 +29,8 @@ On this page, you'll find a list of operations the Redis Chat Memory node suppor
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for redis-chat-memory at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memoryredischat/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memoryredischat/)
 
 ## Related resources
 

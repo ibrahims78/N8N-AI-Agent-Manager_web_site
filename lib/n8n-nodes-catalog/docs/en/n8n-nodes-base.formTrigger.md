@@ -1,3 +1,7 @@
+# n8n Form Trigger node documentation
+
+> Learn how to use the n8n Form Trigger node in n8n. Follow technical documentation to integrate n8n Form Trigger node into your workflows.
+
 # n8n Form Trigger node
 
 Use the n8n Form trigger to start a workflow when a user submits a form, taking the input data from the form. The node generates the form web page for you to use.
@@ -66,7 +70,7 @@ To configure this credential, you'll need:
 
 The Form Trigger node has two URLs: **Test URL** and **Production URL**. n8n displays the URLs at the top of the node panel. Select **Test URL** or **Production URL** to toggle which URL n8n displays.
 
-![Screenshot of the form URLs](/_images/integrations/builtin/core-nodes/form-trigger/form-urls.png)
+![Screenshot of the form URLs](/api/catalog/docs/assets/n8n-nodes-base.formTrigger/form-urls.png)
 
 - **Test URL**: n8n registers a test webhook when you select **Execute Step** or **Execute Workflow**, if the workflow isn't active. When you call the URL, n8n displays the data in the workflow.
 - **Production URL**: n8n registers a production webhook when you publish the workflow. When using the production URL, n8n doesn't display the data in the workflow. You can still view workflow data for a production execution. Select the **Executions** tab in the workflow, then select the workflow execution you want to view.
@@ -170,3 +174,5 @@ All other attributes are removed during sanitization. Only `http://` and `https:
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for n8n-form-trigger at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger/)

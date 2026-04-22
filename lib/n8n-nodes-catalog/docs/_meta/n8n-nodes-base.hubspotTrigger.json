@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.hubspotTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.hubspottrigger.md",
+  "fetchedAt": "2026-04-22T18:36:04.415Z",
+  "frontmatter": {
+    "raw": {
+      "title": "HubSpot Trigger node documentation",
+      "description": "Learn how to use the HubSpot Trigger node in n8n. Follow technical documentation to integrate HubSpot Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "HubSpot Trigger node documentation",
+    "description": "Learn how to use the HubSpot Trigger node in n8n. Follow technical documentation to integrate HubSpot Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

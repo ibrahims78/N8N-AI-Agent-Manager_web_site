@@ -1,3 +1,7 @@
+# Lemonade Chat Model node documentation
+
+> Learn how to use the Lemonade Chat Model node in n8n. Follow technical documentation to integrate Lemonade Chat Model node into your workflows.
+
 # Lemonade Chat Model node
 
 Use the Lemonade Chat Model node to run chat-capable language models managed by a Lemonade server from within n8n. This node functions as a LangChain-compatible chat model root node and is suitable for chat-style workloads. It lets you select a model hosted on your Lemonade server, and control generation behavior using common sampling and decoding options.
@@ -90,6 +94,8 @@ Comma-separated list of sequences where the model will stop generating text. Use
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for lemonade-chat-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatlemonade/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatlemonade/)
 
 ## Related resources
 

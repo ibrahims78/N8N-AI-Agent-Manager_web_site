@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.humanticAi",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.humanticai.md",
+  "fetchedAt": "2026-04-22T18:36:04.381Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Humantic AI node documentation",
+      "description": "Learn how to use the Humantic AI node in n8n. Follow technical documentation to integrate Humantic AI node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Humantic AI node documentation",
+    "description": "Learn how to use the Humantic AI node in n8n. Follow technical documentation to integrate Humantic AI node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

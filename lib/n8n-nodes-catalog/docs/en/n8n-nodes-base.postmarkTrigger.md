@@ -1,3 +1,7 @@
+# Postmark Trigger node documentation
+
+> Learn how to use the Postmark Trigger node in n8n. Follow technical documentation to integrate Postmark Trigger node into your workflows.
+
 # Postmark Trigger node
 
 [Postmark](https://postmarkapp.com) helps deliver and track application email. You can track statistics such as the number of emails sent or processed, opens, bounces and, spam complaints.

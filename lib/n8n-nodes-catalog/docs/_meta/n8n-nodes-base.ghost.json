@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.ghost",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.ghost.md",
+  "fetchedAt": "2026-04-22T18:36:02.661Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Ghost node documentation",
+      "description": "Learn how to use the Ghost node in n8n. Follow technical documentation to integrate Ghost node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Ghost node documentation",
+    "description": "Learn how to use the Ghost node in n8n. Follow technical documentation to integrate Ghost node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

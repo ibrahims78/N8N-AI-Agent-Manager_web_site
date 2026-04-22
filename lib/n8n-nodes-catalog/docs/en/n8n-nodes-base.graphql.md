@@ -1,5 +1,9 @@
 # GraphQL
 
+> Documentation for the GraphQL node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# GraphQL
+
 [GraphQL](https://graphql.org/) is an open-source data query and manipulation language for APIs, and a runtime for fulfilling queries with existing data. Use the GraphQL node to query a GraphQL endpoint.
 
 ## Node parameters
@@ -51,6 +55,8 @@ Enter any **Headers** you want to pass as part of the query as **Name** / **Valu
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for graphql at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.graphql/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.graphql/)
 
 ## Related resources
 

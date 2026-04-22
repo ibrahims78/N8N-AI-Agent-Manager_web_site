@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.microsoftToDo",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.microsofttodo.md",
+  "fetchedAt": "2026-04-22T18:36:06.247Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Microsoft To Do node documentation",
+      "description": "Learn how to use the Microsoft To Do node in n8n. Follow technical documentation to integrate Microsoft To Do node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Microsoft To Do node documentation",
+    "description": "Learn how to use the Microsoft To Do node in n8n. Follow technical documentation to integrate Microsoft To Do node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,3 +1,7 @@
+# AWS SNS Trigger node documentation
+
+> Learn how to use the AWS SNS Trigger node in n8n. Follow technical documentation to integrate AWS SNS Trigger node into your workflows.
+
 # AWS SNS Trigger node
 
 [AWS SNS](https://aws.amazon.com/sns/) is a notification service provided as part of Amazon Web Services. It provides a low-cost infrastructure for the mass delivery of messages, predominantly to mobile users.

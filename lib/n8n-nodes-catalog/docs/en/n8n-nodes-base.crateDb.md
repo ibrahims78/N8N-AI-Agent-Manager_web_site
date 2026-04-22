@@ -1,3 +1,7 @@
+# CrateDB node documentation
+
+> Learn how to use the CrateDB node in n8n. Follow technical documentation to integrate CrateDB node into your workflows.
+
 # CrateDB node
 
 Use the CrateDB node to automate work in CrateDB, and integrate CrateDB with other applications. n8n has built-in support for a wide range of CrateDB features, including executing, inserting, and updating rows in the database.
@@ -17,6 +21,8 @@ On this page, you'll find a list of operations the CrateDB node supports and lin
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for cratedb at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.cratedb/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.cratedb/)
 
 ## Node reference
 

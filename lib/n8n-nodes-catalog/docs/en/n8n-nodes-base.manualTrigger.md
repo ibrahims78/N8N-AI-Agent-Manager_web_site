@@ -1,8 +1,12 @@
+# Manual Trigger node documentation
+
+> Learn how to use the Manual Trigger node in n8n. Follow technical documentation to integrate Manual Trigger node into your workflows.
+
 # Manual Trigger node
 
 Use this node if you want to start a workflow by selecting **Execute Workflow** and don't want any option for the workflow to run automatically.
 
-Workflows always need a trigger, or start point. Most workflows start with a trigger node firing in response to an external event or the [Schedule Trigger](/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/index.md) firing on a set schedule.
+Workflows always need a trigger, or start point. Most workflows start with a trigger node firing in response to an external event or the [Schedule Trigger](https://docs.n8n.io//) firing on a set schedule.
 
 The Manual Trigger node serves as the workflow trigger for workflows that don't have an automatic trigger.
 

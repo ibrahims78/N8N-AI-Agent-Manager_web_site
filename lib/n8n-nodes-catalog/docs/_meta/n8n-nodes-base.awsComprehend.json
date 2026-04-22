@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.awsComprehend",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.awscomprehend.md",
+  "fetchedAt": "2026-04-22T18:35:59.657Z",
+  "frontmatter": {
+    "raw": {
+      "title": "AWS Comprehend node documentation",
+      "description": "Learn how to use the AWS Comprehend node in n8n. Follow technical documentation to integrate AWS Comprehend node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "AWS Comprehend node documentation",
+    "description": "Learn how to use the AWS Comprehend node in n8n. Follow technical documentation to integrate AWS Comprehend node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

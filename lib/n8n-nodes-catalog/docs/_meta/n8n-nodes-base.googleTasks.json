@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.googleTasks",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.googletasks.md",
+  "fetchedAt": "2026-04-22T18:36:03.790Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Google Tasks node documentation",
+      "description": "Learn how to use the Google Tasks node in n8n. Follow technical documentation to integrate Google Tasks node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Google Tasks node documentation",
+    "description": "Learn how to use the Google Tasks node in n8n. Follow technical documentation to integrate Google Tasks node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

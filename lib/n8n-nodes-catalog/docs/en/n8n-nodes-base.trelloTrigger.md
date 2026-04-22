@@ -1,3 +1,7 @@
+# Trello Trigger node documentation
+
+> Learn how to use the Trello Trigger node in n8n. Follow technical documentation to integrate Trello Trigger node into your workflows.
+
 # Trello Trigger node
 
 [Trello](https://trello.com/) is a web-based Kanban-style list-making application which is a subsidiary of Atlassian. Users can create their task boards with different columns and move the tasks between them.

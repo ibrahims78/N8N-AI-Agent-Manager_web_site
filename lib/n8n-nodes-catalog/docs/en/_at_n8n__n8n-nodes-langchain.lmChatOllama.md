@@ -1,3 +1,7 @@
+# Ollama Chat Model node documentation
+
+> Learn how to use the Ollama Chat Model node in n8n. Follow technical documentation to integrate Ollama Chat Model node into your workflows.
+
 # Ollama Chat Model node
 
 The Ollama Chat Model node allows you use local Llama 2 models with conversational [agents](/glossary.md#ai-agent).
@@ -36,6 +40,8 @@ Refer to the Ollama [Models Library documentation](https://ollama.com/library) f
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for ollama-chat-model at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatollama/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatollama/)
+
 ## Related resources
 
 Refer to [LangChains's Ollama Chat Model documentation](https://js.langchain.com/docs/integrations/chat/ollama/) for more information about the service.
@@ -44,7 +50,7 @@ View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatollama/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.lmchatollama/common-issues/).
 
 ## Self-hosted AI Starter Kit
 
@@ -52,9 +58,12 @@ New to working with AI and using self-hosted n8n? Try n8n's [self-hosted AI Star
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Ollama Chat Model node common issues
 
-Here are some common errors and issues with the [Ollama Chat Model node](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatollama/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Ollama Chat Model node](https://docs.n8n.io/n8n-nodes-langchain.lmchatollama/) and steps to resolve or troubleshoot them.
 
 ## Processing parameters
 

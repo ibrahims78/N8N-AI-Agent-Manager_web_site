@@ -1,3 +1,7 @@
+# LinkedIn node documentation
+
+> Learn how to use the LinkedIn node in n8n. Follow technical documentation to integrate LinkedIn node into your workflows.
+
 # LinkedIn node
 
 Use the LinkedIn node to automate work in LinkedIn, and integrate LinkedIn with other applications. n8n supports creating posts.
@@ -33,13 +37,15 @@ On this page, you'll find a list of operations the LinkedIn node supports and li
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for linkedin at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.linkedin/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.linkedin/)
+
 ## Related resources
 
 Refer to [LinkedIn's API documentation](https://learn.microsoft.com/en-us/linkedin/) for more information about the service.
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

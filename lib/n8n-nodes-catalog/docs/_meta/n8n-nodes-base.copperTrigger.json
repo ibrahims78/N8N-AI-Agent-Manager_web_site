@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.copperTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.coppertrigger.md",
+  "fetchedAt": "2026-04-22T18:36:00.679Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Copper Trigger node documentation",
+      "description": "Learn how to use the Copper Trigger node in n8n. Follow technical documentation to integrate Copper Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Copper Trigger node documentation",
+    "description": "Learn how to use the Copper Trigger node in n8n. Follow technical documentation to integrate Copper Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

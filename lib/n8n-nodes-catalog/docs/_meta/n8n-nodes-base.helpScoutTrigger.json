@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.helpScoutTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.helpscouttrigger.md",
+  "fetchedAt": "2026-04-22T18:36:04.243Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Help Scout Trigger node documentation",
+      "description": "Learn how to use the Help Scout Trigger node in n8n. Follow technical documentation to integrate Help Scout Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Help Scout Trigger node documentation",
+    "description": "Learn how to use the Help Scout Trigger node in n8n. Follow technical documentation to integrate Help Scout Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

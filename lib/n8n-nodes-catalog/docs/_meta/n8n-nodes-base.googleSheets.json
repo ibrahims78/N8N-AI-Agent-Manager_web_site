@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.googleSheets",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.googlesheets/index.md",
-  "fetchedAt": "2026-04-22T18:08:59.811Z",
+  "fetchedAt": "2026-04-22T18:36:04.057Z",
   "frontmatter": {
     "raw": {
       "title": "Google Sheets",
@@ -14,13 +14,13 @@
     "contentType": "[integration, reference]"
   },
   "siblings": [
-    "document-operations.md",
     "common-issues.md",
+    "document-operations.md",
     "sheet-operations.md"
   ],
   "assets": [
+    "workflow.png",
     "test-sheet-after.png",
-    "test-sheet-before.png",
-    "workflow.png"
+    "test-sheet-before.png"
   ]
 }

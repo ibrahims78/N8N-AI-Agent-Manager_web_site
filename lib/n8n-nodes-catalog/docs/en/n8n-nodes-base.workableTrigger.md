@@ -1,3 +1,7 @@
+# Workable Trigger node documentation
+
+> Learn how to use the Workable Trigger node in n8n. Follow technical documentation to integrate Workable Trigger node into your workflows.
+
 # Workable Trigger node
 
 Use the Workable Trigger node to respond to events in the [Workable](https://www.workable.com/) recruiting platform and integrate Workable with other applications. n8n has built-in support for a wide range of Workable events, including candidate created and moved.

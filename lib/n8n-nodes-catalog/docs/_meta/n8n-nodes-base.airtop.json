@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.airtop",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.airtop.md",
+  "fetchedAt": "2026-04-22T18:35:58.942Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Airtop node documentation",
+      "description": "Learn how to use the Airtop node in n8n. Follow technical documentation to integrate Airtop node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Airtop node documentation",
+    "description": "Learn how to use the Airtop node in n8n. Follow technical documentation to integrate Airtop node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,3 +1,7 @@
+# Customer.io Trigger node documentation
+
+> Learn how to use the Customer.io Trigger node in n8n. Follow technical documentation to integrate Customer.io Trigger node into your workflows.
+
 # Customer.io Trigger node
 
 [Customer.io](https://customer.io/) enables users to send newsletters to selected segments of customers using their website data. You can send targeted emails, push notifications, and SMS to lower churn, create stronger relationships, and drive subscriptions.

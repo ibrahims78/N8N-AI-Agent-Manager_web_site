@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.switch",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.switch.md",
+  "fetchedAt": "2026-04-22T18:36:09.119Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Switch",
+      "description": "Documentation for the Switch node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]",
+      "priority": "critical"
+    },
+    "title": "Switch",
+    "description": "Documentation for the Switch node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

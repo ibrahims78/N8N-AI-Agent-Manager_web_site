@@ -1,3 +1,7 @@
+# Google Business Profile Trigger node documentation
+
+> Learn how to use the Google Business Profile Trigger node in n8n. Follow technical documentation to integrate Google Business Profile Trigger node into your workflows.
+
 # Google Business Profile Trigger node
 
 Use the Google Business Profile Trigger node to respond to events in [Google Business Profile](https://www.google.com/business/) and integrate Google Business Profile with other applications. n8n has built-in support for responding to new reviews.
@@ -6,7 +10,7 @@ On this page, you'll find a list of events the Google Business Profile Trigger n
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/google/index.md).
+> You can find authentication information for this node [here](https://docs.n8n.io//).
 
 ## Events
 

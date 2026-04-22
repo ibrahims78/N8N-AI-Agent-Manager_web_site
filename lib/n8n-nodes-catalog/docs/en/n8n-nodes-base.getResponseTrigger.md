@@ -1,3 +1,7 @@
+# GetResponse Trigger node documentation
+
+> Learn how to use the GetResponse Trigger node in n8n. Follow technical documentation to integrate GetResponse Trigger node into your workflows.
+
 # GetResponse Trigger node
 
 [GetResponse](https://www.getresponse.com/) is an online platform that offers email marketing software, landing page creator, webinar hosting, and much more.

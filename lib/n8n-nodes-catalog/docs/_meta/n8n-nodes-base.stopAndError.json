@@ -1,0 +1,18 @@
+{
+  "nodeType": "n8n-nodes-base.stopAndError",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.stopanderror.md",
+  "fetchedAt": "2026-04-22T18:36:08.892Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Stop And Error",
+      "description": "Documentation for the Stop And Error node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]",
+      "priority": "high"
+    },
+    "title": "Stop And Error",
+    "description": "Documentation for the Stop And Error node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatAwsBedrock",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatawsbedrock.md",
+  "fetchedAt": "2026-04-22T18:36:12.380Z",
+  "frontmatter": {
+    "raw": {
+      "title": "AWS Bedrock Chat Model node documentation",
+      "description": "Learn how to use the AWS Bedrock Chat Model node in n8n. Follow technical documentation to integrate AWS Bedrock Chat Model node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "AWS Bedrock Chat Model node documentation",
+    "description": "Learn how to use the AWS Bedrock Chat Model node in n8n. Follow technical documentation to integrate AWS Bedrock Chat Model node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

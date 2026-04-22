@@ -1,3 +1,7 @@
+# Notion Trigger node documentation
+
+> Learn how to use the Notion Trigger node in n8n. Follow technical documentation to integrate Notion Trigger node into your workflows.
+
 # Notion Trigger node
 
 [Notion](https://notion.so) is an all-in-one workspace for your notes, tasks, wikis, and databases.
@@ -17,7 +21,7 @@
 
 ## Related resources
 
-n8n provides an app node for Notion. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.notion/index.md).
+n8n provides an app node for Notion. You can find the node docs [here](https://docs.n8n.io//).
 
 View [example workflows and related content](https://n8n.io/integrations/notion-trigger-beta/) on n8n's website.
 

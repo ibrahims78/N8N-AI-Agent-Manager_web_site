@@ -1,3 +1,7 @@
+# Summarization Chain node documentation
+
+> Learn how to use the Summarize Chain node in n8n. Follow technical documentation to integrate Summarize Chain node into your workflows.
+
 # Summarization Chain node
 
 Use the Summarization Chain node to summarize multiple documents.
@@ -29,6 +33,8 @@ You can customize the **Individual Summary Prompts** and the **Final Prompt to C
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for summarization-chain at [https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainsummarization/](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainsummarization/)
 
 ## Related resources
 

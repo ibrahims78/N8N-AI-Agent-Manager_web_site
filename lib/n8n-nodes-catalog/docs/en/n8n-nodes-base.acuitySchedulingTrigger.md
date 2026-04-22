@@ -1,3 +1,7 @@
+# Acuity Scheduling Trigger node documentation
+
+> Learn how to use the Acuity Scheduling Trigger node in n8n. Follow technical documentation to integrate Acuity Scheduling Trigger node into your workflows.
+
 # Acuity Scheduling Trigger node
 
 [Acuity Scheduling](https://acuityscheduling.com/) is a cloud-based appointment scheduling software solution that enables business owners to manage their appointments online. It has the capability to automatically sync calendars according to users' time zones and can send regular alerts and reminders to users regarding their appointment schedules.

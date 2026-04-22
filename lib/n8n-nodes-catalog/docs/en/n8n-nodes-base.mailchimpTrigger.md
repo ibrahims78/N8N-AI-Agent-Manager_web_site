@@ -1,3 +1,7 @@
+# Mailchimp Trigger node documentation
+
+> Learn how to use the Mailchimp Trigger node in n8n. Follow technical documentation to integrate Mailchimp Trigger node into your workflows.
+
 # Mailchimp Trigger node
 
 [Mailchimp](https://mailchimp.com/) is an integrated marketing platform that allows business owners to automate their email campaigns and track user engagement.

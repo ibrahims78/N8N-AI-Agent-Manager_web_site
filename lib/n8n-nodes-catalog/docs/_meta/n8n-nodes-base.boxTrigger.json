@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.boxTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.boxtrigger.md",
+  "fetchedAt": "2026-04-22T18:36:00.051Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Box Trigger node documentation",
+      "description": "Learn how to use the Box Trigger node in n8n. Follow technical documentation to integrate Box Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Box Trigger node documentation",
+    "description": "Learn how to use the Box Trigger node in n8n. Follow technical documentation to integrate Box Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

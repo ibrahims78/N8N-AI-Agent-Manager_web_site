@@ -1,3 +1,7 @@
+# Strava Trigger node documentation
+
+> Learn how to use the Strava Trigger node in n8n. Follow technical documentation to integrate Strava Trigger node into your workflows.
+
 # Strava Trigger node
 
 [Strava](https://www.strava.com/) is an internet service for tracking human exercise which incorporates social network features.

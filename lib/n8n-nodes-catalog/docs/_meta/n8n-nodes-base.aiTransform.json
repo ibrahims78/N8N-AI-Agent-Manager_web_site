@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.aiTransform",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.aitransform.md",
+  "fetchedAt": "2026-04-22T18:35:58.924Z",
+  "frontmatter": {
+    "raw": {
+      "title": "AI Transform",
+      "description": "Documentation for the AI Transform node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "AI Transform",
+    "description": "Documentation for the AI Transform node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

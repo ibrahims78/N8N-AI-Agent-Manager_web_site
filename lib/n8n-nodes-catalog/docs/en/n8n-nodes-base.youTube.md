@@ -1,3 +1,7 @@
+# YouTube node documentation
+
+> Learn how to use the YouTube node in n8n. Follow technical documentation to integrate YouTube node into your workflows.
+
 # YouTube node
 
 Use the YouTube node to automate work in YouTube, and integrate YouTube with other applications. n8n has built-in support for a wide range of YouTube features, including retrieving and updating channels, as well as creating and deleting playlists. 
@@ -6,7 +10,7 @@ On this page, you'll find a list of operations the YouTube node supports and lin
 
 > **Credentials**
 >
-> Refer to [YouTube credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication.
+> Refer to [YouTube credentials](https://docs.n8n.io//) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
@@ -44,9 +48,11 @@ On this page, you'll find a list of operations the YouTube node supports and lin
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for youtube at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.youtube/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.youtube/)
+
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

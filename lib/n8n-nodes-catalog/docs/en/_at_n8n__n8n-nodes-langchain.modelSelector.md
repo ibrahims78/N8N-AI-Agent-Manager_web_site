@@ -1,5 +1,9 @@
 # Model Selector
 
+> Learn how to use the Model Selector node in n8n. Follow technical documentation to integrate Model Selector node into your workflows.
+
+# Model Selector
+
 The Model Selector node dynamically selects one of the connected language models during workflow execution based on a set of defined conditions. This enables implementing fallback mechanisms for error handling or choosing the optimal model for specific tasks.
 
 This page covers node parameters for the Model Selector node and includes links to related resources.
@@ -27,6 +31,8 @@ The Model Selector node evaluates rules sequentially, starting from the first in
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for model-selector at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.modelselector/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.modelselector/)
 
 ## Related resources
 

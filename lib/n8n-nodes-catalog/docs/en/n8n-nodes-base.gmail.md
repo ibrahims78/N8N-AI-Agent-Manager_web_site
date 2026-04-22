@@ -1,3 +1,7 @@
+# Gmail node documentation
+
+> Learn how to use the Gmail node in n8n. Follow technical documentation to integrate Gmail node into your workflows.
+
 # Gmail node
 
 Use the Gmail node to automate work in Gmail, and integrate Gmail with other applications. n8n has built-in support for a wide range of Gmail features, including creating, updating, deleting, and getting drafts, messages, labels, thread.  
@@ -6,7 +10,7 @@ On this page, you'll find a list of operations the Gmail node supports and links
 
 > **Credentials**
 >
-> Refer to [Google credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication.
+> Refer to [Google credentials](https://docs.n8n.io//) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
@@ -15,48 +19,50 @@ On this page, you'll find a list of operations the Gmail node supports and links
 ## Operations
 
 * **Draft**
-	* [**Create**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/draft-operations.md#create-a-draft) a draft
-	* [**Delete**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/draft-operations.md#delete-a-draft) a draft
-	* [**Get**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/draft-operations.md#get-a-draft) a draft
-	* [**Get Many**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/draft-operations.md#get-many-drafts) drafts
+	* [**Create**](https://docs.n8n.io/draft-operations/#create-a-draft) a draft
+	* [**Delete**](https://docs.n8n.io/draft-operations/#delete-a-draft) a draft
+	* [**Get**](https://docs.n8n.io/draft-operations/#get-a-draft) a draft
+	* [**Get Many**](https://docs.n8n.io/draft-operations/#get-many-drafts) drafts
 * **Label**
-	* [**Create**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/label-operations.md#create-a-label) a label
-	* [**Delete**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/label-operations.md#delete-a-label) a label
-	* [**Get**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/label-operations.md#get-a-label) a label
-	* [**Get Many**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/label-operations.md#get-many-labels) labels
+	* [**Create**](https://docs.n8n.io/label-operations/#create-a-label) a label
+	* [**Delete**](https://docs.n8n.io/label-operations/#delete-a-label) a label
+	* [**Get**](https://docs.n8n.io/label-operations/#get-a-label) a label
+	* [**Get Many**](https://docs.n8n.io/label-operations/#get-many-labels) labels
 * **Message**
-	* [**Add Label**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#add-label-to-a-message) to a message
-	* [**Delete**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#delete-a-message) a message
-	* [**Get**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#get-a-message) a message
-	* [**Get Many**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#get-many-messages) messages
-	* [**Mark as Read**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#mark-as-read)
-	* [**Mark as Unread**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#mark-as-unread)
-	* [**Remove Label**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#remove-label-from-a-message) from a message
-	* [**Reply**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#reply-to-a-message) to a message
-	* [**Send**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#send-a-message) a message
+	* [**Add Label**](https://docs.n8n.io/message-operations/#add-label-to-a-message) to a message
+	* [**Delete**](https://docs.n8n.io/message-operations/#delete-a-message) a message
+	* [**Get**](https://docs.n8n.io/message-operations/#get-a-message) a message
+	* [**Get Many**](https://docs.n8n.io/message-operations/#get-many-messages) messages
+	* [**Mark as Read**](https://docs.n8n.io/message-operations/#mark-as-read)
+	* [**Mark as Unread**](https://docs.n8n.io/message-operations/#mark-as-unread)
+	* [**Remove Label**](https://docs.n8n.io/message-operations/#remove-label-from-a-message) from a message
+	* [**Reply**](https://docs.n8n.io/message-operations/#reply-to-a-message) to a message
+	* [**Send**](https://docs.n8n.io/message-operations/#send-a-message) a message
 * **Thread**
-	* [**Add Label**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/thread-operations.md#add-label-to-a-thread) to a thread
-	* [**Delete**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/thread-operations.md#delete-a-thread) a thread
-	* [**Get**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/thread-operations.md#get-a-thread) a thread
-	* [**Get Many**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/thread-operations.md#get-many-threads) threads
-	* [**Remove Label**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/thread-operations.md#remove-label-from-a-thread) from thread
-	* [**Reply**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/thread-operations.md#reply-to-a-message) to a message
-	* [**Trash**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/thread-operations.md#trash-a-thread) a thread
-	* [**Untrash**](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/thread-operations.md#untrash-a-thread) a thread
+	* [**Add Label**](https://docs.n8n.io/thread-operations/#add-label-to-a-thread) to a thread
+	* [**Delete**](https://docs.n8n.io/thread-operations/#delete-a-thread) a thread
+	* [**Get**](https://docs.n8n.io/thread-operations/#get-a-thread) a thread
+	* [**Get Many**](https://docs.n8n.io/thread-operations/#get-many-threads) threads
+	* [**Remove Label**](https://docs.n8n.io/thread-operations/#remove-label-from-a-thread) from thread
+	* [**Reply**](https://docs.n8n.io/thread-operations/#reply-to-a-message) to a message
+	* [**Trash**](https://docs.n8n.io/thread-operations/#trash-a-thread) a thread
+	* [**Untrash**](https://docs.n8n.io/thread-operations/#untrash-a-thread) a thread
 
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for gmail at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gmail/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gmail/)
+
 ## Related resources
 
 Refer to Google's [Gmail API documentation](https://developers.google.com/gmail/api) for detailed information about the API that this node integrates with.
 
-n8n provides a trigger node for Gmail. You can find the trigger node docs [here](/integrations/builtin/trigger-nodes/n8n-nodes-base.gmailtrigger/index.md).
+n8n provides a trigger node for Gmail. You can find the trigger node docs [here](https://docs.n8n.io//).
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -68,17 +74,20 @@ Refer to [Custom API operations](/integrations/custom-operations.md) for more in
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/common-issues.md).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Gmail node common issues
 
-Here are some common errors and issues with the [Gmail node](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Gmail node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## Remove the n8n attribution from sent messages
 
-If you're using the node to [send a message](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#send-a-message) or [reply to a message](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#reply-to-a-message), the node appends this statement to the end of the email:
+If you're using the node to [send a message](https://docs.n8n.io/message-operations/#send-a-message) or [reply to a message](https://docs.n8n.io/message-operations/#reply-to-a-message), the node appends this statement to the end of the email:
 
 > This email was sent automatically with n8n
 
@@ -88,7 +97,7 @@ To remove this attribution:
 2. Select **Append n8n attribution**.
 3. Turn the toggle off.
 
-Refer to [Send options](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#send-options) and [Reply options](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/message-operations.md#reply-options) for more information.
+Refer to [Send options](https://docs.n8n.io/message-operations/#send-options) and [Reply options](https://docs.n8n.io/message-operations/#reply-options) for more information.
 
 ## Forbidden - perhaps check your credentials
 
@@ -100,7 +109,7 @@ There was a problem loading the parameter options from server: "Forbidden - perh
 
 The error most often displays when you're using a Google Service Account as the credential and the credential doesn't have **Impersonate a User** turned on.
 
-Refer to [Google Service Account: Finish your n8n credential](/integrations/builtin/credentials/google/service-account.md#finish-your-n8n-credential) for more information.
+Refer to [Google Service Account: Finish your n8n credential](https://docs.n8n.io/service-account/#finish-your-n8n-credential) for more information.
 
 ## 401 unauthorized error
 
@@ -115,9 +124,9 @@ This error occurs when there's an issue with the credential you're using and its
 
 To resolve:
 
-1. For [OAuth2](/integrations/builtin/credentials/google/oauth-single-service.md) credentials, make sure you've enabled the Gmail API in **APIs & Services > Library**. Refer to [Google OAuth2 Single Service - Enable APIs](/integrations/builtin/credentials/google/oauth-single-service.md#enable-apis) for more information.
-2. For [Service Account](/integrations/builtin/credentials/google/service-account.md) credentials:
-    1. [Enable domain-wide delegation](/integrations/builtin/credentials/google/service-account.md#enable-domain-wide-delegation).
+1. For [OAuth2](https://docs.n8n.io/oauth-single-service/) credentials, make sure you've enabled the Gmail API in **APIs & Services > Library**. Refer to [Google OAuth2 Single Service - Enable APIs](https://docs.n8n.io/oauth-single-service/#enable-apis) for more information.
+2. For [Service Account](https://docs.n8n.io/service-account/) credentials:
+    1. [Enable domain-wide delegation](https://docs.n8n.io/service-account/#enable-domain-wide-delegation).
     2. Make sure you add the Gmail API as part of the domain-wide delegation configuration.
 
 ## Bad request - please check your parameters
@@ -128,9 +137,12 @@ Try a **Get** operation with the ID to confirm it exists.
 
 ---
 
+<!-- sibling:draft-operations.md -->
+## Draft Operations
+
 # Gmail node Draft Operations
 
-Use the Draft operations to create, delete, or get a draft or list drafts in Gmail. Refer to the [Gmail node](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/index.md) for more information on the Gmail node itself.
+Use the Draft operations to create, delete, or get a draft or list drafts in Gmail. Refer to the [Gmail node](https://docs.n8n.io//) for more information on the Gmail node itself.
 
 ## Create a draft
 
@@ -221,13 +233,16 @@ Refer to the [Gmail API Method: users.drafts.list](https://developers.google.com
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/common-issues.md).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:label-operations.md -->
+## Label Operations
+
 # Gmail node Label Operations
 
-Use the Label operations to create, delete, or get a label or list labels in Gmail. Refer to the [Gmail node](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/index.md) for more information on the Gmail node itself.
+Use the Label operations to create, delete, or get a label or list labels in Gmail. Refer to the [Gmail node](https://docs.n8n.io//) for more information on the Gmail node itself.
 
 ## Create a label
 
@@ -296,13 +311,16 @@ Refer to the [Gmail API Method: users.labels.list](https://developers.google.com
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/common-issues.md).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:message-operations.md -->
+## Message Operations
+
 # Gmail node Message Operations
 
-Use the Message operations to send, reply to, delete, mark read or unread, add a label to, remove a label from, or get a message or get a list of messages in Gmail. Refer to the [Gmail node](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/index.md) for more information on the Gmail node itself.
+Use the Message operations to send, reply to, delete, mark read or unread, add a label to, remove a label from, or get a message or get a list of messages in Gmail. Refer to the [Gmail node](https://docs.n8n.io//) for more information on the Gmail node itself.
 
 --8<-- "_snippets/integrations/builtin/app-nodes/hitl-tools.md"
 
@@ -328,7 +346,7 @@ Use this operation to immediately and permanently delete a message.
 
 > **Permanent deletion**
 >
-> This operation can't be undone. For recoverable deletions, use the [Thread Trash operation](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/thread-operations.md#trash-a-thread) instead.
+> This operation can't be undone. For recoverable deletions, use the [Thread Trash operation](https://docs.n8n.io/thread-operations/#trash-a-thread) instead.
 
 Enter these parameters:
 
@@ -519,13 +537,16 @@ Refer to the [Gmail API Method: users.messages.send](https://developers.google.c
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/common-issues.md).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:thread-operations.md -->
+## Thread Operations
+
 # Gmail node Thread Operations
 
-Use the Thread operations to delete, reply to, trash, untrash, add/remove labels, get one, or list threads. Refer to the [Gmail node](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/index.md) for more information on the Gmail node itself.
+Use the Thread operations to delete, reply to, trash, untrash, add/remove labels, get one, or list threads. Refer to the [Gmail node](https://docs.n8n.io//) for more information on the Gmail node itself.
 
 ## Add Label to a thread
 
@@ -681,4 +702,4 @@ Refer to the [Gmail API Method: users.threads.untrash](https://developers.google
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](/integrations/builtin/app-nodes/n8n-nodes-base.gmail/common-issues.md).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).

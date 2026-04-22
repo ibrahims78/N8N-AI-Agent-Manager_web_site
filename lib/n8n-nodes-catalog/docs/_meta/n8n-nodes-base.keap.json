@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.keap",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.keap.md",
+  "fetchedAt": "2026-04-22T18:36:04.979Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Keap node documentation",
+      "description": "Learn how to use the Keap node in n8n. Follow technical documentation to integrate Keap node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Keap node documentation",
+    "description": "Learn how to use the Keap node in n8n. Follow technical documentation to integrate Keap node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

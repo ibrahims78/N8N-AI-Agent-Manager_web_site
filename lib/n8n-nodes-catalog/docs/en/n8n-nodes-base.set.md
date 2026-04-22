@@ -1,5 +1,9 @@
 # Edit Fields (Set)
 
+> Documentation for the Edit Fields node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Edit Fields (Set)
+
 Use the Edit Fields node to set workflow data. This node can set new data as well as overwrite data that already exists. This node is crucial in workflows which expect incoming data from previous nodes, such as when inserting values to Google Sheets or databases.
 
 ## Node parameters
@@ -26,7 +30,7 @@ If you don't want to use expressions:
 
 You can do this for both the name and value of the field.
 
-![A gif showing the drag and drop action, as well as changing a field to fixed](/_images/integrations/builtin/core-nodes/set/drag-drop-fixed-toggle.gif)
+![A gif showing the drag and drop action, as well as changing a field to fixed](/api/catalog/docs/assets/n8n-nodes-base.set/drag-drop-fixed-toggle.gif)
 
 ### Keep Only Set Fields
 
@@ -68,6 +72,8 @@ You can prevent this behavior by selecting **Add Option** > **Support Dot Notati
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for set at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.set/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.set/)
 
 ## Arrays and expressions in JSON Output mode
 

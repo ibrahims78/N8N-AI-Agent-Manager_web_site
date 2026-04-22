@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.mcpTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger.md",
+  "fetchedAt": "2026-04-22T18:36:12.748Z",
+  "frontmatter": {
+    "raw": {
+      "title": "MCP Server Trigger node documentation",
+      "description": "Learn how to use the MCP Server Trigger node in n8n. Follow technical documentation to integrate the MCP Server Trigger node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "MCP Server Trigger node documentation",
+    "description": "Learn how to use the MCP Server Trigger node in n8n. Follow technical documentation to integrate the MCP Server Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

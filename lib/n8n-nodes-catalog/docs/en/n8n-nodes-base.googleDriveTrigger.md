@@ -1,10 +1,14 @@
+# Google Drive Trigger node documentation
+
+> Learn how to use the Google Drive Trigger node in n8n. Follow technical documentation to integrate Google Drive Trigger node into your workflows.
+
 # Google Drive Trigger node
 
 [Google Drive](https://drive.google.com) is a file storage and synchronization service developed by Google. It allows users to store files on their servers, synchronize files across devices, and share files.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/google/index.md).
+> You can find authentication information for this node [here](https://docs.n8n.io//).
 
 > **Examples and templates**
 >
@@ -16,13 +20,16 @@
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/trigger-nodes/n8n-nodes-base.googledrivetrigger/common-issues.md).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/common-issues/).
 
 ---
 
+<!-- sibling:common-issues.md -->
+## Common Issues
+
 # Google Drive Trigger node common issues
 
-Here are some common errors and issues with the [Google Drive Trigger node](/integrations/builtin/trigger-nodes/n8n-nodes-base.googledrivetrigger/index.md) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Google Drive Trigger node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
 
 ## 401 unauthorized error
 
@@ -37,9 +44,9 @@ This error occurs when there's an issue with the credential you're using and its
 
 To resolve:
 
-1. For [OAuth2](/integrations/builtin/credentials/google/oauth-single-service.md) credentials, make sure you've enabled the Google Drive API in **APIs & Services > Library**. Refer to [Google OAuth2 Single Service - Enable APIs](/integrations/builtin/credentials/google/oauth-single-service.md#enable-apis) for more information.
-2. For [Service Account](/integrations/builtin/credentials/google/service-account.md) credentials:
-    1. [Enable domain-wide delegation](/integrations/builtin/credentials/google/service-account.md#enable-domain-wide-delegation).
+1. For [OAuth2](https://docs.n8n.io/oauth-single-service/) credentials, make sure you've enabled the Google Drive API in **APIs & Services > Library**. Refer to [Google OAuth2 Single Service - Enable APIs](https://docs.n8n.io/oauth-single-service/#enable-apis) for more information.
+2. For [Service Account](https://docs.n8n.io/service-account/) credentials:
+    1. [Enable domain-wide delegation](https://docs.n8n.io/service-account/#enable-domain-wide-delegation).
     2. Make sure you add the Google Drive API as part of the domain-wide delegation configuration.
 
 ## Handling more than one file change

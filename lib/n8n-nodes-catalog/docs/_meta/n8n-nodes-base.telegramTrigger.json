@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.telegramTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/index.md",
+  "fetchedAt": "2026-04-22T18:36:09.463Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Telegram Trigger node documentation",
+      "description": "Learn how to use the Telegram Trigger node in n8n. Follow technical documentation to integrate Telegram Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "critical"
+    },
+    "title": "Telegram Trigger node documentation",
+    "description": "Learn how to use the Telegram Trigger node in n8n. Follow technical documentation to integrate Telegram Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "common-issues.md"
+  ],
+  "assets": []
+}

@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.coda",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.coda.md",
+  "fetchedAt": "2026-04-22T18:36:00.460Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Coda node documentation",
+      "description": "Learn how to use the Coda node in n8n. Follow technical documentation to integrate Coda node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Coda node documentation",
+    "description": "Learn how to use the Coda node in n8n. Follow technical documentation to integrate Coda node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

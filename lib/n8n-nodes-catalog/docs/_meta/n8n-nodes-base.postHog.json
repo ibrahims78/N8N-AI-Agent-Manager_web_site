@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.postHog",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.posthog.md",
+  "fetchedAt": "2026-04-22T18:36:07.447Z",
+  "frontmatter": {
+    "raw": {
+      "title": "PostHog node documentation",
+      "description": "Learn how to use the PostHog node in n8n. Follow technical documentation to integrate PostHog node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "PostHog node documentation",
+    "description": "Learn how to use the PostHog node in n8n. Follow technical documentation to integrate PostHog node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

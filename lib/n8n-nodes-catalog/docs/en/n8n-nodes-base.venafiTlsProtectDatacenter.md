@@ -1,3 +1,7 @@
+# Venafi TLS Protect Datacenter node documentation
+
+> Learn how to use the Venafi TLS Protect Datacenter node in n8n. Follow technical documentation to integrate Venafi TLS Protect Datacenter node into your workflows.
+
 <!-- vale off -->
 <!-- disabled vale because of "Datacenter" Don't want to general approve it, but it's the brand name -->
 # Venafi TLS Protect Datacenter node
@@ -26,6 +30,8 @@ On this page, you'll find a list of operations the Venafi TLS Protect Datacenter
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for venafi-tls-protect-datacenter at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.venafitlsprotectdatacenter/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.venafitlsprotectdatacenter/)
+
 ## Related resources
 
 n8n also provides:
@@ -36,7 +42,7 @@ n8n also provides:
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

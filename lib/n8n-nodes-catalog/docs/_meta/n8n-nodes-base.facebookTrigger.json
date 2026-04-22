@@ -1,0 +1,30 @@
+{
+  "nodeType": "n8n-nodes-base.facebookTrigger",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md",
+  "fetchedAt": "2026-04-22T18:36:02.240Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Facebook Trigger",
+      "description": "Learn how to use the Facebook Trigger node in n8n. Follow technical documentation to integrate Facebook Trigger node into your workflows.",
+      "contentType": "[integration, reference]",
+      "priority": "medium"
+    },
+    "title": "Facebook Trigger",
+    "description": "Learn how to use the Facebook Trigger node in n8n. Follow technical documentation to integrate Facebook Trigger node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "certificate-transparency.md",
+    "application.md",
+    "ad-account.md",
+    "link.md",
+    "instagram.md",
+    "group.md",
+    "page.md",
+    "whatsapp.md",
+    "user.md",
+    "permissions.md",
+    "workplace-security.md"
+  ],
+  "assets": []
+}

@@ -1,3 +1,7 @@
+# ActiveCampaign node documentation
+
+> Learn how to use the ActiveCampaign node in n8n. Follow technical documentation to integrate ActiveCampaign node into your workflows.
+
 # ActiveCampaign node
 
 Use the ActiveCampaign node to automate work in ActiveCampaign, and integrate ActiveCampaign with other applications. n8n has built-in support for a wide range of ActiveCampaign features, including creating, getting, updating, and deleting accounts, contact, orders, e-commerce customers, connections, lists, tags, and deals.
@@ -79,9 +83,11 @@ On this page, you'll find a list of operations the ActiveCampaign node supports 
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for activecampaign at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.activecampaign/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.activecampaign/)
+
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

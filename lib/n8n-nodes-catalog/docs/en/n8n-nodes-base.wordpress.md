@@ -1,3 +1,7 @@
+# WordPress node documentation
+
+> Learn how to use the WordPress node in n8n. Follow technical documentation to integrate WordPress node into your workflows.
+
 # WordPress node
 
 Use the WordPress node to automate work in WordPress, and integrate WordPress with other applications. n8n has built-in support for a wide range of WordPress features, including creating, updating, and getting posts and users.
@@ -34,9 +38,11 @@ On this page, you'll find a list of operations the WordPress node supports and l
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for wordpress at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.wordpress/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.wordpress/)
+
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

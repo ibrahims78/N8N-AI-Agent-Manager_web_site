@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.textClassifier",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.text-classifier.md",
+  "fetchedAt": "2026-04-22T18:36:11.287Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Text Classifier node documentation",
+      "description": "Learn how to use the Text Classifier node in n8n. Follow technical documentation to integrate Text Classifier node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Text Classifier node documentation",
+    "description": "Learn how to use the Text Classifier node in n8n. Follow technical documentation to integrate Text Classifier node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.toolSearXng",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolsearxng.md",
+  "fetchedAt": "2026-04-22T18:36:13.497Z",
+  "frontmatter": {
+    "raw": {
+      "title": "SearXNG Tool node documentation",
+      "description": "Learn how to use the SearXNG Tool node in n8n. Follow technical documentation to integrate SearXNG Tool node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "SearXNG Tool node documentation",
+    "description": "Learn how to use the SearXNG Tool node in n8n. Follow technical documentation to integrate SearXNG Tool node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

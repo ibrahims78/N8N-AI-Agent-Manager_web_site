@@ -1,3 +1,7 @@
+# Figma Trigger (Beta) node documentation
+
+> Learn how to use the Figma Trigger node in n8n. Follow technical documentation to integrate Figma Trigger node into your workflows.
+
 # Figma Trigger (Beta) node
 
 [Figma](https://www.figma.com/) is a prototyping tool which is primarily web-based, with more offline features enabled by desktop applications for macOS and Windows.

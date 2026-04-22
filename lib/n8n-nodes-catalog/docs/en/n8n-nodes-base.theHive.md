@@ -1,3 +1,7 @@
+# TheHive node documentation
+
+> Learn how to use the TheHive node in n8n. Follow technical documentation to integrate TheHive node into your workflows.
+
 # TheHive node
 
 Use the TheHive node to automate work in TheHive, and integrate TheHive with other applications. n8n has built-in support for a wide range of TheHive features, including creating alerts, counting tasks logs, cases, and observables. 
@@ -25,9 +29,11 @@ The available operations depend on your API version. To see the operations list,
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for thehive at [https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.thehive/](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.thehive/)
+
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 

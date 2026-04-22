@@ -1,0 +1,17 @@
+{
+  "nodeType": "n8n-nodes-base.gSuiteAdmin",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.gsuiteadmin.md",
+  "fetchedAt": "2026-04-22T18:36:03.455Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Google Workspace Admin node documentation",
+      "description": "Learn how to use the Google Workspace Admin node in n8n. Follow technical documentation to integrate Google Workspace Admin node into your workflows.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Google Workspace Admin node documentation",
+    "description": "Learn how to use the Google Workspace Admin node in n8n. Follow technical documentation to integrate Google Workspace Admin node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

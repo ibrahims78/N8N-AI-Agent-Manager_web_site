@@ -1,0 +1,25 @@
+{
+  "nodeType": "n8n-nodes-base.webhook",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.webhook/index.md",
+  "fetchedAt": "2026-04-22T18:36:10.794Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Webhook node documentation",
+      "description": "Learn how to use the Webhook node in n8n. Follow technical documentation to integrate Webhook node into your workflows.",
+      "priority": "critical",
+      "contentType": "[integration, reference]",
+      "tags": "",
+      "hide": ""
+    },
+    "title": "Webhook node documentation",
+    "description": "Learn how to use the Webhook node in n8n. Follow technical documentation to integrate Webhook node into your workflows.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [
+    "workflow-development.md",
+    "common-issues.md"
+  ],
+  "assets": [
+    "webhook-urls.png"
+  ]
+}

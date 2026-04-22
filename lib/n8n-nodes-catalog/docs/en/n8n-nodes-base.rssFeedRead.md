@@ -1,5 +1,9 @@
 # RSS Read
 
+> Documentation for the RSS Read node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# RSS Read
+
 Use the RSS Read node to read data from RSS feeds published on the internet.
 
 ## Node parameters
@@ -13,6 +17,8 @@ Use the RSS Read node to read data from RSS feeds published on the internet.
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for rss-read at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.rssfeedread/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.rssfeedread/)
 
 ## Related resources
 

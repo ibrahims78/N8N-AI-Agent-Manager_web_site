@@ -1,5 +1,9 @@
 # Merge
 
+> Documentation for the Merge node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
+
+# Merge
+
 Use the Merge node to combine data from multiple streams, once data of all streams is available.
 
 > **Major changes in 0.194.0**
@@ -21,7 +25,7 @@ You can specify how the Merge node should combine data from different data strea
 Keep data from all inputs. Choose a **Number of Inputs** to output items of each input, one after another. The node waits for the execution of all connected inputs. 
 
 <figure markdown="span">
-![Sample Append mode inputs and output. Two separate data sources are on the left, one with items A, B, C and one with items D, E, F. The final data source combines both and lists A, B, C, D, E, F.](/_images/integrations/builtin/core-nodes/merge/append-diagram.png)
+![Sample Append mode inputs and output. Two separate data sources are on the left, one with items A, B, C and one with items D, E, F. The final data source combines both and lists A, B, C, D, E, F.](/api/catalog/docs/assets/n8n-nodes-base.merge/append-diagram.png)
 <figcaption>Append mode inputs and output</figcaption>
 </figure>
 
@@ -42,7 +46,7 @@ n8n's default behavior is to keep matching items. You can change this using the 
 * **Enrich Input 2**: Keep all data from Input 2, and add matching data from Input 1. This is like a right join.
 
 <figure markdown="span">
-![Sample Combine mode inputs and output. Two separate data sources are on the left. The final data source combines these data sources by matching fields.](/_images/integrations/builtin/core-nodes/merge/merge-by-field-diagram.png)
+![Sample Combine mode inputs and output. Two separate data sources are on the left. The final data source combines these data sources by matching fields.](/api/catalog/docs/assets/n8n-nodes-base.merge/merge-by-field-diagram.png)
 <figcaption>Combine by Matching Fields mode inputs and output</figcaption>
 </figure>
 
@@ -51,7 +55,7 @@ n8n's default behavior is to keep matching items. You can change this using the 
 Combine items based on their order. The item at index 0 in Input 1 merges with the item at index 0 in Input 2, and so on.
 
 <figure markdown="span">
-![Sample Combine mode inputs and output. Two separate data sources are on the left. The final data source combines these data sources by index position.](/_images/integrations/builtin/core-nodes/merge/merge-by-position-diagram.png)
+![Sample Combine mode inputs and output. Two separate data sources are on the left. The final data source combines these data sources by index position.](/api/catalog/docs/assets/n8n-nodes-base.merge/merge-by-position-diagram.png)
 <figcaption>Combine by Position mode inputs and output</figcaption>
 </figure>
 
@@ -60,7 +64,7 @@ Combine items based on their order. The item at index 0 in Input 1 merges with t
 Output all possible item combinations, while merging fields with the same name.
 
 <figure markdown="span">
-![Sample Combine mode inputs and output. Two separate data sources are on the left. The final data source combines these data sources by all possible combinations.](/_images/integrations/builtin/core-nodes/merge/multiplex-diagram.png)
+![Sample Combine mode inputs and output. Two separate data sources are on the left. The final data source combines these data sources by all possible combinations.](/api/catalog/docs/assets/n8n-nodes-base.merge/multiplex-diagram.png)
 <figcaption>Combine by All Possible Combinations mode inputs and output</figcaption>
 </figure>
 
@@ -112,6 +116,8 @@ The node outputs the data from the chosen input, without changing it.
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
+> **🔗 Templates & examples:** browse ready-made workflows for merge at [https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.merge/](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.merge/)
+
 ## Merging data streams with uneven numbers of items
 
 The items passed into Input 1 of the Merge node will take precedence. For example, if the Merge node receives five items in Input 1 and 10 items in Input 2, it only processes five items. The remaining five items from Input 2 aren't processed.
@@ -127,7 +133,7 @@ One data stream triggers the Merge node, which then goes and executes the other 
 
 For example, in the screenshot below there's a workflow containing an Edit Fields node, If node, and Merge node. The standard If node behavior is to execute one data stream (in the screenshot, this is the **true** output). However, due to the Merge node, both data streams execute, despite the If node not sending any data down the **false** data stream.
 
-![Screenshot of a workflow. The workflow has an Edit Fields node, followed by an If node. It ends with a Merge node.](/_images/integrations/builtin/core-nodes/merge/if-merge-node.png)
+![Screenshot of a workflow. The workflow has an Edit Fields node, followed by an If node. It ends with a Merge node.](/api/catalog/docs/assets/n8n-nodes-base.merge/if-merge-node.png)
 
 <!-- TODO: remove once v1 is mature -->
 

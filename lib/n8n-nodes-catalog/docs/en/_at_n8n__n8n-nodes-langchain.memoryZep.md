@@ -1,3 +1,7 @@
+# Zep node documentation
+
+> Learn how to use the Zep node in n8n. Follow technical documentation to integrate Zep node into your workflows.
+
 # Zep node
 
 > **Deprecated**
@@ -27,6 +31,8 @@ On this page, you'll find a list of operations the Zep node supports, and links 
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for zep at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memoryzep/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memoryzep/)
 
 ## Related resources
 

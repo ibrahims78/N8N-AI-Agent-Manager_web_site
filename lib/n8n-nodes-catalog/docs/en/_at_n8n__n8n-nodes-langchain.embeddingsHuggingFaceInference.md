@@ -1,3 +1,7 @@
+# Embeddings HuggingFace Inference node documentation
+
+> Learn how to use the Embeddings HuggingFace Inference node in n8n. Follow technical documentation to integrate Embeddings HuggingFace Inference node into your workflows.
+
 # Embeddings HuggingFace Inference node
 
 Use the Embeddings HuggingFace Inference node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
@@ -31,6 +35,8 @@ Refer to [HuggingFace's guide to inference](https://huggingface.co/inference-end
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+> **🔗 Templates & examples:** browse ready-made workflows for embeddings-hugging-face-inference at [https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingshuggingfaceinference/](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingshuggingfaceinference/)
 
 ## Related resources
 
