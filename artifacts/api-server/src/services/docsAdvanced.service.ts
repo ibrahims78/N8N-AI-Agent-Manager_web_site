@@ -1074,6 +1074,36 @@ export async function exportAllDocsHtml(language: DocLang = "ar"): Promise<strin
   const md = await exportAllDocsMarkdown(language);
   const { default: MarkdownIt } = await import("markdown-it");
   const mdIt = new MarkdownIt({ html: false, linkify: true, breaks: false });
+
+  // Rewrite n8n's relative doc links (e.g. "/integrations/builtin/.../index.md"
+  // or "/glossary.md#anchor") into absolute https://docs.n8n.io/... URLs so
+  // they actually open when the book is downloaded as a standalone HTML/PDF.
+  // Strip the trailing ".md" / "/index.md" because the n8n docs site serves
+  // extensionless URLs.
+  const defaultLinkOpen =
+    mdIt.renderer.rules.link_open ||
+    function (tokens, idx, options, _env, self) {
+      return self.renderToken(tokens, idx, options);
+    };
+  mdIt.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+    const hrefIdx = tokens[idx].attrIndex("href");
+    if (hrefIdx >= 0) {
+      const href = tokens[idx].attrs![hrefIdx][1];
+      if (href.startsWith("/")) {
+        const cleaned = href
+          .replace(/\/index\.md(?=$|[#?])/, "/")
+          .replace(/\.md(?=$|[#?])/, "");
+        tokens[idx].attrs![hrefIdx][1] = `https://docs.n8n.io${cleaned}`;
+        tokens[idx].attrSet("target", "_blank");
+        tokens[idx].attrSet("rel", "noopener");
+      } else if (/^https?:\/\//i.test(href)) {
+        tokens[idx].attrSet("target", "_blank");
+        tokens[idx].attrSet("rel", "noopener");
+      }
+    }
+    return defaultLinkOpen(tokens, idx, options, env, self);
+  };
+
   const htmlBody = mdIt.render(md);
   const isAr = language === "ar";
   const titleStr = isAr ? "كتاب n8n العربي" : "n8n Reference Book";

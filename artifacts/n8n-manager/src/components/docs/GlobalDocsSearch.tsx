@@ -113,8 +113,22 @@ export function GlobalDocsSearch({
               <Loader2 size={14} className="animate-spin" /> {isRTL ? "بحث..." : "Searching..."}
             </div>
           ) : !hits || hits.length === 0 ? (
-            <div className="p-3 text-sm text-muted-foreground">
-              {isRTL ? "لا توجد نتائج. جرَّب كلمات أخرى." : "No results — try different keywords."}
+            <div className="p-3 text-sm text-muted-foreground space-y-1">
+              <div>{isRTL ? "لا توجد نتائج لكلماتك." : "No results for your keywords."}</div>
+              {scope === "ar" && (
+                <div className="text-[11px]">
+                  {isRTL
+                    ? "النطاق العربي فارغ — لم يتم ترجمة التوثيقات بعد. غيِّر النطاق إلى All أو EN، أو شغِّل «ترجمة الكل» من لوحة الإدارة."
+                    : "Arabic corpus is empty — translations haven't been generated yet. Switch scope to All or EN, or run 'Translate All' from the admin panel."}
+                </div>
+              )}
+              {scope === "any" && (
+                <div className="text-[11px]">
+                  {isRTL
+                    ? "تلميح: محتوى التوثيقات حالياً بالإنجليزية فقط. جرِّب كلمات إنجليزية مثل webhook أو http."
+                    : "Hint: indexed content is currently English-only. Try English keywords like 'webhook' or 'http'."}
+                </div>
+              )}
             </div>
           ) : (
             <ul className="divide-y divide-border">
