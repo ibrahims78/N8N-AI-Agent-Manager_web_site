@@ -1,0 +1,273 @@
+================================================================================
+  دمج كتالوج عُقد N8N — تقرير التنفيذ
+================================================================================
+  المشروع: مدير وكيل N8N الذكي (N8N AI Agent Manager)
+  المصدر : https://github.com/ibrahims78/n8n  (فرع master)
+  التاريخ: 22-04-2026
+================================================================================
+
+ملخص
+-----
+تم بنجاح دمج 430 عقدة رسمية من n8n داخل مدير وكيل N8N الذكي.
+كل عقدة تحمل: الاسم المعروض، الفئات، الفئات الفرعية، المرادفات (مصطلحات
+بحث بديلة)، علامة Trigger، رابط التوثيق الرسمي، رابط توثيق بيانات
+الاعتماد، وروابط أمثلة سير العمل من مدوّنة n8n.io.
+
+النتائج باختصار
+----------------
+  إجمالي العُقد التي تم بذرها ........... 430
+  إجمالي عُقد الـ Trigger ............... 89
+  عدد الفئات ............................. 16
+  أعلى 5 فئات ............................ التطوير (118)، التواصل (109)،
+                                          العُقد الأساسية (73)،
+                                          البيانات والتخزين (59)،
+                                          التسويق (54)
+  حجم ملف الكتالوج ....................... 416 كيلوبايت (JSON مضغوط)
+  فرع المستودع المصدر .................... master (ibrahims78/n8n)
+
+
+================================================================================
+  المرحلة 1 — جلب الكتالوج وتخزينه في قاعدة البيانات
+================================================================================
+
+حزمة جديدة: ‎@workspace/n8n-nodes-catalog
+  المسار: lib/n8n-nodes-catalog/
+  الملفات:
+    - package.json
+    - src/index.ts                 تعريفات وأنواع TypeScript (CatalogNode وغيرها)
+    - data/catalog.json            430 عقدة بصيغة JSON (ملف بذر مُضمَّن)
+    - scripts/fetch.mjs            سكربت تحديث (يستخدم GitHub Git Tree API)
+
+سكربت التحديث (scripts/fetch.mjs)
+  - يستدعي GET /repos/ibrahims78/n8n/git/trees/master?recursive=1
+  - يُرشّح المسارات المطابقة لـ: packages/nodes-base/nodes/**/*.node.json
+  - يجلب كل ملف ‎.node.json من raw.githubusercontent.com (تزامن 8)
+  - يُجمّع 430 سجلًا في الملف lib/n8n-nodes-catalog/data/catalog.json
+  - طريقة التشغيل:
+      pnpm --filter @workspace/n8n-nodes-catalog run fetch
+
+مخطط قاعدة البيانات: lib/db/src/schema/node_catalog.ts
+  الجداول التي تم إنشاؤها (drizzle-kit push):
+
+  node_catalog
+  ------------
+    id                  serial PK
+    node_type           text UNIQUE        مثل: "n8n-nodes-base.slack"
+    display_name        text
+    folder              text                مثل: "Slack"
+    file_name           text
+    is_trigger          boolean
+    node_version        text
+    codex_version       text
+    categories          jsonb               ["Communication", "HITL"]
+    subcategories       jsonb               {"HITL": ["Human in the Loop"]}
+    aliases             jsonb               ["human","approval","wait", ...]
+    primary_docs_url    text
+    credential_docs_url text
+    examples            jsonb               [{label, url, icon}, ...]
+    icon_url            text
+    raw_json            jsonb               الملف الأصلي ‎.node.json كاملًا
+    created_at / updated_at  timestamps
+  الفهارس: node_type (فريد)، display_name، is_trigger
+
+  node_catalog_meta
+  -----------------
+    id           serial PK
+    source_url   text
+    branch       text
+    total_nodes  integer
+    fetched_at   timestamp
+    created_at   timestamp
+  يُسجّل كل عملية تحديث لأغراض الرصد والمتابعة.
+
+خدمة الواجهة الخلفية: artifacts/api-server/src/services/nodeCatalog.service.ts
+  الواجهة العامة:
+    seedNodeCatalog()           إدخال/تحديث 430 عقدة من ملف catalog.json
+    listCatalog(opts)           قائمة مع تقسيم صفحات/بحث/فئة/Trigger
+    getCategoriesWithCounts()   إرجاع الفئات مرتبة حسب العدد
+    lookupNode(query)           بحث مباشر عن طريق node-type/folder/alias
+    searchCatalogDb(q, limit)   بحث تقريبي على الاسم/المرادفات/الفئات
+    refreshCatalogFromGitHub()  جلب مباشر لأحدث البيانات من GitHub
+    getCatalogStatus()          إرجاع الإجمالي وآخر تاريخ تحديث
+
+نقاط REST: artifacts/api-server/src/routes/catalog.routes.ts
+  جميع المسارات تتطلب مصادقة JWT. يتم تركيبها على: /api/catalog
+
+  GET  /api/catalog/status           الإجمالي وآخر تحديث
+  GET  /api/catalog/categories       جميع الفئات مع الأعداد
+  GET  /api/catalog                  قائمة مع فلاتر:
+                                       ?search=xxx
+                                       ?category=Communication
+                                       ?trigger=true|false
+                                       ?limit=24&offset=0
+  GET  /api/catalog/lookup/:query    بحث مباشر بالنوع/المجلد/المرادف
+  POST /api/catalog/refresh   [أدمن] تحديث مباشر من GitHub
+
+دمج البذر: artifacts/api-server/src/seed.ts
+  يُبذَر الكتالوج تلقائيًا عند كل تشغيل للخادم (إدخال/تحديث آمن للتكرار).
+  أول بذر في هذه الجلسة أدخل 430 عقدة، والمرات اللاحقة ستحدّث المتغير فقط.
+
+
+================================================================================
+  المرحلة 2 — تطوير الوكيل الذكي (AI Agent)
+================================================================================
+
+أداة جديدة: lookup_node_catalog
+  أُضيفت في: artifacts/api-server/src/services/agentTools.ts
+  المخطط:
+    {
+      name: "lookup_node_catalog",
+      params: { query: string }
+    }
+  السلوك:
+    1. يحاول أولًا المطابقة الدقيقة عبر lookupNode() (تُغطي نوع العقدة،
+       والمجلد، واسم الملف، و256 مرادفًا مثل "human approval" → Slack).
+    2. عند الفشل ينتقل إلى البحث التقريبي على الاسم المعروض والمرادفات
+       والفئات، ويُرجع حتى 10 نتائج.
+    3. يُرجع: nodeType، displayName، isTrigger، categories، subcategories،
+       aliases، primaryDocsUrl، credentialDocsUrl، examples (حتى 5).
+
+  أهمية ذلك
+  ----------
+  المستخدمون باللغة العربية يستخدمون كثيرًا صياغات غير مألوفة مثل
+  "أريد عقدة بشرية" التي كان النموذج اللغوي مضطرًا لتخمينها سابقًا.
+  فهرس المرادفات في الكتالوج يحلّ هذه العبارات مباشرة إلى نوع العقدة
+  الصحيح في n8n، ويمكن للنموذج أيضًا تقديم رابط التوثيق الرسمي للمستخدم
+  دون اختلاق روابط.
+
+
+================================================================================
+  المرحلة 3 — واجهة المستخدم الأمامية
+================================================================================
+
+صفحة جديدة: artifacts/n8n-manager/src/pages/nodes-catalog.tsx
+  المسار: ‎/nodes-catalog (محمي، يتطلب تسجيل الدخول)
+
+  المزايا:
+    - حقل بحث (مع تأخير 300 مللي ثانية) على الاسم والمرادفات والفئات
+    - قائمة فلتر Trigger (الكل / Triggers فقط / عادية)
+    - شرائح الفئات (16 شريحة مع أعداد مباشرة) — اختيار مفرد قابل للتبديل
+    - شبكة بصفحات بمعدل 24 لكل صفحة (1/2/3 أعمدة متجاوبة)
+    - بطاقة لكل عقدة تحتوي على:
+        * الأيقونة (من iconUrl داخل codex مع بديل عند الفشل)
+        * الاسم المعروض ‎+ نوع العقدة (خط أحادي المسافة)
+        * شارة "Trigger" للعقد المُشغِّلة
+        * حتى 3 وسوم فئات
+        * معاينة المرادفات (مع قص الأسطر)
+        * رابط "التوثيق" (primaryDocsUrl) — يفتح وثائق n8n.io
+        * رابط "المصادقة" (credentialDocsUrl) — يفتح وثائق بيانات الاعتماد
+        * عدد الأمثلة
+
+  دعم RTL/العربية:
+    - جميع التسميات مُترجمة (لا نص إنجليزي ثابت في الواجهة)
+    - موقع أيقونة البحث ينعكس بحسب اتجاه الكتابة
+    - أسهم التنقل بين الصفحات تنعكس في وضع RTL
+    - dir="rtl" يُطبَّق على الجذر
+
+التنقل
+  artifacts/n8n-manager/src/components/Layout.tsx
+    أُضيف عنصر "كتالوج العقد" (أيقونة Package) بين القوالب والتاريخ.
+    التسمية: "كتالوج العقد" (عربي) / "Nodes Catalog" (إنجليزي).
+
+  artifacts/n8n-manager/src/App.tsx
+    أُضيف ‎<Route path="/nodes-catalog">‎ مرتبط بصفحة NodesCatalogPage.
+
+
+================================================================================
+  المرحلة 4 — آلية التحديث الدوري
+================================================================================
+
+بطاقة في صفحة الإعدادات: artifacts/n8n-manager/src/pages/settings.tsx
+  قسم جديد "كتالوج عُقد n8n" (للأدمن فقط) يعرض:
+    - العدد الإجمالي الحالي للعقد
+    - فرع المصدر (master)
+    - وقت آخر تحديث
+    - زر "تحديث الآن" → POST /api/catalog/refresh
+      • يُعيد الجلب مباشرةً من GitHub
+      • يعرض ‎{fetched, inserted, updated}‎ عبر تنبيه toast
+      • يُحدّث عرض الحالة المحلي
+
+  هذا تحديث دوري يدوي؛ يمكن للمستخدم تشغيله متى أُضيفت عقد جديدة في
+  مستودع n8n الأصلي. (لم يُربط مجدول خلفي في هذه التكرارة — تتم إعادة
+  بذر البيانات أيضًا عند كل تشغيل للخادم، فإعادة تشغيل سير العمل تعمل
+  فعليًا كمحفّز ثانٍ للتحديث.)
+
+
+================================================================================
+  الاختبار — التحقق من البداية إلى النهاية (تم تشغيله مباشرة)
+================================================================================
+
+  الاختبار 1 — نقطة الحالة
+    GET /api/catalog/status
+    -> { totalNodes: 430, source: "github.com/ibrahims78/n8n",
+         branch: "master", fetchedAt: "2026-04-22T03:12:38Z" }   ✅
+
+  الاختبار 2 — الفئات
+    GET /api/catalog/categories
+    -> 16 فئة، الأعلى: Development(118)، Communication(109)      ✅
+
+  الاختبار 3 — البحث
+    GET /api/catalog?search=slack&limit=2
+    -> أُرجعت عقدة Slack مع الفئات ‎["Communication","HITL"]‎،
+       والمرادفات ‎["human","form","wait","hitl","approval"]‎،
+       بالإضافة إلى روابط التوثيق وبيانات الاعتماد وأمثلة سير العمل   ✅
+
+  الاختبار 4 — بحث مباشر بالمرادف
+    GET /api/catalog/lookup/slack          -> Slack ✅
+    GET /api/catalog/lookup/n8n-nodes-base.postgres -> Postgres ✅
+
+  الاختبار 5 — فلتر Trigger
+    GET /api/catalog?trigger=true
+    -> الإجمالي: 89، أول ثلاث: ActiveCampaign، AcuityScheduling،
+       Affinity                                                     ✅
+
+  الاختبار 6 — البذر عند بدء الخادم (من السجلات)
+    [INFO] Node catalog seeded   inserted: 430   total: 430
+    [INFO] Seed completed successfully.
+    [INFO] N8N AI Agent Manager API listening   port: 8080         ✅
+
+
+================================================================================
+  الملفات المُنشأة / المُعدَّلة
+================================================================================
+  مُنشأة:
+    lib/n8n-nodes-catalog/package.json
+    lib/n8n-nodes-catalog/src/index.ts
+    lib/n8n-nodes-catalog/data/catalog.json     (416 كيلوبايت، 430 سجلًا)
+    lib/n8n-nodes-catalog/scripts/fetch.mjs
+    lib/db/src/schema/node_catalog.ts
+    artifacts/api-server/src/services/nodeCatalog.service.ts
+    artifacts/api-server/src/routes/catalog.routes.ts
+    artifacts/n8n-manager/src/pages/nodes-catalog.tsx
+    N8N_CATALOG_INTEGRATION.txt   (هذا الملف)
+
+  مُعدَّلة:
+    lib/db/src/schema/index.ts          (تصدير جداول node_catalog)
+    artifacts/api-server/src/routes/index.ts (تركيب مسارات /catalog)
+    artifacts/api-server/src/services/agentTools.ts
+        - استيراد lookupNode/searchCatalogDb
+        - تعريف الأداة الجديدة + حالة الموزّع
+        - تنفيذ executeLookupCatalog()
+    artifacts/api-server/src/seed.ts    (استدعاء seedNodeCatalog عند الإقلاع)
+    artifacts/n8n-manager/src/App.tsx   (مسار ‎/nodes-catalog)
+    artifacts/n8n-manager/src/components/Layout.tsx (عنصر تنقل كتالوج العقد)
+    artifacts/n8n-manager/src/pages/settings.tsx    (بطاقة CatalogCard للتحديث)
+
+
+================================================================================
+  طريقة الاستخدام
+================================================================================
+  1. تصفّح الكتالوج:    سجّل الدخول → اضغط "كتالوج العقد" في القائمة الجانبية.
+  2. البحث/الفلترة:     اكتب "slack" أو "human approval" أو اختر فئة.
+  3. فتح التوثيق:       اضغط "التوثيق" أو "المصادقة" على أي بطاقة.
+  4. تحديث من GitHub:   صفحة الإعدادات → "كتالوج عُقد n8n" → "تحديث الآن".
+  5. تحديث ملف البذر الثابت (متقدّم):
+        pnpm --filter @workspace/n8n-nodes-catalog run fetch
+
+  استخدام الوكيل الذكي:
+  أثناء المحادثة مع المساعد، اسأل أسئلة مثل:
+    "ما عقدة n8n التي يجب أن أستخدمها لموافقات الإنسان في السير (HITL)؟"
+    "أعطني رابط التوثيق الرسمي لعقدة Postgres."
+    "اعرض جميع عُقد Trigger في فئة التواصل."
+  سيقوم الوكيل باستدعاء lookup_node_catalog تلقائيًا.
+================================================================================

@@ -24,3 +24,9 @@ id = "a-9oJp0iScG3sRFlERnqn"
 uri = "file://N8N_CATALOG_INTEGRATION.txt"
 type = "text"
 title = "n8n Catalog Integration — Implementation Report"
+
+[[outputs]]
+id = "ky-mI5hHqGi0_0RX7lD06"
+uri = "file://N8N_CATALOG_INTEGRATION_AR.txt"
+type = "text"
+title = "تقرير دمج كتالوج عُقد N8N (عربي)"
