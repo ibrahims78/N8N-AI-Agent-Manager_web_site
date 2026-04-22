@@ -138,21 +138,127 @@ function candidateRawUrls(repoPath: string): string[] {
 
 /* ───────────────────────── Fetch English ───────────────────────── */
 
+/** Fetch a single raw URL, returning text or null on failure. */
+async function fetchRaw(url: string): Promise<string | null> {
+  try {
+    const r = await fetch(url, { signal: AbortSignal.timeout(15_000) });
+    if (r.ok) {
+      const text = await r.text();
+      return text && text.length > 10 ? text : null;
+    }
+  } catch (err) {
+    logger.debug({ err, url }, "fetchRaw failed");
+  }
+  return null;
+}
+
+/**
+ * Resolve MkDocs --8<-- snippet includes in-place.
+ * Pattern: --8<-- "some/path.md"  or  --8<-- 'some/path.md'
+ */
+async function resolveSnippets(markdown: string): Promise<string> {
+  const includeRe = /--8<--\s+["']([^"']+)["']/g;
+  const matches = [...markdown.matchAll(includeRe)];
+  if (matches.length === 0) return markdown;
+
+  let result = markdown;
+  await Promise.all(
+    matches.map(async (m) => {
+      const snippetPath = m[1]; // e.g. "_snippets/integrations/builtin/app-nodes/ai-tools.md"
+      const snippetUrl = `${DOCS_REPO_RAW}/docs/${snippetPath}`;
+      const snippetContent = await fetchRaw(snippetUrl);
+      if (snippetContent) {
+        // Replace the include directive with the fetched content
+        result = result.replace(m[0], snippetContent.trim());
+      } else {
+        // Remove the unresolvable directive silently
+        result = result.replace(m[0], "");
+      }
+    })
+  );
+  return result;
+}
+
+/**
+ * Clean up MkDocs/Jinja2 shortcodes that don't render in plain Markdown:
+ *  - [[ templatesWidget(...) ]]
+ *  - {{ ... }}  (Jinja2 variables)
+ *  - ::: (admonition blocks)
+ */
+function cleanMkDocsDirectives(markdown: string): string {
+  return markdown
+    // Remove [[ ...widget calls... ]]
+    .replace(/\[\[.*?\]\]/gs, "")
+    // Remove Jinja2 {{ variable }} expressions left over
+    .replace(/\{\{[^}]*\}\}/g, "")
+    // Collapse multiple blank lines into two
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+/**
+ * If the fetched URL is an index.md inside a directory, look for sibling .md files
+ * in that directory on GitHub and append them as additional sections.
+ */
+async function fetchSiblingPages(indexUrl: string): Promise<string> {
+  // indexUrl looks like: https://raw.githubusercontent.com/.../app-nodes/n8n-nodes-base.postgres/index.md
+  if (!indexUrl.endsWith("/index.md")) return "";
+
+  const dirRawBase = indexUrl.slice(0, -"index.md".length); // trailing slash included
+  // Convert raw URL to API URL to list directory
+  // raw: https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/...
+  // api: https://api.github.com/repos/n8n-io/n8n-docs/contents/docs/...
+  const apiUrl = indexUrl
+    .replace("https://raw.githubusercontent.com/", "https://api.github.com/repos/")
+    .replace("/main/", "/contents/")
+    .replace("/index.md", "");
+
+  try {
+    const r = await fetch(apiUrl, { signal: AbortSignal.timeout(10_000) });
+    if (!r.ok) return "";
+    const files: Array<{ name: string; type: string }> = await r.json();
+    const siblings = files.filter(
+      (f) => f.type === "file" && f.name.endsWith(".md") && f.name !== "index.md"
+    );
+    if (siblings.length === 0) return "";
+
+    const parts = await Promise.all(
+      siblings.map(async (f) => {
+        const content = await fetchRaw(`${dirRawBase}${f.name}`);
+        if (!content) return "";
+        // Strip front-matter from sibling pages
+        const stripped = content.replace(/^---[\s\S]*?---\n?/, "").trim();
+        return stripped ? `\n\n---\n\n${stripped}` : "";
+      })
+    );
+    return parts.filter(Boolean).join("");
+  } catch (err) {
+    logger.debug({ err, apiUrl }, "fetchSiblingPages failed");
+    return "";
+  }
+}
+
 async function fetchMarkdownFromGithub(
   docsUrl: string
 ): Promise<{ markdown: string; sourceUrl: string } | null> {
   const repoPath = docsUrlToRepoPath(docsUrl);
   if (!repoPath) return null;
+
   for (const url of candidateRawUrls(repoPath)) {
-    try {
-      const r = await fetch(url, { signal: AbortSignal.timeout(15_000) });
-      if (r.ok) {
-        const md = await r.text();
-        if (md && md.length > 20) return { markdown: md, sourceUrl: url };
-      }
-    } catch (err) {
-      logger.debug({ err, url }, "doc fetch attempt failed");
-    }
+    const raw = await fetchRaw(url);
+    if (!raw) continue;
+
+    // 1. Resolve --8<-- snippet includes
+    let md = await resolveSnippets(raw);
+
+    // 2. Append sibling pages (common-issues.md, etc.) if this is an index.md
+    const extra = await fetchSiblingPages(url);
+    if (extra) md += extra;
+
+    // 3. Strip MkDocs shortcodes that don't render in plain Markdown
+    md = cleanMkDocsDirectives(md);
+
+    if (md.length > 20) return { markdown: md, sourceUrl: url };
   }
   return null;
 }
@@ -193,14 +299,20 @@ export async function getEnglishDoc(nodeType: string, force = false): Promise<Do
         .limit(1)
     )[0];
     if (cached?.markdown) {
-      return {
-        nodeType,
-        language: "en",
-        markdown: cached.markdown,
-        sourceUrl: cached.sourceUrl,
-        fetchedAt: toISO(cached.fetchedAt),
-        fromCache: true,
-      };
+      // If cached content still has unresolved MkDocs includes, re-fetch silently
+      const hasUnresolved = /--8<--/.test(cached.markdown);
+      if (!hasUnresolved) {
+        return {
+          nodeType,
+          language: "en",
+          markdown: cached.markdown,
+          sourceUrl: cached.sourceUrl,
+          fetchedAt: toISO(cached.fetchedAt),
+          fromCache: true,
+        };
+      }
+      // Fall through to re-fetch with the improved fetcher
+      logger.info({ nodeType }, "Re-fetching doc to resolve MkDocs snippets");
     }
   }
 
