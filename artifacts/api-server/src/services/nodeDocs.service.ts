@@ -161,6 +161,13 @@ async function fetchMarkdownFromGithub(
  * Returns the English doc for a node. If not cached, fetches from GitHub
  * and persists it (DB + local file). Returns null markdown if not available.
  */
+/** Convert a DB timestamp value (may be Date or string) to ISO string safely. */
+function toISO(value: Date | string | null | undefined): string | null {
+  if (!value) return null;
+  if (value instanceof Date) return value.toISOString();
+  return new Date(value).toISOString();
+}
+
 export async function getEnglishDoc(nodeType: string, force = false): Promise<DocResult> {
   const node = (
     await db.select().from(nodeCatalogTable).where(eq(nodeCatalogTable.nodeType, nodeType)).limit(1)
@@ -191,7 +198,7 @@ export async function getEnglishDoc(nodeType: string, force = false): Promise<Do
         language: "en",
         markdown: cached.markdown,
         sourceUrl: cached.sourceUrl,
-        fetchedAt: cached.fetchedAt.toISOString(),
+        fetchedAt: toISO(cached.fetchedAt),
         fromCache: true,
       };
     }
@@ -235,7 +242,7 @@ export async function getEnglishDoc(nodeType: string, force = false): Promise<Do
     language: "en",
     markdown: fetched.markdown,
     sourceUrl: fetched.sourceUrl,
-    fetchedAt: saved.fetchedAt.toISOString(),
+    fetchedAt: toISO(saved.fetchedAt),
     fromCache: false,
   };
 }
@@ -345,7 +352,7 @@ export async function getArabicDoc(nodeType: string, force = false): Promise<Doc
         language: "ar",
         markdown: cached.markdown,
         sourceUrl: cached.sourceUrl,
-        fetchedAt: cached.fetchedAt.toISOString(),
+        fetchedAt: toISO(cached.fetchedAt),
         fromCache: true,
       };
     }
@@ -394,7 +401,7 @@ export async function getArabicDoc(nodeType: string, force = false): Promise<Doc
     language: "ar",
     markdown: translated,
     sourceUrl: en.sourceUrl,
-    fetchedAt: saved.fetchedAt.toISOString(),
+    fetchedAt: toISO(saved.fetchedAt),
     fromCache: false,
   };
 }
@@ -578,7 +585,7 @@ export async function getDocsStats(): Promise<DocsStats> {
     enMissing: Math.max(0, totalNodes - enFetched),
     arTranslated,
     arPending: Math.max(0, enFetched - arTranslated),
-    lastFetchedAt: enRows[0]?.lastAt ? enRows[0].lastAt.toISOString() : null,
+    lastFetchedAt: toISO(enRows[0]?.lastAt),
     localFiles,
   };
 }
