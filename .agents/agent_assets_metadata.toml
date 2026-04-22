@@ -30,3 +30,9 @@ id = "ky-mI5hHqGi0_0RX7lD06"
 uri = "file://N8N_CATALOG_INTEGRATION_AR.txt"
 type = "text"
 title = "تقرير دمج كتالوج عُقد N8N (عربي)"
+
+[[outputs]]
+id = "g3be2ZRG42vFItnu5LkHW"
+uri = "file://DOCUMENTATION_FEATURE_CHANGES.txt"
+type = "text"
+title = "Implementation Summary — Docs Caching & Translation"

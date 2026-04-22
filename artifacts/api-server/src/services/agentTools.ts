@@ -26,6 +26,7 @@ import {
   searchDynamicNodeTypes,
 } from "./dynamicNodeSchema.service";
 import { lookupNode, searchCatalogDb } from "./nodeCatalog.service";
+import { searchWithinNodeDoc, getEnglishDoc, getArabicDoc } from "./nodeDocs.service";
 import { logger } from "../lib/logger";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -214,6 +215,37 @@ export const AGENT_TOOL_DEFINITIONS: OpenAI.Chat.ChatCompletionTool[] = [
   {
     type: "function",
     function: {
+      name: "lookup_node_docs",
+      description:
+        "Fetch the OFFICIAL n8n documentation for a specific node — the actual page content, not just the link. Use this when you need to know HOW a node works (its operations, parameters, examples, gotchas). Optionally pass a `query` to get only the most relevant sections via keyword scoring (RAG-lite). Falls back to the full doc when no query is given. Returns Markdown.",
+      parameters: {
+        type: "object",
+        properties: {
+          node_type: {
+            type: "string",
+            description:
+              "The exact node type, e.g. 'n8n-nodes-base.slack' or '@n8n/n8n-nodes-langchain.agent'. If unsure, call lookup_node_catalog first.",
+          },
+          query: {
+            type: "string",
+            description:
+              "Optional. A short keyword query to extract the most relevant sections of the doc (e.g. 'send message channel', 'webhook authentication'). Omit to get the full doc.",
+          },
+          language: {
+            type: "string",
+            enum: ["en", "ar"],
+            description:
+              "Documentation language. Defaults to 'en'. Use 'ar' to return the Arabic translation (auto-translated and cached on first request).",
+          },
+        },
+        required: ["node_type"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "get_execution_errors",
       description:
         "Get recent execution errors for a specific workflow. Useful when diagnosing why a workflow is failing.",
@@ -277,6 +309,13 @@ export async function executeToolCall(
         break;
       case "lookup_node_catalog":
         result = await executeLookupCatalog(String(args.query ?? ""));
+        break;
+      case "lookup_node_docs":
+        result = await executeLookupNodeDocs(
+          String(args.node_type ?? ""),
+          args.query ? String(args.query) : undefined,
+          args.language === "ar" ? "ar" : "en"
+        );
         break;
       case "get_execution_errors":
         result = await executeGetExecutionErrors(
@@ -712,5 +751,47 @@ async function executeLookupCatalog(query: string): Promise<unknown> {
       aliases: n.aliases,
       primaryDocsUrl: n.primaryDocsUrl,
     })),
+  };
+}
+
+async function executeLookupNodeDocs(
+  nodeType: string,
+  query: string | undefined,
+  language: "en" | "ar"
+): Promise<unknown> {
+  const t = nodeType.trim();
+  if (!t) return { found: false, message: "node_type is required." };
+
+  if (query && query.trim()) {
+    const r = await searchWithinNodeDoc(t, query.trim(), language, 3);
+    if (r.snippets.length === 0) {
+      return { found: false, nodeType: t, language, sourceUrl: r.sourceUrl, message: "No doc available for this node." };
+    }
+    return {
+      found: true,
+      nodeType: t,
+      language,
+      sourceUrl: r.sourceUrl,
+      query: query.trim(),
+      snippets: r.snippets,
+    };
+  }
+
+  const doc = language === "ar" ? await getArabicDoc(t) : await getEnglishDoc(t);
+  if (!doc.markdown) {
+    return { found: false, nodeType: t, language, message: doc.error || "Doc not available." };
+  }
+  // Truncate to 8KB to avoid blowing the agent's context
+  const truncated =
+    doc.markdown.length > 8000
+      ? doc.markdown.slice(0, 8000) + "\n\n…[truncated; pass a `query` to extract relevant sections]"
+      : doc.markdown;
+  return {
+    found: true,
+    nodeType: t,
+    language,
+    sourceUrl: doc.sourceUrl,
+    fromCache: doc.fromCache,
+    markdown: truncated,
   };
 }

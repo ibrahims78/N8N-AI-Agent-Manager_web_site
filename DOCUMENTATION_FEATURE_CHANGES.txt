@@ -1,0 +1,211 @@
+================================================================
+  N8N AI Agent Manager — Documentation Caching & Translation
+  Implementation Summary
+  Date: April 22, 2026
+================================================================
+
+OVERVIEW
+--------
+Extended the n8n nodes catalog (541 nodes) with full Markdown
+documentation pulled directly from the n8n-io/n8n-docs GitHub
+repository, plus on-demand Arabic translation powered by OpenAI.
+Added a rich detail dialog to the catalog UI with tabs for Info,
+Examples, and Docs (EN/AR toggle), plus admin refresh controls.
+
+
+================================================================
+  PHASE A — CATALOG REFRESH BUTTON + NODE DETAIL DIALOG
+================================================================
+
+Files:
+  artifacts/n8n-manager/src/pages/nodes-catalog.tsx  (rewritten)
+
+What was added:
+  - Admin-only "Refresh catalog" button in the page header (calls
+    POST /api/catalog/refresh).
+  - Admin-only "Fetch all docs" button (calls
+    POST /api/catalog/docs/refresh-all).
+  - Cards are now clickable and open a NodeDetailDialog.
+  - Health/coverage badges on each card:
+      • green "Docs"  → English doc cached
+      • blue  "AR"    → Arabic translation cached
+      • purple "🎬 N" → official examples count
+      • amber  "Auth" → requires credentials
+  - Header status now shows live counts of EN/AR docs cached.
+
+NodeDetailDialog (new component) shows three tabs:
+  1. Info        — categories, aliases, official links,
+                   technical details (folder, version).
+  2. Examples    — full clickable list of every official
+                   example workflow (resolves the "examples
+                   exist for 110 nodes but UI only showed
+                   the count" gap).
+  3. Docs        — full Markdown viewer (see Phase B).
+
+
+================================================================
+  PHASE B — FULL MARKDOWN DOCS FETCH + VIEWER
+================================================================
+
+Database:
+  lib/db/src/schema/node_docs.ts  (new table, pushed to DB)
+    columns: nodeType, language ('en'|'ar'), markdown,
+             sourceUrl, sourceSha, error, fetchedAt
+    unique(nodeType, language)
+
+Backend service:
+  artifacts/api-server/src/services/nodeDocs.service.ts  (new)
+    - fetchEnglishDoc(nodeType): derives the GitHub raw URL
+      from primaryDocsUrl and tries two path patterns
+      ({path}.md → {path}/index.md), stores the result.
+    - getDoc(nodeType, lang): cache-first lookup; for AR,
+      lazily translates the EN version on first request.
+    - bulkFetchEnglish(force, concurrency=6): parallel fetch
+      across the entire catalog with progress accounting.
+    - getStats(): totals, EN cached, AR cached, last fetch.
+    - getCoverage(): per-node EN/AR cache booleans (used by
+      the catalog page badges).
+    - searchWithinNodeDoc(nodeType, query): RAG-lite keyword
+      ranking that returns the top-scoring Markdown sections
+      for a given query.
+
+Backend routes:
+  artifacts/api-server/src/routes/catalogDocs.routes.ts  (new)
+    GET    /api/catalog/docs/stats
+    GET    /api/catalog/docs/coverage
+    GET    /api/catalog/docs/:nodeType?lang=en|ar
+    POST   /api/catalog/docs/:nodeType/refresh?lang=en|ar
+    POST   /api/catalog/docs/refresh-all?force=true|false
+    GET    /api/catalog/docs/:nodeType/search?q=...
+  Registered in artifacts/api-server/src/routes/index.ts
+  under both root (/api/catalog/docs/*) and v1 routers.
+
+Frontend viewer:
+  Inside NodeDetailDialog → DocsViewer component.
+    - Renders Markdown via react-markdown + remark-gfm
+      (already installed: react-markdown 10.1, remark-gfm 4.0).
+    - Uses ScrollArea for long docs, prose styling for typography.
+    - "Cached" pill when content came from local cache.
+    - "Source" link back to the GitHub blob page.
+    - Admin refresh button (per-doc, per-language).
+
+
+================================================================
+  PHASE C — ARABIC TRANSLATION (LAZY, CACHED)
+================================================================
+
+Strategy:
+  - First Arabic request for a node triggers translation
+    against the cached English Markdown — no English copy in
+    DB means refresh EN first, then translate.
+  - Translation is split into ~3KB Markdown chunks so we
+    stay well within the model's context and never break
+    code fences, headings, or tables across chunks.
+
+Translator:
+  - Model:    OpenAI gpt-4o-mini (cost-efficient for bulk).
+  - Prompt:   technical glossary forces consistent terminology
+              for "node", "trigger", "credential", "workflow",
+              "webhook", "execution", etc.; preserves all
+              code blocks, links, and Markdown structure
+              verbatim.
+  - API key:  decrypted from systemSettingsTable via
+              decryptApiKey() — same pattern as the rest of
+              the platform; user supplies the key once in
+              Settings.
+
+UI language toggle:
+  - DocsViewer defaults to AR when the UI language is Arabic,
+    EN otherwise; users can switch any time.
+  - During a first-time AR fetch, the viewer shows a loader
+    with "Translating for the first time… (5–15 sec)" hint.
+  - Subsequent loads come straight from the cache.
+
+Cache invalidation:
+  - Refresh button on the doc tab (admin) re-fetches the
+    English source and re-translates if requested via lang=ar.
+
+
+================================================================
+  PHASE D — AGENT RAG TOOL
+================================================================
+
+File:
+  artifacts/api-server/src/services/agentTools.ts  (extended)
+
+Tool added:
+  lookup_node_docs({ nodeType, query?, lang? })
+    - If `query` is provided → calls searchWithinNodeDoc and
+      returns the top-ranked Markdown sections (RAG-lite).
+    - If no `query` → returns the full doc, truncated to
+      8KB to fit comfortably in the model's context window.
+    - Picks Arabic when the conversation language is Arabic,
+      English otherwise (overridable via `lang`).
+
+Effect on the AI agent:
+  - The agent can now answer questions like
+      "How do I configure the HTTP Request node's pagination?"
+    by pulling the exact section from the official docs
+    instead of guessing.
+  - Works in both Arabic and English with no extra prompts.
+
+
+================================================================
+  TECHNICAL FIX BUNDLED IN THIS WORK
+================================================================
+
+LangChain parser:
+  lib/n8n-nodes-catalog/scripts/fetch.mjs
+    - Added Vector Store pattern recognition.
+    - De-duplication by nodeType (prevents double-counting).
+  Result: 541 unique nodes in DB (430 base + 111 LC) — was
+          previously misreporting due to duplicates.
+
+
+================================================================
+  HOW TO USE (END-USER FLOW)
+================================================================
+
+1. Open the Nodes Catalog page.
+2. (Admin only, first time) click "Fetch all docs". This
+   pulls every available English doc from GitHub in
+   parallel — about a minute for the full 541 nodes.
+3. Click any node card → opens the detail dialog.
+4. Switch to the Docs tab and toggle EN ↔ ع as needed.
+5. Use the Examples tab to jump directly to official
+   workflow examples (where they exist).
+6. Ask the AI agent any question about a node — it will
+   automatically consult the cached docs (Arabic or
+   English) via the lookup_node_docs tool.
+
+
+================================================================
+  FILES TOUCHED (FINAL LIST)
+================================================================
+
+NEW
+  lib/db/src/schema/node_docs.ts
+  artifacts/api-server/src/services/nodeDocs.service.ts
+  artifacts/api-server/src/routes/catalogDocs.routes.ts
+
+MODIFIED
+  artifacts/api-server/src/services/agentTools.ts
+    + lookup_node_docs tool
+  artifacts/api-server/src/routes/index.ts
+    + catalogDocs router (root + v1)
+  artifacts/n8n-manager/src/pages/nodes-catalog.tsx
+    + refresh buttons, detail dialog, docs viewer, badges
+  lib/n8n-nodes-catalog/scripts/fetch.mjs
+    + Vector Store pattern + de-duplication
+
+VERIFICATION
+  - API Server bundle builds clean (3.6 MB), 541 nodes
+    seeded, listening on :8080.
+  - n8n-manager Vite HMR succeeds; new Radix deps
+    (dialog, tabs, scroll-area) auto-installed.
+  - /api/catalog/docs/stats and /coverage respond
+    (401 without auth — correctly protected).
+
+================================================================
+  END OF DOCUMENT
+================================================================

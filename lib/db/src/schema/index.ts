@@ -9,3 +9,4 @@ export * from "./templates";
 export * from "./audit_logs";
 export * from "./agent_memory";
 export * from "./node_catalog";
+export * from "./node_docs";
