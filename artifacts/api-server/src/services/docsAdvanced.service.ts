@@ -1033,6 +1033,70 @@ export async function getNodeOperations(
    8. تصدير: Markdown مجمَّع + PDF
    ═══════════════════════════════════════════════════════════════════ */
 
+/**
+ * Inline every `/api/catalog/docs/assets/<safeNode>/<file>` reference into a
+ * base64 data URI so the exported HTML/PDF is fully self-contained — works
+ * even when opened offline or shared with someone else.
+ *
+ * Returns the rewritten markdown.
+ */
+async function inlineLocalAssetsAsDataUri(md: string): Promise<string> {
+  const fs = await import("node:fs/promises");
+  const path = await import("node:path");
+  // The api-server is launched from `artifacts/api-server` so cwd is two
+  // levels under the repo root — match the convention used by the other
+  // catalog services (nodeDocs.service.ts, nodeDocsPipeline.service.ts).
+  const ASSETS_DIR = path.resolve(
+    process.cwd(),
+    "../../lib/n8n-nodes-catalog/docs/_assets"
+  );
+  const re = /\/api\/catalog\/docs\/assets\/([^/\s)"']+)\/([^/\s)"']+)/g;
+  const matches = [...md.matchAll(re)];
+  if (matches.length === 0) return md;
+
+  const cache = new Map<string, string>();
+  for (const [full, safeNode, filename] of matches) {
+    if (cache.has(full)) continue;
+    try {
+      const file = path.join(ASSETS_DIR, safeNode, filename);
+      // Defence in depth — refuse anything escaping the assets dir.
+      if (!file.startsWith(ASSETS_DIR + path.sep)) {
+        cache.set(full, full);
+        continue;
+      }
+      const buf = await fs.readFile(file);
+      const ext = (filename.split(".").pop() || "").toLowerCase();
+      const mime: Record<string, string> = {
+        png: "image/png",
+        jpg: "image/jpeg",
+        jpeg: "image/jpeg",
+        gif: "image/gif",
+        webp: "image/webp",
+        svg: "image/svg+xml",
+      };
+      const dataUri = `data:${mime[ext] ?? "application/octet-stream"};base64,${buf.toString("base64")}`;
+      cache.set(full, dataUri);
+    } catch {
+      // Missing on disk — leave the original URL so it still works online.
+      cache.set(full, full);
+    }
+  }
+  return md.replace(re, (m) => cache.get(m) ?? m);
+}
+
+/**
+ * Some older Arabic docs were stored before the asset pipeline ran, so they
+ * still contain raw n8n image paths like `/_images/.../foo.png`. Rewrite them
+ * to absolute n8n CDN URLs (`https://docs.n8n.io/_images/.../foo.png`) so the
+ * images actually load in the exported book.
+ */
+function rewriteRawN8nImagePaths(md: string): string {
+  return md.replace(
+    /(!\[[^\]]*\]\()(\/_images\/[^)\s]+)(\))/g,
+    (_full, pre, p, post) => `${pre}https://docs.n8n.io${p}${post}`
+  );
+}
+
 /** يولِّد ملف Markdown كبير يجمع كل توثيقات لغة معيَّنة. مناسب للتنزيل. */
 export async function exportAllDocsMarkdown(language: DocLang = "ar"): Promise<string> {
   const docs = await db
@@ -1057,8 +1121,10 @@ export async function exportAllDocsMarkdown(language: DocLang = "ar"): Promise<s
   }
   parts.push("\n---\n");
   for (const d of docs) {
-    const md = d.manualOverrideMarkdown || d.markdown;
+    let md = d.manualOverrideMarkdown || d.markdown;
     if (!md) continue;
+    // Backfill: rewrite raw n8n /_images paths (older AR docs) to absolute URLs.
+    md = rewriteRawN8nImagePaths(md);
     parts.push(`\n## <a id="${d.nodeType.replace(/[^a-z0-9]/gi, "-")}"></a>${d.nodeType}\n`);
     if (d.sourceUrl) parts.push(`> Source: ${d.sourceUrl}\n`);
     parts.push(md + "\n\n---\n");
@@ -1071,7 +1137,10 @@ export async function exportAllDocsMarkdown(language: DocLang = "ar"): Promise<s
  * هذا أكثر موثوقية من حلول chromium-headless ويدعم العربية بشكل ممتاز.
  */
 export async function exportAllDocsHtml(language: DocLang = "ar"): Promise<string> {
-  const md = await exportAllDocsMarkdown(language);
+  const rawMd = await exportAllDocsMarkdown(language);
+  // Inline every locally-stored image as a base64 data: URI so the file is
+  // fully self-contained (works offline, can be shared, prints to PDF cleanly).
+  const md = await inlineLocalAssetsAsDataUri(rawMd);
   const { default: MarkdownIt } = await import("markdown-it");
   const mdIt = new MarkdownIt({ html: false, linkify: true, breaks: false });
 
@@ -1089,7 +1158,12 @@ export async function exportAllDocsHtml(language: DocLang = "ar"): Promise<strin
     const hrefIdx = tokens[idx].attrIndex("href");
     if (hrefIdx >= 0) {
       const href = tokens[idx].attrs![hrefIdx][1];
-      if (href.startsWith("/")) {
+      if (href.startsWith("/api/")) {
+        // Our own API endpoints (assets, etc.) — leave untouched so the
+        // base64 inliner / live server can serve them.
+        tokens[idx].attrSet("target", "_blank");
+        tokens[idx].attrSet("rel", "noopener");
+      } else if (href.startsWith("/")) {
         const cleaned = href
           .replace(/\/index\.md(?=$|[#?])/, "/")
           .replace(/\.md(?=$|[#?])/, "");

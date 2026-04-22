@@ -300,7 +300,16 @@ router.get("/export.html", authenticate, async (req: Request, res: Response): Pr
 
 router.get("/export.md", authenticate, async (req: Request, res: Response): Promise<void> => {
   const lang = pickLang(req.query.lang);
-  const md = await exportAllDocsMarkdown(lang);
+  let md = await exportAllDocsMarkdown(lang);
+  // Convert local /api/catalog/docs/assets/... paths to absolute URLs that
+  // point back at this server, so images still load when the .md is opened
+  // in any markdown viewer outside the app.
+  const proto = (req.headers["x-forwarded-proto"] as string) || req.protocol || "https";
+  const host = req.headers["x-forwarded-host"] || req.headers.host;
+  if (host) {
+    const base = `${proto}://${host}`;
+    md = md.replace(/(\/api\/catalog\/docs\/assets\/[^\s)"']+)/g, (p) => `${base}${p}`);
+  }
   res.setHeader("Content-Type", "text/markdown; charset=utf-8");
   res.setHeader(
     "Content-Disposition",
