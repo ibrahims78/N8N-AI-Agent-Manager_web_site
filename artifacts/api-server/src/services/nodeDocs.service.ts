@@ -229,6 +229,35 @@ async function fetchRaw(url: string): Promise<string | null> {
 }
 
 /**
+ * Common sibling filenames found in n8n-docs node directories. Used as a
+ * fallback when the GitHub contents API is rate-limited. We probe these
+ * in parallel and keep whichever return a 200.
+ */
+const COMMON_SIBLING_FILENAMES = [
+  "common-issues.md",
+  "operations.md",
+  "templates-and-examples.md",
+  "node-parameters.md",
+  "credentials.md",
+  "data-structure.md",
+  "examples.md",
+  "user-templates.md",
+  "supported-operations.md",
+  "how-it-works.md",
+];
+
+/** Headers for GitHub API calls. Adds Authorization if GITHUB_TOKEN is set. */
+function githubApiHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    "Accept": "application/vnd.github+json",
+    "User-Agent": "n8n-ai-agent-manager",
+  };
+  const token = process.env["GITHUB_TOKEN"];
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  return headers;
+}
+
+/**
  * Resolve MkDocs --8<-- snippet includes in-place.
  * Pattern: --8<-- "some/path.md"  or  --8<-- 'some/path.md'
  */
@@ -332,43 +361,64 @@ function cleanMkDocsDirectives(markdown: string): string {
 /**
  * If the fetched URL is an index.md inside a directory, look for sibling .md files
  * in that directory on GitHub and append them as additional sections.
+ *
+ * Strategy:
+ *  1. Try the GitHub contents API (authoritative — finds every .md in the dir).
+ *     Adds Authorization header if `GITHUB_TOKEN` is set (raises 60/h → 5000/h).
+ *  2. If the API call fails (404, 403 rate-limit, or transient error), fall
+ *     back to probing a curated list of well-known sibling filenames over
+ *     raw.githubusercontent.com (which has no rate limit).
  */
 async function fetchSiblingPages(indexUrl: string): Promise<string> {
   // indexUrl looks like: https://raw.githubusercontent.com/.../app-nodes/n8n-nodes-base.postgres/index.md
   if (!indexUrl.endsWith("/index.md")) return "";
 
   const dirRawBase = indexUrl.slice(0, -"index.md".length); // trailing slash included
-  // Convert raw URL to API URL to list directory
-  // raw: https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/...
-  // api: https://api.github.com/repos/n8n-io/n8n-docs/contents/docs/...
   const apiUrl = indexUrl
     .replace("https://raw.githubusercontent.com/", "https://api.github.com/repos/")
     .replace("/main/", "/contents/")
     .replace("/index.md", "");
 
+  // Step 1: try the contents API.
+  let siblingNames: string[] | null = null;
   try {
-    const r = await fetch(apiUrl, { signal: AbortSignal.timeout(10_000) });
-    if (!r.ok) return "";
-    const files: Array<{ name: string; type: string }> = await r.json();
-    const siblings = files.filter(
-      (f) => f.type === "file" && f.name.endsWith(".md") && f.name !== "index.md"
-    );
-    if (siblings.length === 0) return "";
-
-    const parts = await Promise.all(
-      siblings.map(async (f) => {
-        const content = await fetchRaw(`${dirRawBase}${f.name}`);
-        if (!content) return "";
-        // Strip front-matter from sibling pages
-        const stripped = content.replace(/^---[\s\S]*?---\n?/, "").trim();
-        return stripped ? `\n\n---\n\n${stripped}` : "";
-      })
-    );
-    return parts.filter(Boolean).join("");
+    const r = await fetch(apiUrl, {
+      signal: AbortSignal.timeout(10_000),
+      headers: githubApiHeaders(),
+    });
+    if (r.ok) {
+      const files: Array<{ name: string; type: string }> = await r.json();
+      siblingNames = files
+        .filter((f) => f.type === "file" && f.name.endsWith(".md") && f.name !== "index.md")
+        .map((f) => f.name);
+    } else if (r.status === 403 || r.status === 429) {
+      logger.warn(
+        { apiUrl, status: r.status, hasToken: !!process.env["GITHUB_TOKEN"] },
+        "GitHub API rate-limited — falling back to known sibling filenames. Set GITHUB_TOKEN to raise the limit."
+      );
+    } else {
+      logger.debug({ apiUrl, status: r.status }, "GitHub contents API non-ok");
+    }
   } catch (err) {
-    logger.debug({ err, apiUrl }, "fetchSiblingPages failed");
-    return "";
+    logger.debug({ err, apiUrl }, "GitHub contents API failed");
   }
+
+  // Step 2: fallback — probe the well-known names over raw URLs.
+  if (siblingNames === null) {
+    siblingNames = COMMON_SIBLING_FILENAMES;
+  }
+  if (siblingNames.length === 0) return "";
+
+  const parts = await Promise.all(
+    siblingNames.map(async (name) => {
+      const content = await fetchRaw(`${dirRawBase}${name}`);
+      if (!content) return "";
+      // Strip front-matter from sibling pages
+      const stripped = content.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "").trim();
+      return stripped ? `\n\n---\n\n${stripped}` : "";
+    })
+  );
+  return parts.filter(Boolean).join("");
 }
 
 async function fetchMarkdownFromGithub(
@@ -387,9 +437,11 @@ async function fetchMarkdownFromGithub(
     // 2. Resolve --8<-- snippet includes
     md = await resolveSnippets(md);
 
-    // 3. Append sibling pages (common-issues.md, etc.) if this is an index.md
+    // 3. Append sibling pages (common-issues.md, etc.) if this is an index.md.
+    //    Note: `extra` already has frontmatter stripped from each sibling
+    //    inside fetchSiblingPages — append it as-is.
     const extra = await fetchSiblingPages(url);
-    if (extra) md += extra.split(/^---[\s\S]*?---\n?/m).join("");
+    if (extra) md += extra;
 
     // 4. Convert MkDocs admonitions (/// note ... ///) to blockquotes
     md = convertAdmonitions(md);
@@ -453,10 +505,15 @@ export async function getEnglishDoc(nodeType: string, force = false): Promise<Do
       //  - Unresolved snippet includes (--8<--)
       //  - YAML frontmatter that wasn't stripped (--- ... --- at top)
       //  - MkDocs admonition blocks (/// note | ... ///) that weren't converted
+      //  - Source was an /index.md (directory-style doc) but no sibling
+      //    section separator was appended → siblings dropped due to GitHub
+      //    API rate limit at fetch time
       const hasUnresolved =
         /--8<--/.test(cached.markdown) ||
         /^---\r?\n[\s\S]*?\r?\n---/.test(cached.markdown) ||
-        /\/\/\/\s*[a-zA-Z]+\s*\|/.test(cached.markdown);
+        /\/\/\/\s*[a-zA-Z]+\s*\|/.test(cached.markdown) ||
+        (cached.sourceUrl?.endsWith("/index.md") === true &&
+          !cached.markdown.includes("\n\n---\n\n"));
       if (!hasUnresolved) {
         return {
           nodeType,
