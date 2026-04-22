@@ -486,6 +486,7 @@ export default function NodesCatalogPage() {
   const [triggerFilter, setTriggerFilter] = useState<"all" | "trigger" | "regular">("all");
   const [page, setPage] = useState(1);
   const [openNodeType, setOpenNodeType] = useState<string | null>(null);
+  const [selectedNode, setSelectedNode] = useState<CatalogItem | null>(null);
 
   useEffect(() => {
     const id = setTimeout(() => setDebouncedSearch(search), 300);
@@ -686,7 +687,7 @@ export default function NodesCatalogPage() {
                 node={node}
                 isRTL={isRTL}
                 cov={coverageMap.get(node.nodeType)}
-                onOpen={() => setOpenNodeType(node.nodeType)}
+                onOpen={() => { setSelectedNode(node); setOpenNodeType(node.nodeType); }}
               />
             ))}
           </div>
@@ -720,7 +721,8 @@ export default function NodesCatalogPage() {
       {/* Detail dialog */}
       <NodeDetailDialog
         nodeType={openNodeType}
-        onClose={() => setOpenNodeType(null)}
+        initialNode={selectedNode}
+        onClose={() => { setOpenNodeType(null); setSelectedNode(null); }}
         isRTL={isRTL}
         isAdmin={isAdmin}
       />
@@ -840,17 +842,27 @@ interface DocResp {
 }
 
 function NodeDetailDialog({
-  nodeType, onClose, isRTL, isAdmin,
-}: { nodeType: string | null; onClose: () => void; isRTL: boolean; isAdmin: boolean }) {
+  nodeType, initialNode, onClose, isRTL, isAdmin,
+}: {
+  nodeType: string | null;
+  initialNode: CatalogItem | null;
+  onClose: () => void;
+  isRTL: boolean;
+  isAdmin: boolean;
+}) {
   const open = !!nodeType;
 
+  // Use initialNode passed from the card immediately — no extra API call needed.
+  // The query runs in the background only when we don't have pre-loaded data.
   const { data: node } = useQuery<CatalogItem>({
     queryKey: ["catalog-node", nodeType],
     queryFn: async () => {
       const r = await apiRequest<{ success: boolean; data: CatalogItem }>(`/catalog/lookup/${encodeURIComponent(nodeType!)}`);
       return r.data;
     },
-    enabled: open,
+    enabled: open && !initialNode,
+    initialData: initialNode ?? undefined,
+    staleTime: 2 * 60_000,
   });
 
   return (
