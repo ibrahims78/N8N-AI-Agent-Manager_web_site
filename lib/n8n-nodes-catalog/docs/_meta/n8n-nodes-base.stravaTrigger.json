@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.stravaTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.stravatrigger.md",
-  "fetchedAt": "2026-04-22T18:36:09.038Z",
+  "fetchedAt": "2026-04-22T18:58:27.766Z",
   "frontmatter": {
     "raw": {
       "title": "Strava Trigger node documentation",

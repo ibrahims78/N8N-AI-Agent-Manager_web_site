@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.microsoftToDo",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.microsofttodo.md",
-  "fetchedAt": "2026-04-22T18:36:06.247Z",
+  "fetchedAt": "2026-04-22T18:58:25.442Z",
   "frontmatter": {
     "raw": {
       "title": "Microsoft To Do node documentation",

@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Copper node supports and link
 
 > **Credentials**
 >
-> Refer to [Copper credentials](/integrations/builtin/credentials/copper.md) for guidance on setting up authentication.
+> Refer to [Copper credentials](https://docs.n8n.io/integrations/builtin/credentials/copper/) for guidance on setting up authentication.
 
 ## Operations
 

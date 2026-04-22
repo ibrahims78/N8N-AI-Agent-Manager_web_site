@@ -8,7 +8,7 @@ The Local File Trigger node starts a workflow when it detects changes on the fil
 
 > **Security considerations**
 >
-> The Local File Trigger node can introduce significant security risks in environments that operate with untrusted users. Because of this, the node is [disabled](/hosting/securing/blocking-nodes.md#exclude-nodes) by default starting from version 2.0.
+> The Local File Trigger node can introduce significant security risks in environments that operate with untrusted users. Because of this, the node is [disabled](https://docs.n8n.io/hosting/securing/blocking-nodes/#exclude-nodes) by default starting from version 2.0.
 
 > **Self-hosted n8n only**
 >

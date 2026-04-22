@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Splunk node supports and link
 
 > **Credentials**
 >
-> Refer to [Splunk credentials](/integrations/builtin/credentials/splunk.md) for guidance on setting up authentication.
+> Refer to [Splunk credentials](https://docs.n8n.io/integrations/builtin/credentials/splunk/) for guidance on setting up authentication.
 
 ## Operations
 

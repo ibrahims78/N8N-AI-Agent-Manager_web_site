@@ -16,7 +16,7 @@ You can use the Data Table node to:
 >
 > As well as using the Data Tables node in a workflow, you can view and manage data tables manually from the **Data Tables** tab in your project **Overview**.
 > 
-> For information about working with data tables in this tab, and guidance on when to use data tables and their limitations, see [Data tables](/data/data-tables.md).
+> For information about working with data tables in this tab, and guidance on when to use data tables and their limitations, see [Data tables](https://docs.n8n.io/data/data-tables/).
 
 ## Resources
 
@@ -27,33 +27,33 @@ The Data Table node supports the following resources:
 
 ### Operations
 
-See available operations below. For detailed information on parameters for different operation types, refer to the [Table operations](https://docs.n8n.io/tables/) and [Row operations](https://docs.n8n.io/rows/) pages.
+See available operations below. For detailed information on parameters for different operation types, refer to the [Table operations](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/tables/) and [Row operations](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/rows/) pages.
 
 * **Rows**
-    * [**Delete:**](https://docs.n8n.io/rows/#delete-row) Delete one or more rows.
-    * [**Get:**](https://docs.n8n.io/rows/#get-row) Get one or more rows from your table based on defined filters.
-    * [**If Row Exists:**](https://docs.n8n.io/rows/#if-row-exists) Specify a set of conditions to match input items that exist in the data table.
-    * [**If Row Does Not Exist:**](https://docs.n8n.io/rows/#if-row-does-not-exist) Specify a set of conditions to match input items that don't exist in the data table.
-    * [**Insert:**](https://docs.n8n.io/rows/#insert-row) Insert rows into an existing table.
-    * [**Update:**](https://docs.n8n.io/rows/#update-row) Update one or more rows.
-    * [**Upsert:**](https://docs.n8n.io/rows/#upsert-row) Upsert one or more rows. If the row exists, it's updated; otherwise, a new row is created.
+    * [**Delete:**](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/rows/#delete-row) Delete one or more rows.
+    * [**Get:**](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/rows/#get-row) Get one or more rows from your table based on defined filters.
+    * [**If Row Exists:**](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/rows/#if-row-exists) Specify a set of conditions to match input items that exist in the data table.
+    * [**If Row Does Not Exist:**](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/rows/#if-row-does-not-exist) Specify a set of conditions to match input items that don't exist in the data table.
+    * [**Insert:**](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/rows/#insert-row) Insert rows into an existing table.
+    * [**Update:**](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/rows/#update-row) Update one or more rows.
+    * [**Upsert:**](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/rows/#upsert-row) Upsert one or more rows. If the row exists, it's updated; otherwise, a new row is created.
 
 * **Tables**
-    * [**Create:**](https://docs.n8n.io/tables/#create-a-data-table) Create a new data table.
-    * [**Delete:**](https://docs.n8n.io/tables/#delete-a-data-table) Delete an existing data table.
-    * [**List:**](https://docs.n8n.io/tables/#list-data-tables) List existing data tables.
-    * [**Update:**](https://docs.n8n.io/tables/#update-a-data-table) Update an existing data table.
+    * [**Create:**](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/tables/#create-a-data-table) Create a new data table.
+    * [**Delete:**](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/tables/#delete-a-data-table) Delete an existing data table.
+    * [**List:**](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/tables/#list-data-tables) List existing data tables.
+    * [**Update:**](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/tables/#update-a-data-table) Update an existing data table.
 
 ## Related resources
 
-[Data tables](/data/data-tables.md) explains how to create and manage data tables.
+[Data tables](https://docs.n8n.io/data/data-tables/) explains how to create and manage data tables.
 
 ---
 
 <!-- sibling:rows.md -->
 ## Rows
 
-Use row operations to delete, get, insert, update, upsert, or filter rows in a data table. Refer to the [Data Table node](https://docs.n8n.io//) documentation for more information on the node itself.
+Use row operations to delete, get, insert, update, upsert, or filter rows in a data table. Refer to the [Data Table node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/) documentation for more information on the node itself.
 
 ## Delete row
 
@@ -214,7 +214,7 @@ Use these options to further refine the action's behavior:
 <!-- sibling:tables.md -->
 ## Tables
 
-Use table operations to create, delete, list and update data tables. Refer to the [Data Table node](https://docs.n8n.io//) documentation for more information on the node itself.
+Use table operations to create, delete, list and update data tables. Refer to the [Data Table node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.datatable/) documentation for more information on the node itself.
 
 ## Create a data table
 

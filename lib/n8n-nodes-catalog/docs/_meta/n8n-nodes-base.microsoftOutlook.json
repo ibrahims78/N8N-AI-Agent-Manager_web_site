@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.microsoftOutlook",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.microsoftoutlook.md",
-  "fetchedAt": "2026-04-22T18:36:06.092Z",
+  "fetchedAt": "2026-04-22T18:58:25.336Z",
   "frontmatter": {
     "raw": {
       "title": "Microsoft Outlook node documentation",

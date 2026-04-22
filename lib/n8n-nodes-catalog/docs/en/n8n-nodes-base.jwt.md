@@ -8,7 +8,7 @@ Work with JSON web tokens in your n8n workflows.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/jwt.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/jwt/).
 
 ## Operations
 
@@ -20,9 +20,9 @@ Work with JSON web tokens in your n8n workflows.
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
-* **Credential to connect with**: Select or create a [JWT credential](/integrations/builtin/credentials/jwt.md) to connect with.
+* **Credential to connect with**: Select or create a [JWT credential](https://docs.n8n.io/integrations/builtin/credentials/jwt/) to connect with.
 * **Token**: Enter the token to **Verify** or **Decode**.
 * If you select the **Sign** operation, you'll also have this parameter:
     * **Use JSON to Build Payload**: When turned on, the node uses JSON to build the claims. The selection here influences what appears in the Payload Claims section.

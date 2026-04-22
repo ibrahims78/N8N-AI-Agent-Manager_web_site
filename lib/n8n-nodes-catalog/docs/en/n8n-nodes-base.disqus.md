@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Disqus node supports and link
 
 > **Credentials**
 >
-> Refer to [Disqus credentials](/integrations/builtin/credentials/disqus.md) for guidance on setting up authentication.
+> Refer to [Disqus credentials](https://docs.n8n.io/integrations/builtin/credentials/disqus/) for guidance on setting up authentication.
 
 ## Operations
 

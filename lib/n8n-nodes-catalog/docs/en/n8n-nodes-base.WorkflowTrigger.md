@@ -8,7 +8,7 @@ The Workflow Trigger node gets triggered when a workflow is updated or activated
 
 > **Deprecated**
 >
-> n8n has deprecated the Workflow Trigger node and moved its functionality to the [n8n Trigger node](/integrations/builtin/core-nodes/n8n-nodes-base.n8ntrigger.md).
+> n8n has deprecated the Workflow Trigger node and moved its functionality to the [n8n Trigger node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.n8ntrigger/).
 
 > **Keep in mind**
 >

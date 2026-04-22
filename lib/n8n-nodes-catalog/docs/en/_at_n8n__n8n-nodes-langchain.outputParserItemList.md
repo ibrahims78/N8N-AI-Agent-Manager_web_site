@@ -29,4 +29,4 @@ Use the Item List Output Parser node to return a list of items with a specific l
 
 Refer to [LangChain's output parser documentation](https://js.langchain.com/docs/concepts/output_parsers) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

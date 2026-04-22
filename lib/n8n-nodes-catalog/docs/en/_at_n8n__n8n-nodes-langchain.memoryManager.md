@@ -4,7 +4,7 @@
 
 # Chat Memory Manager node
 
-The Chat Memory Manager node manages chat message [memories](/glossary.md#ai-memory) within your workflows. Use this node to load, insert, and delete chat messages in an in-memory [vector store](/glossary.md#ai-vector-store).
+The Chat Memory Manager node manages chat message [memories](https://docs.n8n.io/glossary/#ai-memory) within your workflows. Use this node to load, insert, and delete chat messages in an in-memory [vector store](https://docs.n8n.io/glossary/#ai-vector-store).
 
 This node is useful when you:
 
@@ -51,4 +51,4 @@ On this page, you'll find a list of operations that the Chat Memory Manager node
 
 Refer to [LangChain's Memory documentation](https://langchain-ai.github.io/langgraphjs/concepts/memory/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

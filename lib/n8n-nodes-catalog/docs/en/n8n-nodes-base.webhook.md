@@ -12,7 +12,7 @@ The webhook allows you to trigger workflows from services that don't have a dedi
 
 ## Workflow development process
 
-n8n provides different **Webhook URL**s for testing and production. The testing URL includes an option to **Listen for test event**. Refer to [Workflow development](https://docs.n8n.io/workflow-development/) for more information on building, testing, and shifting your Webhook node to production.
+n8n provides different **Webhook URL**s for testing and production. The testing URL includes an option to **Listen for test event**. Refer to [Workflow development](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/workflow-development/) for more information on building, testing, and shifting your Webhook node to production.
 
 ## Node parameters
 
@@ -46,7 +46,7 @@ The Webhook node supports standard [HTTP Request Methods](https://developer.mozi
     > **Webhook max payload**
 >
 > The webhook maximum payload size is 16MB.
->   If you're self-hosting n8n, you can change this using the [endpoint environment variable](/hosting/configuration/environment-variables/endpoints.md) `N8N_PAYLOAD_SIZE_MAX`.
+>   If you're self-hosting n8n, you can change this using the [endpoint environment variable](https://docs.n8n.io/hosting/configuration/environment-variables/endpoints/) `N8N_PAYLOAD_SIZE_MAX`.
 > 	///	
 > 
 > ### Path
@@ -72,14 +72,14 @@ The Webhook node supports standard [HTTP Request Methods](https://developer.mozi
 > - JWT auth
 > - None
 > 
-> Refer to [Webhook credentials](/integrations/builtin/credentials/webhook.md) for more information on setting up each credential type.
+> Refer to [Webhook credentials](https://docs.n8n.io/integrations/builtin/credentials/webhook/) for more information on setting up each credential type.
 > 
 > ### Respond
 > 
 > * **Immediately**: The Webhook node returns the response code and the message **Workflow got started**.
 > * **When Last Node Finishes**: The Webhook node returns the response code and the data output from the last node executed in the workflow.
-> * **Using 'Respond to Webhook' Node**: The Webhook node responds as defined in the [Respond to Webhook](/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook.md) node.
-> * **Streaming response**: Enables real-time data streaming back to the user as the workflow processes. Requires nodes with streaming support in the workflow (for example, the [AI agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) node).
+> * **Using 'Respond to Webhook' Node**: The Webhook node responds as defined in the [Respond to Webhook](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/) node.
+> * **Streaming response**: Enables real-time data streaming back to the user as the workflow processes. Requires nodes with streaming support in the workflow (for example, the [AI agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/) node).
 > 
 > ### Response Code
 > 
@@ -145,7 +145,7 @@ The Webhook node supports standard [HTTP Request Methods](https://developer.mozi
 > 
 > ## Common issues
 > 
-> For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/common-issues/).
+> For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/common-issues/).
 > 
 > 
 > ---
@@ -155,7 +155,7 @@ The Webhook node supports standard [HTTP Request Methods](https://developer.mozi
 > 
 > # Common issues and questions
 > 
-> Here are some common issues and questions for the [Webhook node](https://docs.n8n.io//) and suggested solutions.
+> Here are some common issues and questions for the [Webhook node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/) and suggested solutions.
 > 
 > ## Listen for multiple HTTP methods
 > 
@@ -169,7 +169,7 @@ The Webhook node supports standard [HTTP Request Methods](https://developer.mozi
 > 
 > ## Use the HTTP Request node to trigger the Webhook node
 > 
-> The [HTTP Request](https://docs.n8n.io//) node makes HTTP requests to the URL you specify.
+> The [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) node makes HTTP requests to the URL you specify.
 > 
 > 1. Create a new workflow.
 > 2. Add the HTTP Request node to the workflow.
@@ -218,7 +218,7 @@ By default, the response format is JSON or an array. To send a response of type 
 2. Select **Response Data** > **First Entry JSON**.
 3. Select **Add Option** > **Property Name**.
 4. Enter the name of the property that contains the response. This defaults to `data`.
-5. Connect an [Edit Fields node](/integrations/builtin/core-nodes/n8n-nodes-base.set.md) to the Webhook node.
+5. Connect an [Edit Fields node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.set/) to the Webhook node.
 6. In the Edit Fields node, select **Add Value** > **String**.
 7. Enter the name of the property in the **Name** field. The name should match the property name from step 4.
 8. Enter the string value in the **Value** field.
@@ -237,13 +237,13 @@ While building or testing a workflow, use the **Test URL**. Once you're ready to
 | Test URL | Select **Listen for test event** and trigger a test event from the source. | 120 seconds | :white_check_mark: |
 | Production URL | Publish the workflow | Until workflow is unpublished | :x: |
 
-Refer to [Workflow development](https://docs.n8n.io/workflow-development/) for more information.
+Refer to [Workflow development](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/workflow-development/) for more information.
 
 ## IP addresses in whitelist are failing to connect
 
 If you're unable to connect from IP addresses in your IP whitelist, check if you are running n8n behind a reverse proxy.
 
-If so, set the `N8N_PROXY_HOPS` [environment variable](/hosting/configuration/environment-variables/index.md) to the number of reverse-proxies n8n is running behind.
+If so, set the `N8N_PROXY_HOPS` [environment variable](https://docs.n8n.io/hosting/configuration/environment-variables/) to the number of reverse-proxies n8n is running behind.
 
 ## Only one webhook per path and method
 
@@ -270,7 +270,7 @@ Because of this, for long-running processes that might exceed this limit, you ma
 
 # Workflow development
 
-The [Webhook node](https://docs.n8n.io//) works a bit differently from other core nodes. n8n recommends following these processes for building, testing, and using your Webhook node in production.
+The [Webhook node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/) works a bit differently from other core nodes. n8n recommends following these processes for building, testing, and using your Webhook node in production.
 
 n8n generates two **Webhook URLs** for each Webhook node: a **Test URL** and a **Production URL**.
 
@@ -280,10 +280,10 @@ While building or testing a workflow, use the **Test** webhook URL.
 
 Using a test webhook ensures that you can view the incoming data in the editor UI, which is useful for debugging. Select **Listen for test event** to register the webhook before sending the data to the test webhook. The test webhook stays active for 120 seconds.
 
-When using the Webhook node on localhost on a [self-hosted](/hosting/index.md) n8n instance, run n8n in tunnel mode:
+When using the Webhook node on localhost on a [self-hosted](https://docs.n8n.io/hosting/) n8n instance, run n8n in tunnel mode:
 
-* [npm with tunnel](/hosting/installation/npm.md#n8n-with-tunnel)
-* [Docker with tunnel](/hosting/installation/docker.md#n8n-with-tunnel)
+* [npm with tunnel](https://docs.n8n.io/hosting/installation/npm/#n8n-with-tunnel)
+* [Docker with tunnel](https://docs.n8n.io/hosting/installation/docker/#n8n-with-tunnel)
 
 <video src="/_video/integrations/builtin/core-nodes/webhook/webhook-node-intro.mp4" controls width="100%"></video>
 
@@ -293,4 +293,4 @@ When your workflow is ready, switch to using the **Production** webhook URL. You
 
 When working with a Production webhook, ensure that you have saved and published the workflow. Data flowing through the webhook isn't visible in the editor UI with the production webhook.
 
-Refer to [Create a workflow](/workflows/create.md) for more information on publishing workflows.
+Refer to [Create a workflow](https://docs.n8n.io/workflows/create/) for more information on publishing workflows.

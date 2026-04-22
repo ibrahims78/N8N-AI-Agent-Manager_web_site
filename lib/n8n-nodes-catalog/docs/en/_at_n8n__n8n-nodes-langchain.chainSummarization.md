@@ -40,4 +40,4 @@ You can customize the **Individual Summary Prompts** and the **Final Prompt to C
 
 Refer to [LangChain's documentation on summarization](https://js.langchain.com/docs/tutorials/summarization/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

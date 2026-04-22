@@ -4,13 +4,13 @@
 
 # MongoDB Chat Memory node
 
-Use the MongoDB Chat Memory node to use MongoDB as a [memory](/glossary.md#ai-memory) server for storing chat history.
+Use the MongoDB Chat Memory node to use MongoDB as a [memory](https://docs.n8n.io/glossary/#ai-memory) server for storing chat history.
 
 On this page, you'll find a list of operations the MongoDB Chat Memory node supports, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/mongodb.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/mongodb/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -31,6 +31,6 @@ On this page, you'll find a list of operations the MongoDB Chat Memory node supp
 
 Refer to [LangChain's MongoDB Chat Message History documentation](https://js.langchain.com/docs/integrations/memory/mongodb) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.
 
 ## Single memory instance

@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Google Business Profile node 
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](https://docs.n8n.io//).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/google/).
 
 ## Operations
 
@@ -34,13 +34,13 @@ On this page, you'll find a list of operations the Google Business Profile node 
 
 ## Related resources
 
-n8n provides a trigger node for Google Business Profile. You can find the trigger node docs [here](/integrations/builtin/trigger-nodes/n8n-nodes-base.googlebusinessprofiletrigger.md).
+n8n provides a trigger node for Google Business Profile. You can find the trigger node docs [here](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.googlebusinessprofiletrigger/).
 
 Refer to [Google Business Profile's documentation](https://developers.google.com/my-business/reference/rest) for more information about the service.
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -48,4 +48,4 @@ You can use the credential you created for this service in the HTTP Request node
 1. Select the service you want to connect to.
 1. Select your credential.
 
-Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
+Refer to [Custom API operations](https://docs.n8n.io/integrations/custom-operations/) for more information.

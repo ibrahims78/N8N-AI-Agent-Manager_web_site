@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.Brandfetch",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.brandfetch.md",
-  "fetchedAt": "2026-04-22T18:36:00.054Z",
+  "fetchedAt": "2026-04-22T18:58:21.115Z",
   "frontmatter": {
     "raw": {
       "title": "Brandfetch node documentation",

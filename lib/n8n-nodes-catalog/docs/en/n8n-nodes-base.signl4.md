@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the SIGNL4 node supports and link
 
 > **Credentials**
 >
-> Refer to [SIGNL4 credentials](/integrations/builtin/credentials/signl4.md) for guidance on setting up authentication.
+> Refer to [SIGNL4 credentials](https://docs.n8n.io/integrations/builtin/credentials/signl4/) for guidance on setting up authentication.
 
 ## Operations
 

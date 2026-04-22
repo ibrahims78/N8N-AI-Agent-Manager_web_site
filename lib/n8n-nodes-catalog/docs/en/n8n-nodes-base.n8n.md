@@ -4,18 +4,18 @@
 
 # n8n
 
-A node to integrate with n8n itself. This node allows you to consume the [n8n API](/api/index.md) in your workflows.
+A node to integrate with n8n itself. This node allows you to consume the [n8n API](https://docs.n8n.io/api/) in your workflows.
 
-Refer to the [n8n REST API documentation](/api/index.md) for more information on using the n8n API. Refer to [API endpoint reference](/api/api-reference.md) for working with the API endpoints directly.
+Refer to the [n8n REST API documentation](https://docs.n8n.io/api/) for more information on using the n8n API. Refer to [API endpoint reference](https://docs.n8n.io/api/api-reference/) for working with the API endpoints directly.
 
 > **Credentials**
 >
-> You can find authentication information for this node in the [API authentication](/api/authentication.md) documentation.
+> You can find authentication information for this node in the [API authentication](https://docs.n8n.io/api/authentication/) documentation.
 
 > **SSL**
 >
-> This node doesn't support SSL. If your server requires an SSL connection, use the [HTTP Request node](https://docs.n8n.io//) to call the [n8n API](/api/index.md).
-> The HTTP Request node has options to [provide the SSL certificate](/integrations/builtin/credentials/httprequest.md#provide-an-ssl-certificate).
+> This node doesn't support SSL. If your server requires an SSL connection, use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to call the [n8n API](https://docs.n8n.io/api/).
+> The HTTP Request node has options to [provide the SSL certificate](https://docs.n8n.io/integrations/builtin/credentials/httprequest/#provide-an-ssl-certificate).
 
 ## Operations
 
@@ -132,7 +132,7 @@ Configure this operation with this parameter:
 	* `connections`
 	* `settings`
 
-Refer to [n8n API reference](/api/api-reference.md) for more information.
+Refer to [n8n API reference](https://docs.n8n.io/api/api-reference/) for more information.
 
 ## Get many workflows
 

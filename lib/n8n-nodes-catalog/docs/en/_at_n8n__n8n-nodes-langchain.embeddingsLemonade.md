@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Embeddings Lemonade node supp
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/lemonade.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/lemonade/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -36,4 +36,4 @@ The model which will generate the embeddings. Models are loaded and managed thro
 
 Refer to [Lemonade Server's documentation](https://lemonade-server.ai/docs/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

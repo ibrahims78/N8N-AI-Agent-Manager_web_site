@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.redis",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.redis.md",
-  "fetchedAt": "2026-04-22T18:36:07.924Z",
+  "fetchedAt": "2026-04-22T18:58:26.824Z",
   "frontmatter": {
     "raw": {
       "title": "Redis node documentation",

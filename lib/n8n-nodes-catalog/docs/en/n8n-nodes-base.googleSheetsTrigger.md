@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](https://docs.n8n.io//).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/google/).
 
 > **Examples and templates**
 >
@@ -24,13 +24,13 @@
 
 Refer to [Google Sheet's API documentation](https://developers.google.com/sheets/api) for more information about the service.
 
-n8n provides an app node for Google Sheets. You can find the node docs [here](https://docs.n8n.io//).
+n8n provides an app node for Google Sheets. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlesheets/).
 
 View [example workflows and related content](https://n8n.io/integrations/google-sheets-trigger/) on n8n's website.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.googlesheetstrigger/common-issues/).
 
 ---
 
@@ -39,7 +39,7 @@ For common questions or issues and suggested solutions, refer to [Common issues]
 
 # Google Sheets Trigger node common issues
 
-Here are some common errors and issues with the [Google Sheets Trigger node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Google Sheets Trigger node](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.googlesheetstrigger/) and steps to resolve or troubleshoot them.
 
 ## Stuck waiting for trigger event
 

@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Paddle node supports and link
 
 > **Credentials**
 >
-> Refer to [Paddle credentials](/integrations/builtin/credentials/paddle.md) for guidance on setting up authentication.
+> Refer to [Paddle credentials](https://docs.n8n.io/integrations/builtin/credentials/paddle/) for guidance on setting up authentication.
 
 ## Operations
 

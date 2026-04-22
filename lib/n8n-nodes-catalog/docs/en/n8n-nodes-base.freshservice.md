@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Freshservice node supports an
 
 > **Credentials**
 >
-> Refer to [Freshservice credentials](/integrations/builtin/credentials/freshservice.md) for guidance on setting up authentication.
+> Refer to [Freshservice credentials](https://docs.n8n.io/integrations/builtin/credentials/freshservice/) for guidance on setting up authentication.
 
 ## Operations
 

@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.googleTranslate",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.googletranslate.md",
-  "fetchedAt": "2026-04-22T18:36:03.858Z",
+  "fetchedAt": "2026-04-22T18:58:23.679Z",
   "frontmatter": {
     "raw": {
       "title": "Google Translate node documentation",

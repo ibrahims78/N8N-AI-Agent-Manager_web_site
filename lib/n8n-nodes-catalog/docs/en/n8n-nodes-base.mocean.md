@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Mocean node supports and link
 
 > **Credentials**
 >
-> Refer to [Mocean credentials](/integrations/builtin/credentials/mocean.md) for guidance on setting up authentication.
+> Refer to [Mocean credentials](https://docs.n8n.io/integrations/builtin/credentials/mocean/) for guidance on setting up authentication.
 
 ## Operations
 

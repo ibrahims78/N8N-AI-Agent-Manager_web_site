@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the SecurityScorecard node suppor
 
 > **Credentials**
 >
-> Refer to [SecurityScorecard credentials](/integrations/builtin/credentials/securityscorecard.md) for guidance on setting up authentication.
+> Refer to [SecurityScorecard credentials](https://docs.n8n.io/integrations/builtin/credentials/securityscorecard/) for guidance on setting up authentication.
 
 ## Operations
 

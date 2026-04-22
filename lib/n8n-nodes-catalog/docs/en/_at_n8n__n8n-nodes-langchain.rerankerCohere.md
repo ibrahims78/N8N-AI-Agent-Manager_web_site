@@ -4,7 +4,7 @@
 
 # Reranker Cohere
 
-The Reranker Cohere node allows you to [rerank](/glossary.md#ai-reranking) the resulting chunks from a [vector store](/glossary.md#ai-vector-store). You can connect this node to a vector store.
+The Reranker Cohere node allows you to [rerank](https://docs.n8n.io/glossary/#ai-reranking) the resulting chunks from a [vector store](https://docs.n8n.io/glossary/#ai-vector-store). You can connect this node to a vector store.
 
 The reranker reorders the list of documents retrieved from a vector store for a given query in order of descending relevance.
 
@@ -12,7 +12,7 @@ On this page, you'll find the node parameters for the Reranker Cohere node, and 
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/cohere.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/cohere/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -36,4 +36,4 @@ Choose the reranking model to use. You can find out more about the available mod
 
 ## Related resources
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

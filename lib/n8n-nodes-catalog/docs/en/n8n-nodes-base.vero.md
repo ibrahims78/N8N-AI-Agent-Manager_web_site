@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Vero node supports and links 
 
 > **Credentials**
 >
-> Refer to [Vero credentials](/integrations/builtin/credentials/vero.md) for guidance on setting up authentication.
+> Refer to [Vero credentials](https://docs.n8n.io/integrations/builtin/credentials/vero/) for guidance on setting up authentication.
 
 ## Operations
 

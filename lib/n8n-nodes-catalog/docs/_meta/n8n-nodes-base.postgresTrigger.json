@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.postgresTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.postgrestrigger.md",
-  "fetchedAt": "2026-04-22T18:36:07.554Z",
+  "fetchedAt": "2026-04-22T18:58:26.559Z",
   "frontmatter": {
     "raw": {
       "title": "Postgres Trigger node documentation",

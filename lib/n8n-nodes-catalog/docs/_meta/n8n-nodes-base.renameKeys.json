@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.renameKeys",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.renamekeys.md",
-  "fetchedAt": "2026-04-22T18:36:07.929Z",
+  "fetchedAt": "2026-04-22T18:58:26.879Z",
   "frontmatter": {
     "raw": {
       "title": "Rename Keys",

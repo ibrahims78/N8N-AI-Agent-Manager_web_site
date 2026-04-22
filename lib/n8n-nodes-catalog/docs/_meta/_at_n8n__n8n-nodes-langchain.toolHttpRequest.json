@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.toolHttpRequest",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolhttprequest.md",
-  "fetchedAt": "2026-04-22T18:36:13.458Z",
+  "fetchedAt": "2026-04-22T18:58:31.185Z",
   "frontmatter": {
     "raw": {
       "title": "HTTP Request Tool node documentation",

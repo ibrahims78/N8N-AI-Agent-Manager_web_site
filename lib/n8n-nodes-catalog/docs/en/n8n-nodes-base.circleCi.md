@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the CircleCI node supports and li
 
 > **Credentials**
 >
-> Refer to [CircleCI credentials](/integrations/builtin/credentials/circleci.md) for guidance on setting up authentication.
+> Refer to [CircleCI credentials](https://docs.n8n.io/integrations/builtin/credentials/circleci/) for guidance on setting up authentication.
 
 ## Operations
 

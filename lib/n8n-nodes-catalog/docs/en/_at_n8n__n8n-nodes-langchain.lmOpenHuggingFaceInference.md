@@ -8,11 +8,11 @@ Use the Hugging Face Inference Model node to use Hugging Face's models.
 
 On this page, you'll find the node parameters for the Hugging Face Inference Model node, and links to more resources.
 
-This node lacks tools support, so it won't work with the [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) node. Instead, connect it with the [Basic LLM Chain](https://docs.n8n.io/n8n-nodes-langchain.chainllm/) node.
+This node lacks tools support, so it won't work with the [AI Agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/) node. Instead, connect it with the [Basic LLM Chain](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainllm/) node.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/huggingface.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/huggingface/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -46,4 +46,4 @@ This node lacks tools support, so it won't work with the [AI Agent](https://docs
 
 Refer to [LangChains's Hugging Face Inference Model documentation](https://js.langchain.com/docs/integrations/llms/huggingface_inference/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.autopilotTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.autopilottrigger.md",
-  "fetchedAt": "2026-04-22T18:35:59.524Z",
+  "fetchedAt": "2026-04-22T18:58:20.698Z",
   "frontmatter": {
     "raw": {
       "title": "Autopilot Trigger node documentation",

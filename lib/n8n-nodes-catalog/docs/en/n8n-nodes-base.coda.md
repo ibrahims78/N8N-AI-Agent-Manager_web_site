@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Coda node supports and links 
 
 > **Credentials**
 >
-> Refer to [Coda credentials](/integrations/builtin/credentials/coda.md) for guidance on setting up authentication.
+> Refer to [Coda credentials](https://docs.n8n.io/integrations/builtin/credentials/coda/) for guidance on setting up authentication.
 
 ## Operations
 

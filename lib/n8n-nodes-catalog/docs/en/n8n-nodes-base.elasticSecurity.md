@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Elastic Security node support
 
 > **Credentials**
 >
-> Refer to [Elastic Security credentials](/integrations/builtin/credentials/elasticsecurity.md) for guidance on setting up authentication.
+> Refer to [Elastic Security credentials](https://docs.n8n.io/integrations/builtin/credentials/elasticsecurity/) for guidance on setting up authentication.
 
 ## Operations
 

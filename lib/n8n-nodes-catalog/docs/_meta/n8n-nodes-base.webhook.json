@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.webhook",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.webhook/index.md",
-  "fetchedAt": "2026-04-22T18:36:10.794Z",
+  "fetchedAt": "2026-04-22T18:58:29.191Z",
   "frontmatter": {
     "raw": {
       "title": "Webhook node documentation",
@@ -16,8 +16,8 @@
     "contentType": "[integration, reference]"
   },
   "siblings": [
-    "workflow-development.md",
-    "common-issues.md"
+    "common-issues.md",
+    "workflow-development.md"
   ],
   "assets": [
     "webhook-urls.png"

@@ -8,13 +8,13 @@
 >
 > This node is deprecated, and will be removed in a future version.
 
-Use the Zep node to use Zep as a [memory](/glossary.md#ai-memory) server.
+Use the Zep node to use Zep as a [memory](https://docs.n8n.io/glossary/#ai-memory) server.
 
 On this page, you'll find a list of operations the Zep node supports, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/zep.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/zep/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -38,6 +38,6 @@ On this page, you'll find a list of operations the Zep node supports, and links 
 
 Refer to [LangChain's Zep documentation](https://js.langchain.com/docs/integrations/memory/zep_memory) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.
 
 ## Single memory instance

@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the ConvertKit node supports and 
 
 > **Credentials**
 >
-> Refer to [ConvertKit credentials](/integrations/builtin/credentials/convertkit.md) for guidance on setting up authentication.
+> Refer to [ConvertKit credentials](https://docs.n8n.io/integrations/builtin/credentials/convertkit/) for guidance on setting up authentication.
 
 ## Operations
 

@@ -4,7 +4,7 @@
 
 # Think Tool node
 
-The Think Tool node is a [tool](/glossary.md#ai-tool) that invites an [agent](/glossary.md#ai-agent) to do some thinking before answering. Essentially, it allows the agent to reflect on the question by talking to itself before providing an answer. In particular, this is useful for complex queries that require a thoughtful response.
+The Think Tool node is a [tool](https://docs.n8n.io/glossary/#ai-tool) that invites an [agent](https://docs.n8n.io/glossary/#ai-agent) to do some thinking before answering. Essentially, it allows the agent to reflect on the question by talking to itself before providing an answer. In particular, this is useful for complex queries that require a thoughtful response.
 
 > **Parameter resolution in sub-nodes**
 >
@@ -56,4 +56,4 @@ and then afterward provide the answer:
 
 Refer to [LangChain's documentation on tools](https://langchain-ai.github.io/langgraphjs/how-tos/tool-calling/) for more information about tools in LangChain.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

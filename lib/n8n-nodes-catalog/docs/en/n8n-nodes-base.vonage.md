@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Vonage node supports and link
 
 > **Credentials**
 >
-> Refer to [Vonage credentials](/integrations/builtin/credentials/vonage.md) for guidance on setting up authentication.
+> Refer to [Vonage credentials](https://docs.n8n.io/integrations/builtin/credentials/vonage/) for guidance on setting up authentication.
 
 ## Operations
 

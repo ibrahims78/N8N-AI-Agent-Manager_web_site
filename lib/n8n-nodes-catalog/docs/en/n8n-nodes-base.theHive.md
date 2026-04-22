@@ -10,10 +10,10 @@ On this page, you'll find a list of operations the TheHive node supports and lin
 
 > **TheHive and TheHive 5**
 >
-> n8n provides two nodes for TheHive. Use this node (TheHive) if you want to use TheHive's version 3 or 4 API. If you want to use version 5, use [TheHive 5](/integrations/builtin/app-nodes/n8n-nodes-base.thehive5.md).
+> n8n provides two nodes for TheHive. Use this node (TheHive) if you want to use TheHive's version 3 or 4 API. If you want to use version 5, use [TheHive 5](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.thehive5/).
 > **Credentials**
 >
-> Refer to [TheHive credentials](/integrations/builtin/credentials/thehive.md) for guidance on setting up authentication.
+> Refer to [TheHive credentials](https://docs.n8n.io/integrations/builtin/credentials/thehive/) for guidance on setting up authentication.
 
 ## Operations
 
@@ -33,7 +33,7 @@ The available operations depend on your API version. To see the operations list,
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -41,11 +41,11 @@ You can use the credential you created for this service in the HTTP Request node
 1. Select the service you want to connect to.
 1. Select your credential.
 
-Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
+Refer to [Custom API operations](https://docs.n8n.io/integrations/custom-operations/) for more information.
 
 ## Related resources
 
-n8n provides a trigger node for TheHive. You can find the trigger node docs [here](/integrations/builtin/trigger-nodes/n8n-nodes-base.thehivetrigger.md).
+n8n provides a trigger node for TheHive. You can find the trigger node docs [here](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.thehivetrigger/).
 
 Refer to TheHive's documentation for more information about the service:
 

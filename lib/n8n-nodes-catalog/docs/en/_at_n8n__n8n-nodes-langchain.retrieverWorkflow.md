@@ -23,7 +23,7 @@ On this page, you'll find the node parameters for the Workflow Retriever node, a
 Tell n8n which workflow to call. You can choose either:
 
 * **Database** and enter a workflow ID.
-* **Parameter** and copy in a complete [workflow JSON](/workflows/export-import.md).
+* **Parameter** and copy in a complete [workflow JSON](https://docs.n8n.io/workflows/export-import/).
 
 ### Workflow values
 
@@ -46,4 +46,4 @@ The expression to access the value of `myCustomValue` is ``.
 
 Refer to [LangChain's general retriever documentation](https://js.langchain.com/docs/concepts/retrievers/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

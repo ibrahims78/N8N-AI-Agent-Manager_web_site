@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Grist node supports and links
 
 > **Credentials**
 >
-> Refer to [Grist credentials](/integrations/builtin/credentials/grist.md) for guidance on setting up authentication.
+> Refer to [Grist credentials](https://docs.n8n.io/integrations/builtin/credentials/grist/) for guidance on setting up authentication.
 
 ## Operations
 

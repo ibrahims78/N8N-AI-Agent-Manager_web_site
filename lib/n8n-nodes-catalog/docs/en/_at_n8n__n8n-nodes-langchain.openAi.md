@@ -15,33 +15,33 @@ On this page, you'll find a list of operations the OpenAI node supports and link
 
 > **Credentials**
 >
-> Refer to [OpenAI credentials](/integrations/builtin/credentials/openai.md) for guidance on setting up authentication.
+> Refer to [OpenAI credentials](https://docs.n8n.io/integrations/builtin/credentials/openai/) for guidance on setting up authentication.
 
 ## Operations
 
 - **Text**
-	- [**Generate a Chat Completion**](https://docs.n8n.io/text-operations/#generate-a-chat-completion)
-	- [**Generate a Model Response**](https://docs.n8n.io/text-operations/#generate-a-model-response)
-	- [**Classify Text for Violations**](https://docs.n8n.io/text-operations/#classify-text-for-violations)
+	- [**Generate a Chat Completion**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/text-operations/#generate-a-chat-completion)
+	- [**Generate a Model Response**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/text-operations/#generate-a-model-response)
+	- [**Classify Text for Violations**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/text-operations/#classify-text-for-violations)
 - **Image**
-	- [**Analyze Image**](https://docs.n8n.io/image-operations/#analyze-image)
-	- [**Generate an Image**](https://docs.n8n.io/image-operations/#generate-an-image)
-	- [**Edit an Image**](https://docs.n8n.io/image-operations/#edit-an-image)
+	- [**Analyze Image**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/image-operations/#analyze-image)
+	- [**Generate an Image**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/image-operations/#generate-an-image)
+	- [**Edit an Image**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/image-operations/#edit-an-image)
 - **Audio**
-	- [**Generate Audio**](https://docs.n8n.io/audio-operations/#generate-audio)
-	- [**Transcribe a Recording**](https://docs.n8n.io/audio-operations/#transcribe-a-recording)
-	- [**Translate a Recording**](https://docs.n8n.io/audio-operations/#translate-a-recording)
+	- [**Generate Audio**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/audio-operations/#generate-audio)
+	- [**Transcribe a Recording**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/audio-operations/#transcribe-a-recording)
+	- [**Translate a Recording**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/audio-operations/#translate-a-recording)
 - **File**
-	- [**Delete a File**](https://docs.n8n.io/file-operations/#delete-a-file)
-	- [**List Files**](https://docs.n8n.io/file-operations/#list-files)
-	- [**Upload a File**](https://docs.n8n.io/file-operations/#upload-a-file)
+	- [**Delete a File**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/file-operations/#delete-a-file)
+	- [**List Files**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/file-operations/#list-files)
+	- [**Upload a File**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/file-operations/#upload-a-file)
 - **Video**
-	- [**Generate a Video**](https://docs.n8n.io/video-operations/#generate-video)
+	- [**Generate a Video**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/video-operations/#generate-video)
 - **Conversation**
-	- [**Create a Conversation**](https://docs.n8n.io/conversation-operations/#create-a-conversation)
-	- [**Get a Conversation**](https://docs.n8n.io/conversation-operations/#get-a-conversation)
-	- [**Update a Conversation**](https://docs.n8n.io/conversation-operations/#update-a-conversation)
-	- [**Remove a Conversation**](https://docs.n8n.io/conversation-operations/#remove-a-conversation)
+	- [**Create a Conversation**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/conversation-operations/#create-a-conversation)
+	- [**Get a Conversation**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/conversation-operations/#get-a-conversation)
+	- [**Update a Conversation**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/conversation-operations/#update-a-conversation)
+	- [**Remove a Conversation**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/conversation-operations/#remove-a-conversation)
 
 ## Templates and examples
 
@@ -55,11 +55,11 @@ Refer to [OpenAI's documentation](https://beta.openai.com/docs/introduction) for
 
 Refer to [OpenAI's assistants documentation](https://platform.openai.com/docs/assistants/how-it-works/objects) for more information about how assistants work.
 
-For help dealing with rate limits, refer to [Handling rate limits](/integrations/builtin/rate-limits.md).
+For help dealing with rate limits, refer to [Handling rate limits](https://docs.n8n.io/integrations/builtin/rate-limits/).
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -67,25 +67,25 @@ You can use the credential you created for this service in the HTTP Request node
 1. Select the service you want to connect to.
 1. Select your credential.
 
-Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
+Refer to [Custom API operations](https://docs.n8n.io/integrations/custom-operations/) for more information.
 
 ## Using tools with OpenAI assistants
 
-Some operations allow you to connect tools. [Tools](/advanced-ai/examples/understand-tools.md) act like addons that your AI can use to access extra context or resources.
+Some operations allow you to connect tools. [Tools](https://docs.n8n.io/advanced-ai/examples/understand-tools/) act like addons that your AI can use to access extra context or resources.
 
 Select the **Tools** connector to browse the available tools and add them.
 
-Once you add a tool connection, the OpenAI node becomes a [root node](/glossary.md#root-node-n8n), allowing it to form a [cluster node](/glossary.md#cluster-node-n8n) with the tools [sub-nodes](/glossary.md#sub-node-n8n). See [Node types](/integrations/builtin/node-types.md#cluster-nodes) for more information on cluster nodes and root nodes.
+Once you add a tool connection, the OpenAI node becomes a [root node](https://docs.n8n.io/glossary/#root-node-n8n), allowing it to form a [cluster node](https://docs.n8n.io/glossary/#cluster-node-n8n) with the tools [sub-nodes](https://docs.n8n.io/glossary/#sub-node-n8n). See [Node types](https://docs.n8n.io/integrations/builtin/node-types/#cluster-nodes) for more information on cluster nodes and root nodes.
 
 ### Operations that support tool connectors
 
 - **Text**
-	- [**Generate a Chat Completion**](https://docs.n8n.io/text-operations/#generate-a-chat-completion)
-	- [**Generate a Model Response**](https://docs.n8n.io/text-operations/#generate-a-model-response)
+	- [**Generate a Chat Completion**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/text-operations/#generate-a-chat-completion)
+	- [**Generate a Model Response**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/text-operations/#generate-a-model-response)
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/common-issues/).
 
 ---
 
@@ -94,7 +94,7 @@ For common questions or issues and suggested solutions, refer to [Common issues]
 
 # OpenAI node common issues
 
-Here are some common errors and issues with the [OpenAI node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [OpenAI node](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/) and steps to resolve or troubleshoot them.
 
 --8<-- "_snippets/integrations/openai-api-issues.md"
 --8<-- "_snippets/integrations/referenced-node-unexecuted.md"
@@ -106,7 +106,7 @@ Here are some common errors and issues with the [OpenAI node](https://docs.n8n.i
 
 # OpenAI Assistant operations
 
-Use this operation to create, delete, list, message, or update an assistant in OpenAI. Refer to [OpenAI](https://docs.n8n.io//) for more information on the OpenAI node itself.
+Use this operation to create, delete, list, message, or update an assistant in OpenAI. Refer to [OpenAI](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/) for more information on the OpenAI node itself.
 
 > **Assistant operations deprecated in OpenAI node V2**
 >
@@ -118,7 +118,7 @@ Use this operation to create a new assistant.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Assistant**.
 - **Operation**: Select **Create an Assistant**.
 - **Model**: Select the model that the assistant will use. If you’re not sure which model to use, try `gpt-4o` if you need high intelligence or `gpt-4o-mini` if you need the fastest speed and lowest cost. Refer to [Models overview | OpenAI Platform](https://platform.openai.com/docs/models) for more information. 
@@ -149,7 +149,7 @@ Use this operation to delete an existing assistant from your account.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Assistant**.
 - **Operation**: Select **Delete an Assistant**.
 - **Assistant**: Select the assistant you want to delete **From list** or **By ID**.
@@ -160,7 +160,7 @@ Refer to [Delete assistant | OpenAI](https://platform.openai.com/docs/api-refere
 
 Use this operation to retrieve a list of assistants in your organization.
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Assistant**.
 - **Operation**: Select **List Assistants**.
 
@@ -176,7 +176,7 @@ Use this operation to send a message to an assistant and receive a response.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Assistant**.
 - **Operation**: Select **Message an Assistant**.
 - **Assistant**: Select the assistant you want to message.
@@ -199,7 +199,7 @@ Use this operation to update the details of an existing assistant.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Assistant**.
 - **Operation**: Select **Update an Assistant**.
 - **Assistant**: Select the assistant you want to update.
@@ -216,7 +216,7 @@ Enter these parameters:
   Always respond in a friendly and engaging manner. When a user asks a question, provide a concise answer first, followed by a brief explanation or additional context if necessary. If the question is open-ended, offer a suggestion or ask a clarifying question to guide the conversation. Keep the tone positive and supportive, and avoid technical jargon unless specifically requested by the user.
   ```
 - **Knowledge Retrieval**: Turn on to enable knowledge retrieval for the assistant, allowing it to access external sources or a connected knowledge base. Refer to [File Search | OpenAI Platform](https://platform.openai.com/docs/assistants/tools/file-search) for more information. 
-- **Files**: Select a file to upload for your external knowledge source. Use [**Upload a File**](https://docs.n8n.io/file-operations/#upload-a-file) operation to add more files. Note that this only updates the [Code Interpreter](https://platform.openai.com/docs/assistants/tools/code-interpreter) tool, not the [File Search](https://platform.openai.com/docs/assistants/tools/file-search) tool.
+- **Files**: Select a file to upload for your external knowledge source. Use [**Upload a File**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/file-operations/#upload-a-file) operation to add more files. Note that this only updates the [Code Interpreter](https://platform.openai.com/docs/assistants/tools/code-interpreter) tool, not the [File Search](https://platform.openai.com/docs/assistants/tools/file-search) tool.
 - **Model**: Select the model that the assistant will use. If you’re not sure which model to use, try `gpt-4o` if you need high intelligence or `gpt-4o-mini` if you need the fastest speed and lowest cost. Refer to [Models overview | OpenAI Platform](https://platform.openai.com/docs/models) for more information. 
 - **Name**: Enter the name of the assistant. The maximum length is 256 characters.
 - **Remove All Custom Tools (Functions)**: Turn on to remove all custom tools (functions) from the assistant. 
@@ -227,7 +227,7 @@ Refer to [Modify assistant | OpenAI](https://platform.openai.com/docs/api-refere
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/common-issues/).
 
 ---
 
@@ -236,7 +236,7 @@ For common errors or issues and suggested resolution steps, refer to [Common Iss
 
 # OpenAI Audio operations
 
-Use this operation to generate an audio, or transcribe or translate a recording in OpenAI. Refer to [OpenAI](https://docs.n8n.io//) for more information on the OpenAI node itself.
+Use this operation to generate an audio, or transcribe or translate a recording in OpenAI. Refer to [OpenAI](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/) for more information on the OpenAI node itself.
 
 ## Generate Audio
 
@@ -244,7 +244,7 @@ Use this operation to create audio from a text prompt.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Audio**.
 - **Operation**: Select **Generate Audio**.
 - **Model**: Select the model you want to use to generate the audio. Refer to [TTS | OpenAI](https://platform.openai.com/docs/models/tts) for more information.
@@ -267,7 +267,7 @@ Use this operation to transcribe audio into text. OpenAI API limits the size of 
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Audio**.
 - **Operation**: Select **Transcribe a Recording**.
 - **Input Data Field Name**: Defaults to `data`. Enter the name of the binary property that contains the audio file in one of these formats: `.flac`, `.mp3`, `.mp4`, `.mpeg`, `.mpga`, `.m4a`, `.ogg`, `.wav`, or `.webm`. 
@@ -285,7 +285,7 @@ Use this operation to translate audio into English. OpenAI API limits the size o
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Audio**.
 - **Operation**: Select **Translate a Recording**.
 - **Input Data Field Name**: Defaults to `data`. Enter the name of the binary property that contains the audio file in one of these formats: `.flac`, `.mp3`, `.mp4`, `.mpeg`, `.mpga`, `.m4a`, `.ogg`, `.wav`, or `.webm`. 
@@ -298,7 +298,7 @@ Refer to [Create transcription | OpenAI](https://platform.openai.com/docs/api-re
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/common-issues/).
 
 ---
 
@@ -307,7 +307,7 @@ For common errors or issues and suggested resolution steps, refer to [Common Iss
 
 # OpenAI Conversation operations
 
-Use this operation to create, get, update, or remove a conversation in OpenAI. Refer to [OpenAI](https://docs.n8n.io//) for more information on the OpenAI node itself.
+Use this operation to create, get, update, or remove a conversation in OpenAI. Refer to [OpenAI](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/) for more information on the OpenAI node itself.
 
 ## Create a Conversation
 
@@ -315,7 +315,7 @@ Use this operation to create a new conversation.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Conversation**.
 - **Operation**: Select **Create a Conversation**.
 - **Messages**: A message input to the model. Messages with the `system` role take precedence over instructions given with the `user` role. Messages with the `assistant` role will be assumed to have been generated by the model in previous interactions.
@@ -332,7 +332,7 @@ Use this operation to retrieve an existing conversation.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Conversation**.
 - **Operation**: Select **Get Conversation**.
 - **Conversation ID**: The ID of the conversation to retrieve.
@@ -345,7 +345,7 @@ Use this operation to remove an existing conversation.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Conversation**.
 - **Operation**: Select **Remove Conversation**.
 - **Conversation ID**: The ID of the conversation to remove.
@@ -358,7 +358,7 @@ Use this operation to update an existing conversation.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Conversation**.
 - **Operation**: Select **Update a Conversation**.
 - **Conversation ID**: The ID of the conversation to update.
@@ -376,7 +376,7 @@ Refer to [Conversations | OpenAI](https://platform.openai.com/docs/api-reference
 
 # OpenAI File operations
 
-Use this operation to create, delete, list, message, or update a file in OpenAI. Refer to [OpenAI](https://docs.n8n.io//) for more information on the OpenAI node itself.
+Use this operation to create, delete, list, message, or update a file in OpenAI. Refer to [OpenAI](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/) for more information on the OpenAI node itself.
 
 ## Delete a File
 
@@ -384,7 +384,7 @@ Use this operation to delete a file from the server.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **File**.
 - **Operation**: Select **Delete a File**.
 - **File**: Enter the ID of the file to use for this operation or select the file name from the dropdown.
@@ -397,7 +397,7 @@ Use this operation to list files that belong to the user's organization.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **File**.
 - **Operation**: Select **List Files**.
 
@@ -413,7 +413,7 @@ Use this operation to upload a file. This can be used across various operations.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **File**.
 - **Operation**: Select **Upload a File**.
 - **Input Data Field Name**: Defaults to `data`. Enter the name of the binary property which contains the file. The size of individual files can be a maximum of 512 MB or 2 million tokens for Assistants.
@@ -426,7 +426,7 @@ Refer to [Upload file | OpenAI](https://platform.openai.com/docs/api-reference/f
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/common-issues/).
 
 ---
 
@@ -435,7 +435,7 @@ For common errors or issues and suggested resolution steps, refer to [Common Iss
 
 # OpenAI Image operations
 
-Use this operation to analyze or generate an image in OpenAI. Refer to [OpenAI](https://docs.n8n.io//) for more information on the OpenAI node itself.
+Use this operation to analyze or generate an image in OpenAI. Refer to [OpenAI](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/) for more information on the OpenAI node itself.
 
 ## Analyze Image
 
@@ -443,7 +443,7 @@ Use this operation to take in images and answer questions about them.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Image**.
 - **Operation**: Select **Analayze Image**.
 - **Model**: Select the model you want to use to analyze an image. 
@@ -465,7 +465,7 @@ Use this operation to create an image from a text prompt.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Image**.
 - **Operation**: Select **Generate an Image**.
 - **Model**: Select the model you want to use to generate an image. 
@@ -489,7 +489,7 @@ Use this operation to edit an image from a text prompt.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Image**.
 - **Operation**: Select **Edit Image**.
 - **Model**: Select the model you want to use to generate an image. Supports `dall-e-2` and `gpt-image-1`.
@@ -509,7 +509,7 @@ Enter these parameters:
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/common-issues/).
 
 ---
 
@@ -518,7 +518,7 @@ For common errors or issues and suggested resolution steps, refer to [Common Iss
 
 # OpenAI Text operations
 
-Use this operation to message a model or classify text for violations in OpenAI. Refer to [OpenAI](https://docs.n8n.io//) for more information on the OpenAI node itself.
+Use this operation to message a model or classify text for violations in OpenAI. Refer to [OpenAI](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/) for more information on the OpenAI node itself.
 
 > **Previous node versions**
 >
@@ -530,7 +530,7 @@ Use this operation to send a message or prompt to an OpenAI model - using the Ch
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Text**.
 - **Operation**: Select **Generate a Chat Completion**.
 - **Model**: Select the model you want to use. If you’re not sure which model to use, try `gpt-4o` if you need high intelligence or `gpt-4o-mini` if you need the fastest speed and lowest cost. Refer to [Models overview | OpenAI Platform](https://platform.openai.com/docs/models) for more information. 
@@ -558,7 +558,7 @@ Use this operation to send a message or prompt to an OpenAI model - using the Re
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Text**.
 - **Operation**: Select **Generate a Model Response**.
 - **Model**: Select the model you want to use. Refer to [Models overview | OpenAI Platform](https://platform.openai.com/docs/models) for an overview. 
@@ -604,7 +604,7 @@ Use this operation to identify and flag content that might be harmful. OpenAI mo
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Text**.
 - **Operation**: Select **Classify Text for Violations**.
 - **Text Input**: Enter text to classify if it violates the moderation policy. 
@@ -618,7 +618,7 @@ Refer to [Moderations | OpenAI](https://platform.openai.com/docs/api-reference/m
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/common-issues/).
 
 ---
 
@@ -627,7 +627,7 @@ For common errors or issues and suggested resolution steps, refer to [Common Iss
 
 # OpenAI Video operations
 
-Use this operation to generate a video in OpenAI. Refer to [OpenAI](https://docs.n8n.io//) for more information on the OpenAI node itself.
+Use this operation to generate a video in OpenAI. Refer to [OpenAI](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/) for more information on the OpenAI node itself.
 
 ## Generate Video
 
@@ -635,7 +635,7 @@ Use this operation to generate a video from a text prompt.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [OpenAI credential](/integrations/builtin/credentials/openai.md).
+- **Credential to connect with**: Create or select an existing [OpenAI credential](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 - **Resource**: Select **Video**.
 - **Operation**: Select **Generate Video**.
 - **Model**: Select the model you want to use to generate a video. Currently supports `sora-2` and `sora-2-pro`.

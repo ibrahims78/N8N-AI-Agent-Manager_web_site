@@ -4,13 +4,13 @@
 
 # Redis Chat Memory node
 
-Use the Redis Chat Memory node to use Redis as a [memory](/glossary.md#ai-memory) server.
+Use the Redis Chat Memory node to use Redis as a [memory](https://docs.n8n.io/glossary/#ai-memory) server.
 
 On this page, you'll find a list of operations the Redis Chat Memory node supports, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/redis.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/redis/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -36,6 +36,6 @@ On this page, you'll find a list of operations the Redis Chat Memory node suppor
 
 Refer to [LangChain's Redis Chat Memory documentation](https://js.langchain.com/docs/integrations/memory/redis) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.
 
 ## Single memory instance

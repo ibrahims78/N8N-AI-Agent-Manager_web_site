@@ -10,15 +10,15 @@ On this page, you'll find a list of operations the Discord node supports and lin
 
 > **Credentials**
 >
-> Refer to [Discord credentials](/integrations/builtin/credentials/discord.md) for guidance on setting up authentication.
+> Refer to [Discord credentials](https://docs.n8n.io/integrations/builtin/credentials/discord/) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 > **Human-in-the-loop for AI tool calls**
 >
-> This node can be used as a human review step for AI Agent tool calls. When configured this way, the AI Agent will pause and request human approval through this service before executing tools that require oversight. Learn more in [Human-in-the-loop for AI tool calls](/advanced-ai/human-in-the-loop-tools.md).
+> This node can be used as a human review step for AI Agent tool calls. When configured this way, the AI Agent will pause and request human approval through this service before executing tools that require oversight. Learn more in [Human-in-the-loop for AI tool calls](https://docs.n8n.io/advanced-ai/human-in-the-loop-tools/).
 
 ## Operations
 <!-- vale off -->
@@ -73,7 +73,7 @@ When using the Free Text response type, you can customize the message button lab
 
 When using the Custom Form response type, you build a form using the fields and options you want.
 
-You can customize each form element with the settings outlined in the [n8n Form trigger's form elements](/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger.md#form-elements). To add more fields, select the **Add Form Element** button.
+You can customize each form element with the settings outlined in the [n8n Form trigger's form elements](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger/#form-elements). To add more fields, select the **Add Form Element** button.
 
 You'll also be able to customize the message button label, the form title and description, and the response button label.
 
@@ -91,7 +91,7 @@ Refer to [Discord's documentation](https://discord.com/developers/docs/intro) fo
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -99,11 +99,11 @@ You can use the credential you created for this service in the HTTP Request node
 1. Select the service you want to connect to.
 1. Select your credential.
 
-Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
+Refer to [Custom API operations](https://docs.n8n.io/integrations/custom-operations/) for more information.
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.discord/common-issues/).
 
 ---
 
@@ -112,7 +112,7 @@ For common errors or issues and suggested resolution steps, refer to [Common Iss
 
 # Discord node common issues
 
-Here are some common errors and issues with the [Discord node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Discord node](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.discord/) and steps to resolve or troubleshoot them.
 
 ## Add extra fields to embeds
 
@@ -143,7 +143,7 @@ For example, to include `footer` and `fields`, neither of which are available us
 
 You can learn more about embeds in [Using Webhooks and Embeds | Discord](https://discord.com/safety/using-webhooks-and-embeds).
 
-If you experience issues when working with embeds with the Discord node, you can use the [HTTP Request](https://docs.n8n.io//) with your existing Discord credentials to `POST` to the following URL:
+If you experience issues when working with embeds with the Discord node, you can use the [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) with your existing Discord credentials to `POST` to the following URL:
 
 ```
 https://discord.com/api/v10/channels/<CHANNEL_ID>/messages

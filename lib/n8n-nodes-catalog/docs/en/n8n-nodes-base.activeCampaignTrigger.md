@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/activecampaign.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/activecampaign/).
 
 > **Examples and templates**
 >
@@ -20,7 +20,7 @@
 
 ## Related resources
 
-n8n provides an app node for ActiveCampaign. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.activecampaign.md).
+n8n provides an app node for ActiveCampaign. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.activecampaign/).
 
 View [example workflows and related content](https://n8n.io/integrations/activecampaign-trigger/) on n8n's website.
 

@@ -10,11 +10,11 @@ On this page, you'll find a list of operations the Slack node supports and links
 
 > **Credentials**
 >
-> Refer to [Slack credentials](/integrations/builtin/credentials/slack.md) for guidance on setting up authentication.
+> Refer to [Slack credentials](https://docs.n8n.io/integrations/builtin/credentials/slack/) for guidance on setting up authentication.
 
 > **Human-in-the-loop for AI tool calls**
 >
-> This node can be used as a human review step for AI Agent tool calls. When configured this way, the AI Agent will pause and request human approval through this service before executing tools that require oversight. Learn more in [Human-in-the-loop for AI tool calls](/advanced-ai/human-in-the-loop-tools.md).
+> This node can be used as a human review step for AI Agent tool calls. When configured this way, the AI Agent will pause and request human approval through this service before executing tools that require oversight. Learn more in [Human-in-the-loop for AI tool calls](https://docs.n8n.io/advanced-ai/human-in-the-loop-tools/).
 
 ## Operations
 
@@ -80,7 +80,7 @@ Refer to [Slack's documentation](https://api.slack.com/) for more information ab
 
 ## Required scopes
 
-Once you create a Slack app for your [Slack credentials](/integrations/builtin/credentials/slack.md), you must add the appropriate scopes to your Slack app for this node to work. Start with the scopes listed in the [Scopes | Slack credentials](/integrations/builtin/credentials/slack.md#scopes) page.
+Once you create a Slack app for your [Slack credentials](https://docs.n8n.io/integrations/builtin/credentials/slack/), you must add the appropriate scopes to your Slack app for this node to work. Start with the scopes listed in the [Scopes | Slack credentials](https://docs.n8n.io/integrations/builtin/credentials/slack/#scopes) page.
 
 If those aren't enough, use the table below to look up the resource and operation you want to use, then follow the link to Slack's API documentation to find the correct scopes.
 
@@ -135,7 +135,7 @@ If those aren't enough, use the table below to look up the resource and operatio
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -143,4 +143,4 @@ You can use the credential you created for this service in the HTTP Request node
 1. Select the service you want to connect to.
 1. Select your credential.
 
-Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
+Refer to [Custom API operations](https://docs.n8n.io/integrations/custom-operations/) for more information.

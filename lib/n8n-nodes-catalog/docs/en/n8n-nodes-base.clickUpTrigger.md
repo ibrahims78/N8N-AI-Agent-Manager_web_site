@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/clickup.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/clickup/).
 
 > **Examples and templates**
 >
@@ -45,7 +45,7 @@
 
 ## Related resources
 
-n8n provides an app node for ClickUp. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.clickup.md).
+n8n provides an app node for ClickUp. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.clickup/).
 
 View [example workflows and related content](https://n8n.io/integrations/clickup-trigger/) on n8n's website.
 

@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.sendGrid",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.sendgrid.md",
-  "fetchedAt": "2026-04-22T18:36:08.326Z",
+  "fetchedAt": "2026-04-22T18:58:27.186Z",
   "frontmatter": {
     "raw": {
       "title": "SendGrid node documentation",

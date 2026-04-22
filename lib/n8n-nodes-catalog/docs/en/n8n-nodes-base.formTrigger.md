@@ -6,7 +6,7 @@
 
 Use the n8n Form trigger to start a workflow when a user submits a form, taking the input data from the form. The node generates the form web page for you to use.
 
-You can add more pages to continue the form with the [n8n Form](/integrations/builtin/core-nodes/n8n-nodes-base.form.md) node.
+You can add more pages to continue the form with the [n8n Form](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.form/) node.
 
 ## Build and test workflows
 
@@ -25,7 +25,7 @@ When working with a production URL, ensure that you have saved and published the
 
 ## Set default selections with query parameters
 
-You can set the initial values for fields by using [query parameters](https://en.wikipedia.org/wiki/Query_string#Web_forms) with the initial URL provided by the n8n Form Trigger. Every [page in the form](/integrations/builtin/core-nodes/n8n-nodes-base.form.md) receives the same query parameters sent to the n8n Form Trigger URL.
+You can set the initial values for fields by using [query parameters](https://en.wikipedia.org/wiki/Query_string#Web_forms) with the initial URL provided by the n8n Form Trigger. Every [page in the form](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.form/) receives the same query parameters sent to the n8n Form Trigger URL.
 
 > **Only for production**
 >
@@ -102,7 +102,7 @@ Every field has the following settings:
 	- Select **Custom HTML** to insert arbitrary HTML.
 		- You can include elements like links, images, video, and more. You can't include `<script>`, `<style>`, or `<input>` elements. For more information, see [HTML security and allowed tags](#html-security-and-allowed-tags).
 		- By default, Custom HTML fields aren't included in the node output. To include the Custom HTML content in the output, fill out the associated **Element Name** field.
-    - Select **Date** to include a date picker in the form. Refer to [Date and time with Luxon](/data/specific-data-types/luxon.md) for more information on formatting dates.
+    - Select **Date** to include a date picker in the form. Refer to [Date and time with Luxon](https://docs.n8n.io/data/specific-data-types/luxon/) for more information on formatting dates.
 	- Select **Dropdown List** > **Add Field Option** to add multiple options. By default, the dropdown is single-choice. To make it multiple-choice, turn on **Multiple Choice**.
 	- Select **Radio Buttons** to include radio button elements in the form.
 	- Select **Hidden Field** to include a form element without displaying it on the form. You can set a default value using the **Field Value** parameter or pass values for the field using [query parameters](#set-default-selections-with-query-parameters).
@@ -125,7 +125,7 @@ Select **Add Option** to view more configuration options:
 - **Button Label**: The label to use for your form's submit button. n8n displays the **Button Label** as the name of the submit button.
 - **Form Path**: The final segment of the form's URL, for both testing and production. Replaces the automatically generated UUID as the final component.
 - **Ignore Bots**: Turn on to ignore requests from bots like link previewers and web crawlers. 
-- **Use Workflow Timezone**: Turn on to use the timezone in the [Workflow settings](/workflows/settings.md) instead of UTC (default). This affects the value of the `submittedAt` timestamp in the node output. 
+- **Use Workflow Timezone**: Turn on to use the timezone in the [Workflow settings](https://docs.n8n.io/workflows/settings/) instead of UTC (default). This affects the value of the `submittedAt` timestamp in the node output. 
 - **Custom Form Styling**: Override the default styling of the public form interface with CSS. The field pre-populates with the default styling so you can change only what you need to.
 
 ## Customizing Form Trigger node behavior

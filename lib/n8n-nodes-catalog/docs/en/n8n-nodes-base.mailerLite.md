@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the MailerLite node supports and 
 
 > **Credentials**
 >
-> Refer to [MailerLite credentials](/integrations/builtin/credentials/mailerlite.md) for guidance on setting up authentication.
+> Refer to [MailerLite credentials](https://docs.n8n.io/integrations/builtin/credentials/mailerlite/) for guidance on setting up authentication.
 
 ## Operations
 

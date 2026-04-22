@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/jotform.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/jotform/).
 
 > **Examples and templates**
 >

@@ -4,7 +4,7 @@
 
 # Switch
 
-Use the Switch node to route a workflow conditionally based on comparison operations. It's similar to the [IF](/integrations/builtin/core-nodes/n8n-nodes-base.if.md) node, but supports multiple output routes.
+Use the Switch node to route a workflow conditionally based on comparison operations. It's similar to the [IF](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.if/) node, but supports multiple output routes.
 
 ## Node parameters
 
@@ -53,7 +53,7 @@ To configure the node with this operation, use these parameters:
 
 ## Related resources
 
-Refer to [Splitting with conditionals](/flow-logic/splitting.md) for more information on using conditionals to create complex logic in n8n.
+Refer to [Splitting with conditionals](https://docs.n8n.io/flow-logic/splitting/) for more information on using conditionals to create complex logic in n8n.
 
 ## Available data type comparisons
 <!-- vale off -->

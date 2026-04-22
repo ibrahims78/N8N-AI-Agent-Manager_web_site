@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Sendy node supports and links
 
 > **Credentials**
 >
-> Refer to [Sendy credentials](/integrations/builtin/credentials/sendy.md) for guidance on setting up authentication.
+> Refer to [Sendy credentials](https://docs.n8n.io/integrations/builtin/credentials/sendy/) for guidance on setting up authentication.
 
 ## Operations
 

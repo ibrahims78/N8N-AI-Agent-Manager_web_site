@@ -10,7 +10,7 @@ Use the Redis Trigger node to subscribe to a Redis channel. The workflow starts 
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/redis.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/redis/).
 
 > **Examples and templates**
 >

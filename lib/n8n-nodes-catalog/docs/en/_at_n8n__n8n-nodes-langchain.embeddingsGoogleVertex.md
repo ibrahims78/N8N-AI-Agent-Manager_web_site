@@ -4,13 +4,13 @@
 
 # Embeddings Google Vertex node
 
-Use the Embeddings Google Vertex node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
+Use the Embeddings Google Vertex node to generate [embeddings](https://docs.n8n.io/glossary/#ai-embedding) for a given text.
 
 On this page, you'll find the node parameters for the Embeddings Google Vertex node, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](https://docs.n8n.io/service-account/).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/google/service-account/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -36,4 +36,4 @@ Learn more about available embedding models in [Google VertexAI embeddings API d
 
 Refer to [LangChain's Google Generative AI embeddings documentation](https://js.langchain.com/docs/integrations/text_embedding/google_generativeai) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

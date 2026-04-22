@@ -4,13 +4,13 @@
 
 # Azure OpenAI Chat Model node
 
-Use the Azure OpenAI Chat Model node to use OpenAI's chat models with conversational [agents](/glossary.md#ai-agent).
+Use the Azure OpenAI Chat Model node to use OpenAI's chat models with conversational [agents](https://docs.n8n.io/glossary/#ai-agent).
 
 On this page, you'll find the node parameters for the Azure OpenAI Chat Model node, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/azureopenai.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/azureopenai/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -37,7 +37,7 @@ On this page, you'll find the node parameters for the Azure OpenAI Chat Model no
 
 ## Proxy limitations
 
-This node doesn't support the [`NO_PROXY` environment variable](/hosting/configuration/environment-variables/deployment.md).
+This node doesn't support the [`NO_PROXY` environment variable](https://docs.n8n.io/hosting/configuration/environment-variables/deployment/).
 
 ## Templates and examples
 
@@ -49,4 +49,4 @@ This node doesn't support the [`NO_PROXY` environment variable](/hosting/configu
 
 Refer to [LangChains's Azure OpenAI documentation](https://js.langchain.com/docs/integrations/chat/azure) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the UpLead node supports and link
 
 > **Credentials**
 >
-> Refer to [UpLead credentials](/integrations/builtin/credentials/uplead.md) for guidance on setting up authentication.
+> Refer to [UpLead credentials](https://docs.n8n.io/integrations/builtin/credentials/uplead/) for guidance on setting up authentication.
 
 ## Operations
 

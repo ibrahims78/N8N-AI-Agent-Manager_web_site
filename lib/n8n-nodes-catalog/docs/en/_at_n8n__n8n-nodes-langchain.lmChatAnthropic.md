@@ -4,13 +4,13 @@
 
 # Anthropic Chat Model node
 
-Use the Anthropic Chat Model node to use Anthropic's Claude family of chat models with conversational [agents](/glossary.md#ai-agent).
+Use the Anthropic Chat Model node to use Anthropic's Claude family of chat models with conversational [agents](https://docs.n8n.io/glossary/#ai-agent).
 
 On this page, you'll find the node parameters for the Anthropic Chat Model node, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/anthropic.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/anthropic/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -45,4 +45,4 @@ Learn more in the [Anthropic model documentation](https://docs.anthropic.com/cla
 
 Refer to [LangChains's Anthropic documentation](https://js.langchain.com/docs/integrations/chat/anthropic/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

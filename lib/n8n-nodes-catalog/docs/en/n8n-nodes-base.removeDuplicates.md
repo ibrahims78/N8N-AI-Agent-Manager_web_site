@@ -96,11 +96,11 @@ When using the **Clear Deduplication History** operation, the following option i
 
 ## Templates and examples
 
-For templates using the Remove Duplicates node and examples of how to use it, refer to [Templates and examples](https://docs.n8n.io/templates-and-examples/).
+For templates using the Remove Duplicates node and examples of how to use it, refer to [Templates and examples](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.removeduplicates/templates-and-examples/).
 
 ## Related resources
 
-Learn more about [data structure and data flow](/data/index.md) in n8n workflows.
+Learn more about [data structure and data flow](https://docs.n8n.io/data/) in n8n workflows.
 
 ---
 
@@ -109,7 +109,7 @@ Learn more about [data structure and data flow](/data/index.md) in n8n workflows
 
 # Templates and examples
 
-Here are some templates and examples for the [Remove Duplicates node](https://docs.n8n.io//).
+Here are some templates and examples for the [Remove Duplicates node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.removeduplicates/).
 
 > **Continuous examples**
 >

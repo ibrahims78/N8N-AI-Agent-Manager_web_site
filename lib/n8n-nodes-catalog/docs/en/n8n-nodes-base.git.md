@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/git.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/git/).
 
 ## Operations
 
@@ -57,7 +57,7 @@ Configure this operation with these parameters:
 
 * **Repository Path**: Enter the local path of the git repository.
 * **Authentication**: Select **Authenticate** to pass credentials in. Select **None** to not use authentication.
-    * **Credential for Git**: If you select **Authenticate**, you must select or create credentials for the node to use. Refer to [Git credential](/integrations/builtin/credentials/git.md) for more information.
+    * **Credential for Git**: If you select **Authenticate**, you must select or create credentials for the node to use. Refer to [Git credential](https://docs.n8n.io/integrations/builtin/credentials/git/) for more information.
 * **New Repository Path**: Enter the local path where you'd like to locate the cloned repository.
 * **Source Repository**: Enter the URL or path of the repository you want to clone.
 
@@ -109,7 +109,7 @@ Configure this operation with these parameters:
 
 * **Repository Path**: Enter the local path of the git repository.
 * **Authentication**: Select **Authenticate** to pass credentials in or **None** to not use authentication.
-    * If you select **Authenticate**, you must select or create **Credential for Git** for the node to use. Refer to [Git credential](/integrations/builtin/credentials/git.md) for more information.
+    * If you select **Authenticate**, you must select or create **Credential for Git** for the node to use. Refer to [Git credential](https://docs.n8n.io/integrations/builtin/credentials/git/) for more information.
 
 ### Push options
 

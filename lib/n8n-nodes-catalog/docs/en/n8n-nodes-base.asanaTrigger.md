@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/asana.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/asana/).
 
 > **Examples and templates**
 >
@@ -20,7 +20,7 @@
 
 ## Related resources
 
-n8n provides an app node for Asana. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.asana.md).
+n8n provides an app node for Asana. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.asana/).
 
 View [example workflows and related content](https://n8n.io/integrations/asana-trigger/) on n8n's website.
 

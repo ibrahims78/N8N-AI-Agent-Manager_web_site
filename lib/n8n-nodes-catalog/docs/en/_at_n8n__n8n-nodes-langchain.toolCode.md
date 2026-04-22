@@ -4,7 +4,7 @@
 
 # Custom Code Tool node
 
-Use the Custom Code Tool node to write code that an [agent](/glossary.md#ai-agent) can run.
+Use the Custom Code Tool node to write code that an [agent](https://docs.n8n.io/glossary/#ai-agent) can run.
 
 On this page, you'll find the node parameters for the Custom Code Tool node and links to more resources.
 
@@ -49,4 +49,4 @@ return myString.toLowerCase();
 
 Refer to [LangChain's documentation on tools](https://langchain-ai.github.io/langgraphjs/how-tos/tool-calling/) for more information about tools in LangChain.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

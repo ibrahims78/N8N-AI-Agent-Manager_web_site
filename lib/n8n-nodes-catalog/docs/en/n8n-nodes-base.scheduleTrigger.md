@@ -14,8 +14,8 @@ Use the Schedule Trigger node to run workflows at fixed intervals and times. Thi
 >
 > The node relies on the timezone setting. n8n uses either:
 > 
-> 1. The workflow timezone, if set. Refer to [Workflow settings](/workflows/settings.md) for more information.
-> 2. The n8n instance timezone, if the workflow timezone isn't set. The default is `America/New York` for self-hosted instances. n8n Cloud tries to detect the instance owner's timezone when they sign up, falling back to GMT as the default. Self-hosted users can change the instance setting using [Environment variables](/hosting/configuration/environment-variables/timezone-localization.md). Cloud admins can change the instance timezone in the [Admin dashboard](/manage-cloud/set-cloud-timezone.md).
+> 1. The workflow timezone, if set. Refer to [Workflow settings](https://docs.n8n.io/workflows/settings/) for more information.
+> 2. The n8n instance timezone, if the workflow timezone isn't set. The default is `America/New York` for self-hosted instances. n8n Cloud tries to detect the instance owner's timezone when they sign up, falling back to GMT as the default. Self-hosted users can change the instance setting using [Environment variables](https://docs.n8n.io/hosting/configuration/environment-variables/timezone-localization/). Cloud admins can change the instance timezone in the [Admin dashboard](https://docs.n8n.io/manage-cloud/set-cloud-timezone/).
 
 ## Node parameters
 
@@ -121,7 +121,7 @@ The sixth asterisk in the Cron expression represents seconds. Setting this is op
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/common-issues/).
 
 ---
 
@@ -130,7 +130,7 @@ For common questions or issues and suggested solutions, refer to [Common Issues]
 
 # Schedule Trigger node common issues
 
-Here are some common errors and issues with the [Schedule Trigger node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Schedule Trigger node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/) and steps to resolve or troubleshoot them.
 
 ## Invalid cron expression
 
@@ -138,8 +138,8 @@ This error occurs when you set **Trigger Interval** to **Custom (Cron)** and n8n
 
 To debug, check that the following:
 
-* That your cron expression follows the syntax used in the [cron examples](https://docs.n8n.io//#custom-cron-interval)
-* That your cron expression (after removing the [seconds column](https://docs.n8n.io//#why-there-are-six-asterisks-in-the-cron-expression)) validates on [crontab guru](https://crontab.guru/)
+* That your cron expression follows the syntax used in the [cron examples](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/#custom-cron-interval)
+* That your cron expression (after removing the [seconds column](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/#why-there-are-six-asterisks-in-the-cron-expression)) validates on [crontab guru](https://crontab.guru/)
 
 ## Scheduled workflows run at the wrong time
 
@@ -147,9 +147,9 @@ If the Schedule Trigger node runs at the wrong time, it may mean that you need t
 
 ### Adjust the timezone globally
 
-If you're using [n8n Cloud](/manage-cloud/overview.md), follow the instructions on the [set the Cloud instance timezone](/manage-cloud/set-cloud-timezone.md) page to ensure that n8n executes in sync with your local time.
+If you're using [n8n Cloud](https://docs.n8n.io/manage-cloud/overview/), follow the instructions on the [set the Cloud instance timezone](https://docs.n8n.io/manage-cloud/set-cloud-timezone/) page to ensure that n8n executes in sync with your local time.
 
-If you're [self hosting](/hosting/index.md), set your global timezone using the [`GENERIC_TIMEZONE` environment variable](/hosting/configuration/environment-variables/timezone-localization.md).
+If you're [self hosting](https://docs.n8n.io/hosting/), set your global timezone using the [`GENERIC_TIMEZONE` environment variable](https://docs.n8n.io/hosting/configuration/environment-variables/timezone-localization/).
 
 ### Adjust the timezone for an individual workflow
 

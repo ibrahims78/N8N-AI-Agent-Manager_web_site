@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Zammad node supports and link
 
 > **Credentials**
 >
-> Refer to [Zammad credentials](/integrations/builtin/credentials/zammad.md) for guidance on setting up authentication.
+> Refer to [Zammad credentials](https://docs.n8n.io/integrations/builtin/credentials/zammad/) for guidance on setting up authentication.
 
 ## Operations
 

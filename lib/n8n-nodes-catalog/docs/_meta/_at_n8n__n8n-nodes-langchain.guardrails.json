@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.guardrails",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-langchain.guardrails.md",
-  "fetchedAt": "2026-04-22T18:36:10.952Z",
+  "fetchedAt": "2026-04-22T18:58:29.267Z",
   "frontmatter": {
     "raw": {
       "title": "Guardrails node documentation",

@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.mailchimpTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.mailchimptrigger.md",
-  "fetchedAt": "2026-04-22T18:36:05.485Z",
+  "fetchedAt": "2026-04-22T18:58:25.008Z",
   "frontmatter": {
     "raw": {
       "title": "Mailchimp Trigger node documentation",

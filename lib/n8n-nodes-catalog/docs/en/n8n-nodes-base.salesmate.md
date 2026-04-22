@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Salesmate node supports and l
 
 > **Credentials**
 >
-> Refer to [Salesmate credentials](/integrations/builtin/credentials/salesmate.md) for guidance on setting up authentication.
+> Refer to [Salesmate credentials](https://docs.n8n.io/integrations/builtin/credentials/salesmate/) for guidance on setting up authentication.
 
 ## Operations
 

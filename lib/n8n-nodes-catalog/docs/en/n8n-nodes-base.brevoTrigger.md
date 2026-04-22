@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/brevo.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/brevo/).
 
 > **Examples and templates**
 >
@@ -31,7 +31,7 @@
 
 ## Related resources
 
-n8n provides an app node for Brevo. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.brevo.md).
+n8n provides an app node for Brevo. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.brevo/).
 
 View [example workflows and related content](https://n8n.io/integrations/brevo-trigger/) on n8n's website.
 

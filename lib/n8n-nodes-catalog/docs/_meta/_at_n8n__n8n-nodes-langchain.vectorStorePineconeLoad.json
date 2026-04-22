@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.vectorStorePineconeLoad",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.vectorstorepinecone.md",
-  "fetchedAt": "2026-04-22T18:36:14.168Z",
+  "fetchedAt": "2026-04-22T18:58:31.763Z",
   "frontmatter": {
     "raw": {
       "title": "Pinecone Vector Store node documentation",

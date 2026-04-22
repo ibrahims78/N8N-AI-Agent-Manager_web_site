@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Iterable node supports and li
 
 > **Credentials**
 >
-> Refer to [Iterable credentials](/integrations/builtin/credentials/iterable.md) for guidance on setting up authentication.
+> Refer to [Iterable credentials](https://docs.n8n.io/integrations/builtin/credentials/iterable/) for guidance on setting up authentication.
 
 ## Operations
 

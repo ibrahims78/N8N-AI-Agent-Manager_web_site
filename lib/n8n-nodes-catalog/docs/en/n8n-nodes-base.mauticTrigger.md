@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/mautic.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/mautic/).
 
 > **Examples and templates**
 >
@@ -16,6 +16,6 @@
 
 ## Related resources
 
-n8n provides an app node for Mautic. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.mautic.md).
+n8n provides an app node for Mautic. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mautic/).
 
 View [example workflows and related content](https://n8n.io/integrations/mautic/) on n8n's website.

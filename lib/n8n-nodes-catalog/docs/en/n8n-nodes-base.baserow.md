@@ -10,11 +10,11 @@ On this page, you'll find a list of operations the Baserow node supports and lin
 
 > **Credentials**
 >
-> Refer to [Baserow credentials](/integrations/builtin/credentials/baserow.md) for guidance on setting up authentication.
+> Refer to [Baserow credentials](https://docs.n8n.io/integrations/builtin/credentials/baserow/) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 ## Operations
 

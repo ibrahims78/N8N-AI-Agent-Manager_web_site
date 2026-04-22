@@ -8,7 +8,7 @@ Use the IMAP Email node to receive emails using an IMAP email server. This node 
 
 > **Credential**
 >
-> You can find authentication information for this node [here](https://docs.n8n.io//).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/imap/).
 
 ## Operations
 
@@ -20,7 +20,7 @@ Configure the node using the following parameters.
 
 ### Credential to connect with
 
-Select or create an [IMAP credential](https://docs.n8n.io//) to connect to the server with.
+Select or create an [IMAP credential](https://docs.n8n.io/integrations/builtin/credentials/imap/) to connect to the server with.
 
 ### Mailbox Name
 

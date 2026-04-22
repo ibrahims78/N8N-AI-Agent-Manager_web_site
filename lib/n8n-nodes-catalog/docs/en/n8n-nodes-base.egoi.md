@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the E-goi node supports and links
 
 > **Credentials**
 >
-> Refer to [E-goi credentials](/integrations/builtin/credentials/egoi.md) for guidance on setting up authentication.
+> Refer to [E-goi credentials](https://docs.n8n.io/integrations/builtin/credentials/egoi/) for guidance on setting up authentication.
 
 ## Operations
 

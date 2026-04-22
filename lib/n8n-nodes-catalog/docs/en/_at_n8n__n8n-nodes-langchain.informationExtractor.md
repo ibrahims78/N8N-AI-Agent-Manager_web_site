@@ -23,4 +23,4 @@ and links to more resources.
 
 ## Related resources
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

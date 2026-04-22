@@ -6,17 +6,17 @@
 
 > **Legacy tool version**
 >
-> New instances of the HTTP Request tool node that you add to workflows use the standard [HTTP Request](https://docs.n8n.io//) node as a tool. This page is describes the legacy, standalone HTTP Request tool node.
+> New instances of the HTTP Request tool node that you add to workflows use the standard [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) node as a tool. This page is describes the legacy, standalone HTTP Request tool node.
 > 
 > You can identify which tool version is in your workflow by checking if the node has an **Add option** property when you open the node on the canvas. If that button is present, you're using the new version, not the one described on this page.
 
-The HTTP Request tool works just like the [HTTP Request](https://docs.n8n.io//) node, but it's designed to be used with an [AI agent](/glossary.md#ai-agent) as a tool to collect information from a website or API.
+The HTTP Request tool works just like the [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) node, but it's designed to be used with an [AI agent](https://docs.n8n.io/glossary/#ai-agent) as a tool to collect information from a website or API.
 
 On this page, you'll find a list of operations the HTTP Request node supports and links to more resources.
 
 > **Credentials**
 >
-> Refer to [HTTP Request credentials](/integrations/builtin/credentials/httprequest.md) for guidance on setting up authentication.
+> Refer to [HTTP Request credentials](https://docs.n8n.io/integrations/builtin/credentials/httprequest/) for guidance on setting up authentication.
 
 > **Parameter resolution in sub-nodes**
 >
@@ -36,4 +36,4 @@ On this page, you'll find a list of operations the HTTP Request node supports an
 
 Refer to [LangChain's documentation on tools](https://langchain-ai.github.io/langgraphjs/how-tos/tool-calling/) for more information about tools in LangChain.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

@@ -8,7 +8,7 @@ The Execute Command node runs shell commands on the host machine that runs n8n.
 
 > **Security considerations**
 >
-> The Execute Command node can introduce significant security risks in environments that operate with untrusted users. Because of this, the node is [disabled](/hosting/securing/blocking-nodes.md#exclude-nodes) by default starting from version 2.0.
+> The Execute Command node can introduce significant security risks in environments that operate with untrusted users. Because of this, the node is [disabled](https://docs.n8n.io/hosting/securing/blocking-nodes/#exclude-nodes) by default starting from version 2.0.
 
 > **Which shell runs the command?**
 >
@@ -16,7 +16,7 @@ The Execute Command node runs shell commands on the host machine that runs n8n.
 > 
 > If you run n8n with Docker, your command will run in the n8n container and not the Docker host.
 > 
-> If you're using [queue mode](/hosting/scaling/queue-mode.md), the command runs on the worker that's executing the task in production mode. When running manual executions, it runs on the main instance, unless you set `OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS` to `true`.
+> If you're using [queue mode](https://docs.n8n.io/hosting/scaling/queue-mode/), the command runs on the worker that's executing the task in production mode. When running manual executions, it runs on the main instance, unless you set `OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS` to `true`.
 
 > **Not available on Cloud**
 >
@@ -53,7 +53,7 @@ Use one of two methods to run multiple commands in one Execute Command node:
 
 #### Run cURL command
 
-You can also use the [HTTP Request](https://docs.n8n.io//) node to make a cURL request.
+You can also use the [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) node to make a cURL request.
 
 If you want to run the curl command in the Execute Command node, you will have to build a Docker image based on the existing n8n image. The default n8n Docker image uses Alpine Linux. You will have to install the curl package.
 
@@ -84,7 +84,7 @@ If you want to run the curl command in the Execute Command node, you will have t
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executecommand/common-issues/).
 
 ---
 
@@ -93,7 +93,7 @@ For common questions or issues and suggested solutions, refer to [Common Issues]
 
 # Execute Command node common issues
 
-Here are some common errors and issues with the [Execute Command node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Execute Command node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executecommand/) and steps to resolve or troubleshoot them.
 
 <!-- vale off -->
 ## Command failed: &lt;command&gt; /bin/sh: &lt;command&gt;: not found

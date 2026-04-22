@@ -12,7 +12,7 @@ On this page, you'll find a list of operations the One Simple API node supports 
 
 > **Credentials**
 >
-> Refer to [One Simple API credentials](/integrations/builtin/credentials/onesimpleapi.md) for guidance on setting up authentication.
+> Refer to [One Simple API credentials](https://docs.n8n.io/integrations/builtin/credentials/onesimpleapi/) for guidance on setting up authentication.
 
 ## Operations
 

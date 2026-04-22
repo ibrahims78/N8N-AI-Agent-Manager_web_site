@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the UptimeRobot node supports and
 
 > **Credentials**
 >
-> Refer to [UptimeRobot credentials](/integrations/builtin/credentials/uptimerobot.md) for guidance on setting up authentication.
+> Refer to [UptimeRobot credentials](https://docs.n8n.io/integrations/builtin/credentials/uptimerobot/) for guidance on setting up authentication.
 
 ## Operations
 

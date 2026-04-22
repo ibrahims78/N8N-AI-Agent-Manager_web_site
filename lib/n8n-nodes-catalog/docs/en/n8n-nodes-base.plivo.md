@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Plivo node supports and links
 
 > **Credentials**
 >
-> Refer to [Plivo credentials](/integrations/builtin/credentials/plivo.md) for guidance on setting up authentication.
+> Refer to [Plivo credentials](https://docs.n8n.io/integrations/builtin/credentials/plivo/) for guidance on setting up authentication.
 
 ## Operations
 

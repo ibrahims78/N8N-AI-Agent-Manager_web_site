@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Contentful node supports and 
 
 > **Credentials**
 >
-> Refer to [Contentful credentials](/integrations/builtin/credentials/contentful.md) for guidance on setting up authentication.
+> Refer to [Contentful credentials](https://docs.n8n.io/integrations/builtin/credentials/contentful/) for guidance on setting up authentication.
 
 ## Operations
 

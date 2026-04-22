@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.strava",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.strava.md",
-  "fetchedAt": "2026-04-22T18:36:08.961Z",
+  "fetchedAt": "2026-04-22T18:58:27.706Z",
   "frontmatter": {
     "raw": {
       "title": "Strava node documentation",

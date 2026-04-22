@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/netlify.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/netlify/).
 
 > **Examples and templates**
 >
@@ -16,6 +16,6 @@
 
 ## Related resources
 
-n8n provides an app node for Netlify. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.netlify.md).
+n8n provides an app node for Netlify. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.netlify/).
 
 View [example workflows and related content](https://n8n.io/integrations/netlify/) on n8n's website.

@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.openWeatherMap",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.openweathermap.md",
-  "fetchedAt": "2026-04-22T18:36:07.073Z",
+  "fetchedAt": "2026-04-22T18:58:26.107Z",
   "frontmatter": {
     "raw": {
       "title": "OpenWeatherMap node documentation",

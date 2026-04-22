@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the CrateDB node supports and lin
 
 > **Credentials**
 >
-> Refer to [CrateDB credentials](/integrations/builtin/credentials/cratedb.md) for guidance on setting up authentication.
+> Refer to [CrateDB credentials](https://docs.n8n.io/integrations/builtin/credentials/cratedb/) for guidance on setting up authentication.
 
 ## Operations
 

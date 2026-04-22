@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.googleCalendar",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/index.md",
-  "fetchedAt": "2026-04-22T18:36:03.275Z",
+  "fetchedAt": "2026-04-22T18:58:23.568Z",
   "frontmatter": {
     "raw": {
       "title": "Google Calendar node documentation",
@@ -14,8 +14,8 @@
     "contentType": "[integration, reference]"
   },
   "siblings": [
-    "event-operations.md",
-    "calendar-operations.md"
+    "calendar-operations.md",
+    "event-operations.md"
   ],
   "assets": []
 }

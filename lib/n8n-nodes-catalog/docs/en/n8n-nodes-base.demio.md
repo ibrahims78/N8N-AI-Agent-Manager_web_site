@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Demio node supports and links
 
 > **Credentials**
 >
-> Refer to [Demio credentials](/integrations/builtin/credentials/demio.md) for guidance on setting up authentication.
+> Refer to [Demio credentials](https://docs.n8n.io/integrations/builtin/credentials/demio/) for guidance on setting up authentication.
 
 ## Operations
 

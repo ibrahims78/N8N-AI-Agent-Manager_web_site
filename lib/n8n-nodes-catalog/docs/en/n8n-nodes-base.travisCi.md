@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Travis CI node supports and l
 
 > **Credentials**
 >
-> Refer to [Travis CI credentials](/integrations/builtin/credentials/travisci.md) for guidance on setting up authentication.
+> Refer to [Travis CI credentials](https://docs.n8n.io/integrations/builtin/credentials/travisci/) for guidance on setting up authentication.
 
 ## Operations
 

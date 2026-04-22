@@ -4,7 +4,7 @@
 
 # Call n8n Workflow Tool node
 
-The Call n8n Workflow Tool node is a [tool](/glossary.md#ai-tool) that allows an [agent](/glossary.md#ai-agent) to run another n8n workflow and fetch its output data. 
+The Call n8n Workflow Tool node is a [tool](https://docs.n8n.io/glossary/#ai-tool) that allows an [agent](https://docs.n8n.io/glossary/#ai-agent) to run another n8n workflow and fetch its output data. 
 
 On this page, you'll find the node parameters for the Call n8n Workflow Tool node, and links to more resources.
 
@@ -29,7 +29,7 @@ Enter a custom code a description. This tells the agent when to use this tool. F
 Tell n8n which workflow to call. You can choose either:
 
 * **Database** to select the workflow from a list or enter a workflow ID.
-* **Define Below** and copy in a complete [workflow JSON](/workflows/export-import.md).
+* **Define Below** and copy in a complete [workflow JSON](https://docs.n8n.io/workflows/export-import/).
 
 ### Workflow Inputs
 
@@ -41,8 +41,8 @@ You can define the workflow input values using any combination of the following 
 
 * providing fixed values
 * using expressions to reference data from the current workflow
-* [letting the AI model specify the parameter](/advanced-ai/examples/using-the-fromai-function.md) by selecting the button AI button on the right side of the field
-* using the [`$fromAI()` function](/advanced-ai/examples/using-the-fromai-function.md#use-the-fromai-function) in expressions to control the way the model fills in data and to mix AI generated input with other custom input
+* [letting the AI model specify the parameter](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/) by selecting the button AI button on the right side of the field
+* using the [`$fromAI()` function](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/#use-the-fromai-function) in expressions to control the way the model fills in data and to mix AI generated input with other custom input
 
 To reference data from the current workflow, drag fields from the input panel to the field with the Expressions mode selected.
 
@@ -58,4 +58,4 @@ To get started with the `$fromAI()` function, select the "Let the model define t
 
 Refer to [LangChain's documentation on tools](https://langchain-ai.github.io/langgraphjs/how-tos/tool-calling/) for more information about tools in LangChain.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

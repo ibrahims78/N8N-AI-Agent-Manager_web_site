@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the PayPal node supports and link
 
 > **Credentials**
 >
-> Refer to [PayPal credentials](/integrations/builtin/credentials/paypal.md) for guidance on setting up authentication.
+> Refer to [PayPal credentials](https://docs.n8n.io/integrations/builtin/credentials/paypal/) for guidance on setting up authentication.
 
 ## Operations
 

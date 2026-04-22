@@ -31,9 +31,9 @@ Note the following:
 
 ## Related resources
 
-You can use the [Stop And Error](/integrations/builtin/core-nodes/n8n-nodes-base.stopanderror.md) node to send custom messages to the Error Trigger.
+You can use the [Stop And Error](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.stopanderror/) node to send custom messages to the Error Trigger.
 
-Read more about [Error workflows](/flow-logic/error-handling.md) in n8n workflows. 
+Read more about [Error workflows](https://docs.n8n.io/flow-logic/error-handling/) in n8n workflows. 
 
 ## Error data
 

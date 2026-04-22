@@ -10,22 +10,22 @@ On this page, you'll find a list of operations the Google Calendar node supports
 
 > **Credentials**
 >
-> Refer to [Google Calendar credentials](https://docs.n8n.io//) for guidance on setting up authentication.
+> Refer to [Google Calendar credentials](https://docs.n8n.io/integrations/builtin/credentials/google/) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 ## Operations
 
 * **Calendar**
-    * [**Availability**](https://docs.n8n.io/calendar-operations/#availability): If a time-slot is available in a calendar
+    * [**Availability**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/calendar-operations/#availability): If a time-slot is available in a calendar
 * **Event**
-    * [**Create**](https://docs.n8n.io/event-operations/#create): Add an event to calendar
-    * [**Delete**](https://docs.n8n.io/event-operations/#delete): Delete an event
-    * [**Get**](https://docs.n8n.io/event-operations/#get): Retrieve an event
-    * [**Get Many**](https://docs.n8n.io/event-operations/#get-many): Retrieve all events from a calendar
-    * [**Update**](https://docs.n8n.io/event-operations/#update): Update an event
+    * [**Create**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/event-operations/#create): Add an event to calendar
+    * [**Delete**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/event-operations/#delete): Delete an event
+    * [**Get**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/event-operations/#get): Retrieve an event
+    * [**Get Many**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/event-operations/#get-many): Retrieve all events from a calendar
+    * [**Update**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/event-operations/#update): Update an event
 
 ## Templates and examples
 
@@ -35,7 +35,7 @@ On this page, you'll find a list of operations the Google Calendar node supports
 
 ## Related resources
 
-n8n provides a trigger node for Google Calendar. You can find the trigger node docs [here](/integrations/builtin/trigger-nodes/n8n-nodes-base.googlecalendartrigger.md).
+n8n provides a trigger node for Google Calendar. You can find the trigger node docs [here](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.googlecalendartrigger/).
 
 Refer to [Google Calendar's documentation](https://developers.google.com/calendar/api/v3/reference) for more information about the service.
 
@@ -52,7 +52,7 @@ View [example workflows and related content](https://n8n.io/integrations/google-
 <!-- vale from-write-good.Illusions = YES -->
 <!-- vale Vale.Repetition = YES -->
 
-Use this operation to check availability in a calendar in Google Calendar. Refer to [Google Calendar](https://docs.n8n.io//) for more information on the Google Calendar node itself.
+Use this operation to check availability in a calendar in Google Calendar. Refer to [Google Calendar](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/) for more information on the Google Calendar node itself.
 
 ## Availability
 
@@ -60,7 +60,7 @@ Use this operation to check if a time-slot is available in a calendar.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Calendar credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Calendar credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Calendar**.
 - **Operation**: Select **Availability**.
 - **Calendar**: Choose a calendar you want to check against. Select **From list** to choose the title from the dropdown list or **By ID** to enter a calendar ID.
@@ -84,7 +84,7 @@ Refer to the [Freebusy: query | Google Calendar](https://developers.google.com/c
 
 # Google Calendar Event operations
 
-Use these operations to create, delete, get, and update events in Google Calendar. Refer to [Google Calendar](https://docs.n8n.io//) for more information on the Google Calendar node itself.
+Use these operations to create, delete, get, and update events in Google Calendar. Refer to [Google Calendar](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/) for more information on the Google Calendar node itself.
 
 ## Create
 
@@ -92,7 +92,7 @@ Use this operation to add an event to a Google Calendar.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Calendar credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Calendar credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Event**.
 - **Operation**: Select **Create**.
 - **Calendar**: Choose a calendar you want to add an event to. Select **From list** to choose the title from the dropdown list or **By ID** to enter a calendar ID.
@@ -133,7 +133,7 @@ Use this operation to delete an event from a Google Calendar.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Calendar credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Calendar credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Event**.
 - **Operation**: Select **Delete**.
 - **Calendar**: Choose a calendar you want to delete an event from. Select **From list** to choose the title from the dropdown list or **By ID** to enter a calendar ID.
@@ -151,7 +151,7 @@ Use this operation to retrieve an event from a Google Calendar.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Calendar credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Calendar credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Event**.
 - **Operation**: Select **Get**.
 - **Calendar**: Choose a calendar you want to get an event from. Select **From list** to choose the title from the dropdown list or **By ID** to enter a calendar ID.
@@ -173,7 +173,7 @@ Use this operation to retrieve more than one event from a Google Calendar.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Calendar credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Calendar credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Event**.
 - **Operation**: Select **Get Many**.
 - **Calendar**: Choose a calendar you want to get an event from. Select **From list** to choose the title from the dropdown list or **By ID** to enter a calendar ID.
@@ -208,7 +208,7 @@ Use this operation to update an event in a Google Calendar.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Calendar credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Calendar credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Event**.
 - **Operation**: Select **Update**.
 - **Calendar**: Choose a calendar you want to add an event to. Select **From list** to choose the title from the dropdown list or **By ID** to enter a calendar ID.

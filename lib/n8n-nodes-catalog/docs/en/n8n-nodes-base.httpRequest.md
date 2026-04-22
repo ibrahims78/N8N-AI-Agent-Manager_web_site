@@ -4,7 +4,7 @@
 
 # HTTP Request node
 
-The HTTP Request node is one of the most versatile nodes in n8n. It allows you to make HTTP requests to query data from any app or service with a REST API. You can use the HTTP Request node a regular node or attached to an [AI agent](https://docs.n8n.io/n8n-nodes-langchain.agent/tools-agent/) to use as a [tool](/advanced-ai/examples/understand-tools.md){ data-preview }.
+The HTTP Request node is one of the most versatile nodes in n8n. It allows you to make HTTP requests to query data from any app or service with a REST API. You can use the HTTP Request node a regular node or attached to an [AI agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/tools-agent/) to use as a [tool](https://docs.n8n.io/advanced-ai/examples/understand-tools/){ data-preview }.
 
 When using this node, you're creating a REST API call. You need some understanding of basic API terminology and concepts.
 
@@ -12,7 +12,7 @@ There are two ways to create an HTTP request: configure the [node parameters](#n
 
 > **Credentials**
 >
-> Refer to [HTTP Request credentials](/integrations/builtin/credentials/httprequest.md) for guidance on setting up authentication.
+> Refer to [HTTP Request credentials](https://docs.n8n.io/integrations/builtin/credentials/httprequest/) for guidance on setting up authentication.
 
 ## Node parameters
 
@@ -38,7 +38,7 @@ n8n recommends using the **Predefined Credential Type** option when it's availab
 
 #### Predefined credentials
 
-Credentials for integrations supported by n8n, including both built-in and community nodes. Use **Predefined Credential Type** for custom operations without extra setup. Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
+Credentials for integrations supported by n8n, including both built-in and community nodes. Use **Predefined Credential Type** for custom operations without extra setup. Refer to [Custom API operations](https://docs.n8n.io/integrations/custom-operations/) for more information.
 
 #### Generic credentials
 
@@ -54,7 +54,7 @@ You can select one of the following methods:
 * OAuth2 API
 * Query auth
 
-Refer to [HTTP request credentials](/integrations/builtin/credentials/httprequest.md) for more information on setting up each credential type.
+Refer to [HTTP request credentials](https://docs.n8n.io/integrations/builtin/credentials/httprequest/) for more information on setting up each credential type.
 
 ### Send Query Parameters
 
@@ -210,7 +210,7 @@ Configure the pagination settings:
     * **Update a Parameter in Each Request**: Use this when you need to dynamically set parameters for each request.
     * **Response Contains Next URL**: Use this when the API response includes the URL of the next page. Use an expression to set **Next URL**.
 
-For example setups, refer to [HTTP Request node cookbook | Pagination](/code/cookbook/http-node/pagination.md).
+For example setups, refer to [HTTP Request node cookbook | Pagination](https://docs.n8n.io/code/cookbook/http-node/pagination/).
 
 n8n provides built-in variables for working with HTTP node requests and responses when using pagination:
 
@@ -232,7 +232,7 @@ n8n provides built-in variables for working with HTTP node requests and response
 
 Use this option if you need to specify an HTTP proxy.
 
-Enter the **Proxy** the request should use. This takes precedence over global settings defined with the [`HTTP_PROXY`, `HTTPS_PROXY`, or `ALL_PROXY` environment variables](/hosting/configuration/environment-variables/deployment.md).
+Enter the **Proxy** the request should use. This takes precedence over global settings defined with the [`HTTP_PROXY`, `HTTPS_PROXY`, or `ALL_PROXY` environment variables](https://docs.n8n.io/hosting/configuration/environment-variables/deployment/).
 
 ### Timeout
 
@@ -242,7 +242,7 @@ Enter the **Timeout** time to wait in milliseconds.
 
 ## Tool-only options
 
-The following options are only available when attached to an [AI agent](https://docs.n8n.io/n8n-nodes-langchain.agent/tools-agent/) as a [tool](/advanced-ai/examples/understand-tools.md){ data-preview }.
+The following options are only available when attached to an [AI agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/tools-agent/) as a [tool](https://docs.n8n.io/advanced-ai/examples/understand-tools/){ data-preview }.
 
 ### Optimize Response
 
@@ -303,7 +303,7 @@ Import a curl command:
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/common-issues/).
 
 ---
 
@@ -312,14 +312,14 @@ For common questions or issues and suggested solutions, refer to [Common Issues]
 
 # HTTP Request node common issues
 
-Here are some common errors and issues with the [HTTP Request node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) and steps to resolve or troubleshoot them.
 
 ## Bad request - please check your parameters
 
 This error displays when the node receives a 400 error indicating a bad request. This error most often occurs because:
 
 * You're using an invalid name or value in a **Query Parameter**.
-* You're passing array values in a **Query Parameter** but the array isn't formatted correctly. Try using the [**Array Format in Query Parameters**](https://docs.n8n.io//#array-format-in-query-parameters) option.
+* You're passing array values in a **Query Parameter** but the array isn't formatted correctly. Try using the [**Array Format in Query Parameters**](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/#array-format-in-query-parameters) option.
 
 Review the API documentation for your service to format your query parameters.
 
@@ -365,7 +365,7 @@ To resolve, review the selected credentials and make sure you can authenticate w
 
 ## 429 - The service is receiving too many requests from you
 
-This error displays when the node receives a [429 error](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) from the service that you're calling. This often means that you have hit the rate limits of that service. You can find out more on the [Handling API rate limits](/integrations/builtin/rate-limits.md) page.
+This error displays when the node receives a [429 error](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) from the service that you're calling. This often means that you have hit the rate limits of that service. You can find out more on the [Handling API rate limits](https://docs.n8n.io/integrations/builtin/rate-limits/) page.
 
 To resolve the error, you can use one of the built-in options of the HTTP request node:
 

@@ -18,12 +18,12 @@ On this page, you'll find the node parameters, guidance on configuring the node,
 
 Add your custom code. Choose either **Execute** or **Supply Data** mode. You can only use one mode.
 
-Unlike the [Code node](https://docs.n8n.io//), the LangChain Code node doesn't support Python.
+Unlike the [Code node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.code/), the LangChain Code node doesn't support Python.
 
 * **Execute**: use the LangChain Code node like n8n's own Code node. This takes input data from the workflow, processes it, and returns it as the node output. This mode requires a main input and output. You must create these connections in **Inputs** and **Outputs**.
 * **Supply Data**: use the LangChain Code node as a sub-node, sending data to a root node. This uses an output other than main.
 
-By default, you can't load built-in or external modules in this node. Self-hosted users can [enable built-in and external modules](/hosting/configuration/configuration-methods.md).
+By default, you can't load built-in or external modules in this node. Self-hosted users can [enable built-in and external modules](https://docs.n8n.io/hosting/configuration/configuration-methods/).
 
 ### Inputs
 
@@ -45,7 +45,7 @@ By configuring the LangChain Code node connectors (inputs and outputs) you can u
 
 | Node type | Inputs | Outputs | Code mode |
 | --------- | ------ | ------- | --------- |
-| App node. Similar to the [Code node](https://docs.n8n.io//). | Main | Main | Execute |
+| App node. Similar to the [Code node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.code/). | Main | Main | Execute |
 | Root node | Main; at least one other type | Main | Execute |
 | Sub-node | - | A type other than main. Must match the input type you want to connect to. | Supply Data |
 | Sub-node with sub-nodes | A type other than main |A type other than main. Must match the input type you want to connect to. | Supply Data |
@@ -56,8 +56,8 @@ n8n provides these methods to make it easier to perform common tasks in the Lang
 
 | Method | Description |
 | ------ | ----------- |
-| `this.addInputData(inputName, data)` | Populate the data of a specified non-main input. Useful for mocking data.<ul><li>`inputName` is the input connection type, and must be one of: `ai_agent`, `ai_chain`, `ai_document`, `ai_embedding`, `ai_languageModel`, `ai_memory`, `ai_outputParser`, `ai_retriever`, `ai_textSplitter`, `ai_tool`, `ai_vectorRetriever`, `ai_vectorStore`</li><li>`data` contains the data you want to add. Refer to [Data structure](/data/data-structure.md) for information on the data structure expected by n8n.</li></ul> |
-| `this.addOutputData(outputName, data)` | Populate the data of a specified non-main output. Useful for mocking data.<ul><li>`outputName` is the input connection type, and must be one of: `ai_agent`, `ai_chain`, `ai_document`, `ai_embedding`, `ai_languageModel`, `ai_memory`, `ai_outputParser`, `ai_retriever`, `ai_textSplitter`, `ai_tool`, `ai_vectorRetriever`, `ai_vectorStore`</li><li>`data` contains the data you want to add. Refer to [Data structure](/data/data-structure.md) for information on the data structure expected by n8n.</li></ul> |
+| `this.addInputData(inputName, data)` | Populate the data of a specified non-main input. Useful for mocking data.<ul><li>`inputName` is the input connection type, and must be one of: `ai_agent`, `ai_chain`, `ai_document`, `ai_embedding`, `ai_languageModel`, `ai_memory`, `ai_outputParser`, `ai_retriever`, `ai_textSplitter`, `ai_tool`, `ai_vectorRetriever`, `ai_vectorStore`</li><li>`data` contains the data you want to add. Refer to [Data structure](https://docs.n8n.io/data/data-structure/) for information on the data structure expected by n8n.</li></ul> |
+| `this.addOutputData(outputName, data)` | Populate the data of a specified non-main output. Useful for mocking data.<ul><li>`outputName` is the input connection type, and must be one of: `ai_agent`, `ai_chain`, `ai_document`, `ai_embedding`, `ai_languageModel`, `ai_memory`, `ai_outputParser`, `ai_retriever`, `ai_textSplitter`, `ai_tool`, `ai_vectorRetriever`, `ai_vectorStore`</li><li>`data` contains the data you want to add. Refer to [Data structure](https://docs.n8n.io/data/data-structure/) for information on the data structure expected by n8n.</li></ul> |
 | `this.getInputConnectionData(inputName, itemIndex, inputIndex?)` | Get data from a specified non-main input.<ul><li>`inputName` is the input connection type, and must be one of: `ai_agent`, `ai_chain`, `ai_document`, `ai_embedding`, `ai_languageModel`, `ai_memory`, `ai_outputParser`, `ai_retriever`, `ai_textSplitter`, `ai_tool`, `ai_vectorRetriever`, `ai_vectorStore`</li><li>`itemIndex` should always be `0` (this parameter will be used in upcoming functionality)</li><li>Use `inputIndex` if there is more than one node connected to the specified input.</li></ul> |
 | `this.getInputData(inputIndex?, inputName?)` | Get data from the main input. |
 | `this.getNode()` | Get the current node. |
@@ -72,4 +72,4 @@ n8n provides these methods to make it easier to perform common tasks in the Lang
 
 ## Related resources
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

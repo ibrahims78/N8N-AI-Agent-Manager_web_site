@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.theHiveProjectTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.thehive5trigger.md",
-  "fetchedAt": "2026-04-22T18:36:09.337Z",
+  "fetchedAt": "2026-04-22T18:58:28.004Z",
   "frontmatter": {
     "raw": {
       "title": "TheHive 5 Trigger node documentation",

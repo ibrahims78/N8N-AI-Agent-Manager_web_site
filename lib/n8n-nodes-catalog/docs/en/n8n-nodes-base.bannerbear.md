@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Bannerbear node supports and 
 
 > **Credentials**
 >
-> Refer to [Bannerbear credentials](/integrations/builtin/credentials/bannerbear.md) for guidance on setting up authentication.
+> Refer to [Bannerbear credentials](https://docs.n8n.io/integrations/builtin/credentials/bannerbear/) for guidance on setting up authentication.
 
 ## Operations
 

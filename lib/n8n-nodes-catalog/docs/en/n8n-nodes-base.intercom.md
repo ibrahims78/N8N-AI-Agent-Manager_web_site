@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Intercom node supports and li
 
 > **Credentials**
 >
-> Refer to [Intercom credentials](/integrations/builtin/credentials/intercom.md) for guidance on setting up authentication.
+> Refer to [Intercom credentials](https://docs.n8n.io/integrations/builtin/credentials/intercom/) for guidance on setting up authentication.
 
 ## Operations
 

@@ -6,13 +6,13 @@
 
 Use the Supabase Vector Store to interact with your Supabase database as vector store. You can insert documents into a vector database, get many documents from a vector database, and retrieve documents to provide them to a retriever connected to a chain. 
 
-Use the Supabase Vector Store to interact with your Supabase database as [vector store](/glossary.md#ai-vector-store). You can insert documents into a vector database, get documents from a vector database, retrieve documents to provide them to a retriever connected to a [chain](/glossary.md#ai-chain), or connect it directly to an [agent](/glossary.md#ai-agent) to use as a [tool](/glossary.md#ai-tool). You can also update an item in a vector store by its ID.
+Use the Supabase Vector Store to interact with your Supabase database as [vector store](https://docs.n8n.io/glossary/#ai-vector-store). You can insert documents into a vector database, get documents from a vector database, retrieve documents to provide them to a retriever connected to a [chain](https://docs.n8n.io/glossary/#ai-chain), or connect it directly to an [agent](https://docs.n8n.io/glossary/#ai-agent) to use as a [tool](https://docs.n8n.io/glossary/#ai-tool). You can also update an item in a vector store by its ID.
 
 On this page, you'll find the node parameters for the Supabase node, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/supabase.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/supabase/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -36,19 +36,19 @@ You can see an example of this in scenario 1 of [this template](https://n8n.io/w
 
 ### Connect directly to an AI agent as a tool
 
-You can connect the Supabase Vector Store node directly to the tool connector of an [AI agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) to use a vector store as a resource when answering queries.
+You can connect the Supabase Vector Store node directly to the tool connector of an [AI agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/) to use a vector store as a resource when answering queries.
 
 Here, the connection would be: AI agent (tools connector) -> Supabase Vector Store node.
 
 ### Use a retriever to fetch documents
 
-You can use the [Vector Store Retriever](https://docs.n8n.io/n8n-nodes-langchain.retrievervectorstore/) node with the Supabase Vector Store node to fetch documents from the Supabase Vector Store node. This is often used with the [Question and Answer Chain](https://docs.n8n.io/n8n-nodes-langchain.chainretrievalqa/) node to fetch documents from the vector store that match the given chat input.
+You can use the [Vector Store Retriever](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.retrievervectorstore/) node with the Supabase Vector Store node to fetch documents from the Supabase Vector Store node. This is often used with the [Question and Answer Chain](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainretrievalqa/) node to fetch documents from the vector store that match the given chat input.
 
 An [example of the connection flow](https://n8n.io/workflows/1960-ask-questions-about-a-pdf-using-ai/) (the example uses Pinecone, but the pattern in the same) would be: Question and Answer Chain (Retriever connector) -> Vector Store Retriever (Vector Store connector) -> Supabase Vector Store.
 
 ### Use the Vector Store Question Answer Tool to answer questions
 
-Another pattern uses the [Vector Store Question Answer Tool](https://docs.n8n.io/n8n-nodes-langchain.toolvectorstore/) to summarize results and answer questions from the Supabase Vector Store node. Rather than connecting the Supabase Vector Store directly as a tool, this pattern uses a tool specifically designed to summarizes data in the vector store.
+Another pattern uses the [Vector Store Question Answer Tool](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolvectorstore/) to summarize results and answer questions from the Supabase Vector Store node. Rather than connecting the Supabase Vector Store directly as a tool, this pattern uses a tool specifically designed to summarizes data in the vector store.
 
 The [connections flow](https://n8n.io/workflows/2621-ai-agent-to-chat-with-files-in-supabase-storage/) in this case would look like this: AI agent (tools connector) -> Vector Store Question Answer Tool (Vector Store connector) -> Supabase Vector store.
 
@@ -81,7 +81,7 @@ Use Update Documents mode to update documents in a vector database by ID. Fill i
 
 ### Rerank Results
 
-Enables [reranking](/glossary.md#ai-reranking). If you enable this option, you must connect a reranking node to the vector store. That node will then rerank the results for queries. You can use this option with the `Get Many`, `Retrieve Documents (As Vector Store for Chain/Tool)` and `Retrieve Documents (As Tool for AI Agent)` modes.
+Enables [reranking](https://docs.n8n.io/glossary/#ai-reranking). If you enable this option, you must connect a reranking node to the vector store. That node will then rerank the results for queries. You can use this option with the `Get Many`, `Retrieve Documents (As Vector Store for Chain/Tool)` and `Retrieve Documents (As Tool for AI Agent)` modes.
 
 <!-- vale from-write-good.Weasel = NO -->
 ### Get Many parameters
@@ -127,7 +127,7 @@ Available in **Get Many** mode. When searching for data, use this to match with 
 
 This is an `AND` query. If you specify more than one metadata filter field, all of them must match.
 
-When inserting data, the metadata is set using the document loader. Refer to [Default Data Loader](https://docs.n8n.io/n8n-nodes-langchain.documentdefaultdataloader/) for more information on loading documents.
+When inserting data, the metadata is set using the document loader. Refer to [Default Data Loader](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.documentdefaultdataloader/) for more information on loading documents.
 
 ## Templates and examples
 
@@ -139,4 +139,4 @@ When inserting data, the metadata is set using the document loader. Refer to [De
 
 Refer to [LangChain's Supabase documentation](https://js.langchain.com/docs/integrations/vectorstores/supabase/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

@@ -6,7 +6,7 @@
 
 Use this node to save metadata for workflow executions. You can then search by this data in the **Executions** list.
 
-You can retrieve custom execution data during workflow execution using the Code node. Refer to [Custom executions data](/workflows/executions/custom-executions-data.md) for more information.
+You can retrieve custom execution data during workflow execution using the Code node. Refer to [Custom executions data](https://docs.n8n.io/workflows/executions/custom-executions-data/) for more information.
 
 > **Feature availability**
 >

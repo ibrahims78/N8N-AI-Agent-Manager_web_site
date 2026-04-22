@@ -47,4 +47,4 @@ Enter your custom JavaScript code in the **Code** input field.
 
 ## Related resources
 
-Learn more about [data structure and data flow](/data/index.md) in n8n workflows.
+Learn more about [data structure and data flow](https://docs.n8n.io/data/) in n8n workflows.

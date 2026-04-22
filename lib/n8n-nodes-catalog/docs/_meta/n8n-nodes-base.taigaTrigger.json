@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.taigaTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.taigatrigger.md",
-  "fetchedAt": "2026-04-22T18:36:09.157Z",
+  "fetchedAt": "2026-04-22T18:58:27.860Z",
   "frontmatter": {
     "raw": {
       "title": "Taiga Trigger node documentation",

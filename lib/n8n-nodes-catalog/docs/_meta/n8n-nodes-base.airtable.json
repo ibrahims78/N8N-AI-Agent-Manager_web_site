@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.airtable",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.airtable/index.md",
-  "fetchedAt": "2026-04-22T18:40:15.834Z",
+  "fetchedAt": "2026-04-22T18:58:20.714Z",
   "frontmatter": {
     "raw": {
       "title": "Airtable node documentation",

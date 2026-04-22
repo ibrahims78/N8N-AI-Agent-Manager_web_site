@@ -8,13 +8,13 @@
 >
 > This node is deprecated, and will be removed in a future version.
 
-Use the GitHub Document Loader node to load data from a GitHub repository for [vector stores](/glossary.md#ai-vector-store) or summarization.
+Use the GitHub Document Loader node to load data from a GitHub repository for [vector stores](https://docs.n8n.io/glossary/#ai-vector-store) or summarization.
 
 On this page, you'll find the node parameters for the GitHub Document Loader node, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/github.md). This node doesn't support OAuth for authentication.
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/github/). This node doesn't support OAuth for authentication.
 
 > **Parameter resolution in sub-nodes**
 >
@@ -27,7 +27,7 @@ On this page, you'll find the node parameters for the GitHub Document Loader nod
 ## Node parameters
 
 * **Text Splitting**: Choose from:
-	* **Simple**: Uses the [Recursive Character Text Splitter](https://docs.n8n.io/n8n-nodes-langchain.textsplitterrecursivecharactertextsplitter/) with a chunk size of 1000 and an overlap of 200.
+	* **Simple**: Uses the [Recursive Character Text Splitter](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.textsplitterrecursivecharactertextsplitter/) with a chunk size of 1000 and an overlap of 200.
     * **Custom**: Allows you to connect a text splitter of your choice.
 * **Repository Link**: Enter the URL of your GitHub repository.
 * **Branch**: Enter the branch name to use.
@@ -47,4 +47,4 @@ On this page, you'll find the node parameters for the GitHub Document Loader nod
 
 Refer to [LangChain's documentation on document loaders](https://js.langchain.com/docs/modules/data_connection/document_loaders/integrations/file_loaders/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

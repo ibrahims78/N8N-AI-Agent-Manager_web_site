@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Onfleet node supports and lin
 
 > **Credentials**
 >
-> Refer to [Onfleet credentials](/integrations/builtin/credentials/onfleet.md) for guidance on setting up authentication.
+> Refer to [Onfleet credentials](https://docs.n8n.io/integrations/builtin/credentials/onfleet/) for guidance on setting up authentication.
 
 ## Operations
 

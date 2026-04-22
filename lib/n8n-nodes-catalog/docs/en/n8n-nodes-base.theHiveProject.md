@@ -10,10 +10,10 @@ On this page, you'll find a list of operations the TheHive node supports and lin
 
 > **TheHive and TheHive 5**
 >
-> n8n provides two nodes for TheHive. Use this node (TheHive 5) if you want to use TheHive's version 5 API. If you want to use version 3 or 4, use [TheHive](/integrations/builtin/app-nodes/n8n-nodes-base.thehive.md).
+> n8n provides two nodes for TheHive. Use this node (TheHive 5) if you want to use TheHive's version 5 API. If you want to use version 3 or 4, use [TheHive](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.thehive/).
 > **Credentials**
 >
-> Refer to [TheHive credentials](/integrations/builtin/credentials/thehive5.md) for guidance on setting up authentication.
+> Refer to [TheHive credentials](https://docs.n8n.io/integrations/builtin/credentials/thehive5/) for guidance on setting up authentication.
 
 ## Operations
 
@@ -82,6 +82,6 @@ On this page, you'll find a list of operations the TheHive node supports and lin
 
 ## Related resources
 
-n8n provides a trigger node for TheHive. You can find the trigger node docs [here](/integrations/builtin/trigger-nodes/n8n-nodes-base.thehive5trigger.md).
+n8n provides a trigger node for TheHive. You can find the trigger node docs [here](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.thehive5trigger/).
 
 Refer to TheHive's [documentation](https://docs.strangebee.com/) for more information about the service.

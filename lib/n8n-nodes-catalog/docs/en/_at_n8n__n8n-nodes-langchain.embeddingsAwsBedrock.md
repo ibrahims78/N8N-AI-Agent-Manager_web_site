@@ -4,13 +4,13 @@
 
 # Embeddings AWS Bedrock node
 
-Use the Embeddings AWS Bedrock node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
+Use the Embeddings AWS Bedrock node to generate [embeddings](https://docs.n8n.io/glossary/#ai-embedding) for a given text.
 
 On this page, you'll find the node parameters for the Embeddings AWS Bedrock node, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/aws.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/aws/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -36,4 +36,4 @@ Learn more about available models in the [Amazon Bedrock documentation](https://
 
 Refer to [LangChains's AWS Bedrock embeddings documentation](https://js.langchain.com/docs/integrations/platforms/aws/#text-embedding-models) and the [AWS Bedrock documentation](https://docs.aws.amazon.com/bedrock/) for more information about AWS Bedrock.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

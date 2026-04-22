@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the seven node supports and links
 
 > **Credentials**
 >
-> Refer to [seven credentials](/integrations/builtin/credentials/sms77.md) for guidance on setting up authentication.
+> Refer to [seven credentials](https://docs.n8n.io/integrations/builtin/credentials/sms77/) for guidance on setting up authentication.
 
 ## Operations
 

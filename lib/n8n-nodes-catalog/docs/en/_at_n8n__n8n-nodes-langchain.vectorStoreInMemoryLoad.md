@@ -4,7 +4,7 @@
 
 # Simple Vector Store node
 
-Use the Simple Vector Store node to store and retrieve [embeddings](/glossary.md#ai-embedding) in n8n's in-app memory. 
+Use the Simple Vector Store node to store and retrieve [embeddings](https://docs.n8n.io/glossary/#ai-embedding) in n8n's in-app memory. 
 
 On this page, you'll find the node parameters for the Simple Vector Store node, and links to more resources.
 
@@ -18,9 +18,9 @@ On this page, you'll find the node parameters for the Simple Vector Store node, 
 
 > **This node is different from AI memory nodes**
 >
-> The simple vector storage described here is different to the AI memory nodes such as [Simple Memory](https://docs.n8n.io/n8n-nodes-langchain.memorybufferwindow/).
+> The simple vector storage described here is different to the AI memory nodes such as [Simple Memory](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memorybufferwindow/).
 > 
-> This node creates a [vector database](/glossary.md#ai-vector-store) in the app memory.
+> This node creates a [vector database](https://docs.n8n.io/glossary/#ai-vector-store) in the app memory.
 
 ## Data safety limitations
 
@@ -52,19 +52,19 @@ You can see an example of in step 2 of [this template](https://n8n.io/workflows/
 
 ### Connect directly to an AI agent as a tool
 
-You can connect the Simple Vector Store node directly to the [tool](/glossary.md#ai-tool) connector of an [AI agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) to use a vector store as a resource when answering queries.
+You can connect the Simple Vector Store node directly to the [tool](https://docs.n8n.io/glossary/#ai-tool) connector of an [AI agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/) to use a vector store as a resource when answering queries.
 
 Here, the connection would be: AI agent (tools connector) -> Simple Vector Store node.
 
 ### Use a retriever to fetch documents
 
-You can use the [Vector Store Retriever](https://docs.n8n.io/n8n-nodes-langchain.retrievervectorstore/) node with the Simple Vector Store node to fetch documents from the Simple Vector Store node. This is often used with the [Question and Answer Chain](https://docs.n8n.io/n8n-nodes-langchain.chainretrievalqa/) node to fetch documents from the vector store that match the given chat input.
+You can use the [Vector Store Retriever](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.retrievervectorstore/) node with the Simple Vector Store node to fetch documents from the Simple Vector Store node. This is often used with the [Question and Answer Chain](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainretrievalqa/) node to fetch documents from the vector store that match the given chat input.
 
 An [example of the connection flow](https://n8n.io/workflows/1960-ask-questions-about-a-pdf-using-ai/) (the linked example uses Pinecone, but the pattern is the same) would be: Question and Answer Chain (Retriever connector) -> Vector Store Retriever (Vector Store connector) -> Simple Vector Store.
 
 ### Use the Vector Store Question Answer Tool to answer questions
 
-Another pattern uses the [Vector Store Question Answer Tool](https://docs.n8n.io/n8n-nodes-langchain.toolvectorstore/) to summarize results and answer questions from the Simple Vector Store node. Rather than connecting the Simple Vector Store directly as a tool, this pattern uses a tool specifically designed to summarizes data in the vector store.
+Another pattern uses the [Vector Store Question Answer Tool](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolvectorstore/) to summarize results and answer questions from the Simple Vector Store node. Rather than connecting the Simple Vector Store directly as a tool, this pattern uses a tool specifically designed to summarizes data in the vector store.
 
 The [connections flow](https://n8n.io/workflows/2465-building-your-first-whatsapp-chatbot/) in this case would look like this: AI agent (tools connector) -> Vector Store Question Answer Tool (Vector Store connector) -> Simple Vector store.
 
@@ -110,7 +110,7 @@ Use Retrieve Documents (As Tool for AI Agent) mode to use the vector store as a 
 
 ### Rerank Results
 
-Enables [reranking](/glossary.md#ai-reranking). If you enable this option, you must connect a reranking node to the vector store. That node will then rerank the results for queries. You can use this option with the `Get Many`, `Retrieve Documents (As Vector Store for Chain/Tool)` and `Retrieve Documents (As Tool for AI Agent)` modes.
+Enables [reranking](https://docs.n8n.io/glossary/#ai-reranking). If you enable this option, you must connect a reranking node to the vector store. That node will then rerank the results for queries. You can use this option with the `Get Many`, `Retrieve Documents (As Vector Store for Chain/Tool)` and `Retrieve Documents (As Tool for AI Agent)` modes.
 
 <!-- vale from-write-good.Weasel = NO -->
 ### Get Many parameters
@@ -146,4 +146,4 @@ Enables [reranking](/glossary.md#ai-reranking). If you enable this option, you m
 
 Refer to [LangChains's Memory Vector Store documentation](https://js.langchain.com/docs/integrations/vectorstores/memory/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

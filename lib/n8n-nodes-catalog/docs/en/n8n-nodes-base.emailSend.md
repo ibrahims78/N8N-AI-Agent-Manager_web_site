@@ -8,19 +8,19 @@ The Send Email node sends emails using an SMTP email server.
 
 > **Credential**
 >
-> You can find authentication information for this node [here](https://docs.n8n.io//).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/sendemail/).
 
 ## Node parameters
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 Configure this node using the following parameters.
 
 ### Credential to connect with
 
-Select or create an [SMTP account credential](https://docs.n8n.io//) for the node to use.
+Select or create an [SMTP account credential](https://docs.n8n.io/integrations/builtin/credentials/sendemail/) for the node to use.
 
 ### Operation
 
@@ -67,7 +67,7 @@ Set whether to include the phrase `This email was sent automatically with n8n` a
 
 Enter the name of the binary properties that contain data to add as an attachment. Some tips on using this option:
 
-* Use the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](https://docs.n8n.io//) node to upload the file to your workflow.
+* Use the [Read/Write Files from Disk](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile/) node or the [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) node to upload the file to your workflow.
 * Add multiple attachments by entering a comma-separated list of binary properties.
 * Reference embedded images or other content within the body of an email message, for example `<img src="cid:image_1">`.
 
@@ -129,7 +129,7 @@ When using the Free Text response type, the following options are available:
 
 When using the Custom Form response type, you build a form using the fields and options you want.
 
-You can customize each form element with the settings outlined in the [n8n Form trigger's form elements](/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger.md#form-elements). To add more fields, select the **Add Form Element** button.
+You can customize each form element with the settings outlined in the [n8n Form trigger's form elements](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger/#form-elements). To add more fields, select the **Add Form Element** button.
 
 The following options are also available:
 

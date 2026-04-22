@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.awsiam",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.awsiam.md",
-  "fetchedAt": "2026-04-22T18:35:59.696Z",
+  "fetchedAt": "2026-04-22T18:58:20.856Z",
   "frontmatter": {
     "raw": {
       "title": "AWS IAM node documentation",

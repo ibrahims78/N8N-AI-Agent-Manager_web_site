@@ -10,11 +10,11 @@ On this page, you'll find a list of operations the MQTT node supports and links 
 
 > **Credentials**
 >
-> Refer to [MQTT credentials](/integrations/builtin/credentials/mqtt.md) for guidance on setting up authentication.
+> Refer to [MQTT credentials](https://docs.n8n.io/integrations/builtin/credentials/mqtt/) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 ## Operations
 
@@ -28,6 +28,6 @@ Use the MQTT node to send a message. You can set the message topic, and choose w
 
 ## Related resources
 
-n8n provides a trigger node for MQTT. You can find the trigger node docs [here](/integrations/builtin/trigger-nodes/n8n-nodes-base.mqtttrigger.md).
+n8n provides a trigger node for MQTT. You can find the trigger node docs [here](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.mqtttrigger/).
 
 Refer to [MQTT's documentation](https://mqtt.org/getting-started/) for more information about the service.

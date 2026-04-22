@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.memoryMongoDbChat",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memorymongochat.md",
-  "fetchedAt": "2026-04-22T18:36:12.886Z",
+  "fetchedAt": "2026-04-22T18:58:30.770Z",
   "frontmatter": {
     "raw": {
       "title": "MongoDB Chat Memory node documentation",

@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.gmailTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.gmailtrigger/index.md",
-  "fetchedAt": "2026-04-22T18:53:10.657Z",
+  "fetchedAt": "2026-04-22T18:58:23.750Z",
   "frontmatter": {
     "raw": {
       "title": "Gmail Trigger node documentation",

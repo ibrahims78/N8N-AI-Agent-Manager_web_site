@@ -10,7 +10,7 @@ On this page, you'll find a list of events the MailerLite Trigger node can respo
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/mailerlite.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/mailerlite/).
 
 > **Examples and templates**
 >

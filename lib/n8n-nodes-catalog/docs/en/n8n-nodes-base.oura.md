@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Oura node supports and links 
 
 > **Credentials**
 >
-> Refer to [Oura credentials](/integrations/builtin/credentials/oura.md) for guidance on setting up authentication.
+> Refer to [Oura credentials](https://docs.n8n.io/integrations/builtin/credentials/oura/) for guidance on setting up authentication.
 
 ## Operations
 

@@ -4,13 +4,13 @@
 
 # Mistral Cloud Chat Model node
 
-Use the Mistral Cloud Chat Model node to combine Mistral Cloud's chat models with conversational [agents](/glossary.md#ai-agent).
+Use the Mistral Cloud Chat Model node to combine Mistral Cloud's chat models with conversational [agents](https://docs.n8n.io/glossary/#ai-agent).
 
 On this page, you'll find the node parameters for the Mistral Cloud Chat Model node, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/mistral.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/mistral/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -44,4 +44,4 @@ On this page, you'll find the node parameters for the Mistral Cloud Chat Model n
 
 Refer to [LangChains's Mistral documentation](https://js.langchain.com/docs/integrations/chat/mistral) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

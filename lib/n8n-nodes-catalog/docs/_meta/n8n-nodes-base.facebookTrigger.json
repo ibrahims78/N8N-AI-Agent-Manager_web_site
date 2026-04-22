@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.facebookTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/index.md",
-  "fetchedAt": "2026-04-22T18:36:02.240Z",
+  "fetchedAt": "2026-04-22T18:58:22.370Z",
   "frontmatter": {
     "raw": {
       "title": "Facebook Trigger",
@@ -15,15 +15,15 @@
   },
   "siblings": [
     "certificate-transparency.md",
-    "application.md",
     "ad-account.md",
-    "link.md",
     "instagram.md",
+    "application.md",
     "group.md",
-    "page.md",
+    "link.md",
     "whatsapp.md",
-    "user.md",
+    "page.md",
     "permissions.md",
+    "user.md",
     "workplace-security.md"
   ],
   "assets": []

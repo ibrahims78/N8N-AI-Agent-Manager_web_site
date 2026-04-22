@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Unleashed Software node suppo
 
 > **Credentials**
 >
-> Refer to [Unleashed Software credentials](/integrations/builtin/credentials/unleashedsoftware.md) for guidance on setting up authentication.
+> Refer to [Unleashed Software credentials](https://docs.n8n.io/integrations/builtin/credentials/unleashedsoftware/) for guidance on setting up authentication.
 
 ## Operations
 

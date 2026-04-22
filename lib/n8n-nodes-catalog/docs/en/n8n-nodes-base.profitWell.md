@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the ProfitWell node supports and 
 
 > **Credentials**
 >
-> Refer to [ProfitWell credentials](/integrations/builtin/credentials/profitwell.md) for guidance on setting up authentication.
+> Refer to [ProfitWell credentials](https://docs.n8n.io/integrations/builtin/credentials/profitwell/) for guidance on setting up authentication.
 
 ## Operations
 

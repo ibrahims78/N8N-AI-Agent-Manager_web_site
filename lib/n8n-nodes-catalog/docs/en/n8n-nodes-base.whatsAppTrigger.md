@@ -10,7 +10,7 @@ On this page, you'll find a list of events the WhatsApp Trigger node can respond
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/whatsapp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/whatsapp/).
 
 > **Examples and templates**
 >
@@ -31,7 +31,7 @@ On this page, you'll find a list of events the WhatsApp Trigger node can respond
 
 ## Related resources
 
-n8n provides an app node for WhatsApp. You can find the node docs [here](https://docs.n8n.io//).
+n8n provides an app node for WhatsApp. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.whatsapp/).
 
 View [example workflows and related content](https://n8n.io/integrations/whatsapp-trigger/) on n8n's website.
 

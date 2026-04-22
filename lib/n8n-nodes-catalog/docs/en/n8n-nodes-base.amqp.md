@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the AMQP Sender node supports and
 
 > **Credentials**
 >
-> Refer to [AMQP Sender credentials](/integrations/builtin/credentials/amqp.md) for guidance on setting up authentication.
+> Refer to [AMQP Sender credentials](https://docs.n8n.io/integrations/builtin/credentials/amqp/) for guidance on setting up authentication.
 
 ## Operations
 

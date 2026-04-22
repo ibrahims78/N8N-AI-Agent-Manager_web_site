@@ -10,7 +10,7 @@ On this page, you'll find a list of events the Google Business Profile Trigger n
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](https://docs.n8n.io//).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/google/).
 
 ## Events
 
@@ -18,7 +18,7 @@ On this page, you'll find a list of events the Google Business Profile Trigger n
 
 ## Related resources
 
-n8n provides an app node for Google Business Profile. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.googlebusinessprofile.md).
+n8n provides an app node for Google Business Profile. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlebusinessprofile/).
 
 <!-- add a link to the node page on n8n's website. For example: https://n8n.io/integrations/356-gmail/ -->
 View [example workflows and related content](https://n8n.io/integrations/google-business-profile-trigger/) on n8n's website.

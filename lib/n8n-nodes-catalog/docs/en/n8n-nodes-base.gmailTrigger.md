@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](https://docs.n8n.io//).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/google/).
 
 > **Examples and templates**
 >
@@ -22,8 +22,8 @@
 
 Configure the node with these parameters:
 
-* **Credential to connect with**: Select or create a new Google credential to use for the trigger. Refer to [Google credentials](https://docs.n8n.io//) for more information on setting up a new credential.
-* **Poll Times**: Select a poll **Mode** to set how often to trigger the poll. Your **Mode** selection will add or remove relevant fields. Refer to [Poll Mode options](https://docs.n8n.io/poll-mode-options/) to configure the parameters for each mode type.
+* **Credential to connect with**: Select or create a new Google credential to use for the trigger. Refer to [Google credentials](https://docs.n8n.io/integrations/builtin/credentials/google/) for more information on setting up a new credential.
+* **Poll Times**: Select a poll **Mode** to set how often to trigger the poll. Your **Mode** selection will add or remove relevant fields. Refer to [Poll Mode options](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.gmailtrigger/poll-mode-options/) to configure the parameters for each mode type.
 * **Simplify**: Choose whether to return a simplified version of the response (turned on, default) or the raw data (turned off).
     * The simplified version returns email message IDs, labels, and email headers, including: From, To, CC, BCC, and Subject.
 
@@ -39,7 +39,7 @@ Use these filters to further refine the node's behavior:
 
 ## Related resources
 
-n8n provides an app node for Gmail. You can find the node docs [here](https://docs.n8n.io//).
+n8n provides an app node for Gmail. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gmail/).
 
 View [example workflows and related content](https://n8n.io/integrations/gmail-trigger/) on n8n's website.
 
@@ -47,7 +47,7 @@ Refer to [Google's Gmail API documentation](https://developers.google.com/gmail/
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.gmailtrigger/common-issues/).
 
 ---
 
@@ -56,7 +56,7 @@ For common questions or issues and suggested solutions, refer to [Common issues]
 
 # Gmail Trigger node common issues
 
-Here are some common errors and issues with the [Gmail Trigger node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Gmail Trigger node](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.gmailtrigger/) and steps to resolve or troubleshoot them.
 
 ## 401 unauthorized error
 
@@ -71,9 +71,9 @@ This error occurs when there's an issue with the credential you're using and its
 
 To resolve:
 
-1. For [OAuth2](https://docs.n8n.io/oauth-single-service/) credentials, make sure you've enabled the Gmail API in **APIs & Services > Library**. Refer to [Google OAuth2 Single Service - Enable APIs](https://docs.n8n.io/oauth-single-service/#enable-apis) for more information.
-2. For [Service Account](https://docs.n8n.io/service-account/) credentials:
-    1. [Enable domain-wide delegation](https://docs.n8n.io/service-account/#enable-domain-wide-delegation).
+1. For [OAuth2](https://docs.n8n.io/integrations/builtin/credentials/google/oauth-single-service/) credentials, make sure you've enabled the Gmail API in **APIs & Services > Library**. Refer to [Google OAuth2 Single Service - Enable APIs](https://docs.n8n.io/integrations/builtin/credentials/google/oauth-single-service/#enable-apis) for more information.
+2. For [Service Account](https://docs.n8n.io/integrations/builtin/credentials/google/service-account/) credentials:
+    1. [Enable domain-wide delegation](https://docs.n8n.io/integrations/builtin/credentials/google/service-account/#enable-domain-wide-delegation).
     2. Make sure you add the Gmail API as part of the domain-wide delegation configuration.
 
 ---
@@ -83,7 +83,7 @@ To resolve:
 
 # Gmail Trigger node Poll Mode options
 
-Use the [Gmail Trigger node's](https://docs.n8n.io//) **Poll Time** parameter to set how often to trigger the poll. Your **Mode** selection will add or remove relevant fields.
+Use the [Gmail Trigger node's](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.gmailtrigger/) **Poll Time** parameter to set how often to trigger the poll. Your **Mode** selection will add or remove relevant fields.
 
 ## Poll mode options
 

@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.cron",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.scheduletrigger/index.md",
-  "fetchedAt": "2026-04-22T18:36:01.264Z",
+  "fetchedAt": "2026-04-22T18:58:22.155Z",
   "frontmatter": {
     "raw": {
       "title": "Schedule Trigger node documentation",

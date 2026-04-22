@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Netlify node supports and lin
 
 > **Credentials**
 >
-> Refer to [Netlify credentials](/integrations/builtin/credentials/netlify.md) for guidance on setting up authentication.
+> Refer to [Netlify credentials](https://docs.n8n.io/integrations/builtin/credentials/netlify/) for guidance on setting up authentication.
 
 ## Operations
 

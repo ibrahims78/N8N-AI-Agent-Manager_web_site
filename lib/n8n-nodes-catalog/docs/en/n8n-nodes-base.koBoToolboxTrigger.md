@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/kobotoolbox.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/kobotoolbox/).
 
 > **Examples and templates**
 >
@@ -16,4 +16,4 @@
 
 This node starts a workflow upon new submissions of a specified form. The trigger node handles the creation/deletion of the hook, so you don't need to do any setup in KoboToolbox.
 
-It works the same way as the Get Submission operation in the [KoboToolbox](/integrations/builtin/app-nodes/n8n-nodes-base.kobotoolbox.md) node, including supporting the same reformatting options.
+It works the same way as the Get Submission operation in the [KoboToolbox](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.kobotoolbox/) node, including supporting the same reformatting options.

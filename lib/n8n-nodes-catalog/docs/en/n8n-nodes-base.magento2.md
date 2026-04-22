@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Magento 2 node supports and l
 
 > **Credentials**
 >
-> Refer to [Magento 2 credentials](/integrations/builtin/credentials/magento2.md) for guidance on setting up authentication.
+> Refer to [Magento 2 credentials](https://docs.n8n.io/integrations/builtin/credentials/magento2/) for guidance on setting up authentication.
 
 ## Operations
 
@@ -42,7 +42,7 @@ On this page, you'll find a list of operations the Magento 2 node supports and l
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -50,4 +50,4 @@ You can use the credential you created for this service in the HTTP Request node
 1. Select the service you want to connect to.
 1. Select your credential.
 
-Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
+Refer to [Custom API operations](https://docs.n8n.io/integrations/custom-operations/) for more information.

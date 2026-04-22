@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Peekalink node supports and l
 
 > **Credentials**
 >
-> Refer to [Peekalink credentials](/integrations/builtin/credentials/peekalink.md) for guidance on setting up authentication.
+> Refer to [Peekalink credentials](https://docs.n8n.io/integrations/builtin/credentials/peekalink/) for guidance on setting up authentication.
 
 ## Operations
 

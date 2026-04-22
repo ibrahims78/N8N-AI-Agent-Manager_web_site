@@ -8,7 +8,7 @@ Use the XML node to convert data from and to XML.
 
 > **Binary files**
 >
-> If your XML is within a binary file, use the [Extract from File](/integrations/builtin/core-nodes/n8n-nodes-base.extractfromfile.md) node to convert it to text first.
+> If your XML is within a binary file, use the [Extract from File](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.extractfromfile/) node to convert it to text first.
 
 ## Node parameters
 

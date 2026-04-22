@@ -4,13 +4,13 @@
 
 # Embeddings Ollama node
 
-Use the Embeddings Ollama node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
+Use the Embeddings Ollama node to generate [embeddings](https://docs.n8n.io/glossary/#ai-embedding) for a given text.
 
 On this page, you'll find the node parameters for the Embeddings Ollama node, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/ollama.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/ollama/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -38,4 +38,4 @@ Learn more about available models in [Ollama's models documentation](https://oll
 
 Refer to [Langchain's Ollama embeddings documentation](https://js.langchain.com/docs/integrations/text_embedding/ollama/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

@@ -4,13 +4,13 @@
 
 # SerpApi (Google Search) node
 
-The SerpAPI node allows an [agent](/glossary.md#ai-agent) in your workflow to call Google's Search API.
+The SerpAPI node allows an [agent](https://docs.n8n.io/glossary/#ai-agent) in your workflow to call Google's Search API.
 
 On this page, you'll find the node parameters for the SerpAPI node, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/serp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/serp/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -38,4 +38,4 @@ On this page, you'll find the node parameters for the SerpAPI node, and links to
 
 Refer to [Serp's documentation](https://serpapi.com/search-api) for more information about the service. You can also view [LangChain's documentation on their Serp integration](https://js.langchain.com/docs/integrations/tools/serpapi/).
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

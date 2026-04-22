@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/telegram.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 
 > **Examples and templates**
 >
@@ -52,7 +52,7 @@ Some **events may require additional permissions**, see [Telegram's API document
 
 ## Related resources
 
-n8n provides an app node for Telegram. You can find the node docs [here](/integrations/builtin/credentials/telegram.md).
+n8n provides an app node for Telegram. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 
 View [example workflows and related content](https://n8n.io/integrations/telegram-trigger/) on n8n's website.
 
@@ -60,7 +60,7 @@ Refer to [Telegram's API documentation](https://core.telegram.org/bots/api) for 
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/common-issues/).
 
 ---
 
@@ -69,7 +69,7 @@ For common questions or issues and suggested solutions, refer to [Common issues]
 
 # Telegram Trigger node common issues
 
-Here are some common errors and issues with the [Telegram Trigger node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Telegram Trigger node](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) and steps to resolve or troubleshoot them.
 
 ## Stuck waiting for trigger event
 
@@ -85,7 +85,7 @@ To resolve this issue, check your reverse proxy configuration (Nginx, Caddy, Apa
 
 This error occurs when you run n8n behind a reverse proxy and there is a problem with your instance's webhook URL.
 
-When running n8n behind a reverse proxy, you must [configure the `WEBHOOK_URL` environment variable](/hosting/configuration/configuration-examples/webhook-url.md) with the public URL where your n8n instance is running. For Telegram, this URL must use HTTPS.
+When running n8n behind a reverse proxy, you must [configure the `WEBHOOK_URL` environment variable](https://docs.n8n.io/hosting/configuration/configuration-examples/webhook-url/) with the public URL where your n8n instance is running. For Telegram, this URL must use HTTPS.
 
 To fix this issue, configure TLS/SSL termination in your reverse proxy. Afterward, update your `WEBHOOK_URL` environment variable to use the HTTPS address.
 

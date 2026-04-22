@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Mandrill node supports and li
 
 > **Credentials**
 >
-> Refer to [Mandrill credentials](/integrations/builtin/credentials/mandrill.md) for guidance on setting up authentication.
+> Refer to [Mandrill credentials](https://docs.n8n.io/integrations/builtin/credentials/mandrill/) for guidance on setting up authentication.
 
 ## Operations
 

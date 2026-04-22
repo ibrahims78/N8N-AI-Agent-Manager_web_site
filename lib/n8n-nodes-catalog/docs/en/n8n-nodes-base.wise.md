@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Wise node supports and links 
 
 > **Credentials**
 >
-> Refer to [Wise credentials](/integrations/builtin/credentials/wise.md) for guidance on setting up authentication.
+> Refer to [Wise credentials](https://docs.n8n.io/integrations/builtin/credentials/wise/) for guidance on setting up authentication.
 
 ## Operations
 

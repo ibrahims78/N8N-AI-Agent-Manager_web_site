@@ -49,4 +49,4 @@ Choose whether to include binary data from the input in the new output (turned o
 
 ## Related resources
 
-Learn more about [data structure and data flow](/data/index.md) in n8n workflows.
+Learn more about [data structure and data flow](https://docs.n8n.io/data/) in n8n workflows.

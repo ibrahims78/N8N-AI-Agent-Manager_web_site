@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Zulip node supports and links
 
 > **Credentials**
 >
-> Refer to [Zulip credentials](/integrations/builtin/credentials/zulip.md) for guidance on setting up authentication.
+> Refer to [Zulip credentials](https://docs.n8n.io/integrations/builtin/credentials/zulip/) for guidance on setting up authentication.
 
 ## Operations
 

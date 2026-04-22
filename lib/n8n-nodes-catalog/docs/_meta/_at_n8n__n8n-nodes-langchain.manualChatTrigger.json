@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.manualChatTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/index.md",
-  "fetchedAt": "2026-04-22T18:36:14.139Z",
+  "fetchedAt": "2026-04-22T18:58:31.406Z",
   "frontmatter": {
     "raw": {
       "title": "Chat Trigger node documentation",
@@ -15,8 +15,8 @@
     "common-issues.md"
   ],
   "assets": [
+    "hosted-text-elements.png",
     "connect-memory.png",
-    "new-conversation-button.png",
-    "hosted-text-elements.png"
+    "new-conversation-button.png"
   ]
 }

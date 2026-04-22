@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.chainSummarization",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainsummarization.md",
-  "fetchedAt": "2026-04-22T18:36:11.139Z",
+  "fetchedAt": "2026-04-22T18:58:29.466Z",
   "frontmatter": {
     "raw": {
       "title": "Summarization Chain node documentation",

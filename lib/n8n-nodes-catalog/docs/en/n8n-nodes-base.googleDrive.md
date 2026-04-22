@@ -10,31 +10,31 @@ On this page, you'll find a list of operations the Google Drive node supports an
 
 > **Credentials**
 >
-> Refer to [Google Drive credentials](https://docs.n8n.io//) for guidance on setting up authentication.
+> Refer to [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/) for guidance on setting up authentication.
 
 ## Operations
 
 * **File**
-    * [**Copy**](https://docs.n8n.io/file-operations/#copy-a-file) a file
-    * [**Create from text**](https://docs.n8n.io/file-operations/#create-from-text)
-    * [**Delete**](https://docs.n8n.io/file-operations/#delete-a-file) a file
-    * [**Download**](https://docs.n8n.io/file-operations/#download-a-file) a file
-    * [**Move**](https://docs.n8n.io/file-operations/#move-a-file) a file
-    * [**Share**](https://docs.n8n.io/file-operations/#share-a-file) a file
-    * [**Update**](https://docs.n8n.io/file-operations/#update-a-file) a file
-    * [**Upload**](https://docs.n8n.io/file-operations/#upload-a-file) a file
+    * [**Copy**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/file-operations/#copy-a-file) a file
+    * [**Create from text**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/file-operations/#create-from-text)
+    * [**Delete**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/file-operations/#delete-a-file) a file
+    * [**Download**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/file-operations/#download-a-file) a file
+    * [**Move**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/file-operations/#move-a-file) a file
+    * [**Share**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/file-operations/#share-a-file) a file
+    * [**Update**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/file-operations/#update-a-file) a file
+    * [**Upload**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/file-operations/#upload-a-file) a file
 * **File/Folder**
-    * [**Search**](https://docs.n8n.io/file-folder-operations/#search-files-and-folders) files and folders
+    * [**Search**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/file-folder-operations/#search-files-and-folders) files and folders
 * **Folder**
-    * [**Create**](https://docs.n8n.io/folder-operations/#create-a-folder) a folder
-    * [**Delete**](https://docs.n8n.io/folder-operations/#delete-a-folder) a folder
-    * [**Share**](https://docs.n8n.io/folder-operations/#share-a-folder) a folder
+    * [**Create**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/folder-operations/#create-a-folder) a folder
+    * [**Delete**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/folder-operations/#delete-a-folder) a folder
+    * [**Share**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/folder-operations/#share-a-folder) a folder
 * **Shared Drive**
-    * [**Create**](https://docs.n8n.io/shared-drive-operations/#create-a-shared-drive) a shared drive
-    * [**Delete**](https://docs.n8n.io/shared-drive-operations/#delete-a-shared-drive) a shared drive
-    * [**Get**](https://docs.n8n.io/shared-drive-operations/#get-a-shared-drive) a shared drive
-    * [**Get Many**](https://docs.n8n.io/shared-drive-operations/#get-many-shared-drives) shared drives
-    * [**Update**](https://docs.n8n.io/shared-drive-operations/#update-a-shared-drive) a shared drive
+    * [**Create**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/shared-drive-operations/#create-a-shared-drive) a shared drive
+    * [**Delete**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/shared-drive-operations/#delete-a-shared-drive) a shared drive
+    * [**Get**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/shared-drive-operations/#get-a-shared-drive) a shared drive
+    * [**Get Many**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/shared-drive-operations/#get-many-shared-drives) shared drives
+    * [**Update**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/shared-drive-operations/#update-a-shared-drive) a shared drive
 
 ## Templates and examples
 
@@ -44,11 +44,11 @@ On this page, you'll find a list of operations the Google Drive node supports an
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/common-issues/).
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -56,7 +56,7 @@ You can use the credential you created for this service in the HTTP Request node
 1. Select the service you want to connect to.
 1. Select your credential.
 
-Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
+Refer to [Custom API operations](https://docs.n8n.io/integrations/custom-operations/) for more information.
 
 ---
 
@@ -65,7 +65,7 @@ Refer to [Custom API operations](/integrations/custom-operations.md) for more in
 
 # Google Drive node common issues
 
-Here are some common errors and issues with the [Google Drive node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Google Drive node](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/) and steps to resolve or troubleshoot them.
 
 ## Google hasn't verified this app
 
@@ -81,7 +81,7 @@ If using the OAuth authentication method, you may see an error indicating that y
 
 Most often, the actual cause of this issue is that the URLs don't match between Google's OAuth configuration and n8n. To avoid this, start by reviewing any links included in Google's error message. This will contain details about the exact error that occurred.
 
-If you are self-hostin n8n, check the n8n configuration items used to construct external URLs. Verify that the [`N8N_EDITOR_BASE_URL`](/hosting/configuration/environment-variables/deployment.md) and [`WEBHOOK_URL`](/hosting/configuration/configuration-examples/webhook-url.md) environment variables use fully qualified domains.
+If you are self-hostin n8n, check the n8n configuration items used to construct external URLs. Verify that the [`N8N_EDITOR_BASE_URL`](https://docs.n8n.io/hosting/configuration/environment-variables/deployment/) and [`WEBHOOK_URL`](https://docs.n8n.io/hosting/configuration/configuration-examples/webhook-url/) environment variables use fully qualified domains.
 
 ## Get recent files from Google Drive
 
@@ -112,7 +112,7 @@ The process looks like this:
 
 # Google Drive File and Folder operations
 
-Use this operation to search for files and folders in Google Drive. Refer to [Google Drive](https://docs.n8n.io//) for more information on the Google Drive node itself.
+Use this operation to search for files and folders in Google Drive. Refer to [Google Drive](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/) for more information on the Google Drive node itself.
 
 --8<-- "_snippets/integrations/builtin/app-nodes/ai-tools.md"
 
@@ -122,7 +122,7 @@ Use this operation to search for files and folders in a drive.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **File/Folder**.
 - **Operation**: Select **Search**.
 - **Search Method**: Choose how you want to search:
@@ -151,7 +151,7 @@ Refer to the [Method: files.list | Google Drive](https://developers.google.com/d
 
 # Google Drive File operations
 
-Use this operation to create, delete, change, and manage files in Google Drive. Refer to [Google Drive](https://docs.n8n.io//) for more information on the Google Drive node itself.
+Use this operation to create, delete, change, and manage files in Google Drive. Refer to [Google Drive](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/) for more information on the Google Drive node itself.
 
 --8<-- "_snippets/integrations/builtin/app-nodes/ai-tools.md"
 
@@ -161,7 +161,7 @@ Use this operation to copy a file to a drive.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **File**.
 - **Operation**: Select **Copy**.
 - **File**: Choose a file you want to copy. 
@@ -185,7 +185,7 @@ Refer to the [Method: files.copy | Google Drive](https://developers.google.com/d
 Use this operation to create a new file in a drive from provided text.
 
 Enter these parameters:
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **File**.
 - **Operation**: Select **Create From Text**.
 - **File Content**: Enter the file content to use to create the new file.
@@ -216,7 +216,7 @@ Use this operation to delete a file from a drive.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **File**.
 - **Operation**: Select **Delete**.
 - **File**: Choose a file you want to delete. 
@@ -235,7 +235,7 @@ Use this operation to download a file from a drive.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **File**.
 - **Operation**: Select **Download**.
 - **File**: Choose a file you want to download. 
@@ -260,7 +260,7 @@ Use this operation to move a file to a different location in a drive.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **File**.
 - **Operation**: Select **Move**.
 - **File**: Choose a file you want to move. 
@@ -279,7 +279,7 @@ Use this operation to add sharing permissions to a file.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **File**.
 - **Operation**: Select **Share**.
 - **File**: Choose a file you want to share. 
@@ -311,7 +311,7 @@ Use this operation to update a file.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **File**.
 - **Operation**: Select **Update**.
 - **File to Update**: Choose a file you want to update. 
@@ -343,7 +343,7 @@ Use this operation to upload a file.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **File**.
 - **Operation**: Select **Upload**.
 - **Input Data Field Name**: The name of the input field that contains the binary file data you wish to use.
@@ -375,7 +375,7 @@ Refer to the [Method: files.insert | Google Drive](https://developers.google.com
 
 # Google Drive Folder operations
 
-Use this operation to create, delete, and share folders in Google Drive. Refer to [Google Drive](https://docs.n8n.io//) for more information on the Google Drive node itself.
+Use this operation to create, delete, and share folders in Google Drive. Refer to [Google Drive](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/) for more information on the Google Drive node itself.
 
 --8<-- "_snippets/integrations/builtin/app-nodes/ai-tools.md"
 
@@ -384,7 +384,7 @@ Use this operation to create, delete, and share folders in Google Drive. Refer t
 Use this operation to create a new folder in a drive.
 
 Enter these parameters:
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Folder**.
 - **Operation**: Select **Create**.
 - **Folder Name**: The name to use for the new folder.
@@ -406,7 +406,7 @@ Use this operation to delete a folder from a drive.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Folder**.
 - **Operation**: Select **Delete**.
 - **Folder**: Choose a folder you want to delete. 
@@ -425,7 +425,7 @@ Use this operation to add sharing permissions to a folder.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Folder**.
 - **Operation**: Select **Share**.
 - **Folder**: Choose a file you want to move. 
@@ -458,7 +458,7 @@ Refer to the [REST Resources: files | Google Drive](https://developers.google.co
 
 # Google Drive Shared Drive operations
 
-Use this operation to create, delete, get, and update shared drives in Google Drive. Refer to [Google Drive](https://docs.n8n.io//) for more information on the Google Drive node itself.
+Use this operation to create, delete, get, and update shared drives in Google Drive. Refer to [Google Drive](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/) for more information on the Google Drive node itself.
 
 --8<-- "_snippets/integrations/builtin/app-nodes/ai-tools.md"
 
@@ -468,7 +468,7 @@ Use this operation to create a new shared drive.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Shared Drive**.
 - **Operation**: Select **Create**.
 - **Name**: The name to use for the new shared drive.
@@ -509,7 +509,7 @@ Use this operation to delete a shared drive.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Shared Drive**.
 - **Operation**: Select **Delete**.
 - **Shared Drive**: Choose the shared drive want to delete. 
@@ -524,7 +524,7 @@ Use this operation to get a shared drive.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Shared Drive**.
 - **Operation**: Select **Get**.
 - **Shared Drive**: Choose the shared drive want to get. 
@@ -545,7 +545,7 @@ Use this operation to get many shared drives.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Shared Drive**.
 - **Operation**: Select **Get Many**.
 - **Return All**: Choose whether to return all results or only up to a given limit.
@@ -567,7 +567,7 @@ Use this operation to update a shared drive.
 
 Enter these parameters:
 
-- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io//).
+- **Credential to connect with**: Create or select an existing [Google Drive credentials](https://docs.n8n.io/integrations/builtin/credentials/google/).
 - **Resource**: Select **Shared Drive**.
 - **Operation**: Select **Update**.
 - **Shared Drive**: Choose the shared drive you want to update. 

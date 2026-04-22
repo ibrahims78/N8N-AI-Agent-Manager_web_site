@@ -10,7 +10,7 @@ On this page, you'll find the node parameters for the AWS Bedrock Chat Model nod
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/aws.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/aws/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -33,7 +33,7 @@ Learn more about available models in the [Amazon Bedrock model documentation](ht
 
 ## Proxy limitations
 
-This node doesn't support the [`NO_PROXY` environment variable](/hosting/configuration/environment-variables/deployment.md).
+This node doesn't support the [`NO_PROXY` environment variable](https://docs.n8n.io/hosting/configuration/environment-variables/deployment/).
 
 ## Templates and examples
 
@@ -45,4 +45,4 @@ This node doesn't support the [`NO_PROXY` environment variable](/hosting/configu
 
 Refer to [LangChains's AWS Bedrock Chat Model documentation](https://js.langchain.com/docs/integrations/chat/bedrock/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

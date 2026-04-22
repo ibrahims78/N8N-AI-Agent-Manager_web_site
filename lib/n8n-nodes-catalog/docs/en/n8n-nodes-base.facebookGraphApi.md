@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Facebook Graph API node suppo
 
 > **Credentials**
 >
-> Refer to [Facebook Graph API credentials](/integrations/builtin/credentials/facebookgraph.md) for guidance on setting up authentication.
+> Refer to [Facebook Graph API credentials](https://docs.n8n.io/integrations/builtin/credentials/facebookgraph/) for guidance on setting up authentication.
 
 ## Operations
 
@@ -27,7 +27,7 @@ On this page, you'll find a list of operations the Facebook Graph API node suppo
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 * **Host URL**: The host URL for the request. The following options are available:
     * **Default**: Requests are passed to the `graph.facebook.com` host URL. Used for the majority of requests.

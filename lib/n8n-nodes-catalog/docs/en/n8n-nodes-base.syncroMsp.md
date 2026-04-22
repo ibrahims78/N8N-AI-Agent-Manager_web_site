@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the SyncroMSP node supports and l
 
 > **Credentials**
 >
-> Refer to [SyncroMSP credentials](/integrations/builtin/credentials/syncromsp.md) for guidance on setting up authentication.
+> Refer to [SyncroMSP credentials](https://docs.n8n.io/integrations/builtin/credentials/syncromsp/) for guidance on setting up authentication.
 
 ## Operations
 

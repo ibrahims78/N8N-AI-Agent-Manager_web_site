@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the QuestDB node supports and lin
 
 > **Credentials**
 >
-> Refer to [QuestDB credentials](/integrations/builtin/credentials/questdb.md) for guidance on setting up authentication.
+> Refer to [QuestDB credentials](https://docs.n8n.io/integrations/builtin/credentials/questdb/) for guidance on setting up authentication.
 
 ## Operations
 

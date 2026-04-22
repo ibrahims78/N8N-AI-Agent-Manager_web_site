@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.shopifyTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.shopifytrigger.md",
-  "fetchedAt": "2026-04-22T18:36:08.464Z",
+  "fetchedAt": "2026-04-22T18:58:27.320Z",
   "frontmatter": {
     "raw": {
       "title": "Shopify Trigger node documentation",

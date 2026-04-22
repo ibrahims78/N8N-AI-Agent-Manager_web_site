@@ -10,7 +10,7 @@ On this page, you'll find the node parameters for the Google Gemini Chat Model n
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/googleai.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/googleai/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -40,7 +40,7 @@ n8n dynamically loads models from the Google Gemini API and you'll only see the 
 
 The Google Gemini Chat Model node uses Google's SDK, which doesn't support proxy configuration.
 
-If you need to proxy your connection, as a work around, you can set up a dedicated reverse proxy for Gemini requests and change the **Host** parameter in your [Google Gemini credentials](/integrations/builtin/credentials/googleai.md) to point to your proxy address:
+If you need to proxy your connection, as a work around, you can set up a dedicated reverse proxy for Gemini requests and change the **Host** parameter in your [Google Gemini credentials](https://docs.n8n.io/integrations/builtin/credentials/googleai/) to point to your proxy address:
 
 ![Google Gemini credentials proxy configuration](/api/catalog/docs/assets/_at_n8n__n8n-nodes-langchain.lmChatGoogleGemini/google-gemini-proxy-config.png)
 
@@ -54,4 +54,4 @@ If you need to proxy your connection, as a work around, you can set up a dedicat
 
 Refer to [LangChain's Google Gemini documentation](https://js.langchain.com/docs/integrations/chat/google_generativeai) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

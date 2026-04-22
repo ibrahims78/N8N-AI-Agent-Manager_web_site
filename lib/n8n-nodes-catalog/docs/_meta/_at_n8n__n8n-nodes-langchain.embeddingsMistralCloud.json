@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.embeddingsMistralCloud",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingsmistralcloud.md",
-  "fetchedAt": "2026-04-22T18:36:11.859Z",
+  "fetchedAt": "2026-04-22T18:58:29.918Z",
   "frontmatter": {
     "raw": {
       "title": "Embeddings Mistral Cloud node documentation",

@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Hunter node supports and link
 
 > **Credentials**
 >
-> Refer to [Hunter credentials](/integrations/builtin/credentials/hunter.md) for guidance on setting up authentication.
+> Refer to [Hunter credentials](https://docs.n8n.io/integrations/builtin/credentials/hunter/) for guidance on setting up authentication.
 
 ## Operations
 

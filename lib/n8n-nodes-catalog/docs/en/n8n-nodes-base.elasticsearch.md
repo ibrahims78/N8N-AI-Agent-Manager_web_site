@@ -10,11 +10,11 @@ On this page, you'll find a list of operations the Elasticsearch node supports a
 
 > **Credentials**
 >
-> Refer to [Elasticsearch credentials](/integrations/builtin/credentials/elasticsearch.md) for guidance on setting up authentication.
+> Refer to [Elasticsearch credentials](https://docs.n8n.io/integrations/builtin/credentials/elasticsearch/) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 ## Operations
 
@@ -38,7 +38,7 @@ On this page, you'll find a list of operations the Elasticsearch node supports a
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -46,4 +46,4 @@ You can use the credential you created for this service in the HTTP Request node
 1. Select the service you want to connect to.
 1. Select your credential.
 
-Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
+Refer to [Custom API operations](https://docs.n8n.io/integrations/custom-operations/) for more information.

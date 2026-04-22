@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the HaloPSA node supports and lin
 
 > **Credentials**
 >
-> Refer to [HaloPSA credentials](/integrations/builtin/credentials/halopsa.md) for guidance on setting up authentication.
+> Refer to [HaloPSA credentials](https://docs.n8n.io/integrations/builtin/credentials/halopsa/) for guidance on setting up authentication.
 
 ## Operations
 

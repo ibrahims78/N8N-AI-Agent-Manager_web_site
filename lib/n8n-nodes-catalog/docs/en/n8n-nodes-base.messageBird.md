@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the MessageBird node supports and
 
 > **Credentials**
 >
-> Refer to [MessageBird credentials](/integrations/builtin/credentials/messagebird.md) for guidance on setting up authentication.
+> Refer to [MessageBird credentials](https://docs.n8n.io/integrations/builtin/credentials/messagebird/) for guidance on setting up authentication.
 
 ## Operations
 

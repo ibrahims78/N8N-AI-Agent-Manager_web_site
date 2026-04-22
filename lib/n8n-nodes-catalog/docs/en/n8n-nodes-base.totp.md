@@ -8,19 +8,19 @@ The TOTP node provides a way to generate a TOTP (time-based one-time password).
 
 > **Credentials**
 >
-> Refer to [TOTP credentials](/integrations/builtin/credentials/totp.md) for guidance on setting up authentication.
+> Refer to [TOTP credentials](https://docs.n8n.io/integrations/builtin/credentials/totp/) for guidance on setting up authentication.
 
 ## Node parameters
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 Configure this node with these parameters.
 
 ### Credential to connect with
 
-Select or create a [TOTP credential](/integrations/builtin/credentials/totp.md) for the node to use.
+Select or create a [TOTP credential](https://docs.n8n.io/integrations/builtin/credentials/totp/) for the node to use.
 
 ### Operation
 

@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the PostHog node supports and lin
 
 > **Credentials**
 >
-> Refer to [PostHog credentials](/integrations/builtin/credentials/posthog.md) for guidance on setting up authentication.
+> Refer to [PostHog credentials](https://docs.n8n.io/integrations/builtin/credentials/posthog/) for guidance on setting up authentication.
 
 ## Operations
 

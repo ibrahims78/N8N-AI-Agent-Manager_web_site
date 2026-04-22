@@ -9,7 +9,7 @@ Use the Edit Image node to manipulate and edit images.
 > **Dependencies**
 >
 > 1. If you aren't running n8n on Docker, you need to install [GraphicsMagick](http://www.graphicsmagick.org/README.html).
-> 2. You need to use a node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](https://docs.n8n.io//) node to pass the image file as a data property to the Edit Image node.
+> 2. You need to use a node such as the [Read/Write Files from Disk](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile/) node or the [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) node to pass the image file as a data property to the Edit Image node.
 
 ## Operations
 
@@ -189,7 +189,7 @@ Refer to [Node options](#node-options) for optional configuration options.
 	- **tiff**
 	- **WebP**
 
-The **Text** operation also includes the option for **Font Name or ID**. Select the text font from the dropdown or specify an ID using an [expression](/data/expressions.md).
+The **Text** operation also includes the option for **Font Name or ID**. Select the text font from the dropdown or specify an ID using an [expression](https://docs.n8n.io/data/expressions/).
 
 ## Templates and examples
 

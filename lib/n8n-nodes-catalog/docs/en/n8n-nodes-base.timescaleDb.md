@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the TimescaleDB node supports and
 
 > **Credentials**
 >
-> Refer to [TimescaleDB credentials](/integrations/builtin/credentials/timescaledb.md) for guidance on setting up authentication.
+> Refer to [TimescaleDB credentials](https://docs.n8n.io/integrations/builtin/credentials/timescaledb/) for guidance on setting up authentication.
 
 ## Operations
 

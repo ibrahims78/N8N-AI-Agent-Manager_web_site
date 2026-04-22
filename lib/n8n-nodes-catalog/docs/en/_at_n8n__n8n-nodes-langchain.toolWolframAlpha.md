@@ -4,11 +4,11 @@
 
 # Wolfram|Alpha tool node
 
-Use the Wolfram|Alpha tool node to connect your [agents](/glossary.md#ai-agent) and [chains](/glossary.md#ai-chain) to Wolfram|Alpha's computational intelligence engine.
+Use the Wolfram|Alpha tool node to connect your [agents](https://docs.n8n.io/glossary/#ai-agent) and [chains](https://docs.n8n.io/glossary/#ai-chain) to Wolfram|Alpha's computational intelligence engine.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/wolframalpha.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/wolframalpha/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -28,4 +28,4 @@ Use the Wolfram|Alpha tool node to connect your [agents](/glossary.md#ai-agent) 
 
 Refer to [Wolfram|Alpha's documentation](https://products.wolframalpha.com/api) for more information about the service. You can also view [LangChain's documentation on their WolframAlpha Tool](https://js.langchain.com/docs/integrations/tools/wolframalpha/).
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.philipsHue",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.philipshue.md",
-  "fetchedAt": "2026-04-22T18:36:07.399Z",
+  "fetchedAt": "2026-04-22T18:58:26.393Z",
   "frontmatter": {
     "raw": {
       "title": "Philips Hue node documentation",

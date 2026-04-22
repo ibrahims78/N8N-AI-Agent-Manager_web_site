@@ -10,12 +10,12 @@ The Date & Time node manipulates date and time data and convert it to different 
 >
 > The node relies on the timezone setting. n8n uses either:
 > 
-> 1. The workflow timezone, if set. Refer to [Workflow settings](/workflows/settings.md) for more information.
-> 2. The n8n instance timezone, if the workflow timezone isn't set. The default is `America/New York` for self-hosted instances. n8n Cloud tries to detect the instance owner's timezone when they sign up, falling back to GMT as the default. Self-hosted users can change the instance setting using [Environment variables](/hosting/configuration/environment-variables/timezone-localization.md). Cloud admins can change the instance timezone in the [Admin dashboard](/manage-cloud/set-cloud-timezone.md).
+> 1. The workflow timezone, if set. Refer to [Workflow settings](https://docs.n8n.io/workflows/settings/) for more information.
+> 2. The n8n instance timezone, if the workflow timezone isn't set. The default is `America/New York` for self-hosted instances. n8n Cloud tries to detect the instance owner's timezone when they sign up, falling back to GMT as the default. Self-hosted users can change the instance setting using [Environment variables](https://docs.n8n.io/hosting/configuration/environment-variables/timezone-localization/). Cloud admins can change the instance timezone in the [Admin dashboard](https://docs.n8n.io/manage-cloud/set-cloud-timezone/).
 
 > **Date and time in other nodes**
 >
-> You can work with data and time in the Code node, and in expressions in any node. n8n supports Luxon to help work with date and time in JavaScript. Refer to [Date and time with Luxon](/data/specific-data-types/luxon.md) for more information.
+> You can work with data and time in the Code node, and in expressions in any node. n8n supports Luxon to help work with date and time in JavaScript. Refer to [Date and time with Luxon](https://docs.n8n.io/data/specific-data-types/luxon/) for more information.
 
 ## Operations
 
@@ -184,7 +184,7 @@ This operation has one option: **Include Input Fields**. If you'd like to includ
 
 ## Related resources
 
-The Date & Time node uses [Luxon](https://moment.github.io/luxon). You can also use Luxon in the [Code](/code/code-node.md) node and [expressions](/data/expressions.md). Refer to [Date and time with Luxon](/data/specific-data-types/luxon.md) for more information.
+The Date & Time node uses [Luxon](https://moment.github.io/luxon). You can also use Luxon in the [Code](https://docs.n8n.io/code/code-node/) node and [expressions](https://docs.n8n.io/data/expressions/). Refer to [Date and time with Luxon](https://docs.n8n.io/data/specific-data-types/luxon/) for more information.
 
 ### Supported date formats
 

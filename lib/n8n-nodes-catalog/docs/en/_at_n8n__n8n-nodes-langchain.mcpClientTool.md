@@ -8,14 +8,14 @@ The MCP Client Tool node is a [Model Context Protocol (MCP)](https://modelcontex
 
 > **Credentials**
 >
-> The MCP Client Tool node supports [Bearer](/integrations/builtin/credentials/httprequest.md#using-bearer-auth), generic [header](/integrations/builtin/credentials/httprequest.md#using-header-auth), and [OAuth2](/integrations/builtin/credentials/httprequest.md#using-oauth2) authentication methods.
+> The MCP Client Tool node supports [Bearer](https://docs.n8n.io/integrations/builtin/credentials/httprequest/#using-bearer-auth), generic [header](https://docs.n8n.io/integrations/builtin/credentials/httprequest/#using-header-auth), and [OAuth2](https://docs.n8n.io/integrations/builtin/credentials/httprequest/#using-oauth2) authentication methods.
 
 ## Node parameters
 
 Configure the node with the following parameters.
 
 * **SSE Endpoint**: The SSE endpoint for the MCP server you want to connect to.
-* **Authentication**: The authentication method for authentication to your MCP server. The MCP tool supports [bearer](/integrations/builtin/credentials/httprequest.md#using-bearer-auth), generic [header](/integrations/builtin/credentials/httprequest.md#using-header-auth), and [OAuth2](/integrations/builtin/credentials/httprequest.md#using-oauth2) authentication. Select **None** to attempt to connect without authentication.
+* **Authentication**: The authentication method for authentication to your MCP server. The MCP tool supports [bearer](https://docs.n8n.io/integrations/builtin/credentials/httprequest/#using-bearer-auth), generic [header](https://docs.n8n.io/integrations/builtin/credentials/httprequest/#using-header-auth), and [OAuth2](https://docs.n8n.io/integrations/builtin/credentials/httprequest/#using-oauth2) authentication. Select **None** to attempt to connect without authentication.
 * **Tools to Include**: Choose which tools you want to expose to the AI Agent:
 	* **All**: Expose all the tools given by the MCP server.
 	* **Selected**: Activates a **Tools to Include** parameter where you can select the tools you want to expose to the AI Agent.
@@ -29,10 +29,10 @@ Configure the node with the following parameters.
 
 ## Related resources
 
-n8n also has an [MCP Server Trigger](/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger.md) node that allows you to expose n8n tools to external AI Agents.
+n8n also has an [MCP Server Trigger](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/) node that allows you to expose n8n tools to external AI Agents.
 
 Refer to the [MCP documentation](https://modelcontextprotocol.io/introduction) and [MCP specification](https://modelcontextprotocol.io/specification/) for more details about the protocol, servers, and clients.
 
 Refer to [LangChain's documentation on tools](https://langchain-ai.github.io/langgraphjs/how-tos/tool-calling/) for more information about tools in LangChain.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

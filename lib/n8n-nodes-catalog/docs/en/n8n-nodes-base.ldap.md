@@ -8,7 +8,7 @@ This node allows you to interact with your LDAP servers to create, find, and upd
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/ldap.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/ldap/).
 
 ## Operations
 
@@ -23,13 +23,13 @@ Refer to the sections below for details on configuring the node for each operati
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 ## Compare
 
 Configure this operation using these parameters:
 
-* **Credential to connect with**: Select or create an [LDAP credential](/integrations/builtin/credentials/ldap.md) to connect with.
+* **Credential to connect with**: Select or create an [LDAP credential](https://docs.n8n.io/integrations/builtin/credentials/ldap/) to connect with.
 * **DN**: Enter the Distinguished Name (DN) of the entry to compare.
 * **Attribute ID**: Enter the ID of the attribute to compare.
 * **Value**: Enter the value to compare.
@@ -38,7 +38,7 @@ Configure this operation using these parameters:
 
 Configure this operation using these parameters:
 
-* **Credential to connect with**: Select or create an [LDAP credential](/integrations/builtin/credentials/ldap.md) to connect with.
+* **Credential to connect with**: Select or create an [LDAP credential](https://docs.n8n.io/integrations/builtin/credentials/ldap/) to connect with.
 * **DN**: Enter the Distinguished Name (DN) of the entry to create.
 * **Attributes**: Add the **Attribute ID**/**Value** pairs you'd like to create.
 
@@ -46,14 +46,14 @@ Configure this operation using these parameters:
 
 Configure this operation using these parameters:
 
-* **Credential to connect with**: Select or create an [LDAP credential](/integrations/builtin/credentials/ldap.md) to connect with.
+* **Credential to connect with**: Select or create an [LDAP credential](https://docs.n8n.io/integrations/builtin/credentials/ldap/) to connect with.
 * **DN**: Enter the Distinguished Name (DN) of the entry to be deleted.
 
 ## Rename
 
 Configure this operation using these parameters:
 
-* **Credential to connect with**: Select or create an [LDAP credential](/integrations/builtin/credentials/ldap.md) to connect with.
+* **Credential to connect with**: Select or create an [LDAP credential](https://docs.n8n.io/integrations/builtin/credentials/ldap/) to connect with.
 * **DN**: Enter the current Distinguished Name (DN) of the entry to rename.
 * **New DN**: Enter the new Distinguished Name (DN) for the entry in this field.
 
@@ -61,7 +61,7 @@ Configure this operation using these parameters:
 
 Configure this operation using these parameters:
 
-* **Credential to connect with**: Select or create an [LDAP credential](/integrations/builtin/credentials/ldap.md) to connect with.
+* **Credential to connect with**: Select or create an [LDAP credential](https://docs.n8n.io/integrations/builtin/credentials/ldap/) to connect with.
 * **Base DN**: Enter the Distinguished Name (DN) of the subtree to search in.
 * **Search For**: Select the directory object class to search for.
 * **Attribute**: Select the attribute to search for.
@@ -86,7 +86,7 @@ Refer to [The LDAP Search Operation](https://ldap.com/the-ldap-search-operation/
 
 Configure this operation using these parameters:
 
-* **Credential to connect with**: Select or create an [LDAP credential](/integrations/builtin/credentials/ldap.md) to connect with.
+* **Credential to connect with**: Select or create an [LDAP credential](https://docs.n8n.io/integrations/builtin/credentials/ldap/) to connect with.
 * **DN**: Enter the Distinguished Name (DN) of the entry to update.
 * ***Update Attributes**: Select whether to **Add** new, **Remove** existing, or **Replace** existing attribute.
 * Then enter the **Attribute ID**/**Value** pair you'd like to update.

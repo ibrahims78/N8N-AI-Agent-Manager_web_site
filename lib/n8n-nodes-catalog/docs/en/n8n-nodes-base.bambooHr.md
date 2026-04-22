@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the BambooHR node supports and li
 
 > **Credentials**
 >
-> Refer to [BambooHR credentials](/integrations/builtin/credentials/bamboohr.md) for guidance on setting up authentication.
+> Refer to [BambooHR credentials](https://docs.n8n.io/integrations/builtin/credentials/bamboohr/) for guidance on setting up authentication.
 
 ## Operations
 

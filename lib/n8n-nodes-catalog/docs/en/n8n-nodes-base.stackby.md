@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Stackby node supports and lin
 
 > **Credentials**
 >
-> Refer to [Stackby credentials](/integrations/builtin/credentials/stackby.md) for guidance on setting up authentication.
+> Refer to [Stackby credentials](https://docs.n8n.io/integrations/builtin/credentials/stackby/) for guidance on setting up authentication.
 
 ## Operations
 

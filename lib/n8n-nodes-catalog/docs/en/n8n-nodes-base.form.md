@@ -4,13 +4,13 @@
 
 # n8n Form node
 
-Use the n8n Form node to create user-facing forms with multiple steps. You can add other nodes with custom logic between to process user input. You must start the workflow with the [n8n Form Trigger node](/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger.md).
+Use the n8n Form node to create user-facing forms with multiple steps. You can add other nodes with custom logic between to process user input. You must start the workflow with the [n8n Form Trigger node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger/).
 
 ## Setting up the node
 
 ### Set default selections with query parameters
 
-You can set the initial values for fields by using [query parameters](https://en.wikipedia.org/wiki/Query_string#Web_forms) with the initial URL provided by the [n8n Form Trigger node](/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger.md). Every page in the form receives the same query parameters sent to the n8n Form Trigger node URL.
+You can set the initial values for fields by using [query parameters](https://en.wikipedia.org/wiki/Query_string#Web_forms) with the initial URL provided by the [n8n Form Trigger node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger/). Every page in the form receives the same query parameters sent to the n8n Form Trigger node URL.
 
 > **Only for production**
 >
@@ -57,12 +57,12 @@ When serving the form, you can pass values for hidden fields using [query parame
 
 ### Defining the form using JSON
 
-Use **Define Form** > **Using JSON** to define the fields of your form with a [JSON array of objects](/data/data-structure.md). Each object defines a single field by using a combination of these keys:
+Use **Define Form** > **Using JSON** to define the fields of your form with a [JSON array of objects](https://docs.n8n.io/data/data-structure/). Each object defines a single field by using a combination of these keys:
 
 - `fieldLabel`: The label that appears above the input field on the rendered form. 
 - `fieldName`: The field name that is used in the output of the Form node and to reference the field in expressions.
 - `fieldType`: Choose from `checkbox`, `date`, `dropdown`, `email`, `file`, `hiddenField`, `html`, `number`, `password`, `radio`, `text`, or `textarea`.
-    - Use `date` to include a date picker in the form. Refer to [Date and time with Luxon](/data/specific-data-types/luxon.md) for more information on formatting dates.
+    - Use `date` to include a date picker in the form. Refer to [Date and time with Luxon](https://docs.n8n.io/data/specific-data-types/luxon/) for more information on formatting dates.
 	- When using `dropdown`, set the choices with `fieldOptions` (reference the example below). By default, the dropdown is single-choice. To make it multiple-choice, set `multiselect` to `true`. As an alternative, you can use `checkbox` or `radio` together with `fieldOptions` too.
 	- When using `file`, set `multipleFiles` to `true` to allow users to select more than one file. To define the file types to allow, set `acceptFileTypes` to a string containing a comma-separated list of file extensions (reference the example below).
 	- Use `hiddenField` to add a hidden field to your form. Refer to [Including hidden fields](#including-hidden-fields) for more information.
@@ -219,7 +219,7 @@ This workflow demonstrates mutually exclusive branching. Each selection can only
 
 #### Workflows that may execute multiple branches
 
-Form workflows that send data to multiple branches at the same time require more care. When multiple branches receive data during an execution (for example, from a [switch](/integrations/builtin/core-nodes/n8n-nodes-base.switch.md) node), n8n executes each branch that receives data [sequentially](/flow-logic/execution-order.md). Upon reaching the end of one branch, the execution will move to the next branch with data.
+Form workflows that send data to multiple branches at the same time require more care. When multiple branches receive data during an execution (for example, from a [switch](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.switch/) node), n8n executes each branch that receives data [sequentially](https://docs.n8n.io/flow-logic/execution-order/). Upon reaching the end of one branch, the execution will move to the next branch with data.
 
 n8n only executes a single **Form Ending** n8n Form node for each execution. When multiple branches of a form workflow receive data, n8n ignores all Form Ending nodes except for the one associated with the final branch.
 
@@ -239,7 +239,7 @@ Select **Add Option** to view more configuration options:
 
 ### Build and test workflows
 
-While building or testing a workflow, use the **Test URL** in the [n8n Form Trigger node](/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger.md). Using a test URL ensures that you can view the incoming data in the editor UI, which is useful for debugging. 
+While building or testing a workflow, use the **Test URL** in the [n8n Form Trigger node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger/). Using a test URL ensures that you can view the incoming data in the editor UI, which is useful for debugging. 
 
 There are two ways to test:
 

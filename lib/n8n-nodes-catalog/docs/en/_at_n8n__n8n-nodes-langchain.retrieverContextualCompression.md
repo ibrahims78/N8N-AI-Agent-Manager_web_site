@@ -4,7 +4,7 @@
 
 # Contextual Compression Retriever node
 
-The Contextual Compression Retriever node improves the answers returned from [vector store](/glossary.md#ai-vector-store) document similarity searches by taking into account the context from the query.
+The Contextual Compression Retriever node improves the answers returned from [vector store](https://docs.n8n.io/glossary/#ai-vector-store) document similarity searches by taking into account the context from the query.
 
 > **Parameter resolution in sub-nodes**
 >
@@ -24,4 +24,4 @@ The Contextual Compression Retriever node improves the answers returned from [ve
 
 Refer to [LangChain's contextual compression retriever documentation](https://js.langchain.com/docs/how_to/contextual_compression/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

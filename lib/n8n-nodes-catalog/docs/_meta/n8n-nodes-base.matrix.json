@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.matrix",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.matrix.md",
-  "fetchedAt": "2026-04-22T18:36:05.646Z",
+  "fetchedAt": "2026-04-22T18:58:25.161Z",
   "frontmatter": {
     "raw": {
       "title": "Matrix node documentation",

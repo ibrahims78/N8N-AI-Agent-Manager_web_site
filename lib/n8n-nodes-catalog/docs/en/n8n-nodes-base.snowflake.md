@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Snowflake node supports and l
 
 > **Credentials**
 >
-> Refer to [Snowflake credentials](/integrations/builtin/credentials/snowflake.md) for guidance on setting up authentication.
+> Refer to [Snowflake credentials](https://docs.n8n.io/integrations/builtin/credentials/snowflake/) for guidance on setting up authentication.
 
 ## Operations
 

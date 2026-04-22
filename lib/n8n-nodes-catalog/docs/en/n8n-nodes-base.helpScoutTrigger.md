@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/helpscout.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/helpscout/).
 
 > **Examples and templates**
 >

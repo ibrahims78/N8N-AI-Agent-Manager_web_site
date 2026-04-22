@@ -11,7 +11,7 @@ On this page, you'll find a list of operations the marketstack node supports and
 
 > **Credentials**
 >
-> Refer to [marketstack credentials](/integrations/builtin/credentials/marketstack.md) for guidance on setting up authentication.
+> Refer to [marketstack credentials](https://docs.n8n.io/integrations/builtin/credentials/marketstack/) for guidance on setting up authentication.
 
 ## Operations
 

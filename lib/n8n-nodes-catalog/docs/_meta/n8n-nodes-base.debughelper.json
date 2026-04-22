@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.debughelper",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.debughelper.md",
-  "fetchedAt": "2026-04-22T18:36:00.970Z",
+  "fetchedAt": "2026-04-22T18:58:21.719Z",
   "frontmatter": {
     "raw": {
       "title": "Debug Helper",

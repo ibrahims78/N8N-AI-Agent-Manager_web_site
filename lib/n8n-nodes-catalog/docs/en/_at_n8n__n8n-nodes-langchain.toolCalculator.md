@@ -4,7 +4,7 @@
 
 # Calculator node
 
-The Calculator node is a [tool](/glossary.md#ai-tool) that allows an [agent](/glossary.md#ai-agent) to run mathematical calculations.
+The Calculator node is a [tool](https://docs.n8n.io/glossary/#ai-tool) that allows an [agent](https://docs.n8n.io/glossary/#ai-agent) to run mathematical calculations.
 
 > **Parameter resolution in sub-nodes**
 >
@@ -24,4 +24,4 @@ The Calculator node is a [tool](/glossary.md#ai-tool) that allows an [agent](/gl
 
 Refer to [LangChain's documentation on tools](https://langchain-ai.github.io/langgraphjs/how-tos/tool-calling/) for more information about tools in LangChain.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

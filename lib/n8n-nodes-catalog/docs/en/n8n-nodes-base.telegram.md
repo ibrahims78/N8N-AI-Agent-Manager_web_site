@@ -10,43 +10,43 @@ On this page, you'll find a list of operations the Telegram node supports and li
 
 > **Credentials**
 >
-> Refer to [Telegram credentials](/integrations/builtin/credentials/telegram.md) for guidance on setting up authentication.
+> Refer to [Telegram credentials](https://docs.n8n.io/integrations/builtin/credentials/telegram/) for guidance on setting up authentication.
 
 ## Operations
 
-* [**Chat** operations](https://docs.n8n.io/chat-operations/)
-    * [**Get**](https://docs.n8n.io/chat-operations/#get-chat) up-to-date information about a chat.
-    * [**Get Administrators**](https://docs.n8n.io/chat-operations/#get-administrators): Get a list of all administrators in a chat.
-    * [**Get Member**](https://docs.n8n.io/chat-operations/#get-chat-member): Get the details of a chat member.
-    * [**Leave**](https://docs.n8n.io/chat-operations/#leave-chat) a chat.
-    * [**Set Description**](https://docs.n8n.io/chat-operations/#set-description) of a chat.
-    * [**Set Title**](https://docs.n8n.io/chat-operations/#set-title) of a chat.
-* [**Callback** operations](https://docs.n8n.io/callback-operations/)
-    * [**Answer Query**](https://docs.n8n.io/callback-operations/#answer-query): Send answers to callback queries sent from [inline keyboards](https://core.telegram.org/bots/features#inline-keyboards).
-    * [**Answer Inline Query**](https://docs.n8n.io/callback-operations/#answer-inline-query): Send answers to callback queries sent from inline queries.
-* [**File** operations](https://docs.n8n.io/file-operations/)
-    * [**Get File**](https://docs.n8n.io/file-operations/#get-file) from Telegram.
-* [**Message** operations](https://docs.n8n.io/message-operations/)
-    * [**Delete Chat Message**](https://docs.n8n.io/message-operations/#delete-chat-message).
-    * [**Edit Message Text**](https://docs.n8n.io/message-operations/#edit-message-text): Edit the text of an existing message.
-    * [**Pin Chat Message**](https://docs.n8n.io/message-operations/#pin-chat-message) for the chat.
-    * [**Send Animation**](https://docs.n8n.io/message-operations/#send-animation) to the chat.
+* [**Chat** operations](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/chat-operations/)
+    * [**Get**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/chat-operations/#get-chat) up-to-date information about a chat.
+    * [**Get Administrators**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/chat-operations/#get-administrators): Get a list of all administrators in a chat.
+    * [**Get Member**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/chat-operations/#get-chat-member): Get the details of a chat member.
+    * [**Leave**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/chat-operations/#leave-chat) a chat.
+    * [**Set Description**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/chat-operations/#set-description) of a chat.
+    * [**Set Title**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/chat-operations/#set-title) of a chat.
+* [**Callback** operations](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/callback-operations/)
+    * [**Answer Query**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/callback-operations/#answer-query): Send answers to callback queries sent from [inline keyboards](https://core.telegram.org/bots/features#inline-keyboards).
+    * [**Answer Inline Query**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/callback-operations/#answer-inline-query): Send answers to callback queries sent from inline queries.
+* [**File** operations](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/file-operations/)
+    * [**Get File**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/file-operations/#get-file) from Telegram.
+* [**Message** operations](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/)
+    * [**Delete Chat Message**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#delete-chat-message).
+    * [**Edit Message Text**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#edit-message-text): Edit the text of an existing message.
+    * [**Pin Chat Message**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#pin-chat-message) for the chat.
+    * [**Send Animation**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#send-animation) to the chat.
         * For use with GIFs or H.264/MPEG-4 AVC videos without sound up to 50 MB in size.
-    * [**Send Audio**](https://docs.n8n.io/message-operations/#send-audio) file to the chat and display it in the music player.
-    * [**Send Chat Action**](https://docs.n8n.io/message-operations/#send-chat-action): Tell the user that something is happening on the bot's side. The status is set for 5 seconds or less.
-    * [**Send Document**](https://docs.n8n.io/message-operations/#send-document) to the chat.
-    * [**Send Location**](https://docs.n8n.io/message-operations/#send-location): Send a geolocation to the chat.
-    * [**Send Media Group**](https://docs.n8n.io/message-operations/#send-media-group): Send a group of photos and/or videos.
-    * [**Send Message**](https://docs.n8n.io/message-operations/#send-message) to the chat.
-    * [**Send Photo**](https://docs.n8n.io/message-operations/#send-photo) to the chat.
-    * [**Send Sticker**](https://docs.n8n.io/message-operations/#send-sticker) to the chat.
+    * [**Send Audio**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#send-audio) file to the chat and display it in the music player.
+    * [**Send Chat Action**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#send-chat-action): Tell the user that something is happening on the bot's side. The status is set for 5 seconds or less.
+    * [**Send Document**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#send-document) to the chat.
+    * [**Send Location**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#send-location): Send a geolocation to the chat.
+    * [**Send Media Group**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#send-media-group): Send a group of photos and/or videos.
+    * [**Send Message**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#send-message) to the chat.
+    * [**Send Photo**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#send-photo) to the chat.
+    * [**Send Sticker**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#send-sticker) to the chat.
         * For use with static .WEBP, animated .TGS, or video .WEBM stickers.
-    * [**Send Video**](https://docs.n8n.io/message-operations/#send-video) to the chat.
-    * [**Unpin Chat Message**](https://docs.n8n.io/message-operations/#unpin-chat-message) from the chat.
+    * [**Send Video**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#send-video) to the chat.
+    * [**Unpin Chat Message**](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#unpin-chat-message) from the chat.
     
     > **Add bot to channel**
 >
-> To use most of the **Message** operations, you must add your bot to a channel so that it can send messages to that channel. Refer to [Common Issues | Add a bot to a Telegram channel](https://docs.n8n.io/common-issues/#add-a-bot-to-a-telegram-channel) for more information.
+> To use most of the **Message** operations, you must add your bot to a channel so that it can send messages to that channel. Refer to [Common Issues | Add a bot to a Telegram channel](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#add-a-bot-to-a-telegram-channel) for more information.
 >     ///
 > 
 >     ## Templates and examples
@@ -60,11 +60,11 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > Refer to [Telegram's API documentation](https://core.telegram.org/bots/api) for more information about the service.
 > 
-> n8n provides a trigger node for Telegram. Refer to the trigger node docs [here](https://docs.n8n.io//) for more information.
+> n8n provides a trigger node for Telegram. Refer to the trigger node docs [here](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) for more information.
 > 
 > ## Common issues
 > 
-> For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/common-issues/).
+> For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/).
 > 
 > 
 > ---
@@ -74,7 +74,7 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > # Telegram node common issues
 > 
-> Here are some common errors and issues with the [Telegram node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+> Here are some common errors and issues with the [Telegram node](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/) and steps to resolve or troubleshoot them.
 > 
 > ## Add a bot to a Telegram channel
 > 
@@ -95,7 +95,7 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > There are three ways to get that ID:
 > 
-> 1. From the Telegram Trigger: Use the [Telegram Trigger](https://docs.n8n.io//) node in your workflow to get a Chat ID. This node can trigger on different events and returns a Chat ID on successful execution.
+> 1. From the Telegram Trigger: Use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node in your workflow to get a Chat ID. This node can trigger on different events and returns a Chat ID on successful execution.
 > 2. From your web browser: Open Telegram in a web browser and open the group chat. The group's Chat ID is the series of digits behind the letter "g." Prefix your group Chat ID with a `-` when you enter it in n8n.
 > 3. Invite Telegram's [@RawDataBot](https://t.me/RawDataBot) to the group: Once you add it, the bot outputs a JSON file that includes a `chat` object. The `id` for that object is the group Chat ID. Then remove the RawDataBot from your group.
 > 
@@ -103,15 +103,15 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > The Telegram API has a [limitation](https://core.telegram.org/bots/faq#broadcasting-to-users) of sending only 30 messages per second. Follow these steps to send more than 30 messages:
 > 
-> 1. **Loop Over Items node**: Use the [Loop Over Items](/integrations/builtin/core-nodes/n8n-nodes-base.splitinbatches.md) node to get at most 30 chat IDs from your database.
+> 1. **Loop Over Items node**: Use the [Loop Over Items](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.splitinbatches/) node to get at most 30 chat IDs from your database.
 > 2. **Telegram node**: Connect the Telegram node with the Loop Over Items node. Use the **Expression Editor** to select the Chat IDs from the Loop Over Items node.
-> 3. **Code node**: Connect the [Code](https://docs.n8n.io//) node with the Telegram node. Use the Code node to wait for a few seconds before fetching the next batch of chat IDs. Connect this node with the Loop Over Items node.
+> 3. **Code node**: Connect the [Code](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.code/) node with the Telegram node. Use the Code node to wait for a few seconds before fetching the next batch of chat IDs. Connect this node with the Loop Over Items node.
 > 
 > You can also use this [workflow](https://n8n.io/workflows/772).
 > 
 > ## Remove the n8n attribution from sent messages
 > 
-> If you're using the node to [send Telegram messages](https://docs.n8n.io/message-operations/#send-message), the message automatically gets an n8n attribution appended to the end:
+> If you're using the node to [send Telegram messages](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#send-message), the message automatically gets an n8n attribution appended to the end:
 > 
 > > This message was sent automatically with n8n
 > 
@@ -121,7 +121,7 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 2. Select **Append n8n attribution**.
 > 3. Turn the toggle off.
 > 
-> Refer to [Send Message additional fields](https://docs.n8n.io/message-operations/#send-message-additional-fields) for more information.
+> Refer to [Send Message additional fields](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/message-operations/#send-message-additional-fields) for more information.
 > 
 > ---
 > 
@@ -130,7 +130,7 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > # Telegram node Callback operations
 > 
-> Use these operations to respond to callback queries sent from the in-line keyboard or in-line queries. Refer to [Telegram](https://docs.n8n.io//) for more information on the Telegram node itself.
+> Use these operations to respond to callback queries sent from the in-line keyboard or in-line queries. Refer to [Telegram](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/) for more information on the Telegram node itself.
 > 
 > --8<-- "_snippets/integrations/builtin/app-nodes/ai-tools.md"
 > 
@@ -140,11 +140,11 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > Enter these parameters:
 > 
-> * **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+> * **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 > * **Resource**: Select **Callback**.
 > * **Operation**: Select **Answer Query**.
 > * **Query ID**: Enter the unique identifier of the query you want to answer.
->     * To feed a Query ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node triggered on the **Callback Query**.
+>     * To feed a Query ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node triggered on the **Callback Query**.
 > * **Results**: Enter a JSON-serialized array of results you want to use as answers to the query. Refer to the Telegram [InlineQueryResults](https://core.telegram.org/bots/api#inlinequeryresult) documentation for more information on formatting your array.
 > 
 > Refer to the Telegram Bot API [answerCallbackQuery](https://core.telegram.org/bots/api#answercallbackquery) documentation for more information.
@@ -166,11 +166,11 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > Enter these parameters:
 > 
-> * **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+> * **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 > * **Resource**: Select **Callback**.
 > * **Operation**: Select **Answer Inline Query**.
 > * **Query ID**: Enter the unique identifier of the query you want to answer.
->     * To feed a Query ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node triggered on the **Inline Query**.
+>     * To feed a Query ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node triggered on the **Inline Query**.
 > * **Results**: Enter a JSON-serialized array of results you want to use as answers to the query. Refer to the Telegram [InlineQueryResults](https://core.telegram.org/bots/api#inlinequeryresult) documentation for more information on formatting your array.
 > 
 > Telegram allows a maximum of 50 results per query.
@@ -195,7 +195,7 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > # Telegram node Chat operations
 > 
-> Use these operations to get information about chats, members, administrators, leave chat, and set chat titles and descriptions. Refer to [Telegram](https://docs.n8n.io//) for more information on the Telegram node itself.
+> Use these operations to get information about chats, members, administrators, leave chat, and set chat titles and descriptions. Refer to [Telegram](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/) for more information on the Telegram node itself.
 > 
 > --8<-- "_snippets/integrations/builtin/app-nodes/ai-tools.md"
 > 
@@ -205,11 +205,11 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > Enter these parameters:
 > 
-> * **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+> * **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 > * **Resource**: Select **Chat**.
 > * **Operation**: Select **Get**.
 > * **Chat ID**: Enter the Chat ID or username of the target channel in the format `@channelusername`.
->     * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+>     * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 > 
 > Refer to the Telegram Bot API [getChat](https://core.telegram.org/bots/api#getchat) documentation for more information.
 > 
@@ -219,11 +219,11 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > Enter these parameters:
 > 
-> * **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+> * **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 > * **Resource**: Select **Chat**.
 > * **Operation**: Select **Get Administrators**.
 > * **Chat ID**: Enter the Chat ID or username of the target channel in the format `@channelusername`.
->     * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+>     * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 > 
 > Refer to the Telegram Bot API [getChatAdministrators](https://core.telegram.org/bots/api#getchatadministrators) documentation for more information.
 > 
@@ -233,11 +233,11 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > Enter these parameters:
 > 
-> * **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+> * **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 > * **Resource**: Select **Chat**.
 > * **Operation**: Select **Get Member**.
 > * **Chat ID**: Enter the Chat ID or username of the target channel in the format `@channelusername`.
->     * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+>     * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 > * **User ID**: Enter the unique identifier of the user whose information you want to get.
 > 
 > Refer to the Telegram Bot API [getChatMember](https://core.telegram.org/bots/api#getchatmember) documentation for more information.
@@ -248,11 +248,11 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > Enter these parameters:
 > 
-> * **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+> * **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 > * **Resource**: Select **Chat**.
 > * **Operation**: Select **Leave**.
 > * **Chat ID**: Enter the Chat ID or username of the channel you wish to leave in the format `@channelusername`.
->     * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+>     * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 > 
 > Refer to the Telegram Bot API [leaveChat](https://core.telegram.org/bots/api#leavechat) documentation for more information.
 > 
@@ -262,11 +262,11 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > Enter these parameters:
 > 
-> * **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+> * **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 > * **Resource**: Select **Chat**.
 > * **Operation**: Select **Set Description**.
 > * **Chat ID**: Enter the Chat ID or username of the channel you wish to leave in the format `@channelusername`.
->     * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+>     * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 > * **Description**: Enter the new description you'd like to set the chat to use, maximum of 255 characters.
 > 
 > Refer to the Telegram Bot API [setChatDescription](https://core.telegram.org/bots/api#setchatdescription) documentation for more information.
@@ -277,11 +277,11 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > Enter these parameters:
 > 
-> * **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+> * **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 > * **Resource**: Select **Chat**.
 > * **Operation**: Select **Set Title**.
 > * **Chat ID**: Enter the Chat ID or username of the channel you wish to leave in the format `@channelusername`.
->     * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+>     * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 > * **Title**: Enter the new title you'd like to set the chat to use, maximum of 255 characters.
 > 
 > Refer to the Telegram Bot API [setChatTitle](https://core.telegram.org/bots/api#setchattitle) documentation for more information.
@@ -293,7 +293,7 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > # Telegram node File operations
 > 
-> Use this operation to get a file from Telegram. Refer to [Telegram](https://docs.n8n.io//) for more information on the Telegram node itself.
+> Use this operation to get a file from Telegram. Refer to [Telegram](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/) for more information on the Telegram node itself.
 > 
 > --8<-- "_snippets/integrations/builtin/app-nodes/ai-tools.md"
 > 
@@ -303,7 +303,7 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > Enter these parameters:
 > 
-> * **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+> * **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 > * **Resource**: Select **File**.
 > * **Operation**: Select **Get**.
 > * **File ID**: Enter the ID of the file you want to get.
@@ -318,8 +318,8 @@ On this page, you'll find a list of operations the Telegram node supports and li
 > 
 > # Telegram node Message operations
 > 
-> Use these operations to send, edit, and delete messages in a chat; send files to a chat; and pin/unpin message from a chat. Refer to [Telegram](https://docs.n8n.io//) for more information on the Telegram node itself. note | Add bot to channel
-To use most of these operations, you must add your bot to a channel so that it can send messages to that channel. Refer to [Common Issues | Add a bot to a Telegram channel](https://docs.n8n.io/common-issues/#add-a-bot-to-a-telegram-channel) for more information.
+> Use these operations to send, edit, and delete messages in a chat; send files to a chat; and pin/unpin message from a chat. Refer to [Telegram](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/) for more information on the Telegram node itself. note | Add bot to channel
+To use most of these operations, you must add your bot to a channel so that it can send messages to that channel. Refer to [Common Issues | Add a bot to a Telegram channel](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#add-a-bot-to-a-telegram-channel) for more information.
 ///
 
 --8<-- "_snippets/integrations/builtin/app-nodes/ai-tools.md"
@@ -332,11 +332,11 @@ Use this operation to delete a message from chat using the Bot API [deleteMessag
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Delete Chat Message**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to delete in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Message ID**: Enter the unique identifier of the message you want to delete.
 
 Refer to the Telegram Bot API [deleteMessage](https://core.telegram.org/bots/api#deletemessage) documentation for more information.
@@ -347,11 +347,11 @@ Use this operation to edit the text of an existing message using the Bot API [ed
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Edit Message Text**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to leave in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Message ID**: Enter the unique identifier of the message you want to edit.
 * **Reply Markup**: Select whether to use the **Inline Keyboard** to display the InlineKeyboardMarkup **None** not to. This sets the `reply_markup` parameter. Refer to the [InlineKeyboardMarkup](https://core.telegram.org/bots/api#inlinekeyboardmarkup) documentation for more information.
 * **Text**: Enter the text you want to edit the message to.
@@ -373,11 +373,11 @@ Use this operation to pin a message for the chat using the Bot API [pinChatMessa
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Pin Chat Message**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to pin the message to in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Message ID**: Enter the unique identifier of the message you want to pin.
 
 Refer to the Telegram Bot API [pinChatMessage](https://core.telegram.org/bots/api#pinchatmessage) documentation for more information.
@@ -396,11 +396,11 @@ Use this operation to send GIFs or H.264/MPEG-4 AVC videos without sound up to 5
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Send Animation**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to send the animation to in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Binary File**: To send a binary file from the node itself, turn this option on. If you turn this parameter on, you must enter the **Input Binary Field** containing the file you want to send.
 * **Animation**: If you aren't using the **Binary File**, enter the animation to send here. Pass a `file_id` to send a file that exists on the Telegram servers (recommended) or an HTTP URL for Telegram to get a file from the internet.
 * **Reply Markup**: Use this parameter to set more interface options. Refer to [Reply Markup parameters](#reply-markup-parameters) for more information on these options and how to use them.
@@ -433,11 +433,11 @@ Use this operation to send an audio file to the chat and display it in the music
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Send Audio**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to send the audio to in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Binary File**: To send a binary file from the node itself, turn this option on. If you turn this parameter on, you must enter the **Input Binary Field** containing the file you want to send.
 * **Audio**: If you aren't using the **Binary File**, enter the audio to send here. Pass a `file_id` to send a file that exists on the Telegram servers (recommended) or an HTTP URL for Telegram to get a file from the internet.
 * **Reply Markup**: Use this parameter to set more interface options. Refer to [Reply Markup parameters](#reply-markup-parameters) for more information on these options and how to use them.
@@ -469,11 +469,11 @@ Use this operation when you need to tell the user that something is happening on
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Send Chat Action**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to send the chat action to in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Action**: Select the action you'd like to broadcast the bot as taking. The options here include: **Find Location**, **Typing**, **Recording** audio or video, and **Uploading** file types.
 
 Refer to Telegram's Bot API [sendChatAction](https://core.telegram.org/bots/api#sendchataction) documentation for more information.
@@ -484,11 +484,11 @@ Use this operation to send a document to the chat using the Bot API [sendDocumen
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Send Document**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to send the document to in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Binary File**: To send a binary file from the node itself, turn this option on. If you turn this parameter on, you must enter the **Input Binary Field** containing the file you want to send.
 * **Document**: If you aren't using the **Binary File**, enter the document to send here. Pass a `file_id` to send a file that exists on the Telegram servers (recommended) or an HTTP URL for Telegram to get a file from the internet.
 * **Reply Markup**: Use this parameter to set more interface options. Refer to [Reply Markup parameters](#reply-markup-parameters) for more information on these options and how to use them.
@@ -517,11 +517,11 @@ Use this operation to send a geolocation to the chat using the Bot API [sendLoca
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Send Location**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to send the location to in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Latitude**: Enter the latitude of the location.
 * **Longitude**: Enter the longitude of the location.
 * **Reply Markup**: Use this parameter to set more interface options. Refer to [Reply Markup parameters](#reply-markup-parameters) for more information on these options and how to use them.
@@ -545,11 +545,11 @@ Use this operation to send a group of photos and/or videos using the Bot API [se
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Send Media Group**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to send the media group to in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Media**: Use **Add Media** to add different media types to your media group. For each medium, select:
     * **Type**: The type of media this is. Choose from **Photo** and **Video**.
     * **Media File**: Enter the media file to send. Pass a `file_id` to send a file that exists on the Telegram servers (recommended) or an HTTP URL for Telegram to get a file from the internet.
@@ -575,18 +575,18 @@ Use this operation to send a message to the chat using the Bot API [sendMessage]
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Send Message**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to send the message to in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Text**: Enter the text to send, max 4096 characters after entities parsing.
 
 Refer to Telegram's Bot API [sendMessage](https://core.telegram.org/bots/api#sendmessage) documentation for more information.
 
 > **Send Message limits**
 >
-> Telegram limits the number of messages you can send to 30 per second. If you expect to hit this limit, refer to [Send more than 30 messages per second](https://docs.n8n.io/common-issues/#send-more-than-30-messages-per-second) for a suggested workaround.
+> Telegram limits the number of messages you can send to 30 per second. If you expect to hit this limit, refer to [Send more than 30 messages per second](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#send-more-than-30-messages-per-second) for a suggested workaround.
 
 <!-- vale off -->
 ### Send Message additional fields
@@ -608,11 +608,11 @@ Use this operation to send a message to the chat using the Bot API [`sendMessage
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Send and Wait for Response**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to send the message to in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Message**: Enter the text to send.
 * **Response Type**: The approval or response type to use:
 	* **Approval**: Users can approve or disapprove from within the message.
@@ -623,7 +623,7 @@ Refer to Telegram's Bot API [`sendMessage`](https://core.telegram.org/bots/api#s
 
 > **Send Message limits**
 >
-> Telegram limits the number of messages you can send to 30 per second. If you expect to hit this limit, refer to [Send more than 30 messages per second](https://docs.n8n.io/common-issues/#send-more-than-30-messages-per-second) for a suggested workaround.
+> Telegram limits the number of messages you can send to 30 per second. If you expect to hit this limit, refer to [Send more than 30 messages per second](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#send-more-than-30-messages-per-second) for a suggested workaround.
 
 <!-- vale off -->
 ### Send and Wait for Response additional fields
@@ -652,7 +652,7 @@ When using the Free Text response type, the following options are available:
 
 When using the Custom Form response type, you build a form using the fields and options you want.
 
-You can customize each form element with the settings outlined in the [n8n Form trigger's form elements](/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger.md#form-elements). To add more fields, select the **Add Form Element** button.
+You can customize each form element with the settings outlined in the [n8n Form trigger's form elements](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger/#form-elements). To add more fields, select the **Add Form Element** button.
 
 The following options are also available:
 
@@ -670,11 +670,11 @@ Use this operation to send a photo to the chat using the Bot API [sendPhoto](htt
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Send Photo**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to send the photo to in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Binary File**: To send a binary file from the node itself, turn this option on. If you turn this parameter on, you must enter the **Input Binary Field** containing the file you want to send.
 * **Photo**: If you aren't using the **Binary File**, enter the photo to send here. Pass a `file_id` to send a file that exists on the Telegram servers (recommended) or an HTTP URL for Telegram to get a file from the internet.
 * **Reply Markup**: Use this parameter to set more interface options. Refer to [Reply Markup parameters](#reply-markup-parameters) for more information on these options and how to use them.
@@ -699,11 +699,11 @@ Use this method to send static .WEBP, animated .TGS, or video .WEBM stickers usi
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Send Sticker**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to send the sticker to in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Binary File**: To send a binary file from the node itself, turn this option on. If you turn this parameter on, you must enter the **Input Binary Field** containing the file you want to send.
 * **Sticker**: If you aren't using the **Binary File**, enter the photo to send here. Pass a `file_id` to send a file that exists on the Telegram servers (recommended) or an HTTP URL for Telegram to get a file from the internet.
 * **Reply Markup**: Use this parameter to set more interface options. Refer to [Reply Markup parameters](#reply-markup-parameters) for more information on these options and how to use them.
@@ -726,11 +726,11 @@ Use this operation to send a video to the chat using the Bot API [sendVideo](htt
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Send Video**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to send the video to in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Binary File**: To send a binary file from the node itself, turn this option on. If you turn this parameter on, you must enter the **Input Binary Field** containing the file you want to send.
 * **Video**: If you aren't using the **Binary File**, enter the video to send here. Pass a `file_id` to send a file that exists on the Telegram servers (recommended) or an HTTP URL for Telegram to get a file from the internet.
 * **Reply Markup**: Use this parameter to set more interface options. Refer to [Reply Markup parameters](#reply-markup-parameters) for more information on these options and how to use them.
@@ -763,11 +763,11 @@ Use this operation to unpin a message from the chat using the Bot API [unpinChat
 
 Enter these parameters:
 
-* **Credential to connect with**: Create or select an existing [Telegram credential](/integrations/builtin/credentials/telegram.md).
+* **Credential to connect with**: Create or select an existing [Telegram credential](https://docs.n8n.io/integrations/builtin/credentials/telegram/).
 * **Resource**: Select **Message**.
 * **Operation**: Select **Pin Chat Message**.
 * **Chat ID**: Enter the Chat ID or username of the channel you wish to unpin the message from in the format `@channelusername`.
-    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io//) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/common-issues/#get-the-chat-id) for more information.
+    * To feed a Chat ID directly into this node, use the [Telegram Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/) node. Refer to [Common Issues | Get the Chat ID](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/common-issues/#get-the-chat-id) for more information.
 * **Message ID**: Enter the unique identifier of the message you want to unpin.
 
 Refer to the Telegram Bot API [unpinChatMessage](https://core.telegram.org/bots/api#unpinchatmessage) documentation for more information.

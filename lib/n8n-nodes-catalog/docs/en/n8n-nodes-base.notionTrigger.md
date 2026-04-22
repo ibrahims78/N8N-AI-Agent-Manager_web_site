@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/notion.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/notion/).
 
 > **Examples and templates**
 >
@@ -21,7 +21,7 @@
 
 ## Related resources
 
-n8n provides an app node for Notion. You can find the node docs [here](https://docs.n8n.io//).
+n8n provides an app node for Notion. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.notion/).
 
 View [example workflows and related content](https://n8n.io/integrations/notion-trigger-beta/) on n8n's website.
 

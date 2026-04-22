@@ -10,11 +10,11 @@ On this page, you'll find a list of operations the Agile CRM node supports and l
 
 > **Credentials**
 >
-> Refer to [Agile CRM credentials](/integrations/builtin/credentials/agilecrm.md) for guidance on setting up authentication.
+> Refer to [Agile CRM credentials](https://docs.n8n.io/integrations/builtin/credentials/agilecrm/) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 ## Operations
 

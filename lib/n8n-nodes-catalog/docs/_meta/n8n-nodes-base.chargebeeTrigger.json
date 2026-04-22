@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.chargebeeTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.chargebeetrigger.md",
-  "fetchedAt": "2026-04-22T18:36:00.191Z",
+  "fetchedAt": "2026-04-22T18:58:21.250Z",
   "frontmatter": {
     "raw": {
       "title": "Chargebee Trigger node documentation",

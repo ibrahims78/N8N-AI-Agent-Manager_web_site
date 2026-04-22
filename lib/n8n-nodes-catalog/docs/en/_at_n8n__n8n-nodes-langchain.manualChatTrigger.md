@@ -6,7 +6,7 @@
 
 Use the Chat Trigger node when building AI workflows for chatbots and other chat interfaces. You can configure how users access the chat, using one of n8n's provided interfaces, or your own. You can add authentication.
 
-You must connect either an agent or chain [root node](https://docs.n8n.io//).
+You must connect either an agent or chain [root node](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/).
 
 > **Workflow execution usage**
 >
@@ -89,12 +89,12 @@ If you select any option other than **Off**, you must connect the Chat trigger a
 Use this option when building a workflow with steps after the agent or chain that's handling the chat. Choose from:
 
 * **When Last Node Finishes**: The Chat Trigger node returns the response code and the data output from the last node executed in the workflow.
-* **Using Response Nodes**: The Chat Trigger node responds as defined in a [Chat](/integrations/builtin/core-nodes/n8n-nodes-langchain.chat.md) node or [Respond to Webhook](/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook.md) node. In this response mode, the Chat Trigger will solely show messages as defined in these nodes and not output the data from the last node executed in the workflow.
+* **Using Response Nodes**: The Chat Trigger node responds as defined in a [Chat](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chat/) node or [Respond to Webhook](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/) node. In this response mode, the Chat Trigger will solely show messages as defined in these nodes and not output the data from the last node executed in the workflow.
 
 > **Using Response Nodes**
 >
 > This mode replaces the 'Using Respond to Webhook Node' mode from version 1.2 of the Chat Trigger node.
-* **Streaming response**: Enables real-time data streaming back to the user as the workflow processes. Requires nodes with streaming support in the workflow (for example, the [AI agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) node).
+* **Streaming response**: Enables real-time data streaming back to the user as the workflow processes. Requires nodes with streaming support in the workflow (for example, the [AI agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/) node).
 
 #### Require Button Click to Start Chat
 
@@ -125,7 +125,7 @@ If you select any option other than **Off**, you must connect the Chat trigger a
 Use this option when building a workflow with steps after the agent or chain that's handling the chat. Choose from:
 
 * **When Last Node Finishes**: The Chat Trigger node returns the response code and the data output from the last node executed in the workflow.
-* **Using Response Nodes**: The Chat Trigger node responds as defined in a [Chat](/integrations/builtin/core-nodes/n8n-nodes-langchain.chat.md) node or [Respond to Webhook](/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook.md) node. In this response mode, the Chat Trigger will solely show messages as defined in these nodes and not output the data from the last node executed in the workflow.
+* **Using Response Nodes**: The Chat Trigger node responds as defined in a [Chat](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chat/) node or [Respond to Webhook](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/) node. In this response mode, the Chat Trigger will solely show messages as defined in these nodes and not output the data from the last node executed in the workflow.
 
 > **Using Response Nodes**
 >
@@ -140,7 +140,7 @@ Use this option when building a workflow with steps after the agent or chain tha
 
 ## Related resources
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.
 
 ## Set the chat response manually
 
@@ -152,11 +152,11 @@ If you need to manually create the response sent to the user, you must create a 
 
 > **Chat node**
 >
-> When you are using a [Chat](/integrations/builtin/core-nodes/n8n-nodes-langchain.chat.md) node to manually create the response sent to the user, you must set the Chat Trigger response mode to 'Using Response Nodes'.
+> When you are using a [Chat](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chat/) node to manually create the response sent to the user, you must set the Chat Trigger response mode to 'Using Response Nodes'.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/common-issues/).
 
 ---
 
@@ -165,7 +165,7 @@ For common questions or issues and suggested solutions, refer to [Common Issues]
 
 # Chat Trigger node common issues
 
-Here are some common errors and issues with the [Chat Trigger node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Chat Trigger node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/) and steps to resolve or troubleshoot them.
 
 ## Pass data from a website to an embedded Chat Trigger node
 
@@ -182,13 +182,13 @@ createChat({
 });
 ```
 
-The `metadata` field can contain arbitrary data that will appear in the Chat Trigger output alongside other output data. From there, you can query and process the data from downstream nodes as usual using	n8n's [data processing features](/data/index.md).
+The `metadata` field can contain arbitrary data that will appear in the Chat Trigger output alongside other output data. From there, you can query and process the data from downstream nodes as usual using	n8n's [data processing features](https://docs.n8n.io/data/).
 
 ## Chat Trigger node doesn't fetch previous messages
 
 When you configure a Chat Trigger node, you might experience problems fetching previous messages if you aren't careful about how you configure session loading. This often manifests as a `workflow could not be started!` error.
 
-In Chat Triggers, the **Load Previous Session** option retrieves previous chat messages for a session using the `sessionID`. When you set the **Load Previous Session** option to **From memory**, it's almost always best to [connect the same memory node](https://docs.n8n.io//#load-previous-session) to both the Chat Trigger and the Agent in your workflow:
+In Chat Triggers, the **Load Previous Session** option retrieves previous chat messages for a session using the `sessionID`. When you set the **Load Previous Session** option to **From memory**, it's almost always best to [connect the same memory node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/#load-previous-session) to both the Chat Trigger and the Agent in your workflow:
 
 1. In your **Chat Trigger** node, set the **Load Previous Session** option to **From Memory**. This is only visible if you've made the chat publicly available.
 2. Attach a **Simple Memory** node to the **Memory** connector.

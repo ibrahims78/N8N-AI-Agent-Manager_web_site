@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/convertkit.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/convertkit/).
 
 > **Examples and templates**
 >
@@ -30,7 +30,7 @@
 
 ## Related resources
 
-n8n provides an app node for ConvertKit. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.convertkit.md).
+n8n provides an app node for ConvertKit. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.convertkit/).
 
 View [example workflows and related content](https://n8n.io/integrations/convertkit-trigger/) on n8n's website.
 

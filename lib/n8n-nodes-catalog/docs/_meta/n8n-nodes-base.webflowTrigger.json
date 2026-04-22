@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.webflowTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.webflowtrigger.md",
-  "fetchedAt": "2026-04-22T18:36:10.336Z",
+  "fetchedAt": "2026-04-22T18:58:28.789Z",
   "frontmatter": {
     "raw": {
       "title": "Webflow Trigger node documentation",

@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Monica CRM node supports and 
 
 > **Credentials**
 >
-> Refer to [Monica CRM credentials](/integrations/builtin/credentials/monicacrm.md) for guidance on setting up authentication.
+> Refer to [Monica CRM credentials](https://docs.n8n.io/integrations/builtin/credentials/monicacrm/) for guidance on setting up authentication.
 
 ## Operations
 

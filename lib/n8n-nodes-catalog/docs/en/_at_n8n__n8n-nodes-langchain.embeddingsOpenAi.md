@@ -4,13 +4,13 @@
 
 # Embeddings OpenAI node
 
-Use the Embeddings OpenAI node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
+Use the Embeddings OpenAI node to generate [embeddings](https://docs.n8n.io/glossary/#ai-embedding) for a given text.
 
 On this page, you'll find the node parameters for the Embeddings OpenAI node, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/openai.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -38,4 +38,4 @@ On this page, you'll find the node parameters for the Embeddings OpenAI node, an
 
 Refer to [LangChains's OpenAI embeddings documentation](https://js.langchain.com/docs/integrations/text_embedding/openai/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

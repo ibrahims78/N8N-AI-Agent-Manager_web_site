@@ -27,9 +27,9 @@ Choose from:
 
 This parameter controls whether you want the node to require a specific output format. When turned on, n8n prompts you to connect one of these output parsers to the node:
 
-* [Auto-fixing Output Parser](https://docs.n8n.io/n8n-nodes-langchain.outputparserautofixing/)
-* [Item List Output Parser](https://docs.n8n.io/n8n-nodes-langchain.outputparseritemlist/)
-* [Structured Output Parser](https://docs.n8n.io/n8n-nodes-langchain.outputparserstructured/)
+* [Auto-fixing Output Parser](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparserautofixing/)
+* [Item List Output Parser](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparseritemlist/)
+* [Structured Output Parser](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparserstructured/)
 
 ## Chat Messages
 
@@ -73,7 +73,7 @@ For both the **Image** types, select the **Image Details** to control how the mo
 
 Refer to [LangChain's documentation on Basic LLM Chains](https://js.langchain.com/docs/tutorials/llm_chain/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.
 
 ## Common issues
 
@@ -88,4 +88,4 @@ You might see this error in one of two scenarios:
 1. When you've set the **Prompt** to **Define below** and haven't entered anything in the **Text** field.
     * To resolve, enter a valid prompt in the **Text** field.
 2. When you've set the **Prompt** to **Connected Chat Trigger Node** and the incoming data has no field called `chatInput`. 
-    * The node expects the `chatInput` field. If your previous node doesn't have this field, add an [Edit Fields (Set)](/integrations/builtin/core-nodes/n8n-nodes-base.set.md) node to edit an incoming field name to `chatInput`.
+    * The node expects the `chatInput` field. If your previous node doesn't have this field, add an [Edit Fields (Set)](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.set/) node to edit an incoming field name to `chatInput`.

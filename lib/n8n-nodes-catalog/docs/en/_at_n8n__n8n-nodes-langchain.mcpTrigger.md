@@ -8,15 +8,15 @@ Use the MCP Server Trigger node to allow n8n to act as a [Model Context Protocol
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/httprequest.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/httprequest/).
 
 ## How the MCP Server Trigger node works
 
 The MCP Server Trigger node acts as an entry point into n8n for MCP clients. It operates by exposing a URL that MCP clients can interact with to access n8n tools.
 
-Unlike conventional [trigger nodes](/glossary.md#trigger-node-n8n), which respond to events and pass their output to the next [connected node](/workflows/components/connections.md), the MCP Server Trigger node only connects to and executes [tool](/advanced-ai/examples/understand-tools.md) nodes. Clients can list the available tools and call individual tools to perform work.
+Unlike conventional [trigger nodes](https://docs.n8n.io/glossary/#trigger-node-n8n), which respond to events and pass their output to the next [connected node](https://docs.n8n.io/workflows/components/connections/), the MCP Server Trigger node only connects to and executes [tool](https://docs.n8n.io/advanced-ai/examples/understand-tools/) nodes. Clients can list the available tools and call individual tools to perform work.
 
-You can expose n8n workflows to clients by attaching them with the [Custom n8n Workflow Tool](https://docs.n8n.io/n8n-nodes-langchain.toolworkflow/) node.
+You can expose n8n workflows to clients by attaching them with the [Custom n8n Workflow Tool](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolworkflow/) node.
 
 > **Server-Sent Events (SSE) and streamable HTTP support**
 >
@@ -42,7 +42,7 @@ You can require authentication for clients connecting to your MCP URL. Choose fr
 - Bearer auth
 - Header auth
 
-Refer to the [HTTP request credentials](/integrations/builtin/credentials/httprequest.md) for more information on setting up each credential type.
+Refer to the [HTTP request credentials](https://docs.n8n.io/integrations/builtin/credentials/httprequest/) for more information on setting up each credential type.
 
 ### Path
 
@@ -87,7 +87,7 @@ Be sure to replace the `<MCP_URL>` and `<MCP_BEARER_TOKEN>` placeholders with th
 
 ### Configuring the MCP Server Trigger node with webhook replicas
 
-The MCP Server Trigger node relies on Server-Sent Events (SSE) or streamable HTTP, which require the same server instance to handle persistent connections. This can cause problems when running n8n in [queue mode](/hosting/scaling/queue-mode.md) depending on your [webhook processor](/hosting/scaling/queue-mode.md#webhook-processors) configuration:
+The MCP Server Trigger node relies on Server-Sent Events (SSE) or streamable HTTP, which require the same server instance to handle persistent connections. This can cause problems when running n8n in [queue mode](https://docs.n8n.io/hosting/scaling/queue-mode/) depending on your [webhook processor](https://docs.n8n.io/hosting/scaling/queue-mode/#webhook-processors) configuration:
 
 * If you use queue mode with a **single webhook replica**, the MCP Server Trigger node works as expected.
 * If you run **multiple webhook replicas**, you need to route all `/mcp*` requests to a single, dedicated webhook replica. Create a separate replica set with one webhook container for MCP requests. Afterward, update your ingress or load balancer configuration to direct all `/mcp*` traffic to that instance.
@@ -98,7 +98,7 @@ The MCP Server Trigger node relies on Server-Sent Events (SSE) or streamable HTT
 
 ## Related resources
 
-n8n also provides an [MCP Client Tool](https://docs.n8n.io/n8n-nodes-langchain.toolmcp/) node that allows you to connect your n8n AI agents to external tools.
+n8n also provides an [MCP Client Tool](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolmcp/) node that allows you to connect your n8n AI agents to external tools.
 
 Refer to the [MCP documentation](https://modelcontextprotocol.io/introduction) and [MCP specification](https://modelcontextprotocol.io/specification/) for more details about the protocol, servers, and clients.
 

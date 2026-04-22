@@ -29,4 +29,4 @@ If the node has to remove items, select where it keeps the input items from:
 
 ## Related resources
 
-Learn more about [data structure and data flow](/data/index.md) in n8n workflows.
+Learn more about [data structure and data flow](https://docs.n8n.io/data/) in n8n workflows.

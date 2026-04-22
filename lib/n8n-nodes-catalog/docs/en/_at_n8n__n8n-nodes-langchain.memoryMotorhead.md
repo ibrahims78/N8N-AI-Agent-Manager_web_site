@@ -8,13 +8,13 @@
 >
 > The Motorhead project is no longer maintained. This node is deprecated, and will be removed in a future version.
 
-Use the Motorhead node to use Motorhead as a [memory](/glossary.md#ai-memory) server.
+Use the Motorhead node to use Motorhead as a [memory](https://docs.n8n.io/glossary/#ai-memory) server.
 
 On this page, you'll find a list of operations the Motorhead node supports, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/motorhead.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/motorhead/).
 
 ## Node parameters
 
@@ -40,6 +40,6 @@ On this page, you'll find a list of operations the Motorhead node supports, and 
 
 Refer to [LangChain's Motorhead documentation](https://js.langchain.com/docs/integrations/memory/motorhead_memory) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.
 
 ## Single memory instance

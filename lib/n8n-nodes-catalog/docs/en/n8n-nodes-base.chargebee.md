@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Chargebee node supports and l
 
 > **Credentials**
 >
-> Refer to [Chargebee credentials](/integrations/builtin/credentials/chargebee.md) for guidance on setting up authentication.
+> Refer to [Chargebee credentials](https://docs.n8n.io/integrations/builtin/credentials/chargebee/) for guidance on setting up authentication.
 
 ## Operations
 

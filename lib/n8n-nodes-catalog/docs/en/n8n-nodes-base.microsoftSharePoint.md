@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Microsoft SharePoint node sup
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/microsoft.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/microsoft/).
 
 ## Operations
 

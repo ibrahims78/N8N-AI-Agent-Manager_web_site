@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the LingvaNex node supports and l
 
 > **Credentials**
 >
-> Refer to [LingvaNex credentials](/integrations/builtin/credentials/lingvanex.md) for guidance on setting up authentication.
+> Refer to [LingvaNex credentials](https://docs.n8n.io/integrations/builtin/credentials/lingvanex/) for guidance on setting up authentication.
 
 ## Operations
 

@@ -4,13 +4,13 @@
 
 # OpenAI Chat Model node
 
-Use the OpenAI Chat Model node to use OpenAI's chat models with conversational [agents](/glossary.md#ai-agent).
+Use the OpenAI Chat Model node to use OpenAI's chat models with conversational [agents](https://docs.n8n.io/glossary/#ai-agent).
 
 On this page, you'll find the node parameters for the OpenAI Chat Model node and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/openai.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/openai/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -30,7 +30,7 @@ n8n dynamically loads models from OpenAI, and you'll only see the models availab
 
 ### Use Responses API
 OpenAI provides two endpoints for generating output from a model:
-- **Chat Completions**: The Chat Completions API endpoint generates a model response from a list of messages that comprise a conversation. The API requires the user to handle conversation state manually, for example by adding a [Simple Memory](https://docs.n8n.io/n8n-nodes-langchain.memorybufferwindow/) subnode. For new projects, OpenAI recommends to use the Responses API.
+- **Chat Completions**: The Chat Completions API endpoint generates a model response from a list of messages that comprise a conversation. The API requires the user to handle conversation state manually, for example by adding a [Simple Memory](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memorybufferwindow/) subnode. For new projects, OpenAI recommends to use the Responses API.
 - **Responses**: The Responses API is an agentic loop, allowing the model to call multiple built-in tools within the span of one API request. It also supports persistent conversations by passing a `conversation_id`.
 
 Toggle to **Use Responses API** if you want the model to generate output using the Responses API. Otherwise, the OpenAI Chat Model node will default to using the Chat Completions API.
@@ -119,11 +119,11 @@ Refer to [LangChains's OpenAI documentation](https://js.langchain.com/docs/integ
 
 Refer to [OpenAI documentation](https://platform.openai.com/docs/api-reference/responses/create) for more information about the parameters.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.lmchatopenai/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenai/common-issues/).
 
 ---
 
@@ -132,13 +132,13 @@ For common questions or issues and suggested solutions, refer to [Common issues]
 
 # OpenAI Chat Model node common issues
 
-Here are some common errors and issues with the [OpenAI Chat Model node](https://docs.n8n.io/n8n-nodes-langchain.lmchatopenai/) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [OpenAI Chat Model node](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenai/) and steps to resolve or troubleshoot them.
 
 ## Processing parameters
 
-The OpenAI Chat Model node is a [sub-node](/glossary.md#sub-node-n8n). Sub-nodes behave differently than other nodes when processing multiple items using expressions.
+The OpenAI Chat Model node is a [sub-node](https://docs.n8n.io/glossary/#sub-node-n8n). Sub-nodes behave differently than other nodes when processing multiple items using expressions.
 
-Most nodes, including [root nodes](/glossary.md#root-node-n8n), take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five name values, the expression `` resolves to each name in turn.
+Most nodes, including [root nodes](https://docs.n8n.io/glossary/#root-node-n8n), take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five name values, the expression `` resolves to each name in turn.
 
 In sub-nodes, the expression always resolves to the first item. For example, given an input of five name values, the expression `` always resolves to the first name.
 

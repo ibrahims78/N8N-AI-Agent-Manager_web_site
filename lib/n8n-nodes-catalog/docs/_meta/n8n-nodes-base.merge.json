@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.merge",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.merge.md",
-  "fetchedAt": "2026-04-22T18:36:06.095Z",
+  "fetchedAt": "2026-04-22T18:58:25.523Z",
   "frontmatter": {
     "raw": {
       "title": "Merge",
@@ -16,9 +16,9 @@
   "siblings": [],
   "assets": [
     "append-diagram.png",
-    "multiplex-diagram.png",
-    "merge-by-field-diagram.png",
     "if-merge-node.png",
-    "merge-by-position-diagram.png"
+    "merge-by-position-diagram.png",
+    "multiplex-diagram.png",
+    "merge-by-field-diagram.png"
   ]
 }

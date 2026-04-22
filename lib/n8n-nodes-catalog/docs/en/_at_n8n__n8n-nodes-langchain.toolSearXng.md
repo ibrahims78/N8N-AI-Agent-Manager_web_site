@@ -10,7 +10,7 @@ On this page, you'll find the node options for the SearXNG Tool node, and links 
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/searxng.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/searxng/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -55,4 +55,4 @@ The quality and availability of search results depend on the configuration and h
 
 Refer to [SearXNG's documentation](https://docs.searxng.org/) for more information about the service. You can also view [LangChain's documentation on their SearXNG integration](https://python.langchain.com/docs/integrations/tools/searx_search/).
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

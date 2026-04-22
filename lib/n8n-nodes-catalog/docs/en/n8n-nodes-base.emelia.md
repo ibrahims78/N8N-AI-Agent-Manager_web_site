@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Emelia node supports and link
 
 > **Credentials**
 >
-> Refer to [Emelia credentials](/integrations/builtin/credentials/emelia.md) for guidance on setting up authentication.
+> Refer to [Emelia credentials](https://docs.n8n.io/integrations/builtin/credentials/emelia/) for guidance on setting up authentication.
 
 ## Operations
 

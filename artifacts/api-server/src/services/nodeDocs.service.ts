@@ -432,13 +432,17 @@ async function fetchSiblingPages(
   const fetched: string[] = [];
   const parts = await Promise.all(
     siblingNames.map(async (name) => {
-      const content = await fetchRaw(`${dirRawBase}${name}`);
+      const siblingUrl = `${dirRawBase}${name}`;
+      const content = await fetchRaw(siblingUrl);
       if (!content) return "";
-      // Drop frontmatter from each sibling and prepend a section anchor.
-      const stripped = content
+      // Drop frontmatter and resolve the sibling's *own* relative .md links
+      // against ITS url (not the parent index.md), so `../index.md` etc.
+      // produce the correct docs.n8n.io URL.
+      let stripped = content
         .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "")
         .trim();
       if (!stripped) return "";
+      stripped = rewriteRelativeMdLinks(stripped, siblingUrl);
       fetched.push(name);
       const headingTitle = name
         .replace(/\.md$/, "")

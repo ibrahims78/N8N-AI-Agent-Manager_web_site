@@ -8,11 +8,11 @@ Use the Code node to write custom JavaScript or Python and run it as a step in y
 
 > **Coding in n8n**
 >
-> This page gives usage information about the Code node. For more guidance on coding in n8n, refer to the [Code](/code/index.md) section. It includes:
+> This page gives usage information about the Code node. For more guidance on coding in n8n, refer to the [Code](https://docs.n8n.io/code/) section. It includes:
 > 
-> * Reference documentation on [Built-in methods and variables](/code/builtin/overview.md)
-> * Guidance on [Handling dates](/data/specific-data-types/luxon.md) and [Querying JSON](/data/specific-data-types/jmespath.md)
-> * A growing collection of examples in the [Cookbook](/code/cookbook/code-node/index.md)
+> * Reference documentation on [Built-in methods and variables](https://docs.n8n.io/code/builtin/overview/)
+> * Guidance on [Handling dates](https://docs.n8n.io/data/specific-data-types/luxon/) and [Querying JSON](https://docs.n8n.io/data/specific-data-types/jmespath/)
+> * A growing collection of examples in the [Cookbook](https://docs.n8n.io/code/cookbook/code-node/)
 
 > **Examples and templates**
 >
@@ -45,7 +45,7 @@ The Code node supports:
 
 ### External libraries
 
-If you self-host n8n, you can import and use built-in and external npm modules in the Code node. To learn how to enable external modules, refer to the [Enable modules in Code node](/hosting/configuration/configuration-examples/modules-in-code-node.md) guide.
+If you self-host n8n, you can import and use built-in and external npm modules in the Code node. To learn how to enable external modules, refer to the [Enable modules in Code node](https://docs.n8n.io/hosting/configuration/configuration-examples/modules-in-code-node/) guide.
 
 If you use n8n Cloud, you can't import external npm modules. n8n makes two modules available for you:
 
@@ -54,7 +54,7 @@ If you use n8n Cloud, you can't import external npm modules. n8n makes two modul
 
 ### Built-in methods and variables
 
-n8n provides built-in methods and variables for working with data and accessing n8n data. Refer to [Built-in methods and variables](/code/builtin/overview.md) for more information.
+n8n provides built-in methods and variables for working with data and accessing n8n data. Refer to [Built-in methods and variables](https://docs.n8n.io/code/builtin/overview/) for more information.
 
 The syntax to use the built-in methods and variables is `$variableName` or `$methodName()`. Type `
 # Code node
@@ -63,7 +63,7 @@ The syntax to use the built-in methods and variables is `$variableName` or `$met
 
 ### Keyboard shortcuts
 
-The Code node editing environment supports time-saving and useful keyboard shortcuts for a range of operations from autocompletion to code-folding and using multiple-cursors. See the full list of [keyboard shortcuts](https://docs.n8n.io/keyboard-shortcuts/).
+The Code node editing environment supports time-saving and useful keyboard shortcuts for a range of operations from autocompletion to code-folding and using multiple-cursors. See the full list of [keyboard shortcuts](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.code/keyboard-shortcuts/).
 
 ## Python (Pyodide - legacy)
 
@@ -76,20 +76,20 @@ n8n added Python support in version 1.0. It doesn't include a Python executable.
 > The Code node takes longer to process Python than JavaScript. This is due to the extra compilation steps.
 ### Built-in methods and variables
 
-n8n provides built-in methods and variables for working with data and accessing n8n data. Refer to [Built-in methods and variables](/code/builtin/overview.md) for more information.
+n8n provides built-in methods and variables for working with data and accessing n8n data. Refer to [Built-in methods and variables](https://docs.n8n.io/code/builtin/overview/) for more information.
 
 The syntax to use the built-in methods and variables is `_variableName` or `_methodName()`. Type `_` in the Code node to see a list of suggested methods and variables.
 
 ### Keyboard shortcuts
 
-The Code node editing environment supports time-saving and useful keyboard shortcuts for a range of operations from autocompletion to code-folding and using multiple-cursors. See the full list of [keyboard shortcuts](https://docs.n8n.io/keyboard-shortcuts/).
+The Code node editing environment supports time-saving and useful keyboard shortcuts for a range of operations from autocompletion to code-folding and using multiple-cursors. See the full list of [keyboard shortcuts](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.code/keyboard-shortcuts/).
 
 ## File system and HTTP requests
 
 You can't access the file system or make HTTP requests. Use the following nodes instead:
 
-* [Read/Write File From Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md)
-* [HTTP Request](https://docs.n8n.io//)
+* [Read/Write File From Disk](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile/)
+* [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/)
 
 ## Python (Native)
 
@@ -99,7 +99,7 @@ Main differences from Pyodide:
 
 - Native Python supports only `_items` in all-items mode and `_item` in per-item mode. It doesn't support other n8n built-in methods and variables.
 - On self-hosted, native Python supports importing native Python modules from the standard library and from third-parties, if the `n8nio/runners` image includes them and explicitly allowlists them. See [adding extra dependencies for task runners](/hosting/configuration/task-runners.md/#adding-extra-dependencies) for more details.
-- Native Python denies insecure built-ins by default. See [task runners environment variables](/hosting/configuration/environment-variables/task-runners.md) for more details.
+- Native Python denies insecure built-ins by default. See [task runners environment variables](https://docs.n8n.io/hosting/configuration/environment-variables/task-runners/) for more details.
 - Unlike Pyodide, which accepts dot access notation, for example, `item.json.myNewField`, native Python only accepts bracket access notation, for example, `item["json"]["my_new_field"]`. There may be other minor syntax differences where Pyodide accepts constructs that aren't legal in native Python.
 - On n8n cloud, the Python option for the Code node doesn't allow users to import any Python libraries — whether from the standard library or third-party packages. Self-hosting users can find setup instructions to include external libraries [here](https://docs.n8n.io/hosting/configuration/task-runners/#adding-extra-dependencies). In the long term, the n8n team is committed to allowing users to securely execute arbitrary Python code with any first- and third-party libraries using task runners.
 
@@ -113,8 +113,8 @@ There are two places where you can use code in n8n: the Code node and the expres
 
 When working with the Code node, you need to understand the following concepts:
 
-* [Data structure](/data/data-structure.md): understand the data you receive in the Code node, and requirements for outputting data from the node.
-* [Item linking](/data/data-mapping/data-item-linking/index.md): learn how data items work, and how to link to items from previous nodes. You need to handle item linking in your code when the number of input and output items doesn't match.
+* [Data structure](https://docs.n8n.io/data/data-structure/): understand the data you receive in the Code node, and requirements for outputting data from the node.
+* [Item linking](https://docs.n8n.io/data/data-mapping/data-item-linking/): learn how data items work, and how to link to items from previous nodes. You need to handle item linking in your code when the number of input and output items doesn't match.
 
 ### Built-in methods and variables
 
@@ -124,7 +124,7 @@ n8n includes built-in methods and variables. These provide support for:
 * Accessing data about workflows, executions, and your n8n environment
 * Convenience variables to help with data and time
 
-Refer to [Built-in methods and variables](/code/builtin/overview.md) for more information.
+Refer to [Built-in methods and variables](https://docs.n8n.io/code/builtin/overview/) for more information.
 
 ## Use AI in the Code node
 
@@ -145,7 +145,7 @@ To use ChatGPT to generate code in the Code node:
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.code/common-issues/).
 
 ---
 
@@ -154,7 +154,7 @@ For common questions or issues and suggested solutions, refer to [Common Issues]
 
 # Code node common issues
 
-Here are some common errors and issues with the [Code node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Code node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.code/) and steps to resolve or troubleshoot them.
 
 <!-- vale off -->
 ## Code doesn't return items properly
@@ -176,8 +176,8 @@ In n8n, all data passed between nodes is an array of objects. Each of these obje
 
 To troubleshoot this error, check the following:
 
-* Read the [data structure](/data/data-structure.md) to understand the data you receive in the Code node and the requirements for outputting data from the node.
-* Understand how data items work and how to connect data items from previous nodes with [item linking](/data/data-mapping/data-item-linking/index.md).
+* Read the [data structure](https://docs.n8n.io/data/data-structure/) to understand the data you receive in the Code node and the requirements for outputting data from the node.
+* Understand how data items work and how to connect data items from previous nodes with [item linking](https://docs.n8n.io/data/data-mapping/data-item-linking/).
 
 <!-- vale off -->
 ## A 'json' property isn't an object
@@ -213,7 +213,7 @@ To resolve this, ensure that the `json` key references an object in your return 
 
 This error may occur when your Code node doesn't return anything or if it returns an unexpected result.
 
-To resolve this, ensure that your Code node returns the [expected data structure](/data/data-structure.md):
+To resolve this, ensure that your Code node returns the [expected data structure](https://docs.n8n.io/data/data-structure/):
 
 ```javascript
 [
@@ -248,24 +248,24 @@ This error occurs if you try to use `require` in the Code node and n8n can't fin
 
 > **Only for self-hosted**
 >
-> n8n doesn't support importing modules in the [Cloud](/manage-cloud/overview.md) version.
+> n8n doesn't support importing modules in the [Cloud](https://docs.n8n.io/manage-cloud/overview/) version.
 
-If you're [self-hosting](/hosting/index.md) n8n, follow these steps:
+If you're [self-hosting](https://docs.n8n.io/hosting/) n8n, follow these steps:
 
 * Install the module into your n8n environment.
-	* If you are running n8n with [npm](/hosting/installation/npm.md), install the module in the same environment as n8n.
-	* If you are running n8n with [Docker](/hosting/installation/docker.md), you need to extend the official n8n image with a [custom image](https://docs.docker.com/build/building/base-images/) that includes your module.
-* Set the `NODE_FUNCTION_ALLOW_BUILTIN` and `NODE_FUNCTION_ALLOW_EXTERNAL` [environment variables](/hosting/configuration/configuration-examples/modules-in-code-node.md) to allow importing modules.
+	* If you are running n8n with [npm](https://docs.n8n.io/hosting/installation/npm/), install the module in the same environment as n8n.
+	* If you are running n8n with [Docker](https://docs.n8n.io/hosting/installation/docker/), you need to extend the official n8n image with a [custom image](https://docs.docker.com/build/building/base-images/) that includes your module.
+* Set the `NODE_FUNCTION_ALLOW_BUILTIN` and `NODE_FUNCTION_ALLOW_EXTERNAL` [environment variables](https://docs.n8n.io/hosting/configuration/configuration-examples/modules-in-code-node/) to allow importing modules.
 
 ## Using global variables
 
 Sometimes you may wish to set and retrieve simple global data related to a workflow across and within executions. For example, you may wish to include the date of the previous report when compiling a report with a list of project updates.
 
-To set, update, and retrieve data directly to a workflow, use the [static data](/code/cookbook/builtin/get-workflow-static-data.md) functions within your code. You can manage data either globally or tied to specific nodes.
+To set, update, and retrieve data directly to a workflow, use the [static data](https://docs.n8n.io/code/cookbook/builtin/get-workflow-static-data/) functions within your code. You can manage data either globally or tied to specific nodes.
 
 > **Use Remove Duplicates when possible**
 >
-> If you're interested in using variables to avoid processing the same data items more than once, consider using the [Remove Duplicates node](https://docs.n8n.io//) instead. The Remove Duplicates node can save information across executions to avoid processing the same items multiple times.
+> If you're interested in using variables to avoid processing the same data items more than once, consider using the [Remove Duplicates node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.removeduplicates/) instead. The Remove Duplicates node can save information across executions to avoid processing the same items multiple times.
 
 ## Can't access credentials in a code node
 
@@ -273,11 +273,11 @@ By design, Code nodes can't access credentials. They don't have access to n8n’
 
 Attempts to reference credentials in a Code node using expressions or methods like `this.getCredentials()` or `$getCredentials()` will result in errors, such as `this.getCredentials is not a function` and `$getCredentials is not defined`. 
 
-If you need to make authenticated API calls, use the [HTTP Request node](https://docs.n8n.io//) which provides credential support.
+If you need to make authenticated API calls, use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) which provides credential support.
 
 To work with credentials dynamically, handle the credential selection logic outside of the Code node:
 
-- Use a [Switch](/integrations/builtin/core-nodes/n8n-nodes-base.switch.md) node to route to different nodes with different credentials.
+- Use a [Switch](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.switch/) node to route to different nodes with different credentials.
 - Use expressions directly in credential fields to select credentials dynamically based on previous node data.
 - Use an HTTP Request node with Custom Auth to dynamically set headers, query parameters, or body values using expressions.
 

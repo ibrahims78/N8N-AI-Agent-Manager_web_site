@@ -80,4 +80,4 @@ The sixth asterisk in the Cron expression represents seconds. Setting this is op
 
 ## Related resources
 
-n8n provides an app node for RSS Feeds. You can find the node docs [here](/integrations/builtin/core-nodes/n8n-nodes-base.rssfeedread.md).
+n8n provides an app node for RSS Feeds. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.rssfeedread/).

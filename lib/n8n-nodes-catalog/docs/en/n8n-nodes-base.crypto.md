@@ -17,7 +17,7 @@ Use the Crypto node to encrypt data in workflows.
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 Node parameters depend on the action you select.
 
@@ -71,7 +71,7 @@ Node parameters depend on the action you select.
 
 * **Value**: Enter the value you want to sign.
 * **Property Name**: Enter the name of the property you want to write the signed value to.
-* **Algorithm Name or ID**: Choose an algorithm name from the list or specify an ID using an [expression](/data/expressions.md).
+* **Algorithm Name or ID**: Choose an algorithm name from the list or specify an ID using an [expression](https://docs.n8n.io/data/expressions/).
 * **Encoding**: Select the encoding type to use. Choose from:
 	* **BASE64**
 	* **HEX**

@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Microsoft Entra ID node suppo
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/microsoftentra.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/microsoftentra/).
 
 > **Government Cloud Support**
 >
@@ -47,7 +47,7 @@ Refer to [Microsoft Entra ID's documentation](https://learn.microsoft.com/en-us/
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -55,7 +55,7 @@ You can use the credential you created for this service in the HTTP Request node
 1. Select the service you want to connect to.
 1. Select your credential.
 
-Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
+Refer to [Custom API operations](https://docs.n8n.io/integrations/custom-operations/) for more information.
 
 ## Common issues
 
@@ -65,4 +65,4 @@ Here are some common errors and issues with the Microsoft Entra ID node and step
 
 You can't update the **Allow External Senders** and **Auto Subscribe New Members** options directly after creating a new group. You must wait after creating a group before you can change the values of these options.
 
-When designing workflows that use multiple Microsoft Entra ID nodes to first create groups and then update these options, add a [Wait](/integrations/builtin/core-nodes/n8n-nodes-base.wait.md) node between the two operations. A Wait node configured to pause for at least two seconds allows time for the group to fully initialize. After the wait, the update operation can complete without erroring.
+When designing workflows that use multiple Microsoft Entra ID nodes to first create groups and then update these options, add a [Wait](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.wait/) node between the two operations. A Wait node configured to pause for at least two seconds allows time for the group to fully initialize. After the wait, the update operation can complete without erroring.

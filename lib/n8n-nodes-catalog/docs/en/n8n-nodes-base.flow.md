@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Flow node supports and links 
 
 > **Credentials**
 >
-> Refer to [Flow credentials](/integrations/builtin/credentials/flow.md) for guidance on setting up authentication.
+> Refer to [Flow credentials](https://docs.n8n.io/integrations/builtin/credentials/flow/) for guidance on setting up authentication.
 
 ## Operations
 

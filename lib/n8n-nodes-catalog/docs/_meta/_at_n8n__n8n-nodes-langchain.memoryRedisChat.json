@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.memoryRedisChat",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memoryredischat.md",
-  "fetchedAt": "2026-04-22T18:36:13.021Z",
+  "fetchedAt": "2026-04-22T18:58:30.802Z",
   "frontmatter": {
     "raw": {
       "title": "Redis Chat Memory node documentation",

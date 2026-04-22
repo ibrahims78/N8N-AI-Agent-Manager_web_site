@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.circleCi",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.circleci.md",
-  "fetchedAt": "2026-04-22T18:36:00.184Z",
+  "fetchedAt": "2026-04-22T18:58:21.237Z",
   "frontmatter": {
     "raw": {
       "title": "CircleCI node documentation",

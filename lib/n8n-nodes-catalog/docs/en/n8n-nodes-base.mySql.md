@@ -10,11 +10,11 @@ On this page, you'll find a list of operations the MySQL node supports and links
 
 > **Credentials**
 >
-> Refer to [MySQL credentials](/integrations/builtin/credentials/mysql.md) for guidance on setting up authentication.
+> Refer to [MySQL credentials](https://docs.n8n.io/integrations/builtin/credentials/mysql/) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 ## Operations
 
@@ -73,7 +73,7 @@ users,
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common issues](https://docs.n8n.io/common-issues/).
+For common errors or issues and suggested resolution steps, refer to [Common issues](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mysql/common-issues/).
 
 ---
 
@@ -82,7 +82,7 @@ For common errors or issues and suggested resolution steps, refer to [Common iss
 
 # MySQL node common issues
 
-Here are some common errors and issues with the [MySQL node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [MySQL node](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mysql/) and steps to resolve or troubleshoot them.
 
 ## Update rows by composite key
 
@@ -112,7 +112,7 @@ When running the container, [publish the port](https://docs.docker.com/get-start
 docker run -p 3306:3306 --name my-mysql -d mysql:latest
 ```
 
-When configuring [MySQL credentials](/integrations/builtin/credentials/mysql.md), the `localhost` address should work without a problem (set the **Host** to `localhost`).
+When configuring [MySQL credentials](https://docs.n8n.io/integrations/builtin/credentials/mysql/), the `localhost` address should work without a problem (set the **Host** to `localhost`).
 
 ### If only n8n is in Docker
 
@@ -126,7 +126,7 @@ docker run -it --rm --add-host host.docker.internal:host-gateway --name n8n -p 5
 
 If you are using Docker Desktop, this is automatically configured for you.
 
-When configuring [MySQL credentials](/integrations/builtin/credentials/mysql.md), use `host.docker.internal` as the **Host** address instead of `localhost`.
+When configuring [MySQL credentials](https://docs.n8n.io/integrations/builtin/credentials/mysql/), use `host.docker.internal` as the **Host** address instead of `localhost`.
 
 ### If MySQL and n8n are running in separate Docker containers
 
@@ -134,11 +134,11 @@ If both n8n and MySQL are running in Docker in separate containers, you can use 
 
 Configure MySQL to listen on all interfaces by binding to `0.0.0.0` inside of the container (the official images are already configured this way). Add both the MySQL and n8n containers to the same [user-defined bridge network](https://docs.docker.com/engine/network/drivers/bridge/).
 
-When configuring [MySQL credentials](/integrations/builtin/credentials/mysql.md), use the MySQL container's name as the host address instead of `localhost`. For example, if you call the MySQL container `my-mysql`, you would set the **Host** to `my-mysql`.
+When configuring [MySQL credentials](https://docs.n8n.io/integrations/builtin/credentials/mysql/), use the MySQL container's name as the host address instead of `localhost`. For example, if you call the MySQL container `my-mysql`, you would set the **Host** to `my-mysql`.
 
 ### If MySQL and n8n are running in the same Docker container
 
-If MySQL and n8n are running in the same Docker container, the `localhost` address doesn't need any special configuration. You can configure MySQL to listen on `localhost` and configure the **Host** in the [MySQL credentials in n8n](/integrations/builtin/credentials/ollama.md) to use `localhost`.
+If MySQL and n8n are running in the same Docker container, the `localhost` address doesn't need any special configuration. You can configure MySQL to listen on `localhost` and configure the **Host** in the [MySQL credentials in n8n](https://docs.n8n.io/integrations/builtin/credentials/ollama/) to use `localhost`.
 
 ## Decimal numbers returned as strings
 
@@ -146,4 +146,4 @@ By default, the MySQL node returns [`DECIMAL` values](https://dev.mysql.com/doc/
 
 To output decimal values as numbers instead of strings and ignore the risks in loss of precision, enable the **Output Decimals as Numbers** option. This will output the values as numbers instead of strings.
 
-As an alternative, you can manually	convert from the string to a decimal using the `toFloat()` function with [`toFixed()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toFixed) or with the [Edit Fields (Set) node](/integrations/builtin/core-nodes/n8n-nodes-base.set.md) after the MySQL node. Be aware that you may still need to account for a potential loss of precision.
+As an alternative, you can manually	convert from the string to a decimal using the `toFloat()` function with [`toFixed()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toFixed) or with the [Edit Fields (Set) node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.set/) after the MySQL node. Be aware that you may still need to account for a potential loss of precision.

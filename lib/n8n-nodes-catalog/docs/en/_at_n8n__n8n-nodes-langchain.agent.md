@@ -4,11 +4,11 @@
 
 # AI Agent node
 
-An [AI agent](/glossary.md#ai-agent) is an autonomous system that receives data, makes rational decisions, and acts within its environment to achieve specific goals. The AI agent's environment is everything the agent can access that isn't the agent itself. This agent uses external [tools](/glossary.md#ai-tool) and APIs to perform actions and retrieve information. It can understand the capabilities of different tools and determine which tool to use depending on the task. 
+An [AI agent](https://docs.n8n.io/glossary/#ai-agent) is an autonomous system that receives data, makes rational decisions, and acts within its environment to achieve specific goals. The AI agent's environment is everything the agent can access that isn't the agent itself. This agent uses external [tools](https://docs.n8n.io/glossary/#ai-tool) and APIs to perform actions and retrieve information. It can understand the capabilities of different tools and determine which tool to use depending on the task. 
 
 > **Connect a tool**
 >
-> You must connect at least one tool [sub-node](https://docs.n8n.io//) to an AI Agent node.
+> You must connect at least one tool [sub-node](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/) to an AI Agent node.
 
 > **Agent type**
 >
@@ -25,11 +25,11 @@ Refer to [LangChain's documentation on agents](https://js.langchain.com/docs/con
 
 New to AI Agents? Read the [n8n blog introduction to AI agents](https://blog.n8n.io/ai-agents/).
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
+For common errors or issues and suggested resolution steps, refer to [Common Issues](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues/).
 
 ---
 
@@ -38,7 +38,7 @@ For common errors or issues and suggested resolution steps, refer to [Common Iss
 
 # AI Agent node common issues
 
-Here are some common errors and issues with the [AI Agent node](https://docs.n8n.io/n8n-nodes-langchain.agent/) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [AI Agent node](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/) and steps to resolve or troubleshoot them.
 
 ## Internal error: 400 Invalid value for 'content'
 
@@ -61,7 +61,7 @@ You might see this in one of two scenarios:
 
 ## Error in sub-node Simple Memory
 
-This error displays when n8n runs into an issue with the [Simple Memory](https://docs.n8n.io/n8n-nodes-langchain.memorybufferwindow/) sub-node.
+This error displays when n8n runs into an issue with the [Simple Memory](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memorybufferwindow/) sub-node.
 
 It most often occurs when your workflow or the workflow template you copied uses an older version of the Simple memory node (previously known as "Window Buffer Memory").
 
@@ -75,7 +75,7 @@ To resolve this, click the + Chat Model button at the bottom of your screen when
 
 ## No prompt specified error
 
-This error occurs when the agent expects to get the prompt from the previous node automatically. Typically, this happens when you're using the [Chat Trigger Node](https://docs.n8n.io//). 
+This error occurs when the agent expects to get the prompt from the previous node automatically. Typically, this happens when you're using the [Chat Trigger Node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/). 
 
 To resolve this issue, find the **Prompt** parameter of the AI Agent node and change it from **Connected Chat Trigger Node** to **Define below**. This allows you to manually build your prompt by referencing output data from other nodes or by adding static text.
 
@@ -92,9 +92,9 @@ To resolve this issue, find the **Prompt** parameter of the AI Agent node and ch
 
 The Conversational Agent has human-like conversations. It can maintain context, understand user intent, and provide relevant answers. This agent is typically used for building chatbots, virtual assistants, and customer support systems.
 
-The Conversational Agent describes [tools](/glossary.md#ai-tool) in the system prompt and parses JSON responses for tool calls. If your preferred AI model doesn't support tool calling or you're handling simpler interactions, this agent is a good general option. It's more flexible but may be less accurate than the [Tools Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/tools-agent/).
+The Conversational Agent describes [tools](https://docs.n8n.io/glossary/#ai-tool) in the system prompt and parses JSON responses for tool calls. If your preferred AI model doesn't support tool calling or you're handling simpler interactions, this agent is a good general option. It's more flexible but may be less accurate than the [Tools Agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/tools-agent/).
 
-Refer to [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
+Refer to [AI Agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
 
 --8<-- "_snippets/integrations/builtin/cluster-nodes/use-with-chat-trigger.md"
 
@@ -161,11 +161,11 @@ Here is the user's input (remember to respond with a markdown code snippet of a 
 
 ## Templates and examples
 
-Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/n8n-nodes-langchain.agent/#templates-and-examples) section.
+Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/#templates-and-examples) section.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues/).
 
 ---
 
@@ -176,13 +176,13 @@ For common questions or issues and suggested solutions, refer to [Common issues]
 
 Use the OpenAI Functions Agent node to use an [OpenAI functions model](https://platform.openai.com/docs/guides/function-calling). These are models that detect when a function should be called and respond with the inputs that should be passed to the function.
 
-Refer to [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
+Refer to [AI Agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
 
 --8<-- "_snippets/integrations/builtin/cluster-nodes/use-with-chat-trigger.md"
 
 > **OpenAI Chat Model required**
 >
-> You must use the [OpenAI Chat Model](https://docs.n8n.io/n8n-nodes-langchain.lmchatopenai/) with this agent.
+> You must use the [OpenAI Chat Model](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenai/) with this agent.
 
 ## Node parameters
 
@@ -218,11 +218,11 @@ Refine the OpenAI Functions Agent node's behavior using these options:
 
 ## Templates and examples
 
-Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/n8n-nodes-langchain.agent/#templates-and-examples) section.
+Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/#templates-and-examples) section.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues/).
 
 ---
 
@@ -231,9 +231,9 @@ For common questions or issues and suggested solutions, refer to [Common issues]
 
 # Plan and Execute Agent node
 
-The Plan and Execute Agent is like the [ReAct agent](https://docs.n8n.io/n8n-nodes-langchain.agent/react-agent/) but with a focus on planning. It first creates a high-level plan to solve the given task and then executes the plan step by step. This agent is most useful for tasks that require a structured approach and careful planning.
+The Plan and Execute Agent is like the [ReAct agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/react-agent/) but with a focus on planning. It first creates a high-level plan to solve the given task and then executes the plan step by step. This agent is most useful for tasks that require a structured approach and careful planning.
 
-Refer to [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
+Refer to [AI Agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
 
 ## Node parameters
 
@@ -267,11 +267,11 @@ Available LangChain expressions:
 
 ## Templates and examples
 
-Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/n8n-nodes-langchain.agent/#templates-and-examples) section.
+Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/#templates-and-examples) section.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues/).
 
 ---
 
@@ -288,7 +288,7 @@ The ReAct Agent node implements [ReAct](https://react-lm.github.io/) logic. ReAc
 
 The ReAct Agent reasons about a given task, determines the necessary actions, and then executes them. It follows the cycle of reasoning and acting until it completes the task. The ReAct agent can break down complex tasks into smaller sub-tasks, prioritise them, and execute them one after the other.
 
-Refer to [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
+Refer to [AI Agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
 
 > **No memory**
 >
@@ -348,11 +348,11 @@ Refer to LangChain's [ReAct Agents](https://js.langchain.com/docs/concepts/agent
 
 ## Templates and examples
 
-Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/n8n-nodes-langchain.agent/#templates-and-examples) section.
+Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/#templates-and-examples) section.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues/).
 
 ---
 
@@ -367,7 +367,7 @@ For common questions or issues and suggested solutions, refer to [Common issues]
 
 The SQL Agent uses a SQL database as a data source. It can understand natural language questions, convert them into SQL queries, execute the queries, and present the results in a user-friendly format. This agent is valuable for building natural language interfaces to databases.
 
-Refer to [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
+Refer to [AI Agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
 
 ## Node parameters
 
@@ -380,14 +380,14 @@ Choose the database to use as a data source for the node. Options include:
 * **MySQL**: Select this option to use a MySQL database.
     * Also select the **Credential for MySQL**.
 * **SQLite**: Select this option to use a SQLite database.
-    * You must add a [Read/Write File From Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node before the Agent to read your SQLite file.
+    * You must add a [Read/Write File From Disk](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile/) node before the Agent to read your SQLite file.
     * Also enter the **Input Binary Field** name of your SQLite file coming from the Read/Write File From Disk node.
 * **Postgres**: Select this option to use a Postgres database.
     * Also select the **Credential for Postgres**.
 
 > **Postgres and MySQL Agents**
 >
-> If you are using [Postgres](/integrations/builtin/credentials/postgres.md) or [MySQL](/integrations/builtin/credentials/mysql.md), this agent doesn't support the credential tunnel options.
+> If you are using [Postgres](https://docs.n8n.io/integrations/builtin/credentials/postgres/) or [MySQL](https://docs.n8n.io/integrations/builtin/credentials/mysql/), this agent doesn't support the credential tunnel options.
 
 ### Prompt
 
@@ -445,11 +445,11 @@ Default is `10`.
 
 ## Templates and examples
 
-Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/n8n-nodes-langchain.agent/#templates-and-examples) section.
+Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/#templates-and-examples) section.
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues/).
 
 ---
 
@@ -458,144 +458,144 @@ For common questions or issues and suggested solutions, refer to [Common issues]
 
 # Tools AI Agent node
 
-The Tools Agent uses external [tools](/glossary.md#ai-tool) and APIs to perform actions and retrieve information. It can understand the capabilities of different tools and determine which tool to use depending on the task. This agent helps integrate LLMs with various external services and databases.
+The Tools Agent uses external [tools](https://docs.n8n.io/glossary/#ai-tool) and APIs to perform actions and retrieve information. It can understand the capabilities of different tools and determine which tool to use depending on the task. This agent helps integrate LLMs with various external services and databases.
 
 This agent has an enhanced ability to work with tools and can ensure a standard output format.
 
 The Tools Agent implements [Langchain's tool calling](https://js.langchain.com/docs/concepts/tool_calling/) interface. This interface describes available tools and their schemas. The agent also has improved output parsing capabilities, as it passes the parser to the model as a formatting tool.
 
-Refer to [AI Agent](https://docs.n8n.io/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
+Refer to [AI Agent](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/) for more information on the AI Agent node itself.
 
 --8<-- "_snippets/integrations/builtin/cluster-nodes/use-with-chat-trigger.md"
 
 This agent supports the following chat models:
 
-* [OpenAI Chat Model](https://docs.n8n.io/n8n-nodes-langchain.lmchatopenai/)
-* [Groq Chat Model](https://docs.n8n.io/n8n-nodes-langchain.lmchatgroq/)
-* [Mistral Cloud Chat Model](https://docs.n8n.io/n8n-nodes-langchain.lmchatmistralcloud/)
-* [Anthropic Chat Model](https://docs.n8n.io/n8n-nodes-langchain.lmchatanthropic/)
-* [Azure OpenAI Chat Model](https://docs.n8n.io/n8n-nodes-langchain.lmchatazureopenai/)
+* [OpenAI Chat Model](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatopenai/)
+* [Groq Chat Model](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatgroq/)
+* [Mistral Cloud Chat Model](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatmistralcloud/)
+* [Anthropic Chat Model](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatanthropic/)
+* [Azure OpenAI Chat Model](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatazureopenai/)
 
 ??? Details "The Tools Agent can use the following tools..."
-    * [Call n8n Workflow](https://docs.n8n.io/n8n-nodes-langchain.toolworkflow/)
-    * [Code](https://docs.n8n.io/n8n-nodes-langchain.toolcode/)
-    * [HTTP Request](https://docs.n8n.io/n8n-nodes-langchain.toolhttprequest/)
-    * [Action Network](/integrations/builtin/app-nodes/n8n-nodes-base.actionnetwork.md)
-    * [ActiveCampaign](/integrations/builtin/app-nodes/n8n-nodes-base.activecampaign.md)
-    * [Affinity](/integrations/builtin/app-nodes/n8n-nodes-base.affinity.md)
-    * [Agile CRM](/integrations/builtin/app-nodes/n8n-nodes-base.agilecrm.md)
-    * [Airtable](https://docs.n8n.io//)
-    * [APITemplate.io](/integrations/builtin/app-nodes/n8n-nodes-base.apitemplateio.md)
-    * [Asana](/integrations/builtin/app-nodes/n8n-nodes-base.asana.md)
-    * [AWS Lambda](/integrations/builtin/app-nodes/n8n-nodes-base.awslambda.md)
-    * [AWS S3](/integrations/builtin/app-nodes/n8n-nodes-base.awss3.md)
-    * [AWS SES](/integrations/builtin/app-nodes/n8n-nodes-base.awsses.md)
-    * [AWS Textract](/integrations/builtin/app-nodes/n8n-nodes-base.awstextract.md)
-    * [AWS Transcribe](/integrations/builtin/app-nodes/n8n-nodes-base.awstranscribe.md)
-    * [Baserow](/integrations/builtin/app-nodes/n8n-nodes-base.baserow.md)
-    * [Bubble](/integrations/builtin/app-nodes/n8n-nodes-base.bubble.md)
-    * [Calculator](https://docs.n8n.io/n8n-nodes-langchain.toolcalculator/)
-    * [ClickUp](/integrations/builtin/app-nodes/n8n-nodes-base.clickup.md)
-    * [CoinGecko](/integrations/builtin/app-nodes/n8n-nodes-base.coingecko.md)
-    * [Compression](/integrations/builtin/core-nodes/n8n-nodes-base.compression.md)
-    * [Crypto](/integrations/builtin/core-nodes/n8n-nodes-base.crypto.md)
-    * [DeepL](/integrations/builtin/app-nodes/n8n-nodes-base.deepl.md)
-    * [DHL](/integrations/builtin/app-nodes/n8n-nodes-base.dhl.md)
-    * [Discord](https://docs.n8n.io//)
-    * [Dropbox](/integrations/builtin/app-nodes/n8n-nodes-base.dropbox.md)
-    * [Elasticsearch](/integrations/builtin/app-nodes/n8n-nodes-base.elasticsearch.md)
-    * [ERPNext](/integrations/builtin/app-nodes/n8n-nodes-base.erpnext.md)
-    * [Facebook Graph API](/integrations/builtin/app-nodes/n8n-nodes-base.facebookgraphapi.md)
-    * [FileMaker](/integrations/builtin/app-nodes/n8n-nodes-base.filemaker.md)
-    * [Ghost](/integrations/builtin/app-nodes/n8n-nodes-base.ghost.md)
-    * [Git](/integrations/builtin/core-nodes/n8n-nodes-base.git.md)
-    * [GitHub](/integrations/builtin/app-nodes/n8n-nodes-base.github.md)
-    * [GitLab](/integrations/builtin/app-nodes/n8n-nodes-base.gitlab.md)
-    * [Gmail](https://docs.n8n.io//)
-    * [Google Analytics](/integrations/builtin/app-nodes/n8n-nodes-base.googleanalytics.md)
-    * [Google BigQuery](/integrations/builtin/app-nodes/n8n-nodes-base.googlebigquery.md)
-    * [Google Calendar](https://docs.n8n.io//)
-    * [Google Chat](/integrations/builtin/app-nodes/n8n-nodes-base.googlechat.md)
-    * [Google Cloud Firestore](/integrations/builtin/app-nodes/n8n-nodes-base.googlecloudfirestore.md)
-    * [Google Cloud Realtime Database](/integrations/builtin/app-nodes/n8n-nodes-base.googlecloudrealtimedatabase.md)
-    * [Google Contacts](/integrations/builtin/app-nodes/n8n-nodes-base.googlecontacts.md)
-    * [Google Docs](/integrations/builtin/app-nodes/n8n-nodes-base.googledocs.md)
-    * [Google Drive](https://docs.n8n.io//)
-    * [Google Sheets](https://docs.n8n.io//)
-    * [Google Slides](/integrations/builtin/app-nodes/n8n-nodes-base.googleslides.md)
-    * [Google Tasks](/integrations/builtin/app-nodes/n8n-nodes-base.googletasks.md)
-    * [Google Translate](/integrations/builtin/app-nodes/n8n-nodes-base.googletranslate.md)
-    * [Google Workspace Admin](/integrations/builtin/app-nodes/n8n-nodes-base.gsuiteadmin.md)
-    * [Gotify](/integrations/builtin/app-nodes/n8n-nodes-base.gotify.md)
-    * [Grafana](/integrations/builtin/app-nodes/n8n-nodes-base.grafana.md)
-    * [GraphQL](/integrations/builtin/core-nodes/n8n-nodes-base.graphql.md)
-    * [Hacker News](/integrations/builtin/app-nodes/n8n-nodes-base.hackernews.md)
-    * [Home Assistant](/integrations/builtin/app-nodes/n8n-nodes-base.homeassistant.md)
-    * [HubSpot](/integrations/builtin/app-nodes/n8n-nodes-base.hubspot.md)
-    * [Jenkins](/integrations/builtin/app-nodes/n8n-nodes-base.jenkins.md)
-    * [Jira Software](/integrations/builtin/app-nodes/n8n-nodes-base.jira.md)
-    * [JWT](/integrations/builtin/core-nodes/n8n-nodes-base.jwt.md)
-    * [Kafka](/integrations/builtin/app-nodes/n8n-nodes-base.kafka.md)
-    * [LDAP](/integrations/builtin/core-nodes/n8n-nodes-base.ldap.md)
-    * [Line](/integrations/builtin/app-nodes/n8n-nodes-base.line.md)
-    * [LinkedIn](/integrations/builtin/app-nodes/n8n-nodes-base.linkedin.md)
-    * [Mailcheck](/integrations/builtin/app-nodes/n8n-nodes-base.mailcheck.md)
-    * [Mailgun](/integrations/builtin/app-nodes/n8n-nodes-base.mailgun.md)
-    * [Mattermost](/integrations/builtin/app-nodes/n8n-nodes-base.mattermost.md)
-    * [Mautic](/integrations/builtin/app-nodes/n8n-nodes-base.mautic.md)
-    * [Medium](/integrations/builtin/app-nodes/n8n-nodes-base.medium.md)
-    * [Microsoft Excel 365](/integrations/builtin/app-nodes/n8n-nodes-base.microsoftexcel.md)
-    * [Microsoft OneDrive](/integrations/builtin/app-nodes/n8n-nodes-base.microsoftonedrive.md)
-    * [Microsoft Outlook](/integrations/builtin/app-nodes/n8n-nodes-base.microsoftoutlook.md)
-    * [Microsoft SQL](/integrations/builtin/app-nodes/n8n-nodes-base.microsoftsql.md)
-    * [Microsoft Teams](/integrations/builtin/app-nodes/n8n-nodes-base.microsoftteams.md)
-    * [Microsoft To Do](/integrations/builtin/app-nodes/n8n-nodes-base.microsofttodo.md)
-    * [Monday.com](/integrations/builtin/app-nodes/n8n-nodes-base.mondaycom.md)
-    * [MongoDB](/integrations/builtin/app-nodes/n8n-nodes-base.mongodb.md)
-    * [MQTT](/integrations/builtin/app-nodes/n8n-nodes-base.mqtt.md)
-    * [MySQL](https://docs.n8n.io//)
-    * [NASA](/integrations/builtin/app-nodes/n8n-nodes-base.nasa.md)
-    * [Nextcloud](/integrations/builtin/app-nodes/n8n-nodes-base.nextcloud.md)
-    * [NocoDB](/integrations/builtin/app-nodes/n8n-nodes-base.nocodb.md)
-    * [Notion](https://docs.n8n.io//)
-    * [Odoo](/integrations/builtin/app-nodes/n8n-nodes-base.odoo.md)
-    * [OpenWeatherMap](/integrations/builtin/app-nodes/n8n-nodes-base.openweathermap.md)
-    * [Pipedrive](/integrations/builtin/app-nodes/n8n-nodes-base.pipedrive.md)
-    * [Postgres](https://docs.n8n.io//)
-    * [Pushover](/integrations/builtin/app-nodes/n8n-nodes-base.pushover.md)
-    * [QuickBooks Online](/integrations/builtin/app-nodes/n8n-nodes-base.quickbooks.md)
-    * [QuickChart](/integrations/builtin/app-nodes/n8n-nodes-base.quickchart.md)
-    * [RabbitMQ](/integrations/builtin/app-nodes/n8n-nodes-base.rabbitmq.md)
-    * [Reddit](/integrations/builtin/app-nodes/n8n-nodes-base.reddit.md)
-    * [Redis](/integrations/builtin/app-nodes/n8n-nodes-base.redis.md)
-    * [RocketChat](/integrations/builtin/app-nodes/n8n-nodes-base.rocketchat.md)
-    * [S3](/integrations/builtin/app-nodes/n8n-nodes-base.s3.md)
-    * [Salesforce](/integrations/builtin/app-nodes/n8n-nodes-base.salesforce.md)
-    * [Send Email](/integrations/builtin/core-nodes/n8n-nodes-base.sendemail.md)
-    * [SendGrid](/integrations/builtin/app-nodes/n8n-nodes-base.sendgrid.md)
-    * [SerpApi (Google Search)](https://docs.n8n.io/n8n-nodes-langchain.toolserpapi/)
-    * [Shopify](/integrations/builtin/app-nodes/n8n-nodes-base.shopify.md)
-    * [Slack](/integrations/builtin/app-nodes/n8n-nodes-base.slack.md)
-    * [Spotify](/integrations/builtin/app-nodes/n8n-nodes-base.spotify.md)
-    * [Stripe](/integrations/builtin/app-nodes/n8n-nodes-base.stripe.md)
-    * [Supabase](https://docs.n8n.io//)
-    * [Telegram](https://docs.n8n.io//)
-    * [Todoist](/integrations/builtin/app-nodes/n8n-nodes-base.todoist.md)
-    * [TOTP](/integrations/builtin/core-nodes/n8n-nodes-base.totp.md)
-    * [Trello](/integrations/builtin/app-nodes/n8n-nodes-base.trello.md)
-    * [Twilio](/integrations/builtin/app-nodes/n8n-nodes-base.twilio.md)
-    * [urlscan.io](/integrations/builtin/app-nodes/n8n-nodes-base.urlscanio.md)
-    * [Vector Store](https://docs.n8n.io/n8n-nodes-langchain.toolvectorstore/)
-    * [Webflow](/integrations/builtin/app-nodes/n8n-nodes-base.webflow.md)
-    * [Wikipedia](https://docs.n8n.io/n8n-nodes-langchain.toolwikipedia/)
-    * [Wolfram|Alpha](https://docs.n8n.io/n8n-nodes-langchain.toolwolframalpha/)
-    * [WooCommerce](/integrations/builtin/app-nodes/n8n-nodes-base.woocommerce.md)
-    * [Wordpress](/integrations/builtin/app-nodes/n8n-nodes-base.wordpress.md)
-    * [X (Formerly Twitter)](/integrations/builtin/app-nodes/n8n-nodes-base.twitter.md)
-    * [YouTube](/integrations/builtin/app-nodes/n8n-nodes-base.youtube.md)
-    * [Zendesk](/integrations/builtin/app-nodes/n8n-nodes-base.zendesk.md)
-    * [Zoho CRM](/integrations/builtin/app-nodes/n8n-nodes-base.zohocrm.md)
-    * [Zoom](/integrations/builtin/app-nodes/n8n-nodes-base.zoom.md)
+    * [Call n8n Workflow](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolworkflow/)
+    * [Code](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolcode/)
+    * [HTTP Request](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolhttprequest/)
+    * [Action Network](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.actionnetwork/)
+    * [ActiveCampaign](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.activecampaign/)
+    * [Affinity](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.affinity/)
+    * [Agile CRM](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.agilecrm/)
+    * [Airtable](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.airtable/)
+    * [APITemplate.io](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.apitemplateio/)
+    * [Asana](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.asana/)
+    * [AWS Lambda](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.awslambda/)
+    * [AWS S3](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.awss3/)
+    * [AWS SES](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.awsses/)
+    * [AWS Textract](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.awstextract/)
+    * [AWS Transcribe](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.awstranscribe/)
+    * [Baserow](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.baserow/)
+    * [Bubble](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.bubble/)
+    * [Calculator](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolcalculator/)
+    * [ClickUp](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.clickup/)
+    * [CoinGecko](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.coingecko/)
+    * [Compression](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.compression/)
+    * [Crypto](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.crypto/)
+    * [DeepL](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.deepl/)
+    * [DHL](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.dhl/)
+    * [Discord](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.discord/)
+    * [Dropbox](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.dropbox/)
+    * [Elasticsearch](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.elasticsearch/)
+    * [ERPNext](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.erpnext/)
+    * [Facebook Graph API](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.facebookgraphapi/)
+    * [FileMaker](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.filemaker/)
+    * [Ghost](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.ghost/)
+    * [Git](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.git/)
+    * [GitHub](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.github/)
+    * [GitLab](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gitlab/)
+    * [Gmail](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gmail/)
+    * [Google Analytics](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googleanalytics/)
+    * [Google BigQuery](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlebigquery/)
+    * [Google Calendar](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/)
+    * [Google Chat](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlechat/)
+    * [Google Cloud Firestore](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecloudfirestore/)
+    * [Google Cloud Realtime Database](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecloudrealtimedatabase/)
+    * [Google Contacts](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecontacts/)
+    * [Google Docs](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledocs/)
+    * [Google Drive](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/)
+    * [Google Sheets](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlesheets/)
+    * [Google Slides](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googleslides/)
+    * [Google Tasks](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googletasks/)
+    * [Google Translate](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googletranslate/)
+    * [Google Workspace Admin](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gsuiteadmin/)
+    * [Gotify](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gotify/)
+    * [Grafana](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.grafana/)
+    * [GraphQL](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.graphql/)
+    * [Hacker News](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.hackernews/)
+    * [Home Assistant](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.homeassistant/)
+    * [HubSpot](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.hubspot/)
+    * [Jenkins](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.jenkins/)
+    * [Jira Software](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.jira/)
+    * [JWT](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.jwt/)
+    * [Kafka](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.kafka/)
+    * [LDAP](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.ldap/)
+    * [Line](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.line/)
+    * [LinkedIn](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.linkedin/)
+    * [Mailcheck](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mailcheck/)
+    * [Mailgun](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mailgun/)
+    * [Mattermost](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mattermost/)
+    * [Mautic](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mautic/)
+    * [Medium](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.medium/)
+    * [Microsoft Excel 365](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftexcel/)
+    * [Microsoft OneDrive](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftonedrive/)
+    * [Microsoft Outlook](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftoutlook/)
+    * [Microsoft SQL](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftsql/)
+    * [Microsoft Teams](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftteams/)
+    * [Microsoft To Do](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsofttodo/)
+    * [Monday.com](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mondaycom/)
+    * [MongoDB](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mongodb/)
+    * [MQTT](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mqtt/)
+    * [MySQL](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mysql/)
+    * [NASA](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.nasa/)
+    * [Nextcloud](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.nextcloud/)
+    * [NocoDB](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.nocodb/)
+    * [Notion](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.notion/)
+    * [Odoo](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.odoo/)
+    * [OpenWeatherMap](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.openweathermap/)
+    * [Pipedrive](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.pipedrive/)
+    * [Postgres](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.postgres/)
+    * [Pushover](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.pushover/)
+    * [QuickBooks Online](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.quickbooks/)
+    * [QuickChart](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.quickchart/)
+    * [RabbitMQ](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.rabbitmq/)
+    * [Reddit](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.reddit/)
+    * [Redis](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.redis/)
+    * [RocketChat](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.rocketchat/)
+    * [S3](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.s3/)
+    * [Salesforce](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.salesforce/)
+    * [Send Email](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.sendemail/)
+    * [SendGrid](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.sendgrid/)
+    * [SerpApi (Google Search)](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolserpapi/)
+    * [Shopify](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.shopify/)
+    * [Slack](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.slack/)
+    * [Spotify](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.spotify/)
+    * [Stripe](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.stripe/)
+    * [Supabase](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.supabase/)
+    * [Telegram](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.telegram/)
+    * [Todoist](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.todoist/)
+    * [TOTP](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.totp/)
+    * [Trello](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.trello/)
+    * [Twilio](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.twilio/)
+    * [urlscan.io](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.urlscanio/)
+    * [Vector Store](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolvectorstore/)
+    * [Webflow](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.webflow/)
+    * [Wikipedia](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolwikipedia/)
+    * [Wolfram|Alpha](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolwolframalpha/)
+    * [WooCommerce](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.woocommerce/)
+    * [Wordpress](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.wordpress/)
+    * [X (Formerly Twitter)](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.twitter/)
+    * [YouTube](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.youtube/)
+    * [Zendesk](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.zendesk/)
+    * [Zoho CRM](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.zohocrm/)
+    * [Zoom](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.zoom/)
 
 ## Node parameters
 
@@ -641,15 +641,15 @@ When enabled, the AI Agent sends data back to the user in real-time as it genera
 
 > **Streaming requirements**
 >
-> For streaming to work, your workflow must use a trigger that supports streaming responses, such as the [Chat Trigger](https://docs.n8n.io//) or [Webhook](https://docs.n8n.io//) node with **Response Mode** set to **Streaming**.
+> For streaming to work, your workflow must use a trigger that supports streaming responses, such as the [Chat Trigger](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/) or [Webhook](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/) node with **Response Mode** set to **Streaming**.
 
 ## Templates and examples
 
-Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/n8n-nodes-langchain.agent/#templates-and-examples) section.
+Refer to the main AI Agent node's [Templates and examples](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/#templates-and-examples) section.
 
 ## Dynamic parameters for tools with `$fromAI()`
 
-To learn how to dynamically populate parameters for app node tools, refer to [Let AI specify tool parameters with `$fromAI()`](/advanced-ai/examples/using-the-fromai-function.md).
+To learn how to dynamically populate parameters for app node tools, refer to [Let AI specify tool parameters with `$fromAI()`](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 ## Human review for tool calls
 
@@ -664,8 +664,8 @@ To add a human review step:
 
 When the AI wants to use a gated tool, the workflow pauses and sends an approval request through your chosen channel. The recipient can approve (tool executes) or deny (action canceled).
 
-For detailed setup instructions and best practices, refer to [Human-in-the-loop for AI tool calls](/advanced-ai/human-in-the-loop-tools.md).
+For detailed setup instructions and best practices, refer to [Human-in-the-loop for AI tool calls](https://docs.n8n.io/advanced-ai/human-in-the-loop-tools/).
 
 ## Common issues
 
-For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/n8n-nodes-langchain.agent/common-issues/).
+For common questions or issues and suggested solutions, refer to [Common issues](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/common-issues/).

@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Tapfiliate node supports and 
 
 > **Credentials**
 >
-> Refer to [Tapfiliate credentials](/integrations/builtin/credentials/tapfiliate.md) for guidance on setting up authentication.
+> Refer to [Tapfiliate credentials](https://docs.n8n.io/integrations/builtin/credentials/tapfiliate/) for guidance on setting up authentication.
 
 ## Operations
 

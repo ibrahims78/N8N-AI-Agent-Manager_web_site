@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Taiga node supports and links
 
 > **Credentials**
 >
-> Refer to [Taiga credentials](/integrations/builtin/credentials/taiga.md) for guidance on setting up authentication.
+> Refer to [Taiga credentials](https://docs.n8n.io/integrations/builtin/credentials/taiga/) for guidance on setting up authentication.
 
 ## Operations
 

@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Clearbit node supports and li
 
 > **Credentials**
 >
-> Refer to [Clearbit credentials](/integrations/builtin/credentials/clearbit.md) for guidance on setting up authentication.
+> Refer to [Clearbit credentials](https://docs.n8n.io/integrations/builtin/credentials/clearbit/) for guidance on setting up authentication.
 
 ## Operations
 

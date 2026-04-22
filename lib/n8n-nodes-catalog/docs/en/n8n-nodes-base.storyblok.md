@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Storyblok node supports and l
 
 > **Credentials**
 >
-> Refer to [Storyblok credentials](/integrations/builtin/credentials/storyblok.md) for guidance on setting up authentication.
+> Refer to [Storyblok credentials](https://docs.n8n.io/integrations/builtin/credentials/storyblok/) for guidance on setting up authentication.
 
 ## Operations
 

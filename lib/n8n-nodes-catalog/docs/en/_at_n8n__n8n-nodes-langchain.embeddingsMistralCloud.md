@@ -4,13 +4,13 @@
 
 # Embeddings Mistral Cloud node
 
-Use the Embeddings Mistral Cloud node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
+Use the Embeddings Mistral Cloud node to generate [embeddings](https://docs.n8n.io/glossary/#ai-embedding) for a given text.
 
 On this page, you'll find the node parameters for the Embeddings Mistral Cloud node, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/mistral.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/mistral/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -41,4 +41,4 @@ Learn more about available models in [Mistral's models documentation](https://do
 
 Refer to [Langchain's Mistral embeddings documentation](https://js.langchain.com/docs/integrations/text_embedding/mistralai) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

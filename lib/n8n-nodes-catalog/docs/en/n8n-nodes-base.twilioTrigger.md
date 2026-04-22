@@ -10,7 +10,7 @@ On this page, you'll find a list of events the Twilio Trigger node can respond t
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/twilio.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/twilio/).
 
 > **Examples and templates**
 >
@@ -27,7 +27,7 @@ On this page, you'll find a list of events the Twilio Trigger node can respond t
 
 ## Related resources
 
-n8n provides an app node for Twilio. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.twilio.md).
+n8n provides an app node for Twilio. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.twilio/).
 
 View [example workflows and related content](https://n8n.io/integrations/twilio/) on n8n's website.
 

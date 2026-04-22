@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Pushcut node supports and lin
 
 > **Credentials**
 >
-> Refer to [Pushcut credentials](/integrations/builtin/credentials/pushcut.md) for guidance on setting up authentication.
+> Refer to [Pushcut credentials](https://docs.n8n.io/integrations/builtin/credentials/pushcut/) for guidance on setting up authentication.
 
 ## Operations
 

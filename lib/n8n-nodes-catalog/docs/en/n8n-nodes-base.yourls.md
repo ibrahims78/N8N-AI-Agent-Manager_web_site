@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Yourls node supports and link
 
 > **Credentials**
 >
-> Refer to [Yourls credentials](/integrations/builtin/credentials/yourls.md) for guidance on setting up authentication.
+> Refer to [Yourls credentials](https://docs.n8n.io/integrations/builtin/credentials/yourls/) for guidance on setting up authentication.
 
 ## Operations
 

@@ -10,7 +10,7 @@ Use the Facebook Trigger node to trigger a workflow when events occur in Faceboo
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
 
 > **Examples and templates**
 >
@@ -18,23 +18,23 @@ Use the Facebook Trigger node to trigger a workflow when events occur in Faceboo
 
 ## Objects
 
-- [**Ad Account**](https://docs.n8n.io/ad-account/): Get updates for certain ads changes.
-- [**Application**](https://docs.n8n.io/application/): Get updates sent to the application.
-- [**Certificate Transparency**](https://docs.n8n.io/certificate-transparency/): Get updates when new security certificates are generated for your subscribed domains, including new certificates and potential phishing attempts.
-- Activity and events in a [**Group**](https://docs.n8n.io/group/)
-- [**Instagram**](https://docs.n8n.io/instagram/): Get updates when someone comments on the Media objects of your app users; @mentions your app users; or when Stories of your app users expire.
-- [**Link**](https://docs.n8n.io/link/): Get updates about the links for rich previews by an external provider
-- [**Page**](https://docs.n8n.io/page/) updates
-- [**Permissions**](https://docs.n8n.io/permissions/): Updates when granting or revoking permissions
-- [**User**](https://docs.n8n.io/user/) profile updates
-- [**WhatsApp Business Account**](https://docs.n8n.io/whatsapp/)
+- [**Ad Account**](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/ad-account/): Get updates for certain ads changes.
+- [**Application**](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/application/): Get updates sent to the application.
+- [**Certificate Transparency**](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/certificate-transparency/): Get updates when new security certificates are generated for your subscribed domains, including new certificates and potential phishing attempts.
+- Activity and events in a [**Group**](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/group/)
+- [**Instagram**](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/instagram/): Get updates when someone comments on the Media objects of your app users; @mentions your app users; or when Stories of your app users expire.
+- [**Link**](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/link/): Get updates about the links for rich previews by an external provider
+- [**Page**](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/page/) updates
+- [**Permissions**](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/permissions/): Updates when granting or revoking permissions
+- [**User**](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/user/) profile updates
+- [**WhatsApp Business Account**](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/whatsapp/)
     
     > **Use WhatsApp Trigger**
 >
-> n8n recommends using the [WhatsApp Trigger node](/integrations/builtin/trigger-nodes/n8n-nodes-base.whatsapptrigger.md) with the [WhatsApp credentials](/integrations/builtin/credentials/whatsapp.md) instead of the Facebook Trigger node for these events. The WhatsApp Trigger node has more events to listen to.
+> n8n recommends using the [WhatsApp Trigger node](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.whatsapptrigger/) with the [WhatsApp credentials](https://docs.n8n.io/integrations/builtin/credentials/whatsapp/) instead of the Facebook Trigger node for these events. The WhatsApp Trigger node has more events to listen to.
 >     ///
 > 
-> - [**Workplace Security**](https://docs.n8n.io/workplace-security/)
+> - [**Workplace Security**](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/workplace-security/)
 > 
 > For each **Object**, use the **Field Names or IDs** dropdown to select more details on what data to receive. Refer to the linked pages for more details.
 > 
@@ -52,8 +52,8 @@ Use the Facebook Trigger node to trigger a workflow when events occur in Faceboo
 > 
 > # Facebook Trigger Ad Account object
 > 
-> Use this object to receive updates on certain ads changes in an Ad Account. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself. note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
+> Use this object to receive updates on certain ads changes in an Ad Account. Refer to [Facebook Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/) for more information on the trigger itself. note | Credentials
+You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
 ///
 
 > **Examples and templates**
@@ -64,8 +64,8 @@ You can find authentication information for this node [here](/integrations/built
 
 To configure the trigger with this Object:
 
-1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](/integrations/builtin/credentials/facebookapp.md).
-1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](/integrations/builtin/credentials/facebookapp.md) documentation for more information.
+1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
+1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/) documentation for more information.
 1. Select **Ad Account** as the **Object**.
 1. **Field Names or IDs**: By default, the node will trigger on all the available Ad Account events using the `*` wildcard filter. If you'd like to limit the events, use the `X` to remove the star and use the dropdown or an expression to select the updates you're interested in. Options include:
     * **In Process Ad Objects**: Notifies you when a campaign, ad set, or ad exits the `IN_PROCESS` status. Refer to Meta's [Post-processing for Ad Creation and Edits](https://developers.facebook.com/docs/marketing-api/using-the-api/post-processing/) for more information.
@@ -83,11 +83,11 @@ Refer to [Webhooks for Ad Accounts](https://developers.facebook.com/docs/graph-a
 
 # Facebook Trigger Application object
 
-Use this object to receive updates sent to a specific app. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
+Use this object to receive updates sent to a specific app. Refer to [Facebook Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/) for more information on the trigger itself.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
 
 > **Examples and templates**
 >
@@ -97,8 +97,8 @@ Use this object to receive updates sent to a specific app. Refer to [Facebook Tr
 
 To configure the trigger with this Object:
 
-1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](/integrations/builtin/credentials/facebookapp.md).
-1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](/integrations/builtin/credentials/facebookapp.md) documentation for more information.
+1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
+1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/) documentation for more information.
 1. Select **Application** as the **Object**.
 1. **Field Names or IDs**: By default, the node will trigger on all the available events using the `*` wildcard filter. If you'd like to limit the events, use the `X` to remove the star and use the dropdown or an expression to select the updates you're interested in. Options include:
     * **Add Account**
@@ -122,11 +122,11 @@ Refer to Meta's [Application](https://developers.facebook.com/docs/graph-api/web
 
 # Facebook Trigger Certificate Transparency object
 
-Use this object to receive updates about newly issued certificates for any domains that you have subscribed for certificate alerts or phishing alerts. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
+Use this object to receive updates about newly issued certificates for any domains that you have subscribed for certificate alerts or phishing alerts. Refer to [Facebook Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/) for more information on the trigger itself.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
 
 > **Examples and templates**
 >
@@ -136,8 +136,8 @@ Use this object to receive updates about newly issued certificates for any domai
 
 To configure the trigger with this Object:
 
-1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](/integrations/builtin/credentials/facebookapp.md).
-1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](/integrations/builtin/credentials/facebookapp.md) documentation for more information.
+1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
+1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/) documentation for more information.
 1. Select **Certificate Transparency** as the **Object**.
 1. **Field Names or IDs**: By default, the node will trigger on all the available events using the `*` wildcard filter. If you'd like to limit the events, use the `X` to remove the star and use the dropdown or an expression to select the updates you're interested in. Options include:
     * **Certificate**: Notifies you when someone issues a new certificate for your subscribed domains. You'll need to subscribe your domain for certificate alerts.
@@ -160,11 +160,11 @@ Refer to [Webhooks for Certificate Transparency](https://developers.facebook.com
 
 # Facebook Trigger Group object
 
-Use this object to receive updates about activities and events in a group. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
+Use this object to receive updates about activities and events in a group. Refer to [Facebook Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/) for more information on the trigger itself.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
 
 > **Examples and templates**
 >
@@ -174,8 +174,8 @@ Use this object to receive updates about activities and events in a group. Refer
 
 To configure the trigger with this Object:
 
-1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](/integrations/builtin/credentials/facebookapp.md).
-1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](/integrations/builtin/credentials/facebookapp.md) documentation for more information.
+1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
+1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/) documentation for more information.
 1. Select **Group** as the **Object**.
 1. **Field Names or IDs**: By default, the node will trigger on all the available events using the `*` wildcard filter. If you'd like to limit the events, use the `X` to remove the star and use the dropdown or an expression to select the updates you're interested in.
 1. In **Options**, turn on the toggle to **Include Values**. This Object type fails without the option enabled.
@@ -191,11 +191,11 @@ Refer to Meta's [Groups](https://developers.facebook.com/docs/workplace/referenc
 
 # Facebook Trigger Instagram object
 
-Use this object to receive updates when someone comments on the Media objects of your app users; @mentions your app users; or when Stories of your app users expire. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
+Use this object to receive updates when someone comments on the Media objects of your app users; @mentions your app users; or when Stories of your app users expire. Refer to [Facebook Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/) for more information on the trigger itself.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
 
 > **Examples and templates**
 >
@@ -205,8 +205,8 @@ Use this object to receive updates when someone comments on the Media objects of
 
 To configure the trigger with this Object:
 
-1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](/integrations/builtin/credentials/facebookapp.md).
-1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](/integrations/builtin/credentials/facebookapp.md) documentation for more information.
+1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
+1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/) documentation for more information.
 1. Select **Instagram** as the **Object**.
 1. **Field Names or IDs**: By default, the node will trigger on all the available events using the `*` wildcard filter. If you'd like to limit the events, use the `X` to remove the star and use the dropdown or an expression to select the updates you're interested in. Options include:
     * **Comments**: Notifies you when anyone comments on an IG Media owned by your app's Instagram user.
@@ -229,11 +229,11 @@ Refer to [Webhooks for Instagram](https://developers.facebook.com/docs/graph-api
 
 # Facebook Trigger Link object
 
-Use this object to receive updates about links for rich previews by an external provider. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
+Use this object to receive updates about links for rich previews by an external provider. Refer to [Facebook Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/) for more information on the trigger itself.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
 
 > **Examples and templates**
 >
@@ -243,8 +243,8 @@ Use this object to receive updates about links for rich previews by an external 
 
 To configure the trigger with this Object:
 
-1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](/integrations/builtin/credentials/facebookapp.md).
-1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](/integrations/builtin/credentials/facebookapp.md) documentation for more information.
+1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
+1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/) documentation for more information.
 1. Select **Link** as the **Object**.
 1. **Field Names or IDs**: By default, the node will trigger on all the available events using the `*` wildcard filter. If you'd like to limit the events, use the `X` to remove the star and use the dropdown or an expression to select the updates you're interested in.
 1. In **Options**, turn on the toggle to **Include Values**. This Object type fails without the option enabled.
@@ -260,11 +260,11 @@ Refer to Meta's [Links](https://developers.facebook.com/docs/workplace/reference
 
 # Facebook Trigger Page object
 
-Use this object to receive updates when updates to your page profile fields or profile settings occur or someone mentions your page. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
+Use this object to receive updates when updates to your page profile fields or profile settings occur or someone mentions your page. Refer to [Facebook Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/) for more information on the trigger itself.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
 
 > **Examples and templates**
 >
@@ -286,8 +286,8 @@ This Object requires some configuration in your app and page before you can use 
 
 To configure the trigger with this Object:
 
-1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](/integrations/builtin/credentials/facebookapp.md).
-1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](/integrations/builtin/credentials/facebookapp.md) documentation for more information.
+1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
+1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/) documentation for more information.
 1. Select **Page** as the **Object**.
 1. **Field Names or IDs**: By default, the node will trigger on all the available events using the `*` wildcard filter. If you'd like to limit the events, use the `X` to remove the star and use the dropdown or an expression to select the updates you're interested in. Options include individual profile fields, as well as:
     * **Feed**: Describes most changes to a page's feed, including posts, likes, shares, and so on.
@@ -313,11 +313,11 @@ Refer to [Webhooks for Pages](https://developers.facebook.com/docs/graph-api/web
 
 # Facebook Trigger Permissions object
 
-Use this object to receive updates when a user grants or revokes a permission for your app. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
+Use this object to receive updates when a user grants or revokes a permission for your app. Refer to [Facebook Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/) for more information on the trigger itself.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
 
 > **Examples and templates**
 >
@@ -327,8 +327,8 @@ Use this object to receive updates when a user grants or revokes a permission fo
 
 To configure the trigger with this Object:
 
-1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](/integrations/builtin/credentials/facebookapp.md).
-1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](/integrations/builtin/credentials/facebookapp.md) documentation for more information.
+1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
+1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/) documentation for more information.
 1. Select **Permissions** as the **Object**.
 1. **Field Names or IDs**: By default, the node will trigger on all the available events using the `*` wildcard filter. If you'd like to limit the events, use the `X` to remove the star and use the dropdown or an expression to select the updates you're interested in.
 1. In **Options**, choose whether to turn on the toggle to **Include Values**. When turned on, the node includes the new values for the changes.
@@ -344,11 +344,11 @@ Refer to Meta's [Permissions](https://developers.facebook.com/docs/graph-api/web
 
 # Facebook Trigger User object
 
-Use this object to receive updates when changes to a user's profile occur. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
+Use this object to receive updates when changes to a user's profile occur. Refer to [Facebook Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/) for more information on the trigger itself.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
 
 > **Examples and templates**
 >
@@ -358,8 +358,8 @@ Use this object to receive updates when changes to a user's profile occur. Refer
 
 To configure the trigger with this Object:
 
-1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](/integrations/builtin/credentials/facebookapp.md).
-1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](/integrations/builtin/credentials/facebookapp.md) documentation for more information.
+1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
+1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/) documentation for more information.
 1. Select **User** as the **Object**.
 1. **Field Names or IDs**: By default, the node will trigger on all the available events using the `*` wildcard filter. If you'd like to limit the events, use the `X` to remove the star and use the dropdown or an expression to select the updates you're interested in.
 1. In **Options**, choose whether to turn on the toggle to **Include Values**. When turned on, the node includes the new values for the changes.
@@ -375,15 +375,15 @@ Refer to Meta's [User](https://developers.facebook.com/docs/graph-api/webhooks/r
 
 # Facebook Trigger WhatsApp Business Account object
 
-Use this object to receive updates when your WhatsApp Business Account (WABA) changes. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
+Use this object to receive updates when your WhatsApp Business Account (WABA) changes. Refer to [Facebook Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/) for more information on the trigger itself.
 
 > **Use WhatsApp trigger**
 >
-> n8n recommends using the [WhatsApp Trigger node](/integrations/builtin/trigger-nodes/n8n-nodes-base.whatsapptrigger.md) with the [WhatsApp credentials](/integrations/builtin/credentials/whatsapp.md) instead of the Facebook Trigger node. That trigger node includes twice the events to subscribe to.
+> n8n recommends using the [WhatsApp Trigger node](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.whatsapptrigger/) with the [WhatsApp credentials](https://docs.n8n.io/integrations/builtin/credentials/whatsapp/) instead of the Facebook Trigger node. That trigger node includes twice the events to subscribe to.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
 
 > **Examples and templates**
 >
@@ -400,8 +400,8 @@ This Object requires some configuration in your app and WhatsApp account before 
 
 To configure the trigger with this Object:
 
-1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](/integrations/builtin/credentials/facebookapp.md).
-1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](/integrations/builtin/credentials/facebookapp.md) documentation for more information.
+1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
+1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/) documentation for more information.
 1. Select **WhatsApp Business Account** as the **Object**.
 1. **Field Names or IDs**: By default, the node will trigger on all the available events using the `*` wildcard filter. If you'd like to limit the events, use the `X` to remove the star and use the dropdown or an expression to select the updates you're interested in. Options include:
     * **Message Template Status Update**
@@ -420,11 +420,11 @@ Refer to [Webhooks for WhatsApp Business Accounts](https://developers.facebook.c
 
 # Facebook Trigger Workplace Security object
 
-Use this object to receive updates when Workplace security events occur, like adding or removing admins, users joining or leaving a Workplace, and more. Refer to [Facebook Trigger](https://docs.n8n.io//) for more information on the trigger itself.
+Use this object to receive updates when Workplace security events occur, like adding or removing admins, users joining or leaving a Workplace, and more. Refer to [Facebook Trigger](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/) for more information on the trigger itself.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/facebookapp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
 
 > **Examples and templates**
 >
@@ -434,8 +434,8 @@ Use this object to receive updates when Workplace security events occur, like ad
 
 To configure the trigger with this Object:
 
-1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](/integrations/builtin/credentials/facebookapp.md).
-1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](/integrations/builtin/credentials/facebookapp.md) documentation for more information.
+1. Select the **Credential to connect with**. Select an existing or create a new [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/).
+1. Enter the **APP ID** of the app connected to your credential. Refer to the [Facebook App credential](https://docs.n8n.io/integrations/builtin/credentials/facebookapp/) documentation for more information.
 1. Select **Workplace Security** as the **Object**.
 1. **Field Names or IDs**: By default, the node will trigger on all the available events using the `*` wildcard filter. If you'd like to limit the events, use the `X` to remove the star and use the dropdown or an expression to select the updates you're interested in.
 1. In **Options**, turn on the toggle to **Include Values**. This Object type fails without the option enabled.

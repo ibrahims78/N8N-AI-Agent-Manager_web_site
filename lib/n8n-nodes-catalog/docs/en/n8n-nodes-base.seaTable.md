@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the SeaTable node supports and li
 
 > **Credentials**
 >
-> Refer to [SeaTable credentials](/integrations/builtin/credentials/seatable.md) for guidance on setting up authentication.
+> Refer to [SeaTable credentials](https://docs.n8n.io/integrations/builtin/credentials/seatable/) for guidance on setting up authentication.
 
 ## Operations
 

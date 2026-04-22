@@ -12,13 +12,13 @@ When the node execution completes, it combines all of the processed data and ret
 
 ## When to use the Loop Over Items node
 
-By default, n8n nodes are designed to process a list of input items (with some exceptions, detailed below). Depending on what you're trying to achieve, you often don't need the Loop Over Items node in your workflow. You can learn more about how n8n processes multiple items on the [looping in n8n](/flow-logic/looping.md) page.
+By default, n8n nodes are designed to process a list of input items (with some exceptions, detailed below). Depending on what you're trying to achieve, you often don't need the Loop Over Items node in your workflow. You can learn more about how n8n processes multiple items on the [looping in n8n](https://docs.n8n.io/flow-logic/looping/) page.
 
 These links highlight some of the cases where the Loop Over Items node can be useful:
 
-* [Loop until all items are processed](/flow-logic/looping.md#loop-until-all-items-are-processed): describes how the Loop Over Items node differs from normal item processing and when you might want to incorporate this node.
-* [Node exceptions](/flow-logic/looping.md#node-exceptions): outlines specific cases and nodes where you may need to use the Loop Over Items node to manually build looping logic.
-* [Avoiding rate limiting](/integrations/builtin/rate-limits.md): demonstrates how to batch API requests to avoid rate limits from other services.
+* [Loop until all items are processed](https://docs.n8n.io/flow-logic/looping/#loop-until-all-items-are-processed): describes how the Loop Over Items node differs from normal item processing and when you might want to incorporate this node.
+* [Node exceptions](https://docs.n8n.io/flow-logic/looping/#node-exceptions): outlines specific cases and nodes where you may need to use the Loop Over Items node to manually build looping logic.
+* [Avoiding rate limiting](https://docs.n8n.io/integrations/builtin/rate-limits/): demonstrates how to batch API requests to avoid rate limits from other services.
 
 ## Node parameters
 
@@ -32,7 +32,7 @@ Enter the number of items to return with each call.
 
 If turned on, the node will reset with the current input-data newly initialized with each loop. Use this when you want the Loop Over Items node to treat incoming data as a new set of data instead of a continuation of previous items.
 
-For example, you can use the Loop Over Items node with the reset option and an [If node](/integrations/builtin/core-nodes/n8n-nodes-base.if.md) to query a paginated service when you don't know how many pages you need in advance. The loop queries pages one at a time, performs any processing, and increments the page number. The loop reset ensures the loop recognizes each iteration as a new set of data. The If node evaluates an exit condition to decide whether to perform another iteration or not.
+For example, you can use the Loop Over Items node with the reset option and an [If node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.if/) to query a paginated service when you don't know how many pages you need in advance. The loop queries pages one at a time, performs any processing, and increments the page number. The loop reset ensures the loop recognizes each iteration as a new set of data. The If node evaluates an exit condition to decide whether to perform another iteration or not.
 
 > **Include a valid termination condition**
 >
@@ -50,7 +50,7 @@ When enabled, you can adjust the reset conditions by switching the parameter rep
 
 This workflow allows you to read an RSS feed from two different sources using the Loop Over Items node. You need the Loop Over Items node in the workflow as the RSS Feed Read node only processes the first item it receives. You can also find the [workflow](https://n8n.io/workflows/687-read-rss-feed-from-two-different-sources/) on n8n.io.
 
-The example walks through building the workflow, but assumes you are already familiar with n8n. To build your first workflow, including learning how to add nodes to a workflow, refer to [Try it out](/try-it-out/index.md).
+The example walks through building the workflow, but assumes you are already familiar with n8n. To build your first workflow, including learning how to add nodes to a workflow, refer to [Try it out](https://docs.n8n.io/try-it-out/).
 
 The final workflow looks like this:
 

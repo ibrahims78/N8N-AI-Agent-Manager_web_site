@@ -4,13 +4,13 @@
 
 # Google Vertex Chat Model node
 
-Use the Google Vertex AI Chat Model node to use Google's Vertex AI chat models with conversational [agents](/glossary.md#ai-agent).
+Use the Google Vertex AI Chat Model node to use Google's Vertex AI chat models with conversational [agents](https://docs.n8n.io/glossary/#ai-agent).
 
 On this page, you'll find the node parameters for the Google Vertex AI Chat Model node, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](https://docs.n8n.io/service-account/).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/google/service-account/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -44,4 +44,4 @@ On this page, you'll find the node parameters for the Google Vertex AI Chat Mode
 
 Refer to [LangChain's Google Vertex AI documentation](https://js.langchain.com/docs/integrations/chat/google_vertex_ai/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

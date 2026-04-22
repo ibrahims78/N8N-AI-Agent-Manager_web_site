@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Matrix node supports and link
 
 > **Credentials**
 >
-> Refer to [Matrix credentials](/integrations/builtin/credentials/matrix.md) for guidance on setting up authentication.
+> Refer to [Matrix credentials](https://docs.n8n.io/integrations/builtin/credentials/matrix/) for guidance on setting up authentication.
 
 ## Operations
 

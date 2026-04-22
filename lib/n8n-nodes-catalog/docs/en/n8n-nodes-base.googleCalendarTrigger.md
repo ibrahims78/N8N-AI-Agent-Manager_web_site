@@ -8,7 +8,7 @@
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](https://docs.n8n.io//).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/google/).
 
 > **Examples and templates**
 >
@@ -26,7 +26,7 @@
 
 ## Related resources
 
-n8n provides an app node for Google Calendar. You can find the node docs [here](https://docs.n8n.io//).
+n8n provides an app node for Google Calendar. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/).
 
 View [example workflows and related content](https://n8n.io/integrations/google-calendar-trigger/) on n8n's website.
 

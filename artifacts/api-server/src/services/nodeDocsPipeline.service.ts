@@ -573,28 +573,48 @@ export function rewriteRelativeMdLinks(
   markdown: string,
   sourceMdUrl: string
 ): string {
+  // Match `](target.md)` and `](target.md#anchor)`. The trailing group
+  // captures `)` or `#…)` so a fragment after the .md is preserved.
   return markdown.replace(
-    /(\]\()(\s*)([^)\s]+?\.md)(\s*[)#])/g,
-    (_full, prefix: string, ws: string, target: string, suffix: string) => {
+    /(\]\()(\s*)([^)\s]+?\.md)((?:#[^)\s]*)?)(\s*\))/g,
+    (
+      _full,
+      prefix: string,
+      ws: string,
+      target: string,
+      hash: string,
+      tail: string
+    ) => {
       try {
         if (/^https?:\/\//i.test(target)) return _full;
+
+        // Docs-site-absolute path (`/integrations/builtin/credentials/postgres.md`)
+        // → `https://docs.n8n.io/integrations/builtin/credentials/postgres/`
+        if (target.startsWith("/")) {
+          const stripped = target.endsWith("/index.md")
+            ? target.slice(0, -"index.md".length)
+            : target.slice(0, -3); // drop ".md"
+          const docsUrl =
+            `${DOCS_SITE_BASE}${stripped}${stripped.endsWith("/") ? "" : "/"}` +
+            hash;
+          return `${prefix}${ws}${docsUrl}${tail}`;
+        }
+
+        // Relative path — resolve against the source URL and convert back
+        // from the raw GitHub form to docs.n8n.io.
         const u = new URL(target, sourceMdUrl);
         if (!u.hostname.includes("githubusercontent")) return _full;
-        // Convert the raw GitHub path back into a docs.n8n.io URL.
-        // /n8n-io/n8n-docs/main/docs/integrations/.../node.md
-        // → https://docs.n8n.io/integrations/.../node/
         const pathParts = u.pathname.split("/").filter(Boolean);
-        // Strip [n8n-io, n8n-docs, main, docs]
-        const after = pathParts.slice(4);
+        const after = pathParts.slice(4); // strip [n8n-io, n8n-docs, main, docs]
         if (after.length === 0) return _full;
-        let last = after[after.length - 1];
+        const last = after[after.length - 1];
         if (last === "index.md") {
           after.pop();
         } else if (last.endsWith(".md")) {
           after[after.length - 1] = last.slice(0, -3);
         }
-        const docsUrl = `${DOCS_SITE_BASE}/${after.join("/")}/`;
-        return `${prefix}${ws}${docsUrl}${suffix}`;
+        const docsUrl = `${DOCS_SITE_BASE}/${after.join("/")}/${hash}`;
+        return `${prefix}${ws}${docsUrl}${tail}`;
       } catch {
         return _full;
       }

@@ -4,7 +4,7 @@
 
 # S3 node
 
-Use the S3 node to automate work in non-AWS S3 storage and integrate S3 with other applications. n8n has built-in support for a wide range of S3 features, including creating, deleting, and getting buckets, files, and folders. For AWS S3, use [AWS S3](/integrations/builtin/app-nodes/n8n-nodes-base.awss3.md).
+Use the S3 node to automate work in non-AWS S3 storage and integrate S3 with other applications. n8n has built-in support for a wide range of S3 features, including creating, deleting, and getting buckets, files, and folders. For AWS S3, use [AWS S3](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.awss3/).
 
 Use the S3 node for non-AWS S3 solutions like:
 
@@ -16,11 +16,11 @@ On this page, you'll find a list of operations the S3 node supports and links to
 
 > **Credentials**
 >
-> Refer to [S3 credentials](/integrations/builtin/credentials/s3.md) for guidance on setting up authentication.
+> Refer to [S3 credentials](https://docs.n8n.io/integrations/builtin/credentials/s3/) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 ## Operations
 
@@ -37,7 +37,7 @@ On this page, you'll find a list of operations the S3 node supports and links to
     * Upload a file
 
     /// note | Attach file for upload
-    To attach a file for upload, use another node to pass the file as a data property. Nodes like the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](https://docs.n8n.io//) work well.
+    To attach a file for upload, use another node to pass the file as a data property. Nodes like the [Read/Write Files from Disk](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile/) node or the [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) work well.
     ///
 
 * Folder

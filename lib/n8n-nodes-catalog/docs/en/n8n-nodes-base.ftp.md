@@ -8,9 +8,9 @@ The FTP node is useful to access and upload files to an FTP or SFTP server.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/ftp.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/ftp/).
 
-To connect to an SFTP server, use an SFTP credential. Refer to [FTP credentials](/integrations/builtin/credentials/ftp.md) for more information.
+To connect to an SFTP server, use an SFTP credential. Refer to [FTP credentials](https://docs.n8n.io/integrations/builtin/credentials/ftp/) for more information.
 
 ## Operations
 
@@ -22,7 +22,7 @@ To connect to an SFTP server, use an SFTP credential. Refer to [FTP credentials]
 
 > **Uploading files**
 >
-> To attach a file for upload, you'll need to use an extra node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](https://docs.n8n.io//) node to pass the file as a data property.
+> To attach a file for upload, you'll need to use an extra node such as the [Read/Write Files from Disk](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile/) node or the [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) node to pass the file as a data property.
 
 ## Delete
 
@@ -74,7 +74,7 @@ Configure this operation with these parameters:
 
 > **Uploading files**
 >
-> To attach a file for upload, you'll need to use an extra node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](https://docs.n8n.io//) node to pass the file as a data property.
+> To attach a file for upload, you'll need to use an extra node such as the [Read/Write Files from Disk](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile/) node or the [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) node to pass the file as a data property.
 
 ## Templates and examples
 

@@ -10,11 +10,11 @@ On this page, you'll find a list of operations the Notion node supports and link
 
 > **Credentials**
 >
-> Refer to [Notion credentials](/integrations/builtin/credentials/notion.md) for guidance on setting up authentication.
+> Refer to [Notion credentials](https://docs.n8n.io/integrations/builtin/credentials/notion/) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 ## Operations
 
@@ -46,13 +46,13 @@ On this page, you'll find a list of operations the Notion node supports and link
 
 ## Related resources
 
-n8n provides an app node for Notion. You can find the trigger node docs [here](/integrations/builtin/trigger-nodes/n8n-nodes-base.notiontrigger.md).
+n8n provides an app node for Notion. You can find the trigger node docs [here](https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.notiontrigger/).
 
 Refer to [Notion's documentation](https://developers.notion.com/) for details about their API.
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -60,11 +60,11 @@ You can use the credential you created for this service in the HTTP Request node
 1. Select the service you want to connect to.
 1. Select your credential.
 
-Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
+Refer to [Custom API operations](https://docs.n8n.io/integrations/custom-operations/) for more information.
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common issues](https://docs.n8n.io/common-issues/).
+For common errors or issues and suggested resolution steps, refer to [Common issues](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.notion/common-issues/).
 
 ---
 
@@ -73,7 +73,7 @@ For common errors or issues and suggested resolution steps, refer to [Common iss
 
 # Notion node common issues
 
-Here are some common errors and issues with the [Notion node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Notion node](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.notion/) and steps to resolve or troubleshoot them.
 
 ## Relation property not displaying
 
@@ -81,7 +81,7 @@ The Notion node only supports displaying the data relation property for [two-way
 
 To enable two-way relations, edit the relation property in Notion and enable the **Show on [name of related database]** option to create a reverse relation. Select a name to use for the relation in the new context. The relation is now accessible in n8n when filtering or selecting.
 
-If you need to work with Notion databases with one-way relationship, you can use the [HTTP Request](https://docs.n8n.io//) with your existing Notion credentials. For example, to update a one-way relationship, you can send a `PATCH` request to the following URL:
+If you need to work with Notion databases with one-way relationship, you can use the [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) with your existing Notion credentials. For example, to update a one-way relationship, you can send a `PATCH` request to the following URL:
 
 ```
 https://api.notion.com/v1/pages/<page_id>
@@ -114,10 +114,10 @@ You can work around this be creating a regular heading and then modifying it to 
 	* To add a new page with a heading, select the **Page** or **Database Page** resources with the **Create** operation.
 	* To add a heading to an existing page, select the **Block** resource with the **Append After** operation.
 3. Select **Add Block** and set the **Type Name or ID** to either **Heading 1**, **Heading 2**, or **Heading 3**.
-4. Add an [HTTP Request](https://docs.n8n.io//) node connected to the Notion node and select the `GET` method.
+4. Add an [HTTP Request](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) node connected to the Notion node and select the `GET` method.
 5. Set the **URL** to `https://api.notion.com/v1/blocks/<block_ID>`. For example, if your added the heading to an existing page, you could use the following URL: `https://api.notion.com/v1/blocks/`. If you created a new page instead of appending a block, you may need to discover the block ID by querying the page contents first.
 6. Select **Predefined Credential Type** and connect your existing Notion credentials.
-7. Add an [Edit Fields (Set)](/integrations/builtin/core-nodes/n8n-nodes-base.set.md) node after the HTTP Request node.
+7. Add an [Edit Fields (Set)](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.set/) node after the HTTP Request node.
 8. Add `heading_1.is_toggleable` as a new **Boolean** field set to `true`. Swap `heading_1` for a different heading number as necessary.
 9. Add a second HTTP Request node after the Edit Fields (Set) node.
 10. Set the **Method** to `PATCH` and use `https://api.notion.com/v1/blocks/` as the **URL** value.
@@ -134,6 +134,6 @@ You may receive a validation error when working with the Notion node if you subm
 
 To work around this, check for the existence of the field data before sending it to Notion or use a default value.
 
-To check for the data before executing the Notion node, use an [If](/integrations/builtin/core-nodes/n8n-nodes-base.if.md) node to check whether the field is unset. This allows you to use the [Edit Fields (Set)](/integrations/builtin/core-nodes/n8n-nodes-base.set.md) node to conditionally remove the field when it doesn't have a valid value.
+To check for the data before executing the Notion node, use an [If](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.if/) node to check whether the field is unset. This allows you to use the [Edit Fields (Set)](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.set/) node to conditionally remove the field when it doesn't have a valid value.
 
 As an alternative, you can set a default value if the incoming data doesn't provide one.

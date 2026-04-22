@@ -10,11 +10,11 @@ On this page, you'll find a list of operations the Supabase node supports and li
 
 > **Credentials**
 >
-> Refer to [Supabase credentials](/integrations/builtin/credentials/supabase.md) for guidance on setting up authentication.
+> Refer to [Supabase credentials](https://docs.n8n.io/integrations/builtin/credentials/supabase/) for guidance on setting up authentication.
 
 > **This node can be used as an AI tool**
 >
-> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](https://docs.n8n.io/advanced-ai/examples/using-the-fromai-function/).
 
 ## Operations
 
@@ -39,7 +39,7 @@ In the new **Schema** field, provide the custom schema the Supabase node should 
 
 ## What to do if your operation isn't supported
 
-If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io//) to call the service's API.
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to call the service's API.
 
 You can use the credential you created for this service in the HTTP Request node: 
 
@@ -47,11 +47,11 @@ You can use the credential you created for this service in the HTTP Request node
 1. Select the service you want to connect to.
 1. Select your credential.
 
-Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
+Refer to [Custom API operations](https://docs.n8n.io/integrations/custom-operations/) for more information.
 
 ## Common issues
 
-For common errors or issues and suggested resolution steps, refer to [Common issues](https://docs.n8n.io/common-issues/).
+For common errors or issues and suggested resolution steps, refer to [Common issues](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.supabase/common-issues/).
 
 ---
 
@@ -60,7 +60,7 @@ For common errors or issues and suggested resolution steps, refer to [Common iss
 
 # Supabase node common issues
 
-Here are some common errors and issues with the [Supabase node](https://docs.n8n.io//) and steps to resolve or troubleshoot them.
+Here are some common errors and issues with the [Supabase node](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.supabase/) and steps to resolve or troubleshoot them.
 
 ## Filtering rows by metadata
 
@@ -90,7 +90,7 @@ The solution depends on how you're hosting the two components.
 
 If only Supabase is running in Docker, the Docker Compose file used by the [self-hosting guide](https://supabase.com/docs/guides/self-hosting/docker) already runs Supabase bound to the correct interfaces.
 
-When configuring [Supabase credentials](/integrations/builtin/credentials/supabase.md), the `localhost` address should work without a problem (set the **Host** to `localhost`).
+When configuring [Supabase credentials](https://docs.n8n.io/integrations/builtin/credentials/supabase/), the `localhost` address should work without a problem (set the **Host** to `localhost`).
 
 ### If Supabase and n8n are running in separate Docker containers
 
@@ -98,11 +98,11 @@ If both n8n and Supabase are running in Docker in separate containers, you can u
 
 Configure Supabase to listen on all interfaces by binding to `0.0.0.0` inside of the container (the official [Docker compose configuration](https://supabase.com/docs/guides/self-hosting/docker) already does this this). Add both the Supabase and n8n components to the same [user-defined bridge network](https://docs.docker.com/engine/network/drivers/bridge/) if you aren't already managing them together in the same Docker Compose file.
 
-When configuring [Supabase credentials](/integrations/builtin/credentials/supabase.md), use the Supabase API gateway container's name (`supabase-kong` by default) as the host address instead of `localhost`. For example, if you use the default configuration, you would set the **Host** to `http://supabase-kong:8000`.
+When configuring [Supabase credentials](https://docs.n8n.io/integrations/builtin/credentials/supabase/), use the Supabase API gateway container's name (`supabase-kong` by default) as the host address instead of `localhost`. For example, if you use the default configuration, you would set the **Host** to `http://supabase-kong:8000`.
 
 ## Records are accessible through Postgres but not Supabase
 
-If queries for records return empty using the Supabase node, but are available through the [Postgres](https://docs.n8n.io//) node or with a Postgres client, there may be a conflict with Supabase's [Row Level Security (RLS)](https://supabase.com/docs/guides/database/postgres/row-level-security) policy.
+If queries for records return empty using the Supabase node, but are available through the [Postgres](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.postgres/) node or with a Postgres client, there may be a conflict with Supabase's [Row Level Security (RLS)](https://supabase.com/docs/guides/database/postgres/row-level-security) policy.
 
 Supabase always enables RLS when you create a table in a public schema with the Table Editor. When RLS is active, the API doesn't return any data with the public `anon` key until you create policies. This is a security measure to ensure that you only expose data you intend to.
 

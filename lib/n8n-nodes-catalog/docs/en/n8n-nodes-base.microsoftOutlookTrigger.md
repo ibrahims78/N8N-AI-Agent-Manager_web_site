@@ -10,7 +10,7 @@ On this page, you'll find a list of events the Microsoft Outlook Trigger node ca
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/microsoft.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/microsoft/).
 
 > **Government Cloud Support**
 >
@@ -26,6 +26,6 @@ On this page, you'll find a list of events the Microsoft Outlook Trigger node ca
 
 ## Related resources
 
-n8n provides an app node for Microsoft Outlook. You can find the node docs [here](/integrations/builtin/app-nodes/n8n-nodes-base.microsoftoutlook.md).
+n8n provides an app node for Microsoft Outlook. You can find the node docs [here](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftoutlook/).
 
 View [example workflows and related content](https://n8n.io/integrations/microsoft-outlook-trigger/) on n8n's website.

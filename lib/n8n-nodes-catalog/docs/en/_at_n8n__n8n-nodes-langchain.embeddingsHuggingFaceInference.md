@@ -4,13 +4,13 @@
 
 # Embeddings HuggingFace Inference node
 
-Use the Embeddings HuggingFace Inference node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
+Use the Embeddings HuggingFace Inference node to generate [embeddings](https://docs.n8n.io/glossary/#ai-embedding) for a given text.
 
 On this page, you'll find the node parameters for the Embeddings HuggingFace Inference, and links to more resources.
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/huggingface.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/huggingface/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -42,4 +42,4 @@ Refer to [HuggingFace's guide to inference](https://huggingface.co/inference-end
 
 Refer to [Langchain's HuggingFace Inference embeddings documentation](https://js.langchain.com/docs/integrations/text_embedding/hugging_face_inference/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

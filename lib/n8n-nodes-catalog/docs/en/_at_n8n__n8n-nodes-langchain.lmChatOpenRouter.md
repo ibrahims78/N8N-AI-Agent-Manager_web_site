@@ -10,7 +10,7 @@ On this page, you'll find the node parameters for the OpenRouter Chat Model node
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/openrouter.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/openrouter/).
 
 > **Parameter resolution in sub-nodes**
 >
@@ -74,4 +74,4 @@ Use this option to set the probability the completion should use. Use a lower va
 
 As OpenRouter is API-compatible with OpenAI, you can refer to [LangChains's OpenAI documentation](https://js.langchain.com/docs/integrations/chat/openai/) for more information about the service.
 
-View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
+View n8n's [Advanced AI](https://docs.n8n.io/advanced-ai/) documentation.

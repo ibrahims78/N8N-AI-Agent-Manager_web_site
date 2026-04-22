@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Freshdesk node supports and l
 
 > **Credentials**
 >
-> Refer to [Freshdesk credentials](/integrations/builtin/credentials/freshdesk.md) for guidance on setting up authentication.
+> Refer to [Freshdesk credentials](https://docs.n8n.io/integrations/builtin/credentials/freshdesk/) for guidance on setting up authentication.
 
 ## Operations
 

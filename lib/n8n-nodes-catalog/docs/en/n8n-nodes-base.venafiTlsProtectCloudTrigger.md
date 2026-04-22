@@ -10,7 +10,7 @@ Use the n8n Venafi TLS Protect Cloud Trigger node to start a workflow in n8n in 
 
 > **Credentials**
 >
-> You can find authentication information for this node [here](/integrations/builtin/credentials/venafitlsprotectcloud.md).
+> You can find authentication information for this node [here](https://docs.n8n.io/integrations/builtin/credentials/venafitlsprotectcloud/).
 
 > **Examples and templates**
 >

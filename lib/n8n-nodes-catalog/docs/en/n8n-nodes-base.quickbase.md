@@ -10,7 +10,7 @@ On this page, you'll find a list of operations the Quick Base node supports and 
 
 > **Credentials**
 >
-> Refer to [Quick Base credentials](/integrations/builtin/credentials/quickbase.md) for guidance on setting up authentication.
+> Refer to [Quick Base credentials](https://docs.n8n.io/integrations/builtin/credentials/quickbase/) for guidance on setting up authentication.
 
 ## Operations
 

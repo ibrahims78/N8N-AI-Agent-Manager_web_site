@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.gitlabTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.gitlabtrigger.md",
-  "fetchedAt": "2026-04-22T18:36:02.833Z",
+  "fetchedAt": "2026-04-22T18:58:23.101Z",
   "frontmatter": {
     "raw": {
       "title": "GitLab Trigger node documentation",
