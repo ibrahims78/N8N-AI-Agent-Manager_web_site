@@ -1,17 +1,3 @@
----
-title: If
-description: Documentation for the If node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: critical
-tags:
-  - if
-  - if node
-  - If
-  - If node
-hide:
-  - tags
----
-
 # If
 
 Use the If node to split a workflow conditionally based on comparison operations.
@@ -38,8 +24,113 @@ You can choose to keep data:
 
 ## Branch execution with If and Merge nodes
 
+> **0.236.0 and below**
+>
+> n8n removed this execution behavior in version 1.0. This section applies to workflows using the **v0 (legacy)** workflow execution order. By default, this is all workflows built before version 1.0. You can change the execution order in your [workflow settings](/workflows/settings.md).
+If you add a Merge node to a workflow containing an If node, it can result in both output data streams of the If node executing.
+
+One data stream triggers the Merge node, which then goes and executes the other data stream.
+
+For example, in the screenshot below there's a workflow containing an Edit Fields node, If node, and Merge node. The standard If node behavior is to execute one data stream (in the screenshot, this is the **true** output). However, due to the Merge node, both data streams execute, despite the If node not sending any data down the **false** data stream.
+
+![Screenshot of a workflow. The workflow has an Edit Fields node, followed by an If node. It ends with a Merge node.](/_images/integrations/builtin/core-nodes/merge/if-merge-node.png)
+
+<!-- TODO: remove once v1 is mature -->
+
 ## Related resources
 
 Refer to [Splitting with conditionals](/flow-logic/splitting.md) for more information on using conditionals to create complex logic in n8n.
 
 If you need more than two conditional outputs, use the [Switch node](/integrations/builtin/core-nodes/n8n-nodes-base.switch.md).
+
+## Available data type comparisons
+<!-- vale off -->
+### String
+
+String data type supports these comparisons:
+
+- exists
+- does not exist
+- is empty
+- is not empty
+- is equal to
+- is not equal to
+- contains
+- does not contain
+- starts with
+- does not start with
+- ends with
+- does not end with
+- matches regex
+- does not match regex
+
+### Number
+
+Number data type supports these comparisons:
+
+- exists
+- does not exist
+- is empty
+- is not empty
+- is equal to
+- is not equal to
+- is greater than
+- is less than
+- is greater than or equal to
+- is less than or equal to
+
+### Date & Time
+
+Date & Time data type supports these comparisons:
+
+- exists
+- does not exist
+- is empty
+- is not empty
+- is equal to
+- is not equal to
+- is after
+- is before
+- is after or equal to
+- is before or equal to
+
+### Boolean
+
+Boolean data type supports these comparisons:
+
+- exists
+- does not exist
+- is empty
+- is not empty
+- is true
+- is false
+- is equal to
+- is not equal to
+
+### Array
+
+Array data type supports these comparisons:
+
+- exists
+- does not exist
+- is empty
+- is not empty
+- contains
+- does not contain
+- length equal to
+- length not equal to
+- length greater than
+- length less than
+- length greater than or equal to
+- length less than or equal to
+
+### Object
+
+Object data type supports these comparisons:
+
+- exists
+- does not exist
+- is empty
+- is not empty
+
+<!-- vale on -->

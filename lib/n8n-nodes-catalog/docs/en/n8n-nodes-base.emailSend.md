@@ -1,19 +1,16 @@
----
-title: Send Email
-description: Documentation for the Send Email node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: high
----
-
 # Send Email
 
 The Send Email node sends emails using an SMTP email server.
 
-/// note | Credential
-You can find authentication information for this node [here](/integrations/builtin/credentials/sendemail/index.md).
-///
+> **Credential**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/sendemail/index.md).
 
 ## Node parameters
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 Configure this node using the following parameters.
 
@@ -38,9 +35,9 @@ Enter the email address you want to send the email from. You can also include a 
 
 Enter the email address you want to send the email to. You can also include a name using this format: `Name Name <email@sample.com>`, for example: `Nathan Doe <nate@n8n.io>`. Use a comma to separate multiple email addresses: `first@sample.com, "Name" <second@sample.com>`.
 
-/// note | Email Format
-This email format also applies to the CC and BCC fields.
-///
+> **Email Format**
+>
+> This email format also applies to the CC and BCC fields.
 
 ### Subject
 

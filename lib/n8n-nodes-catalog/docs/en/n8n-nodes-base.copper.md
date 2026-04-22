@@ -1,18 +1,12 @@
----
-title: Copper node documentation
-description: Learn how to use the Copper node in n8n. Follow technical documentation to integrate Copper node into your workflows.
-contentType: [integration, reference]
----
-
 # Copper node
 
 Use the Copper node to automate work in Copper, and integrate Copper with other applications. n8n has built-in support for a wide range of Copper features, including getting, updating, deleting, and creating companies, customer sources, leads, projects and tasks.
 
 On this page, you'll find a list of operations the Copper node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Copper credentials](/integrations/builtin/credentials/copper.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Copper credentials](/integrations/builtin/credentials/copper.md) for guidance on setting up authentication.
 
 ## Operations
 

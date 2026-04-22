@@ -1,18 +1,12 @@
----
-title: Quick Base node documentation
-description: Learn how to use the Quick Base node in n8n. Follow technical documentation to integrate Quick Base node into your workflows.
-contentType: [integration, reference]
----
-
 # Quick Base node
 
 Use the Quick Base node to automate work in Quick Base, and integrate Quick Base with other applications. n8n has built-in support for a wide range of Quick Base features, including creating, updating, deleting, and getting records, as well as getting fields, and downloading files. 
 
 On this page, you'll find a list of operations the Quick Base node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Quick Base credentials](/integrations/builtin/credentials/quickbase.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Quick Base credentials](/integrations/builtin/credentials/quickbase.md) for guidance on setting up authentication.
 
 ## Operations
 

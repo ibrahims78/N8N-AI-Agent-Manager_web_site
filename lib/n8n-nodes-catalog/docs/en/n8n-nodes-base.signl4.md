@@ -1,18 +1,12 @@
----
-title: SIGNL4 node documentation
-description: Learn how to use the SIGNL4 node in n8n. Follow technical documentation to integrate SIGNL4 node into your workflows.
-contentType: [integration, reference]
----
-
 # SIGNL4 node
 
 Use the SIGNL4 node to automate work in SIGNL4, and integrate SIGNL4 with other applications. n8n supports sending and resolving alerts with SIGNL4.
 
 On this page, you'll find a list of operations the SIGNL4 node supports and links to more resources.
 
-/// note | Credentials
-Refer to [SIGNL4 credentials](/integrations/builtin/credentials/signl4.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [SIGNL4 credentials](/integrations/builtin/credentials/signl4.md) for guidance on setting up authentication.
 
 ## Operations
 

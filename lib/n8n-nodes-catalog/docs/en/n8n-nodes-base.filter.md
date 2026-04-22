@@ -1,10 +1,3 @@
----
-title: Filter
-description: Documentation for the Filter node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: critical
----
-
 # Filter
 
 Filter items based on a condition. If the item meets the condition, the Filter node passes it on to the next node in the Filter node output. If the item doesn't meet the condition, the Filter node omits the item from its output.
@@ -35,3 +28,95 @@ You can't create a mix of AND and OR rules.
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+## Available data type comparisons
+<!-- vale off -->
+### String
+
+String data type supports these comparisons:
+
+- exists
+- does not exist
+- is empty
+- is not empty
+- is equal to
+- is not equal to
+- contains
+- does not contain
+- starts with
+- does not start with
+- ends with
+- does not end with
+- matches regex
+- does not match regex
+
+### Number
+
+Number data type supports these comparisons:
+
+- exists
+- does not exist
+- is empty
+- is not empty
+- is equal to
+- is not equal to
+- is greater than
+- is less than
+- is greater than or equal to
+- is less than or equal to
+
+### Date & Time
+
+Date & Time data type supports these comparisons:
+
+- exists
+- does not exist
+- is empty
+- is not empty
+- is equal to
+- is not equal to
+- is after
+- is before
+- is after or equal to
+- is before or equal to
+
+### Boolean
+
+Boolean data type supports these comparisons:
+
+- exists
+- does not exist
+- is empty
+- is not empty
+- is true
+- is false
+- is equal to
+- is not equal to
+
+### Array
+
+Array data type supports these comparisons:
+
+- exists
+- does not exist
+- is empty
+- is not empty
+- contains
+- does not contain
+- length equal to
+- length not equal to
+- length greater than
+- length less than
+- length greater than or equal to
+- length less than or equal to
+
+### Object
+
+Object data type supports these comparisons:
+
+- exists
+- does not exist
+- is empty
+- is not empty
+
+<!-- vale on -->

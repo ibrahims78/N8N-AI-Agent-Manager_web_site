@@ -1,18 +1,12 @@
----
-title: Disqus node documentation
-description: Learn how to use the Disqus node in n8n. Follow technical documentation to integrate Disqus node into your workflows.
-contentType: [integration, reference]
----
-
 # Disqus node
 
 Use the Disqus node to automate work in Disqus, and integrate Disqus with other applications. n8n has built-in support for a wide range of Disqus features, including returning forums.
 
 On this page, you'll find a list of operations the Disqus node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Disqus credentials](/integrations/builtin/credentials/disqus.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Disqus credentials](/integrations/builtin/credentials/disqus.md) for guidance on setting up authentication.
 
 ## Operations
 

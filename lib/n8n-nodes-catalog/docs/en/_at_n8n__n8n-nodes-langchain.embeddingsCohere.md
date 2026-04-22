@@ -1,18 +1,20 @@
----
-title: Embeddings Cohere node documentation
-description: Learn how to use the Embeddings Cohere node in n8n. Follow technical documentation to integrate Embeddings Cohere node into your workflows.
-contentType: [integration, reference]
----
-
 # Embeddings Cohere node
 
 Use the Embeddings Cohere node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
 
 On this page, you'll find the node parameters for the Embeddings Cohere node, and links to more resources.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/cohere.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/cohere.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -30,3 +32,5 @@ Learn more about available models in [Cohere's models documentation](https://doc
 ## Related resources
 
 Refer to [Langchain's Cohere embeddings documentation](https://js.langchain.com/docs/integrations/text_embedding/cohere/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

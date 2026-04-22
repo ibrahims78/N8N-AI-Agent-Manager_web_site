@@ -1,18 +1,20 @@
----
-title: Lemonade Chat Model node documentation
-description: Learn how to use the Lemonade Chat Model node in n8n. Follow technical documentation to integrate Lemonade Chat Model node into your workflows.
-contentType: [integration, reference]
----
-
 # Lemonade Chat Model node
 
 Use the Lemonade Chat Model node to run chat-capable language models managed by a Lemonade server from within n8n. This node functions as a LangChain-compatible chat model root node and is suitable for chat-style workloads. It lets you select a model hosted on your Lemonade server, and control generation behavior using common sampling and decoding options.
 
 On this page, you'll find a list of the node parameters, and available options to refine generation.
 
-///  note  | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/lemonade.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/lemonade.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -92,3 +94,5 @@ Comma-separated list of sequences where the model will stop generating text. Use
 ## Related resources
 
 Refer to [Lemonade Server's documentation](https://lemonade-server.ai/docs/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

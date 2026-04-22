@@ -1,15 +1,16 @@
----
-title: Character Text Splitter node documentation
-description: Learn how to use the Character Text Splitter node in n8n. Follow technical documentation to integrate Character Text Splitter node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Character Text Splitter node
 
 Use the Character Text Splitter node to split document data based on characters.
 
 On this page, you'll find the node parameters for the Character Text Splitter node, and links to more resources.
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -24,3 +25,5 @@ On this page, you'll find the node parameters for the Character Text Splitter no
 ## Related resources
 
 Refer to [LangChain's text splitter documentation](https://js.langchain.com/docs/concepts/text_splitters) and [LangChain's API documentation for character text splitting](https://v03.api.js.langchain.com/classes/langchain.text_splitter.CharacterTextSplitter.html) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

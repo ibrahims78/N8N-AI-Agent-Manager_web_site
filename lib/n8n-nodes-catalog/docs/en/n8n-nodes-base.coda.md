@@ -1,18 +1,12 @@
----
-title: Coda node documentation
-description: Learn how to use the Coda node in n8n. Follow technical documentation to integrate Coda node into your workflows.
-contentType: [integration, reference]
----
-
 # Coda node
 
 Use the Coda node to automate work in Coda, and integrate Coda with other applications. n8n has built-in support for a wide range of Coda features, including creating, getting, and deleting controls, formulas, tables, and views.
 
 On this page, you'll find a list of operations the Coda node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Coda credentials](/integrations/builtin/credentials/coda.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Coda credentials](/integrations/builtin/credentials/coda.md) for guidance on setting up authentication.
 
 ## Operations
 

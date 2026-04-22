@@ -1,9 +1,3 @@
----
-title: Cohere Model node documentation
-description: Learn how to use the Cohere Model node in n8n. Follow technical documentation to integrate Cohere Model node into your workflows.
-contentType: [integration, reference]
----
-
 # Cohere Model node
 
 Use the Cohere Model node to use Cohere's models.
@@ -12,9 +6,17 @@ On this page, you'll find the node parameters for the Cohere Model node, and lin
 
 This node lacks tools support, so it won't work with the [AI Agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md) node. Instead, connect it with the [Basic LLM Chain](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainllm.md) node.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/cohere.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/cohere.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node Options
 
@@ -28,3 +30,5 @@ You can find authentication information for this node [here](/integrations/built
 ## Related resources
 
 Refer to [LangChains's Cohere documentation](https://js.langchain.com/docs/integrations/llms/cohere/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

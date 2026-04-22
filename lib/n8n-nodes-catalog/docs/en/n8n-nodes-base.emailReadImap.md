@@ -1,17 +1,10 @@
----
-title: Email Trigger (IMAP) node documentation
-description: Learn how to use the Email Trigger (IMAP) Trigger node in n8n. Follow technical documentation to integrate Email Trigger (IMAP) Trigger node into your workflows.
-contentType: [integration, reference]
-priority: high
----
-
 # Email Trigger (IMAP) node
 
 Use the IMAP Email node to receive emails using an IMAP email server. This node is a trigger node.
 
-/// note | Credential
-You can find authentication information for this node [here](/integrations/builtin/credentials/imap/index.md).
-///
+> **Credential**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/imap/index.md).
 
 ## Operations
 

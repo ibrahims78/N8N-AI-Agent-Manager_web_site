@@ -1,18 +1,12 @@
----
-title: ProfitWell node documentation
-description: Learn how to use the ProfitWell node in n8n. Follow technical documentation to integrate ProfitWell node into your workflows.
-contentType: [integration, reference]
----
-
 # ProfitWell node
 
 Use the ProfitWell node to automate work in ProfitWell, and integrate ProfitWell with other applications. n8n supports getting your company's account settings and retrieving financial metrics from ProfitWell.
 
 On this page, you'll find a list of operations the ProfitWell node supports and links to more resources.
 
-/// note | Credentials
-Refer to [ProfitWell credentials](/integrations/builtin/credentials/profitwell.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [ProfitWell credentials](/integrations/builtin/credentials/profitwell.md) for guidance on setting up authentication.
 
 ## Operations
 

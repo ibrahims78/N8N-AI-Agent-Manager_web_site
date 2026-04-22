@@ -1,18 +1,12 @@
----
-title: AWS Elastic Load Balancing node documentation
-description: Learn how to use the AWS Elastic Load Balancing node in n8n. Follow technical documentation to integrate AWS Elastic Load Balancing node into your workflows.
-contentType: [integration, reference]
----
-
 # AWS Elastic Load Balancing node
 
 Use the AWS Elastic Load Balancing node to automate work in AWS ELB, and integrate AWS ELB with other applications. n8n has built-in support for a wide range of AWS ELB features, including adding, getting, removing, deleting certificates and load balancers.
 
 On this page, you'll find a list of operations the AWS ELB node supports and links to more resources.
 
-/// note | Credentials
-Refer to [AWS ELB credentials](/integrations/builtin/credentials/aws.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [AWS ELB credentials](/integrations/builtin/credentials/aws.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -35,3 +29,15 @@ This node supports creating and managing application and network load balancers.
 ## Related resources
 
 Refer to [AWS ELB's documentation](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/what-is-load-balancing.html) for more information on this service.
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

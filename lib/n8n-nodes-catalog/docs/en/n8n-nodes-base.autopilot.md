@@ -1,21 +1,15 @@
----
-title: Autopilot node documentation
-description: Learn how to use the Autopilot node in n8n. Follow technical documentation to integrate Autopilot node into your workflows.
-contentType: [integration, reference]
----
-
 # Autopilot node
 
 Use the Autopilot node to automate work in Autopilot, and integrate Autopilot with other applications. n8n has built-in support for a wide range of Autopilot features, including creating, deleting, and updating contacts, as well as adding contacts to a list.
 
 On this page, you'll find a list of operations the Autopilot node supports and links to more resources.
 
-/// warning | Autopilot branding change
-Autopilot has become Ortto. The Autopilot credentials and nodes are only compatible with Autopilot, not the new Ortto API.
-///
-/// note | Credentials
-Refer to [Autopilot credentials](/integrations/builtin/credentials/autopilot.md) for guidance on setting up authentication. 
-///
+> **Autopilot branding change**
+>
+> Autopilot has become Ortto. The Autopilot credentials and nodes are only compatible with Autopilot, not the new Ortto API.
+> **Credentials**
+>
+> Refer to [Autopilot credentials](/integrations/builtin/credentials/autopilot.md) for guidance on setting up authentication.
 
 ## Operations
 

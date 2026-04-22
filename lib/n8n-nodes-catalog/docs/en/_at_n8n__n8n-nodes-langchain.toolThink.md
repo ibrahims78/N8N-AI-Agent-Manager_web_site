@@ -1,13 +1,14 @@
----
-title: Think Tool node documentation
-description: Learn how to use the Think Tool node in n8n. Follow technical documentation to integrate the Tool Think node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Think Tool node
 
 The Think Tool node is a [tool](/glossary.md#ai-tool) that invites an [agent](/glossary.md#ai-agent) to do some thinking before answering. Essentially, it allows the agent to reflect on the question by talking to itself before providing an answer. In particular, this is useful for complex queries that require a thoughtful response.
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Templates and examples
 
@@ -46,3 +47,7 @@ and then afterward provide the answer:
 <!-- vale on -->
 
 ## Related resources
+
+Refer to [LangChain's documentation on tools](https://langchain-ai.github.io/langgraphjs/how-tos/tool-calling/) for more information about tools in LangChain.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

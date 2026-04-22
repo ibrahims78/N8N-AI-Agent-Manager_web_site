@@ -1,22 +1,24 @@
----
-title: GitHub Document Loader node documentation
-description: Learn how to use the GitHub Document Loader node in n8n. Follow technical documentation to integrate GitHub Document Loader node into your workflows.
-contentType: [integration, reference]
----
-
 # GitHub Document Loader node
 
-/// warning | Deprecated
-This node is deprecated, and will be removed in a future version.
-///
+> **Deprecated**
+>
+> This node is deprecated, and will be removed in a future version.
 
 Use the GitHub Document Loader node to load data from a GitHub repository for [vector stores](/glossary.md#ai-vector-store) or summarization.
 
 On this page, you'll find the node parameters for the GitHub Document Loader node, and links to more resources.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/github.md). This node doesn't support OAuth for authentication.
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/github.md). This node doesn't support OAuth for authentication.
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -36,3 +38,7 @@ You can find authentication information for this node [here](/integrations/built
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
 ## Related resources
+
+Refer to [LangChain's documentation on document loaders](https://js.langchain.com/docs/modules/data_connection/document_loaders/integrations/file_loaders/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

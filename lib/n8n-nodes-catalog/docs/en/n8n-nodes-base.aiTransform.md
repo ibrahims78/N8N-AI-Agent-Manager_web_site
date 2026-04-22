@@ -1,16 +1,10 @@
----
-title: AI Transform
-description: Documentation for the AI Transform node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
----
-
 # AI Transform
 
 Use the AI Transform node to generate code snippets based on your prompt. The AI is context-aware, understanding the workflow’s nodes and their data types.
 
-/// info | Feature availability
-Available only on [Cloud plans](/manage-cloud/overview.md).
-///
+> **Feature availability**
+>
+> Available only on [Cloud plans](/manage-cloud/overview.md).
 
 ## Node parameters
 

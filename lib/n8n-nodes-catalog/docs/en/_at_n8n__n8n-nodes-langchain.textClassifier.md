@@ -1,9 +1,3 @@
----
-title: Text Classifier node documentation
-description: Learn how to use the Text Classifier node in n8n. Follow technical documentation to integrate Text Classifier node into your workflows.
-contentType: [integration, reference]
----
-
 # Text Classifier node
 
 Use the Text Classifier node to classify (categorize) incoming data. Using the categories provided in the parameters (see below), each item is passed to the model to determine its category.
@@ -26,3 +20,5 @@ On this page, you'll find the node parameters for the Text Classifier node, and 
 * **Enable Auto-Fixing**: When enabled, the node automatically fixes model outputs to ensure they match the expected format. Do this by sending the schema parsing error to the LLM and asking it to fix it.
 
 ## Related resources
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

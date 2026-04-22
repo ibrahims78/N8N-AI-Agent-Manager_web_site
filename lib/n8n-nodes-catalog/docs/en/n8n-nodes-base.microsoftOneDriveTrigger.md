@@ -1,27 +1,20 @@
----
-title: Microsoft OneDrive Trigger node documentation
-description: Learn how to use the Microsoft OneDrive Trigger node in n8n. Follow technical documentation to integrate Microsoft OneDrive Trigger node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Microsoft OneDrive Trigger node
 
 Use the Microsoft OneDrive Trigger node to respond to events in [Microsoft OneDrive](https://www.microsoft.com/en-us/microsoft-365/onedrive/online-cloud-storage) and integrate Microsoft OneDrive with other applications. n8n has built-in support for file and folder events in OneDrive.
 
 On this page, you'll find a list of events the Microsoft OneDrive Trigger node can respond to and links to more resources.
 
-///  note  | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/microsoft.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/microsoft.md).
 
-/// tip | Government Cloud Support
-If you're using a government cloud tenant (US Government, US Government DOD, or China), make sure to select the appropriate **Microsoft Graph API Base URL** in your Microsoft credentials configuration.
-///
+> **Government Cloud Support**
+>
+> If you're using a government cloud tenant (US Government, US Government DOD, or China), make sure to select the appropriate **Microsoft Graph API Base URL** in your Microsoft credentials configuration.
 
-///  note  | Examples and templates
-For usage examples and templates to help you get started, refer to n8n's [Microsoft OneDrive integrations](https://n8n.io/integrations/microsoft-onedrive-trigger/) page.
-///
+> **Examples and templates**
+>
+> For usage examples and templates to help you get started, refer to n8n's [Microsoft OneDrive integrations](https://n8n.io/integrations/microsoft-onedrive-trigger/) page.
 
 ## Events
 

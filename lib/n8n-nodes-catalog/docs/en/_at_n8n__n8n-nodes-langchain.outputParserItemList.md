@@ -1,13 +1,14 @@
----
-title: Item List Output Parser node documentation
-description: Learn how to use the Item List Output Parser node in n8n. Follow technical documentation to integrate Item List Output Parser node into your workflows.
-contentType: [integration, reference]
-priority: high
----
-
 # Item List Output Parser node
 
 Use the Item List Output Parser node to return a list of items with a specific length and separator.
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node options
 
@@ -21,3 +22,5 @@ Use the Item List Output Parser node to return a list of items with a specific l
 ## Related resources
 
 Refer to [LangChain's output parser documentation](https://js.langchain.com/docs/concepts/output_parsers) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

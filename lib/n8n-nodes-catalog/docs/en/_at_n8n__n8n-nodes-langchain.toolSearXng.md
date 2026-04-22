@@ -1,18 +1,20 @@
----
-title: SearXNG Tool node documentation
-description: Learn how to use the SearXNG Tool node in n8n. Follow technical documentation to integrate SearXNG Tool node into your workflows.
-contentType: [integration, reference]
----
-
 # SearXNG Tool node
 
 The SearXNG Tool node allows you to integrate search capabilities into your workflows using SearXNG. SearXNG aggregates results from multiple search engines without tracking you.
 
 On this page, you'll find the node options for the SearXNG Tool node, and links to more resources.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/searxng.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/searxng.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node Options
 
@@ -46,3 +48,5 @@ The quality and availability of search results depend on the configuration and h
 ## Related resources
 
 Refer to [SearXNG's documentation](https://docs.searxng.org/) for more information about the service. You can also view [LangChain's documentation on their SearXNG integration](https://python.langchain.com/docs/integrations/tools/searx_search/).
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

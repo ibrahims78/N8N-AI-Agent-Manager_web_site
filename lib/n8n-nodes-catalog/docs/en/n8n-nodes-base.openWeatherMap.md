@@ -1,19 +1,16 @@
----
-title: OpenWeatherMap node documentation
-description: Learn how to use the OpenWeatherMap node in n8n. Follow technical documentation to integrate OpenWeatherMap node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # OpenWeatherMap node
 
 Use the OpenWeatherMap node to automate work in OpenWeatherMap, and integrate OpenWeatherMap with other applications. n8n supports retrieving current and upcoming weather data with OpenWeatherMap.
 
 On this page, you'll find a list of operations the OpenWeatherMap node supports and links to more resources.
 
-/// note | Credentials
-Refer to [OpenWeatherMap credentials](/integrations/builtin/credentials/openweathermap.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [OpenWeatherMap credentials](/integrations/builtin/credentials/openweathermap.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

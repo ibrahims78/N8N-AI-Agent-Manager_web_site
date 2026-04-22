@@ -1,19 +1,20 @@
----
-title: Mistral Cloud Chat Model node documentation
-description: Learn how to use the Mistral Cloud Chat Model node in n8n. Follow technical documentation to integrate Mistral Cloud Chat Model node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Mistral Cloud Chat Model node
 
 Use the Mistral Cloud Chat Model node to combine Mistral Cloud's chat models with conversational [agents](/glossary.md#ai-agent).
 
 On this page, you'll find the node parameters for the Mistral Cloud Chat Model node, and links to more resources.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/mistral.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/mistral.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -36,3 +37,5 @@ You can find authentication information for this node [here](/integrations/built
 ## Related resources
 
 Refer to [LangChains's Mistral documentation](https://js.langchain.com/docs/integrations/chat/mistral) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

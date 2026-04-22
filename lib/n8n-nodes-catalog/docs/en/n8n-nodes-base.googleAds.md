@@ -1,19 +1,12 @@
----
-title: Google Ads node documentation
-description: Learn how to use the Google Ads node in n8n. Follow technical documentation to integrate Google Ads node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Google Ads node
 
 Use the Google Ads node to automate work in Google Ads, and integrate Google Ads with other applications. n8n has built-in support for a wide range of Google Ads features, including getting campaigns. 
 
 On this page, you'll find a list of operations the Google Ads node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Google Ads credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Google Ads credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -28,3 +21,15 @@ Refer to [Google Ads credentials](/integrations/builtin/credentials/google/index
 ## Related resources
 
 Refer to [Google Ads' documentation](https://developers.google.com/google-ads/api/docs/start) for more information about the service.
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

@@ -1,21 +1,15 @@
----
-title: TheHive node documentation
-description: Learn how to use the TheHive node in n8n. Follow technical documentation to integrate TheHive node into your workflows.
-contentType: [integration, reference]
----
-
 # TheHive node
 
 Use the TheHive node to automate work in TheHive, and integrate TheHive with other applications. n8n has built-in support for a wide range of TheHive features, including creating alerts, counting tasks logs, cases, and observables. 
 
 On this page, you'll find a list of operations the TheHive node supports and links to more resources.
 
-/// note | TheHive and TheHive 5
-n8n provides two nodes for TheHive. Use this node (TheHive) if you want to use TheHive's version 3 or 4 API. If you want to use version 5, use [TheHive 5](/integrations/builtin/app-nodes/n8n-nodes-base.thehive5.md).
-///
-/// note | Credentials
-Refer to [TheHive credentials](/integrations/builtin/credentials/thehive.md) for guidance on setting up authentication. 
-///
+> **TheHive and TheHive 5**
+>
+> n8n provides two nodes for TheHive. Use this node (TheHive) if you want to use TheHive's version 3 or 4 API. If you want to use version 5, use [TheHive 5](/integrations/builtin/app-nodes/n8n-nodes-base.thehive5.md).
+> **Credentials**
+>
+> Refer to [TheHive credentials](/integrations/builtin/credentials/thehive.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -30,6 +24,18 @@ The available operations depend on your API version. To see the operations list,
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
 
 ## Related resources
 

@@ -1,18 +1,20 @@
----
-title: Embeddings Mistral Cloud node documentation
-description: Learn how to use the Embeddings Mistral Cloud node in n8n. Follow technical documentation to integrate Embeddings Mistral Cloud node into your workflows.
-contentType: [integration, reference]
----
-
 # Embeddings Mistral Cloud node
 
 Use the Embeddings Mistral Cloud node to generate [embeddings](/glossary.md#ai-embedding) for a given text.
 
 On this page, you'll find the node parameters for the Embeddings Mistral Cloud node, and links to more resources.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/mistral.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/mistral.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -32,3 +34,5 @@ Learn more about available models in [Mistral's models documentation](https://do
 ## Related resources
 
 Refer to [Langchain's Mistral embeddings documentation](https://js.langchain.com/docs/integrations/text_embedding/mistralai) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

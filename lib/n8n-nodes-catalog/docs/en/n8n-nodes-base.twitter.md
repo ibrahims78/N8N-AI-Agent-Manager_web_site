@@ -1,19 +1,16 @@
----
-title: X (Formerly Twitter) node documentation
-description: Learn how to use the X (Formerly Twitter) node in n8n. Follow technical documentation to integrate X (Formerly Twitter) node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # X (Formerly Twitter) node
 
 Use the X node to automate work in X and integrate X with other applications. n8n has built-in support for a wide range of X features, including creating direct messages and deleting, searching, liking, and retweeting a tweet. 
 
 On this page, you'll find a list of operations the X node supports and links to more resources.
 
-/// note | Credentials
-Refer to [X credentials](/integrations/builtin/credentials/twitter.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [X credentials](/integrations/builtin/credentials/twitter.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

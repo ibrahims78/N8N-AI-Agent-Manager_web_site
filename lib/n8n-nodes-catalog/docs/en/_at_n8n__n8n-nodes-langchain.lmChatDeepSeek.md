@@ -1,19 +1,20 @@
----
-title: DeepSeek Chat Model node documentation
-description: Learn how to use the DeepSeek Chat Model node in n8n. Follow technical documentation to integrate DeepSeek Chat Model node into your workflows.
-contentType: [integration, reference]
-priority: high
----
-
 # DeepSeek Chat Model node
 
 Use the DeepSeek Chat Model node to use DeepSeek's chat models with conversational [agents](/glossary.md#ai-agent).
 
 On this page, you'll find the node parameters for the DeepSeek Chat Model node and links to more resources.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/deepseek.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/deepseek.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -70,3 +71,5 @@ Use this option to set the probability the completion should use. Use a lower va
 ## Related resources
 
 As DeepSeek is API-compatible with OpenAI, you can refer to [LangChains's OpenAI documentation](https://js.langchain.com/docs/integrations/chat/openai/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

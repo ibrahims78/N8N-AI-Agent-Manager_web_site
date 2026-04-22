@@ -1,10 +1,3 @@
----
-title: Edit Fields (Set)
-description: Documentation for the Edit Fields node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: critical
----
-
 # Edit Fields (Set)
 
 Use the Edit Fields node to set workflow data. This node can set new data as well as overwrite data that already exists. This node is crucial in workflows which expect incoming data from previous nodes, such as when inserting values to Google Sheets or databases.

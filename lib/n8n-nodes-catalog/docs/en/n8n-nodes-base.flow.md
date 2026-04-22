@@ -1,18 +1,12 @@
----
-title: Flow node documentation
-description: Learn how to use the Flow node in n8n. Follow technical documentation to integrate Flow node into your workflows.
-contentType: [integration, reference]
----
-
 # Flow node
 
 Use the Flow node to automate work in Flow, and integrate Flow with other applications. n8n has built-in support for a wide range of Flow features, including creating, updating, and getting tasks.
 
 On this page, you'll find a list of operations the Flow node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Flow credentials](/integrations/builtin/credentials/flow.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Flow credentials](/integrations/builtin/credentials/flow.md) for guidance on setting up authentication.
 
 ## Operations
 

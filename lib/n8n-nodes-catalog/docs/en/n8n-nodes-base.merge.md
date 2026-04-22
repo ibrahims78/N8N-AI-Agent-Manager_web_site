@@ -1,23 +1,16 @@
----
-title: Merge
-description: Documentation for the Merge node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: critical
----
-
 # Merge
 
 Use the Merge node to combine data from multiple streams, once data of all streams is available.
 
-/// note | Major changes in 0.194.0
-The n8n team overhauled this node in n8n 0.194.0. This document reflects the latest version of the node. If you're using an older version of n8n, you can find the previous version of this document [here](https://github.com/n8n-io/n8n-docs/blob/4ff688642cc9ee7ca7d00987847bf4e4515da59d/docs/integrations/builtin/core-nodes/n8n-nodes-base.merge.md).
-///
+> **Major changes in 0.194.0**
+>
+> The n8n team overhauled this node in n8n 0.194.0. This document reflects the latest version of the node. If you're using an older version of n8n, you can find the previous version of this document [here](https://github.com/n8n-io/n8n-docs/blob/4ff688642cc9ee7ca7d00987847bf4e4515da59d/docs/integrations/builtin/core-nodes/n8n-nodes-base.merge.md).
 
-/// note | Minor changes in 1.49.0
-n8n version 1.49.0 introduced the option to add more than two inputs. Older versions only support up to two inputs. If you're running an older version and want to combine multiple inputs in these versions, use the [Code node](https://deploy-preview-2225--n8n-docs.netlify.app/code/code-node/).
-
-The **Mode > SQL Query** feature was also added in n8n version 1.49.0 and isn't available in older versions.
-///
+> **Minor changes in 1.49.0**
+>
+> n8n version 1.49.0 introduced the option to add more than two inputs. Older versions only support up to two inputs. If you're running an older version and want to combine multiple inputs in these versions, use the [Code node](https://deploy-preview-2225--n8n-docs.netlify.app/code/code-node/).
+> 
+> The **Mode > SQL Query** feature was also added in n8n version 1.49.0 and isn't available in older versions.
 
 ## Node parameters
 
@@ -85,6 +78,15 @@ When merging data by **Mode > Combine**, you can set these **Options**:
 
 ##### Clash Handling
 
+If multiple items at an index have a field with the same name, this is a clash. For example, if all items in both Input 1 and Input 2 have a field named `language`, these fields clash. By default, n8n prioritizes Input 2, meaning if `language` has a value in Input 2, n8n uses that value when merging the items. 
+
+You can change this behavior by selecting **Options** > **Clash Handling**: 
+
+- **When Field Values Clash**: Choose which input to prioritize, or choose **Always Add Input Number to Field Names** to keep all fields and values, with the input number appended to the field name to show which input it came from.
+- **Merging Nested Fields**
+    - **Deep Merge**: Merge properties at all levels of the items, including nested objects. This is useful when dealing with complex, nested data structures where you need to ensure the merging of all levels of nested properties.
+    - **Shallow Merge**: Merge properties at the top level of the items only, without merging nested objects. This is useful when you have flat data structures or when you only need to merge top-level properties without worrying about nested properties.
+
 ### SQL Query
 
 Write a custom SQL Query to merge the data. 
@@ -115,6 +117,19 @@ The node outputs the data from the chosen input, without changing it.
 The items passed into Input 1 of the Merge node will take precedence. For example, if the Merge node receives five items in Input 1 and 10 items in Input 2, it only processes five items. The remaining five items from Input 2 aren't processed.
 
 ## Branch execution with If and Merge nodes
+
+> **0.236.0 and below**
+>
+> n8n removed this execution behavior in version 1.0. This section applies to workflows using the **v0 (legacy)** workflow execution order. By default, this is all workflows built before version 1.0. You can change the execution order in your [workflow settings](/workflows/settings.md).
+If you add a Merge node to a workflow containing an If node, it can result in both output data streams of the If node executing.
+
+One data stream triggers the Merge node, which then goes and executes the other data stream.
+
+For example, in the screenshot below there's a workflow containing an Edit Fields node, If node, and Merge node. The standard If node behavior is to execute one data stream (in the screenshot, this is the **true** output). However, due to the Merge node, both data streams execute, despite the If node not sending any data down the **false** data stream.
+
+![Screenshot of a workflow. The workflow has an Edit Fields node, followed by an If node. It ends with a Merge node.](/_images/integrations/builtin/core-nodes/merge/if-merge-node.png)
+
+<!-- TODO: remove once v1 is mature -->
 
 ## Try it out: A step by step example
 

@@ -1,18 +1,12 @@
----
-title: Microsoft Dynamics CRM node documentation
-description: Learn how to use the Microsoft Dynamics CRM node in n8n. Follow technical documentation to integrate Microsoft Dynamics CRM node into your workflows.
-contentType: [integration, reference]
----
-
 # Microsoft Dynamics CRM node
 
 Use the Microsoft Dynamics CRM node to automate work in Microsoft Dynamics CRM, and integrate Microsoft Dynamics CRM with other applications. n8n has built-in support for  creating, updating, deleting, and getting Microsoft Dynamics CRM accounts. 
 
 On this page, you'll find a list of operations the Microsoft Dynamics CRM node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Microsoft credentials](/integrations/builtin/credentials/microsoft.md) for guidance on setting up authentication.
-///
+> **Credentials**
+>
+> Refer to [Microsoft credentials](/integrations/builtin/credentials/microsoft.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -26,3 +20,15 @@ Refer to [Microsoft credentials](/integrations/builtin/credentials/microsoft.md)
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

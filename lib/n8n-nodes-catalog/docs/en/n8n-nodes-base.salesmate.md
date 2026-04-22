@@ -1,18 +1,12 @@
----
-title: Salesmate node documentation
-description: Learn how to use the Salesmate node in n8n. Follow technical documentation to integrate Salesmate node into your workflows.
-contentType: [integration, reference]
----
-
 # Salesmate node
 
 Use the Salesmate node to automate work in Salesmate, and integrate Salesmate with other applications. n8n has built-in support for a wide range of Salesmate features, including creating, updating, deleting, and getting activities, companies, and deals. 
 
 On this page, you'll find a list of operations the Salesmate node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Salesmate credentials](/integrations/builtin/credentials/salesmate.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Salesmate credentials](/integrations/builtin/credentials/salesmate.md) for guidance on setting up authentication.
 
 ## Operations
 

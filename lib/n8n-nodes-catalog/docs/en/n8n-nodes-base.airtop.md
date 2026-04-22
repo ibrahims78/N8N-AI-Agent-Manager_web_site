@@ -1,18 +1,12 @@
----
-title: Airtop node documentation
-description: Learn how to use the Airtop node in n8n. Follow technical documentation to integrate Airtop node into your workflows.
-contentType: [integration, reference]
----
-
 # Airtop node
 
 Use the Airtop node to automate work in Airtop, and integrate Airtop with other applications. n8n has built-in support for a wide range of Airtop features, enabling you to control a cloud-based web browser for tasks like querying, scraping, and interacting with web pages.
 
 On this page, you'll find a list of operations the Airtop node supports, and links to more resources.
 
-///  note  | Credentials
-Refer to [Airtop credentials](/integrations/builtin/credentials/airtop.md) for guidance on setting up authentication.
-///
+> **Credentials**
+>
+> Refer to [Airtop credentials](/integrations/builtin/credentials/airtop.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -41,6 +35,18 @@ Refer to [Airtop credentials](/integrations/builtin/credentials/airtop.md) for g
 ## Related resources
 
 Refer to [Airtop's documentation](https://docs.airtop.ai/api-reference/airtop-api) for more information about the service.
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
 
 Contact [Airtop's Support](https://docs.airtop.ai/guides/misc/support) for assistance or to create a feature request.
 

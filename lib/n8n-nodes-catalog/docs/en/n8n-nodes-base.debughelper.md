@@ -1,10 +1,3 @@
----
-title: Debug Helper
-description: Documentation for the Debug Helper node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: medium
----
-
 # Debug Helper
 
 Use the Debug Helper node to trigger different error types or generate random datasets to help test n8n workflows.

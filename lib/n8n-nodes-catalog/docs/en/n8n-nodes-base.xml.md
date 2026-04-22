@@ -1,17 +1,10 @@
----
-title: XML
-description: Documentation for the XML node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: medium
----
-
 # XML
 
 Use the XML node to convert data from and to XML.
 
-/// note | Binary files
-If your XML is within a binary file, use the [Extract from File](/integrations/builtin/core-nodes/n8n-nodes-base.extractfromfile.md) node to convert it to text first.
-///
+> **Binary files**
+>
+> If your XML is within a binary file, use the [Extract from File](/integrations/builtin/core-nodes/n8n-nodes-base.extractfromfile.md) node to convert it to text first.
 
 ## Node parameters
 

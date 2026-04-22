@@ -1,16 +1,10 @@
----
-title: MCP Server Trigger node documentation
-description: Learn how to use the MCP Server Trigger node in n8n. Follow technical documentation to integrate the MCP Server Trigger node into your workflows.
-contentType: [integration, reference]
----
-
 # MCP Server Trigger node
 
 Use the MCP Server Trigger node to allow n8n to act as a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server, making n8n tools and workflows available to MCP clients.
 
-///  note  | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/httprequest.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/httprequest.md).
 
 ## How the MCP Server Trigger node works
 
@@ -20,9 +14,9 @@ Unlike conventional [trigger nodes](/glossary.md#trigger-node-n8n), which respon
 
 You can expose n8n workflows to clients by attaching them with the [Custom n8n Workflow Tool](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolworkflow.md) node.
 
-/// note | Server-Sent Events (SSE) and streamable HTTP support
-The MCP Server Trigger node supports both [Server-Sent Events (SSE)](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse), a long-lived transport built on top of HTTP, and [streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) for connections between clients and the server. It currently doesn't support [standard input/output (stdio)](https://modelcontextprotocol.io/docs/concepts/transports#standard-input%2Foutput-stdio) transport.
-///
+> **Server-Sent Events (SSE) and streamable HTTP support**
+>
+> The MCP Server Trigger node supports both [Server-Sent Events (SSE)](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse), a long-lived transport built on top of HTTP, and [streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) for connections between clients and the server. It currently doesn't support [standard input/output (stdio)](https://modelcontextprotocol.io/docs/concepts/transports#standard-input%2Foutput-stdio) transport.
 
 ## Node parameters
 
@@ -92,9 +86,9 @@ The MCP Server Trigger node relies on Server-Sent Events (SSE) or streamable HTT
 * If you use queue mode with a **single webhook replica**, the MCP Server Trigger node works as expected.
 * If you run **multiple webhook replicas**, you need to route all `/mcp*` requests to a single, dedicated webhook replica. Create a separate replica set with one webhook container for MCP requests. Afterward, update your ingress or load balancer configuration to direct all `/mcp*` traffic to that instance.
 
-/// warning | Caution when running with multiple webhook replicas
-If you run an MCP Server Trigger node with multiple webhook replicas and don't route all `/mcp*` requests to a single, dedicated webhook replica, your SSE and streamable HTTP connections will frequently break or fail to reliably deliver events.
-///
+> **Caution when running with multiple webhook replicas**
+>
+> If you run an MCP Server Trigger node with multiple webhook replicas and don't route all `/mcp*` requests to a single, dedicated webhook replica, your SSE and streamable HTTP connections will frequently break or fail to reliably deliver events.
 
 ## Related resources
 

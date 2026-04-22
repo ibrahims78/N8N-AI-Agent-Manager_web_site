@@ -1,10 +1,3 @@
----
-title: Summarization Chain node documentation
-description: Learn how to use the Summarize Chain node in n8n. Follow technical documentation to integrate Summarize Chain node into your workflows.
-contentType: [integration, reference]
-priority: high
----
-
 # Summarization Chain node
 
 Use the Summarization Chain node to summarize multiple documents.
@@ -40,3 +33,5 @@ You can customize the **Individual Summary Prompts** and the **Final Prompt to C
 ## Related resources
 
 Refer to [LangChain's documentation on summarization](https://js.langchain.com/docs/tutorials/summarization/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

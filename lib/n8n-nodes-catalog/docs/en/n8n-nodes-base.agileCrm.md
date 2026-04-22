@@ -1,18 +1,16 @@
----
-title: Agile CRM node documentation
-description: Learn how to use the Agile CRM node in n8n. Follow technical documentation to integrate Agile CRM node into your workflows.
-contentType: [integration, reference]
----
-
 # Agile CRM node
 
 Use the Agile CRM node to automate work in Agile CRM, and integrate Agile CRM with other applications. n8n has built-in support for a wide range of Agile CRM features, including creating, getting, updating and deleting companies, contracts, and deals.
 
 On this page, you'll find a list of operations the Agile CRM node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Agile CRM credentials](/integrations/builtin/credentials/agilecrm.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Agile CRM credentials](/integrations/builtin/credentials/agilecrm.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

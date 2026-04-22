@@ -1,18 +1,12 @@
----
-title: npm node documentation
-description: Learn how to use the npm node in n8n. Follow technical documentation to integrate npm node into your workflows.
-contentType: [integration, reference]
----
-
 # npm node
 
 Use the npm node to automate work in npm, and integrate npm with other applications.
 
 On this page, you'll find a list of operations the npm node supports and links to more resources.
 
-/// note | Credentials
-Refer to [npm credentials](/integrations/builtin/credentials/npm.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [npm credentials](/integrations/builtin/credentials/npm.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -31,3 +25,15 @@ Refer to [npm credentials](/integrations/builtin/credentials/npm.md) for guidanc
 ## Related resources
 
 Refer to [npm's documentation](https://docs.npmjs.com/) for more information about the service.
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

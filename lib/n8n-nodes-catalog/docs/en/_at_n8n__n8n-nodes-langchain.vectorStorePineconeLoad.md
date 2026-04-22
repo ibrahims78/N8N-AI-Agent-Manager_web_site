@@ -1,19 +1,20 @@
----
-title: Pinecone Vector Store node documentation
-description: Learn how to use the Pinecone Vector Store node in n8n. Follow technical documentation to integrate Pinecone Vector Store node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Pinecone Vector Store node
 
 Use the Pinecone node to interact with your Pinecone database as [vector store](/glossary.md#ai-vector-store). You can insert documents into a vector database, get documents from a vector database, retrieve documents to provide them to a retriever connected to a [chain](/glossary.md#ai-chain), or connect directly to an [agent](/glossary.md#ai-agent) as a [tool](/glossary.md#ai-tool). You can also update an item in a vector database by its ID.
 
 On this page, you'll find the node parameters for the Pinecone node, and links to more resources.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/pinecone.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/pinecone.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node usage patterns
 
@@ -47,7 +48,32 @@ The [connections flow](https://n8n.io/workflows/2705-chat-with-github-api-docume
 
 ### Operation Mode
 
+This Vector Store node has five modes: **Get Many**, **Insert Documents**, **Retrieve Documents (As Vector Store for Chain/Tool)**, **Retrieve Documents (As Tool for AI Agent)**, and **Update Documents**. The mode you select determines the operations you can perform with the node and what inputs and outputs are available.
+
+<!-- vale off -->
+#### Get Many
+
+In this mode, you can retrieve multiple documents from your vector database by providing a prompt. The prompt will be embedded and used for similarity search. The node will return the documents that are most similar to the prompt with their similarity score. This is useful if you want to retrieve a list of similar documents and pass them to an agent as additional context. 
+<!-- vale on -->
+#### Insert Documents
+
+Use Insert Documents mode to insert new documents into your vector database.
+
+#### Retrieve Documents (As Vector Store for Chain/Tool)
+
+Use Retrieve Documents (As Vector Store for Chain/Tool) mode with a vector-store retriever to retrieve documents from a vector database and provide them to the retriever connected to a chain. In this mode you must connect the node to a retriever node or root node.
+
+#### Retrieve Documents (As Tool for AI Agent)
+
+Use Retrieve Documents (As Tool for AI Agent) mode to use the vector store as a tool resource when answering queries. When formulating responses, the agent uses the vector store when the vector store name and description match the question details.
+
+#### Update Documents
+
+Use Update Documents mode to update documents in a vector database by ID. Fill in the **ID** with the ID of the embedding entry to update.
+
 ### Rerank Results
+
+Enables [reranking](/glossary.md#ai-reranking). If you enable this option, you must connect a reranking node to the vector store. That node will then rerank the results for queries. You can use this option with the `Get Many`, `Retrieve Documents (As Vector Store for Chain/Tool)` and `Retrieve Documents (As Tool for AI Agent)` modes.
 
 <!-- vale from-write-good.Weasel = NO -->
 ### Get Many parameters
@@ -84,6 +110,12 @@ Another segregation option for how to store your data within the index.
 
 ### Metadata Filter
 
+Available in **Get Many** mode. When searching for data, use this to match with metadata associated with the document.
+
+This is an `AND` query. If you specify more than one metadata filter field, all of them must match.
+
+When inserting data, the metadata is set using the document loader. Refer to [Default Data Loader](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.documentdefaultdataloader.md) for more information on loading documents.
+
 ### Clear Namespace
 
 Available in **Insert Documents** mode. Deletes all data from the namespace before inserting the new data.
@@ -95,6 +127,8 @@ Available in **Insert Documents** mode. Deletes all data from the namespace befo
 ## Related resources
 
 Refer to [LangChain's Pinecone documentation](https://js.langchain.com/docs/integrations/vectorstores/pinecone/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
 
 ### Find your Pinecone index and namespace
 

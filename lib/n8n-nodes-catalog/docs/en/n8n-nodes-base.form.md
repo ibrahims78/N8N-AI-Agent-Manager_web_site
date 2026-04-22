@@ -1,9 +1,3 @@
----
-title: n8n Form node documentation
-description: Documentation for the n8n Form node in n8n, a workflow automation platform. Includes guidance on usage and links to examples.
-contentType: [integration, reference]
----
-
 # n8n Form node
 
 Use the n8n Form node to create user-facing forms with multiple steps. You can add other nodes with custom logic between to process user input. You must start the workflow with the [n8n Form Trigger node](/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger.md).
@@ -14,9 +8,9 @@ Use the n8n Form node to create user-facing forms with multiple steps. You can a
 
 You can set the initial values for fields by using [query parameters](https://en.wikipedia.org/wiki/Query_string#Web_forms) with the initial URL provided by the [n8n Form Trigger node](/integrations/builtin/core-nodes/n8n-nodes-base.formtrigger.md). Every page in the form receives the same query parameters sent to the n8n Form Trigger node URL.
 
-/// note | Only for production
-Query parameters are only available when using the form in production mode. n8n won't populate field values from query parameters in testing mode.
-///
+> **Only for production**
+>
+> Query parameters are only available when using the form in production mode. n8n won't populate field values from query parameters in testing mode.
 
 <!-- vale from-microsoft.Percentages = NO -->
 When using query parameters, [percent-encode](https://en.wikipedia.org/wiki/Percent-encoding) any field names or values that use special characters. This ensures n8n uses the initial values for the given fields. You can use tools like [URL Encode/Decode](https://www.url-encode-decode.com/) to format your query parameters using percent-encoding.

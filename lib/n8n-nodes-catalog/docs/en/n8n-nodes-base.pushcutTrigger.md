@@ -1,20 +1,14 @@
----
-title: Pushcut Trigger node documentation
-description: Learn how to use the Pushcut Trigger node in n8n. Follow technical documentation to integrate Pushcut Trigger node into your workflows.
-contentType: [integration, reference]
----
-
 # Pushcut Trigger node
 
 [Pushcut](https://pushcut.io) is an app for iOS that lets you create smart notifications to kick off shortcuts, URLs, and online automation.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/pushcut.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/pushcut.md).
 
-///  note  | Examples and templates
-For usage examples and templates to help you get started, refer to n8n's [Pushcut Trigger integrations](https://n8n.io/integrations/pushcut-trigger/) page.
-///
+> **Examples and templates**
+>
+> For usage examples and templates to help you get started, refer to n8n's [Pushcut Trigger integrations](https://n8n.io/integrations/pushcut-trigger/) page.
 
 ## Configure a Pushcut action
 

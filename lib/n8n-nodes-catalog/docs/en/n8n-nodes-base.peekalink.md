@@ -1,18 +1,12 @@
----
-title: Peekalink node documentation
-description: Learn how to use the Peekalink node in n8n. Follow technical documentation to integrate Peekalink node into your workflows.
-contentType: [integration, reference]
----
-
 # Peekalink node
 
 Use the Peekalink node to automate work in Peekalink, and integrate Peekalink with other applications. n8n supports checking, and reviewing links with Peekalink.
 
 On this page, you'll find a list of operations the Peekalink node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Peekalink credentials](/integrations/builtin/credentials/peekalink.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Peekalink credentials](/integrations/builtin/credentials/peekalink.md) for guidance on setting up authentication.
 
 ## Operations
 

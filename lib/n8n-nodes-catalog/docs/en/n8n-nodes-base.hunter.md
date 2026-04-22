@@ -1,18 +1,12 @@
----
-title: Hunter node documentation
-description: Learn how to use the Hunter node in n8n. Follow technical documentation to integrate Hunter node into your workflows.
-contentType: [integration, reference]
----
-
 # Hunter node
 
 Use the Hunter node to automate work in Hunter, and integrate Hunter with other applications. n8n has built-in support for a wide range of Hunter features, including getting, generating, and verifying email addresses. 
 
 On this page, you'll find a list of operations the Hunter node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Hunter credentials](/integrations/builtin/credentials/hunter.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Hunter credentials](/integrations/builtin/credentials/hunter.md) for guidance on setting up authentication.
 
 ## Operations
 

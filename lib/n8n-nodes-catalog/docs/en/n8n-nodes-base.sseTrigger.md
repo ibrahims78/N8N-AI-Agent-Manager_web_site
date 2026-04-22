@@ -1,10 +1,3 @@
----
-title: SSE Trigger node documentation
-description: Learn how to use the SSE Trigger node in n8n. Follow technical documentation to integrate SSE Trigger node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # SSE Trigger node
 
 Server-Sent Events (SSE) is a server push technology enabling a client to receive automatic updates from a server using HTTP connection. The SSE Trigger node is used to receive server-sent events.

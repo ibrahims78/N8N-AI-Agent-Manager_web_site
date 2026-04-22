@@ -1,18 +1,12 @@
----
-title: Contentful node documentation
-description: Learn how to use the Contentful node in n8n. Follow technical documentation to integrate Contentful node into your workflows.
-contentType: [integration, reference]
----
-
 # Contentful node
 
 Use the Contentful node to automate work in Contentful, and integrate Contentful with other applications. n8n has built-in support for a wide range of Contentful features, including getting assets, content types, entries, locales, and space.
 
 On this page, you'll find a list of operations the Contentful node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Contentful credentials](/integrations/builtin/credentials/contentful.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Contentful credentials](/integrations/builtin/credentials/contentful.md) for guidance on setting up authentication.
 
 ## Operations
 

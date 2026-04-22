@@ -1,8 +1,3 @@
----
-title: Venafi TLS Protect Datacenter node documentation
-description: Learn how to use the Venafi TLS Protect Datacenter node in n8n. Follow technical documentation to integrate Venafi TLS Protect Datacenter node into your workflows.
-contentType: [integration, reference]
----
 <!-- vale off -->
 <!-- disabled vale because of "Datacenter" Don't want to general approve it, but it's the brand name -->
 # Venafi TLS Protect Datacenter node
@@ -11,9 +6,9 @@ Use the Venafi TLS Protect Datacenter node to automate work in Venafi TLS Protec
 
 On this page, you'll find a list of operations the Venafi TLS Protect Datacenter node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Venafi TLS Protect Datacenter credentials](/integrations/builtin/credentials/venafitlsprotectdatacenter.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Venafi TLS Protect Datacenter credentials](/integrations/builtin/credentials/venafitlsprotectdatacenter.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -38,3 +33,15 @@ n8n also provides:
 * A [node](/integrations/builtin/app-nodes/n8n-nodes-base.venafitlsprotectcloud.md) and [trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.venafitlsprotectcloudtrigger.md) node for Venafi TLS Protect Cloud.
 
 <!-- vale on -->
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

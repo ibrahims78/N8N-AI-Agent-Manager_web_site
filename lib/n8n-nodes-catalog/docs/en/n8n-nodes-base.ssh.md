@@ -1,17 +1,10 @@
----
-title: SSH
-description: Documentation for the SSH node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: medium
----
-
 # SSH
 
 The SSH node is useful for executing commands using the Secure Shell Protocol.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/ssh.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/ssh.md).
 
 ## Operations
 
@@ -19,9 +12,9 @@ You can find authentication information for this node [here](/integrations/built
 - [**Download** a file](#download-file)
 - [**Upload** a file](#upload-file)
 
-/// note | Uploading files
-To attach a file for upload, you will need to use an extra node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node to pass the file as a data property.
-///
+> **Uploading files**
+>
+> To attach a file for upload, you will need to use an extra node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node to pass the file as a data property.
 
 ### Execute Command
 

@@ -1,23 +1,20 @@
----
-title: Microsoft OneDrive node documentation
-description: Learn how to use the Microsoft OneDrive node in n8n. Follow technical documentation to integrate Microsoft OneDrive node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Microsoft OneDrive node
 
 Use the Microsoft OneDrive node to automate work in Microsoft OneDrive, and integrate Microsoft OneDrive with other applications. n8n has built-in support for a wide range of Microsoft OneDrive features, including creating, updating, deleting, and getting files, and folders.
 
 On this page, you'll find a list of operations the Microsoft OneDrive node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Microsoft credentials](/integrations/builtin/credentials/microsoft.md) for guidance on setting up authentication.
-///
+> **Credentials**
+>
+> Refer to [Microsoft credentials](/integrations/builtin/credentials/microsoft.md) for guidance on setting up authentication.
 
-/// tip | Government Cloud Support
-If you're using a government cloud tenant (US Government, US Government DOD, or China), make sure to select the appropriate **Microsoft Graph API Base URL** in your Microsoft credentials configuration.
-///
+> **Government Cloud Support**
+>
+> If you're using a government cloud tenant (US Government, US Government DOD, or China), make sure to select the appropriate **Microsoft Graph API Base URL** in your Microsoft credentials configuration.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

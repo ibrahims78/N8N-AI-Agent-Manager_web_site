@@ -1,16 +1,10 @@
----
-title: MCP Client Tool node documentation
-description: Learn how to use the MCP Client Tool node in n8n. Follow technical documentation to integrate MCP Client Tool node into your workflows.
-contentType: [integration, reference]
----
-
 # MCP Client Tool node
 
 The MCP Client Tool node is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) client, allowing you to use the tools exposed by an external MCP server. You can connect the MCP Client Tool node to your models to call external tools with n8n agents.
 
-///  note  | Credentials
-The MCP Client Tool node supports [Bearer](/integrations/builtin/credentials/httprequest.md#using-bearer-auth), generic [header](/integrations/builtin/credentials/httprequest.md#using-header-auth), and [OAuth2](/integrations/builtin/credentials/httprequest.md#using-oauth2) authentication methods.
-///
+> **Credentials**
+>
+> The MCP Client Tool node supports [Bearer](/integrations/builtin/credentials/httprequest.md#using-bearer-auth), generic [header](/integrations/builtin/credentials/httprequest.md#using-header-auth), and [OAuth2](/integrations/builtin/credentials/httprequest.md#using-oauth2) authentication methods.
 
 ## Node parameters
 
@@ -32,3 +26,7 @@ Configure the node with the following parameters.
 n8n also has an [MCP Server Trigger](/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger.md) node that allows you to expose n8n tools to external AI Agents.
 
 Refer to the [MCP documentation](https://modelcontextprotocol.io/introduction) and [MCP specification](https://modelcontextprotocol.io/specification/) for more details about the protocol, servers, and clients.
+
+Refer to [LangChain's documentation on tools](https://langchain-ai.github.io/langgraphjs/how-tos/tool-calling/) for more information about tools in LangChain.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

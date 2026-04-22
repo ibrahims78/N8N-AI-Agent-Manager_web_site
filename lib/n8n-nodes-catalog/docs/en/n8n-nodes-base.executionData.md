@@ -1,15 +1,15 @@
----
-title: Execution Data
-description: Documentation for the Execution Data node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: high
----
-
 # Execution Data
 
 Use this node to save metadata for workflow executions. You can then search by this data in the **Executions** list.
 
 You can retrieve custom execution data during workflow execution using the Code node. Refer to [Custom executions data](/workflows/executions/custom-executions-data.md) for more information.
+
+> **Feature availability**
+>
+> Custom executions data is available on:
+> 
+> * Cloud: Pro, Enterprise
+> * Self-Hosted: Enterprise, registered Community
 
 ## Operations
 

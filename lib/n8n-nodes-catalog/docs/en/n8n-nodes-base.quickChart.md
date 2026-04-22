@@ -1,15 +1,12 @@
----
-title: QuickChart node documentation
-description: Learn how to use the QuickChart node in n8n. Follow technical documentation to integrate QuickChart node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # QuickChart node
 
 Use the QuickChart node to automate work in QuickChart, and integrate QuickChart with other applications. n8n has built-in support for a wide range of QuickChart chart types, including bar, doughnut, line, pie, and polar charts.
 
 On this page, you'll find a list of operations the QuickChart node supports and links to more resources.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

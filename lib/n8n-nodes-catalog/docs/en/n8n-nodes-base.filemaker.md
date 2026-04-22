@@ -1,19 +1,16 @@
----
-title: FileMaker node documentation
-description: Learn how to use the FileMaker node in n8n. Follow technical documentation to integrate FileMaker node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # FileMaker node
 
 Use the FileMaker node to automate work in FileMaker, and integrate FileMaker with other applications. n8n has built-in support for a wide range of FileMaker features, including creating, finding, getting, editing, and duplicating files.
 
 On this page, you'll find a list of operations the FileMaker node supports and links to more resources.
 
-/// note | Credentials
-Refer to [FileMaker credentials](/integrations/builtin/credentials/filemaker.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [FileMaker credentials](/integrations/builtin/credentials/filemaker.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

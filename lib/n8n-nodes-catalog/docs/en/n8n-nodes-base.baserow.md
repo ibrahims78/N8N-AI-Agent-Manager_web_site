@@ -1,19 +1,16 @@
----
-title: Baserow node documentation
-description: Learn how to use the Baserow node in n8n. Follow technical documentation to integrate Baserow node into your workflows.
-contentType: [integration, reference]
-priority: high
----
-
 # Baserow node
 
 Use the Baserow node to automate work in Baserow, and integrate Baserow with other applications. n8n has built-in support for a wide range of Baserow features, including creating, getting, retrieving, and updating rows.
 
 On this page, you'll find a list of operations the Baserow node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Baserow credentials](/integrations/builtin/credentials/baserow.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Baserow credentials](/integrations/builtin/credentials/baserow.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

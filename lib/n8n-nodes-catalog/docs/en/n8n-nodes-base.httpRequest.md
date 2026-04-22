@@ -1,10 +1,3 @@
----
-title: HTTP Request node documentation
-description: Learn how to use the HTTP Request node in n8n. Follow technical documentation to integrate HTTP Request node into your workflows.
-contentType: [integration, reference]
-priority: critical
----
-
 # HTTP Request node
 
 The HTTP Request node is one of the most versatile nodes in n8n. It allows you to make HTTP requests to query data from any app or service with a REST API. You can use the HTTP Request node a regular node or attached to an [AI agent](/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/tools-agent.md) to use as a [tool](/advanced-ai/examples/understand-tools.md){ data-preview }.
@@ -13,9 +6,9 @@ When using this node, you're creating a REST API call. You need some understandi
 
 There are two ways to create an HTTP request: configure the [node parameters](#node-parameters) or [import a curl command](#import-curl-command).
 
-/// note | Credentials
-Refer to [HTTP Request credentials](/integrations/builtin/credentials/httprequest.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [HTTP Request credentials](/integrations/builtin/credentials/httprequest.md) for guidance on setting up authentication.
 
 ## Node parameters
 
@@ -149,9 +142,9 @@ Select **Add Option** to view and select these options. Options are available to
 
 ### Array Format in Query Parameters
 
-/// note | Option availability
-This option is only available when you turn on **Send Query Parameters**.
-///
+> **Option availability**
+>
+> This option is only available when you turn on **Send Query Parameters**.
 
 Use this option to control the format for arrays included in query parameters. Choose from these options:
 
@@ -196,9 +189,9 @@ Use this option to set some details about the expected API response, including:
 
 Use this option to paginate results, useful for handling query results that are too big for the API to return in a single call.
 
-/// note | Inspect the API data first
-Some options for pagination require knowledge of the data returned by the API you're using. Before setting up pagination, either check the API documentation, or do an API call without pagination, to see the data it returns.
-///
+> **Inspect the API data first**
+>
+> Some options for pagination require knowledge of the data returned by the API you're using. Before setting up pagination, either check the API documentation, or do an API call without pagination, to see the data it returns.
 ??? Details "Understand pagination"
     Pagination means splitting a large set of data into multiple pages. The amount of data on each page depends on the limit you set.
   
@@ -216,6 +209,20 @@ Configure the pagination settings:
 For example setups, refer to [HTTP Request node cookbook | Pagination](/code/cookbook/http-node/pagination.md).
 
 n8n provides built-in variables for working with HTTP node requests and responses when using pagination:
+
+| Variable | Description |
+| -------- | ----------- |
+| `$pageCount` | The pagination count. Tracks how many pages the node has fetched. |
+| `$request` | The request object sent by the HTTP node. |
+| `$response` | The response object from the HTTP call. Includes `$response.body`, `$response.headers`, and `$response.statusCode`. The contents of `body` and `headers` depend on the data sent by the API. |
+
+> **API differences**
+>
+> Different APIs implement pagination in different ways. Check the API documentation for the API you're using for details. You need to find out things like:
+> 
+> * Does the API provide the URL for the next page?
+> * Are there API-specific limits on page size or page number?
+> * The structure of the data that the API returns.
 
 ### Proxy
 
@@ -276,9 +283,9 @@ You can use curl to call REST APIs. If the API documentation of the service you 
 
 Import a curl command:
 
-/// note | Import format
-This option always imports any parameter values as strings. If you wish to preserve the type of numbers and booleans in your request, switch **Using Fields Below** to **Using JSON** and paste your JSON object containing the parameters.
-///
+> **Import format**
+>
+> This option always imports any parameter values as strings. If you wish to preserve the type of numbers and booleans in your request, switch **Using Fields Below** to **Using JSON** and paste your JSON object containing the parameters.
 
 1. From the HTTP Request node's **Parameters** tab, select **Import cURL**. The **Import cURL command** modal opens.
 2. Paste your curl command into the text box.
@@ -291,80 +298,3 @@ This option always imports any parameter values as strings. If you wish to prese
 ## Common issues
 
 For common questions or issues and suggested solutions, refer to [Common Issues](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/common-issues.md).
-
----
-
-# HTTP Request node common issues
-
-Here are some common errors and issues with the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) and steps to resolve or troubleshoot them.
-
-## Bad request - please check your parameters
-
-This error displays when the node receives a 400 error indicating a bad request. This error most often occurs because:
-
-* You're using an invalid name or value in a **Query Parameter**.
-* You're passing array values in a **Query Parameter** but the array isn't formatted correctly. Try using the [**Array Format in Query Parameters**](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md#array-format-in-query-parameters) option.
-
-Review the API documentation for your service to format your query parameters.
-
-<!-- vale off -->
-## The resource you are requesting could not be found
-<!-- vale on -->
-
-This error displays when the endpoint **URL** you entered is invalid.
-
-This may be due to a typo in the URL or a deprecated API. Refer to your service's API documentation to verify you have a valid endpoint.
-
-## JSON parameter need to be an valid JSON
-
-This error displays when you've passed a parameter as JSON and it's not formatted as valid JSON.
-
-To resolve, review the JSON you've entered for these issues:
-
-* Test your JSON in a JSON checker or syntax parser to find errors like missing quotation marks, extra or missing commas, incorrectly formatted arrays, extra or missing square brackets or curly brackets, and so on.
-* If you've used an **Expression** in the node, be sure you've wrapped the entire JSON in double curly brackets, for example:
-    ```
-    {{
-        {
-        "myjson":
-        {
-            "name1": "value1",
-            "name2": "value2",
-            "array1":
-                ["value1","value2"]
-        }
-        }
-    }}
-    ```
-
-## Forbidden - perhaps check your credentials
-
-This error displays when the node receives a 403 error indicating authentication failed.
-
-To resolve, review the selected credentials and make sure you can authenticate with them. You may need to:
-
-* Update permissions or scopes so that your API key or account can perform the operation you've selected.
-* Format your generic credential in a different way.
-* Generate a new API key or token with the appropriate permissions or scopes.
-
-## 429 - The service is receiving too many requests from you
-
-This error displays when the node receives a [429 error](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) from the service that you're calling. This often means that you have hit the rate limits of that service. You can find out more on the [Handling API rate limits](/integrations/builtin/rate-limits.md) page.
-
-To resolve the error, you can use one of the built-in options of the HTTP request node:
-
-### Batching
-
-Use this option to send requests in batches and introduce a delay between them.
-
-1. In the HTTP Request node, select **Add Option > Batching**.
-1. Set **Items per Batch** to the number of input items to include in each request.
-1. Set **Batch Interval (ms)** to introduce a delay between requests in milliseconds. For example, to send one request to an API per second, set **Batch Interval (ms)** to `1000`.
-
-### Retry on Fail
-
-Use this option to retry the node after a failed attempt.
-
-1. In the HTTP Request node, go to **Settings** and enable **Retry on Fail**.
-1. Set **Max Tries** to the maximum number of times n8n should retry the node.
-1. Set **Wait Between Tries (ms)** to the desired delay in milliseconds between retries. For example, to wait one second before retrying the request again, set **Wait Between Tries (ms)** to `1000`.

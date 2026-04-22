@@ -1,18 +1,12 @@
----
-title: TimescaleDB node documentation
-description: Learn how to use the TimescaleDB node in n8n. Follow technical documentation to integrate TimescaleDB node into your workflows.
-contentType: [integration, reference]
----
-
 # TimescaleDB node
 
 Use the TimescaleDB node to automate work in TimescaleDB, and integrate TimescaleDB with other applications. n8n has built-in support for a wide range of TimescaleDB features, including executing an SQL query, as well as inserting and updating rows in a database. 
 
 On this page, you'll find a list of operations the TimescaleDB node supports and links to more resources.
 
-/// note | Credentials
-Refer to [TimescaleDB credentials](/integrations/builtin/credentials/timescaledb.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [TimescaleDB credentials](/integrations/builtin/credentials/timescaledb.md) for guidance on setting up authentication.
 
 ## Operations
 

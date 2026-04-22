@@ -1,22 +1,16 @@
----
-title: TheHive 5 Trigger node documentation
-description: Learn how to use the TheHive 5 Trigger node in n8n. Follow technical documentation to integrate TheHive 5 Trigger node into your workflows.
-contentType: [integration, reference]
----
-
 # TheHive 5 Trigger node
 
 Use the TheHive 5 Trigger node to respond to events in [TheHive](https://strangebee.com/thehive/) and integrate TheHive with other applications. n8n has built-in support for a wide range of TheHive events, including alerts, cases, comments, pages, and tasks.
 
 On this page, you'll find a list of events the TheHive5 Trigger node can respond to and links to more resources.
 
-/// note | TheHive and TheHive 5
-n8n provides two nodes for TheHive. Use this node (TheHive 5 Trigger) if you want to use TheHive's version 5 API. If you want to use version 3 or 4, use [TheHive Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.thehivetrigger.md).
-///
+> **TheHive and TheHive 5**
+>
+> n8n provides two nodes for TheHive. Use this node (TheHive 5 Trigger) if you want to use TheHive's version 5 API. If you want to use version 3 or 4, use [TheHive Trigger](/integrations/builtin/trigger-nodes/n8n-nodes-base.thehivetrigger.md).
 
-///  note  | Examples and templates
-For usage examples and templates to help you get started, refer to n8n's [TheHive 5 Trigger integrations](https://n8n.io/integrations/thehive-5-trigger/) page.
-///
+> **Examples and templates**
+>
+> For usage examples and templates to help you get started, refer to n8n's [TheHive 5 Trigger integrations](https://n8n.io/integrations/thehive-5-trigger/) page.
 
 ## Events
 

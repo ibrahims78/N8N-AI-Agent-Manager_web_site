@@ -1,16 +1,10 @@
----
-title: Guardrails node documentation
-description: Documentation for the Guardrails node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
----
-
 # Guardrails node
 
 Use the Guardrails node to enforce safety, security, and content policies on text. You can use it to validate user input _before_ sending it to an AI model, or to check the _output_ from an AI model before using it in your workflow.
 
-/// note | Chat Model Connection Required for LLM-based Guardrails
-This node requires a Chat Model node to be connected to its Model input when using the **Check Text for Violations** operation with LLM-based guardrails. Many guardrail checks (like Jailbreak, NSFW, and Topical Alignment) are LLM-based and use this connection to evaluate the input text.
-///
+> **Chat Model Connection Required for LLM-based Guardrails**
+>
+> This node requires a Chat Model node to be connected to its Model input when using the **Check Text for Violations** operation with LLM-based guardrails. Many guardrail checks (like Jailbreak, NSFW, and Topical Alignment) are LLM-based and use this connection to evaluate the input text.
 
 ## Node parameters
 

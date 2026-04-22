@@ -1,18 +1,12 @@
----
-title: AWS DynamoDB node documentation
-description: Learn how to use the AWS DynamoDB node in n8n. Follow technical documentation to integrate AWS DynamoDB node into your workflows.
-contentType: [integration, reference]
----
-
 # AWS DynamoDB node
 
 Use the AWS DynamoDB node to automate work in AWS DynamoDB, and integrate AWS DynamoDB with other applications. n8n has built-in support for a wide range of AWS DynamoDB features, including creating, reading, updating, deleting items, and records on a database.
 
 On this page, you'll find a list of operations the AWS DynamoDB node supports and links to more resources.
 
-/// note | Credentials
-Refer to [AWS credentials](/integrations/builtin/credentials/aws.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [AWS credentials](/integrations/builtin/credentials/aws.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -25,3 +19,15 @@ Refer to [AWS credentials](/integrations/builtin/credentials/aws.md) for guidanc
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

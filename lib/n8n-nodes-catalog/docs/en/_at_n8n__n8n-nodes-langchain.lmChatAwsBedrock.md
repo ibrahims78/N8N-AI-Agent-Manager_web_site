@@ -1,19 +1,20 @@
----
-title: AWS Bedrock Chat Model node documentation
-description: Learn how to use the AWS Bedrock Chat Model node in n8n. Follow technical documentation to integrate AWS Bedrock Chat Model node into your workflows.
-contentType: [integration, reference]
----
-
 # AWS Bedrock Chat Model node
 
 The AWS Bedrock Chat Model node allows you use LLM models utilising AWS Bedrock platform.
 
 On this page, you'll find the node parameters for the AWS Bedrock Chat Model node, and links to more resources.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/aws.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/aws.md).
 
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 	
 ## Node parameters
 
@@ -37,3 +38,5 @@ This node doesn't support the [`NO_PROXY` environment variable](/hosting/configu
 ## Related resources
 
 Refer to [LangChains's AWS Bedrock Chat Model documentation](https://js.langchain.com/docs/integrations/chat/bedrock/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

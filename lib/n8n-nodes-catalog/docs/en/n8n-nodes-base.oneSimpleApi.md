@@ -1,8 +1,3 @@
----
-title: One Simple API node documentation
-description: Learn how to use the One Simple API node in n8n. Follow technical documentation to integrate One Simple API node into your workflows.
-contentType: [integration, reference]
----
 <!-- vale off -->
 <!-- linting off because 'simple' isn't something I want to add to accept.txt -->
 # One Simple API node
@@ -11,9 +6,9 @@ Use the One Simple API node to automate work in One Simple API, and integrate On
 
 On this page, you'll find a list of operations the One Simple API node supports and links to more resources.
 
-/// note | Credentials
-Refer to [One Simple API credentials](/integrations/builtin/credentials/onesimpleapi.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [One Simple API credentials](/integrations/builtin/credentials/onesimpleapi.md) for guidance on setting up authentication.
 
 ## Operations
 

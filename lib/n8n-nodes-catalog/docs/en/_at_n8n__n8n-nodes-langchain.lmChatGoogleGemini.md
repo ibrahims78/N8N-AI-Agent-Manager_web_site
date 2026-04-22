@@ -1,19 +1,20 @@
----
-title: Google Gemini Chat Model node documentation
-description: Learn how to use the Google Gemini Chat Model node in n8n. Follow technical documentation to integrate Google Gemini Chat Model node into your workflows.
-contentType: [integration, reference]
-priority: high
----
-
 # Google Gemini Chat Model node
 
 Use the Google Gemini Chat Model node to use Google's Gemini chat models with conversational agents.
 
 On this page, you'll find the node parameters for the Google Gemini Chat Model node, and links to more resources.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/googleai.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/googleai.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -46,3 +47,5 @@ If you need to proxy your connection, as a work around, you can set up a dedicat
 ## Related resources
 
 Refer to [LangChain's Google Gemini documentation](https://js.langchain.com/docs/integrations/chat/google_generativeai) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

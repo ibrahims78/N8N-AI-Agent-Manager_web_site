@@ -1,18 +1,20 @@
----
-title: Google Vertex Chat Model node documentation
-description: Learn how to use the Google Vertex Chat Model node in n8n. Follow technical documentation to integrate Google Vertex Chat Model node into your workflows.
-contentType: [integration, reference]
----
-
 # Google Vertex Chat Model node
 
 Use the Google Vertex AI Chat Model node to use Google's Vertex AI chat models with conversational [agents](/glossary.md#ai-agent).
 
 On this page, you'll find the node parameters for the Google Vertex AI Chat Model node, and links to more resources.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/google/service-account.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/google/service-account.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -35,3 +37,5 @@ You can find authentication information for this node [here](/integrations/built
 ## Related resources
 
 Refer to [LangChain's Google Vertex AI documentation](https://js.langchain.com/docs/integrations/chat/google_vertex_ai/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

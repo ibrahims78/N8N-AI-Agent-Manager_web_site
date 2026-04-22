@@ -1,29 +1,30 @@
----
-title: Simple Vector Store node documentation
-description: Learn how to use the Simple Vector Store node in n8n. Follow technical documentation to integrate Simple Vector Store node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Simple Vector Store node
 
 Use the Simple Vector Store node to store and retrieve [embeddings](/glossary.md#ai-embedding) in n8n's in-app memory. 
 
 On this page, you'll find the node parameters for the Simple Vector Store node, and links to more resources.
 
-/// note | This node is different from AI memory nodes
-The simple vector storage described here is different to the AI memory nodes such as [Simple Memory](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memorybufferwindow/index.md).
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
-This node creates a [vector database](/glossary.md#ai-vector-store) in the app memory.
-///
+> **This node is different from AI memory nodes**
+>
+> The simple vector storage described here is different to the AI memory nodes such as [Simple Memory](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memorybufferwindow/index.md).
+> 
+> This node creates a [vector database](/glossary.md#ai-vector-store) in the app memory.
 
 ## Data safety limitations
 
 Before using the Simple Vector Store node, it's important to understand its limitations and how it works.
 
-/// warning
-n8n recommends using Simple Vector store for development use only.
-///
+> **Warning**
+>
+> n8n recommends using Simple Vector store for development use only.
 
 ### Vector store data isn't persistent
 
@@ -83,7 +84,29 @@ On n8n Cloud, these values are preset to 100MB (about 8,000 documents, depending
 
 ## Node parameters
 
+### Operation Mode
+
+This Vector Store node has four modes: **Get Many**, **Insert Documents**, **Retrieve Documents (As Vector Store for Chain/Tool)**, and **Retrieve Documents (As Tool for AI Agent)**. The mode you select determines the operations you can perform with the node and what inputs and outputs are available.
+
+#### Get Many
+
+In this mode, you can retrieve multiple documents from your vector database by providing a prompt. The prompt is embedded and used for similarity search. The node returns the documents that are most similar to the prompt with their similarity score. This is useful if you want to retrieve a list of similar documents and pass them to an agent as additional context.
+
+#### Insert Documents
+
+Use insert documents mode to insert new documents into your vector database.
+
+#### Retrieve Documents (as Vector Store for Chain/Tool)
+
+Use Retrieve Documents (As Vector Store for Chain/Tool) mode with a vector-store retriever to retrieve documents from a vector database and provide them to the retriever connected to a chain. In this mode you must connect the node to a retriever node or root node.
+
+#### Retrieve Documents (as Tool for AI Agent)
+
+Use Retrieve Documents (As Tool for AI Agent) mode to use the vector store as a tool resource when answering queries. When formulating responses, the agent uses the vector store when the vector store name and description match the question details.
+
 ### Rerank Results
+
+Enables [reranking](/glossary.md#ai-reranking). If you enable this option, you must connect a reranking node to the vector store. That node will then rerank the results for queries. You can use this option with the `Get Many`, `Retrieve Documents (As Vector Store for Chain/Tool)` and `Retrieve Documents (As Tool for AI Agent)` modes.
 
 <!-- vale from-write-good.Weasel = NO -->
 ### Get Many parameters
@@ -116,3 +139,5 @@ On n8n Cloud, these values are preset to 100MB (about 8,000 documents, depending
 ## Related resources
 
 Refer to [LangChains's Memory Vector Store documentation](https://js.langchain.com/docs/integrations/vectorstores/memory/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

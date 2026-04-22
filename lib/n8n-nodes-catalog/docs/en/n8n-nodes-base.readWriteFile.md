@@ -1,17 +1,10 @@
----
-title: Read/Write Files from Disk
-description: Documentation for the Read/Write Files from Disk node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: critical
----
-
 # Read/Write Files from Disk
 
 Use the Read/Write Files from Disk node to read and write files from/to the machine where n8n is running.
 
-/// note | Self-hosted n8n only
-This node isn't available on n8n Cloud.
-///
+> **Self-hosted n8n only**
+>
+> This node isn't available on n8n Cloud.
 
 ## Operations
 

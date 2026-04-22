@@ -1,20 +1,14 @@
----
-title: Brevo Trigger node documentation
-description: Learn how to use the Brevo Trigger node in n8n. Follow technical documentation to integrate Brevo Trigger node into your workflows.
-contentType: [integration, reference]
----
-
 # Brevo Trigger node
 
 [Brevo](https://www.brevo.com/) is a digital marketing platform to help users grow their business.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/brevo.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/brevo.md).
 
-///  note  | Examples and templates
-For usage examples and templates to help you get started, refer to n8n's [Brevo Trigger integrations](https://n8n.io/integrations/brevo-trigger/) page.
-///
+> **Examples and templates**
+>
+> For usage examples and templates to help you get started, refer to n8n's [Brevo Trigger integrations](https://n8n.io/integrations/brevo-trigger/) page.
 
 ## Events
 

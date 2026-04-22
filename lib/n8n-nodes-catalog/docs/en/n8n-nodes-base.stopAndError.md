@@ -1,10 +1,3 @@
----
-title: Stop And Error
-description: Documentation for the Stop And Error node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: high
----
-
 # Stop And Error
 
 Use the Stop And Error node to display custom error messages, cause executions to fail under certain conditions, and send custom error information to error workflows.

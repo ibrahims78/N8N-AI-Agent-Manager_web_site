@@ -1,18 +1,12 @@
----
-title: Demio node documentation
-description: Learn how to use the Demio node in n8n. Follow technical documentation to integrate Demio node into your workflows.
-contentType: [integration, reference]
----
-
 # Demio node
 
 Use the Demio node to automate work in Demio, and integrate Demio with other applications. n8n has built-in support for a wide range of Demio features, including getting, and registering events and reports.
 
 On this page, you'll find a list of operations the Demio node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Demio credentials](/integrations/builtin/credentials/demio.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Demio credentials](/integrations/builtin/credentials/demio.md) for guidance on setting up authentication.
 
 ## Operations
 

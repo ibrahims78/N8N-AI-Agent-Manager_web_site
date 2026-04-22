@@ -1,10 +1,3 @@
----
-title: n8n Trigger node documentation
-description: Learn how to use the n8n Trigger node in n8n. Follow technical documentation to integrate n8n Trigger node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # n8n Trigger node
 
 The n8n Trigger node triggers when the workflow containing this node updates or gets published, or when the n8n instance starts or restarts. This node only responds to events in its own workflow; changes to other workflows won't trigger it. 

@@ -1,16 +1,10 @@
----
-title: LDAP
-description: Documentation for the LDAP node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
----
-
 # LDAP
 
 This node allows you to interact with your LDAP servers to create, find, and update objects.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/ldap.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/ldap.md).
 
 ## Operations
 
@@ -22,6 +16,10 @@ You can find authentication information for this node [here](/integrations/built
 * [**Update**](#update) attributes
 
 Refer to the sections below for details on configuring the node for each operation.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Compare
 

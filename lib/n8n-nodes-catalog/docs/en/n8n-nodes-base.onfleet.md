@@ -1,18 +1,12 @@
----
-title: Onfleet node documentation
-description: Learn how to use the Onfleet node in n8n. Follow technical documentation to integrate Onfleet node into your workflows.
-contentType: [integration, reference]
----
-
 # Onfleet node
 
 Use the Onfleet node to automate work in Onfleet, and integrate Onfleet with other applications. n8n has built-in support for a wide range of Onfleet features, including creating and deleting tasks in Onfleet as well as retrieving organizations' details. 
 
 On this page, you'll find a list of operations the Onfleet node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Onfleet credentials](/integrations/builtin/credentials/onfleet.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Onfleet credentials](/integrations/builtin/credentials/onfleet.md) for guidance on setting up authentication.
 
 ## Operations
 

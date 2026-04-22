@@ -1,18 +1,12 @@
----
-title: Google Cloud Storage node documentation
-description: Learn how to use the Google Cloud Storage node in n8n. Follow technical documentation to integrate Google Cloud Storage node into your workflows.
-contentType: [integration, reference]
----
-
 # Google Cloud Storage node
 
 Use the Google Cloud Storage node to automate work in Google Cloud Storage, and integrate Google Cloud Storage with other applications. n8n has built-in support for a wide range of Google Cloud Storage features, including creating, updating, deleting, and getting buckets and objects. 
 
 On this page, you'll find a list of operations the Google Cloud Storage node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Google Cloud Storage credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Google Cloud Storage credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -36,3 +30,15 @@ Refer to [Google Cloud Storage credentials](/integrations/builtin/credentials/go
 ## Related resources
 
 Refer to Google's [Cloud Storage API documentation](https://cloud.google.com/storage/docs/apis) for detailed information about the API that this node integrates with.
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

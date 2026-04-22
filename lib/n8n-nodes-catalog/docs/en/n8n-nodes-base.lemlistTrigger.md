@@ -1,20 +1,14 @@
----
-title: Lemlist Trigger node documentation
-description: Learn how to use the Lemlist Trigger node in n8n. Follow technical documentation to integrate Lemlist Trigger node into your workflows.
-contentType: [integration, reference]
----
-
 # Lemlist Trigger node
 
 [Lemlist](https://Lemlist.com) is an email outreach platform that allows you to automatically generate personalized images and videos and send personalized cold emails.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/lemlist.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/lemlist.md).
 
-///  note  | Examples and templates
-For usage examples and templates to help you get started, refer to n8n's [Lemlist Trigger integrations](https://n8n.io/integrations/lemlist-trigger/) page.
-///
+> **Examples and templates**
+>
+> For usage examples and templates to help you get started, refer to n8n's [Lemlist Trigger integrations](https://n8n.io/integrations/lemlist-trigger/) page.
 
 ## Events
 

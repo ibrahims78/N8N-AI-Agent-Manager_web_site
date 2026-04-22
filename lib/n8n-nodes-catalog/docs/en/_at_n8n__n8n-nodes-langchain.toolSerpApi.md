@@ -1,19 +1,20 @@
----
-title: SerpApi (Google Search) node documentation
-description: Learn how to use the SerpApi (Google Search) node in n8n. Follow technical documentation to integrate SerpApi (Google Search) node into your workflows.
-contentType: [integration, reference]
-priority: high
----
-
 # SerpApi (Google Search) node
 
 The SerpAPI node allows an [agent](/glossary.md#ai-agent) in your workflow to call Google's Search API.
 
 On this page, you'll find the node parameters for the SerpAPI node, and links to more resources.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/serp.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/serp.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node options
 
@@ -30,3 +31,5 @@ You can find authentication information for this node [here](/integrations/built
 ## Related resources
 
 Refer to [Serp's documentation](https://serpapi.com/search-api) for more information about the service. You can also view [LangChain's documentation on their Serp integration](https://js.langchain.com/docs/integrations/tools/serpapi/).
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

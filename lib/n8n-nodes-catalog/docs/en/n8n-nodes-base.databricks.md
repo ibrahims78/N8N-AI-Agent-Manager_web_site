@@ -1,18 +1,16 @@
----
-title: Databricks node documentation
-description: Learn how to use the Databricks node in n8n. Follow technical documentation to integrate Databricks node into your workflows.
-contentType: [integration, reference]
----
-
 # Databricks node
 
 Use the Databricks node to automate work in Databricks, and integrate Databricks with other applications. n8n has built-in support for a wide range of Databricks features, including executing SQL queries, managing Unity Catalog objects, querying ML model serving endpoints, and working with vector search indexes.
 
 On this page, you'll find a list of operations the Databricks node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Databricks credentials](/integrations/builtin/credentials/databricks.md) for guidance on setting up authentication.
-///
+> **Credentials**
+>
+> Refer to [Databricks credentials](/integrations/builtin/credentials/databricks.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 
@@ -64,3 +62,15 @@ Refer to [Databricks credentials](/integrations/builtin/credentials/databricks.m
 ## Related resources
 
 Refer to [Databricks' REST API documentation](https://docs.databricks.com/api/) for details about their API.
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

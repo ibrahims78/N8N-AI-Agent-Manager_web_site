@@ -1,19 +1,12 @@
----
-title: Spotify node documentation
-description: Learn how to use the Spotify node in n8n. Follow technical documentation to integrate Spotify node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Spotify node
 
 Use the Spotify node to automate work in Spotify, and integrate Spotify with other applications. n8n has built-in support for a wide range of Spotify features, including getting album and artist information. 
 
 On this page, you'll find a list of operations the Spotify node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Spotify credentials](/integrations/builtin/credentials/spotify.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Spotify credentials](/integrations/builtin/credentials/spotify.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -58,3 +51,15 @@ Refer to [Spotify credentials](/integrations/builtin/credentials/spotify.md) for
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

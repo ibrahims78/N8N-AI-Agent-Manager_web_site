@@ -1,19 +1,16 @@
----
-title: Redis node documentation
-description: Learn how to use the Redis node in n8n. Follow technical documentation to integrate Redis node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Redis node
 
 Use the Redis node to automate work in Redis, and integrate Redis with other applications. n8n has built-in support for a wide range of Redis features, including deleting keys, getting key values, setting key value, and publishing messages to the Redis channel.  
 
 On this page, you'll find a list of operations the Redis node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Redis credentials](/integrations/builtin/credentials/redis.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Redis credentials](/integrations/builtin/credentials/redis.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

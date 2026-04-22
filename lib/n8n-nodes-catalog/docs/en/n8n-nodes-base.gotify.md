@@ -1,18 +1,16 @@
----
-title: Gotify node documentation
-description: Learn how to use the Gotify node in n8n. Follow technical documentation to integrate Gotify node into your workflows.
-contentType: [integration, reference]
----
-
 # Gotify node
 
 Use the Gotify node to automate work in Gotify, and integrate Gotify with other applications. n8n has built-in support for a wide range of Gotify features, including creating, deleting, and getting messages. 
 
 On this page, you'll find a list of operations the Gotify node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Gotify credentials](/integrations/builtin/credentials/gotify.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Gotify credentials](/integrations/builtin/credentials/gotify.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

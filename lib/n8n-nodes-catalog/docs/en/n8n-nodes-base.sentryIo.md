@@ -1,18 +1,12 @@
----
-title: Sentry.io node documentation
-description: Learn how to use the Sentry.io node in n8n. Follow technical documentation to integrate Sentry.io node into your workflows.
-contentType: [integration, reference]
----
-
 # Sentry.io node
 
 Use the Sentry.io node to automate work in Sentry.io, and integrate Sentry.io with other applications. n8n has built-in support for a wide range of Sentry.io features, including creating, updating, deleting, and getting, issues, projects, and releases, as well as getting all events.
 
 On this page, you'll find a list of operations the Sentry.io node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Sentry.io credentials](/integrations/builtin/credentials/sentryio.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Sentry.io credentials](/integrations/builtin/credentials/sentryio.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -55,3 +49,15 @@ Refer to [Sentry.io credentials](/integrations/builtin/credentials/sentryio.md) 
 ## Related resources
 
 Refer to [Sentry.io's documentation](https://docs.sentry.io/api/) for more information about the service.
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

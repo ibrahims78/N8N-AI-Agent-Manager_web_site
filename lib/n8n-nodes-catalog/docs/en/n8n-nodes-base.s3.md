@@ -1,10 +1,3 @@
----
-title: S3 node documentation
-description: Learn how to use the S3 node in n8n. Follow technical documentation to integrate S3 node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # S3 node
 
 Use the S3 node to automate work in non-AWS S3 storage and integrate S3 with other applications. n8n has built-in support for a wide range of S3 features, including creating, deleting, and getting buckets, files, and folders. For AWS S3, use [AWS S3](/integrations/builtin/app-nodes/n8n-nodes-base.awss3.md).
@@ -17,9 +10,13 @@ Use the S3 node for non-AWS S3 solutions like:
 
 On this page, you'll find a list of operations the S3 node supports and links to more resources.
 
-/// note | Credentials
-Refer to [S3 credentials](/integrations/builtin/credentials/s3.md) for guidance on setting up authentication.
-///
+> **Credentials**
+>
+> Refer to [S3 credentials](/integrations/builtin/credentials/s3.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

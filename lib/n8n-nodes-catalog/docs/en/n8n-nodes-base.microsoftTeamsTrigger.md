@@ -1,22 +1,16 @@
----
-title: Microsoft Teams Trigger node documentation
-description: Learn how to use the Microsoft Teams Trigger node in n8n. Follow technical documentation to integrate Microsoft Teams Trigger node into your workflows.
-contentType: [integration, reference]
----
-
 # Microsoft Teams Trigger node
 
 Use the Microsoft Teams Trigger node to respond to events in [Microsoft Teams](https://www.microsoft.com/en-us/microsoft-teams/group-chat-software) and integrate Microsoft Teams with other applications.
 
 On this page, you'll find a list of events the Microsoft Teams Trigger node can respond to and links to more resources.
 
-///  note  | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/microsoft.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/microsoft.md).
 
-/// tip | Government Cloud Support
-If you're using a government cloud tenant (US Government, US Government DOD, or China), make sure to select the appropriate **Microsoft Graph API Base URL** in your Microsoft credentials configuration.
-///
+> **Government Cloud Support**
+>
+> If you're using a government cloud tenant (US Government, US Government DOD, or China), make sure to select the appropriate **Microsoft Graph API Base URL** in your Microsoft credentials configuration.
 
 ## Events
 

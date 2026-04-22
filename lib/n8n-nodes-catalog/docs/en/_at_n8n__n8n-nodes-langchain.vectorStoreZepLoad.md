@@ -1,26 +1,28 @@
----
-title: Zep Vector Store node documentation
-description: Learn how to use the Zep Vector Store node in n8n. Follow technical documentation to integrate Zep Vector Store node into your workflows.
-contentType: [integration, reference]
----
-
 # Zep Vector Store node
 
-/// warning | Deprecated
-This node is deprecated, and will be removed in a future version. 
-///
+> **Deprecated**
+>
+> This node is deprecated, and will be removed in a future version.
 
 Use the Zep Vector Store to interact with Zep vector databases. You can insert documents into a vector database, get documents from a vector database, retrieve documents to provide them to a retriever connected to a [chain](/glossary.md#ai-chain), or connect it directly to an [agent](/glossary.md#ai-agent) to use as a [tool](/glossary.md#ai-tool).
 
 On this page, you'll find the node parameters for the Zep Vector Store node, and links to more resources.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/zep.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/zep.md).
 
-/// note | Examples and templates
-For usage examples and templates to help you get started, refer to n8n's [Zep Vector Store integrations](https://n8n.io/integrations/zep-vector-store/) page.
-///
+> **Examples and templates**
+>
+> For usage examples and templates to help you get started, refer to n8n's [Zep Vector Store integrations](https://n8n.io/integrations/zep-vector-store/) page.
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node usage patterns
 
@@ -52,7 +54,29 @@ The [connections flow](https://n8n.io/workflows/2621-ai-agent-to-chat-with-files
 	
 ## Node parameters
 
+### Operation Mode
+
+This Vector Store node has four modes: **Get Many**, **Insert Documents**, **Retrieve Documents (As Vector Store for Chain/Tool)**, and **Retrieve Documents (As Tool for AI Agent)**. The mode you select determines the operations you can perform with the node and what inputs and outputs are available.
+
+#### Get Many
+
+In this mode, you can retrieve multiple documents from your vector database by providing a prompt. The prompt is embedded and used for similarity search. The node returns the documents that are most similar to the prompt with their similarity score. This is useful if you want to retrieve a list of similar documents and pass them to an agent as additional context.
+
+#### Insert Documents
+
+Use insert documents mode to insert new documents into your vector database.
+
+#### Retrieve Documents (as Vector Store for Chain/Tool)
+
+Use Retrieve Documents (As Vector Store for Chain/Tool) mode with a vector-store retriever to retrieve documents from a vector database and provide them to the retriever connected to a chain. In this mode you must connect the node to a retriever node or root node.
+
+#### Retrieve Documents (as Tool for AI Agent)
+
+Use Retrieve Documents (As Tool for AI Agent) mode to use the vector store as a tool resource when answering queries. When formulating responses, the agent uses the vector store when the vector store name and description match the question details.
+
 ### Rerank Results
+
+Enables [reranking](/glossary.md#ai-reranking). If you enable this option, you must connect a reranking node to the vector store. That node will then rerank the results for queries. You can use this option with the `Get Many`, `Retrieve Documents (As Vector Store for Chain/Tool)` and `Retrieve Documents (As Tool for AI Agent)` modes.
 
 ### Insert Documents parameters
 
@@ -93,6 +117,12 @@ Disable this to configure your embeddings in Zep instead of in n8n.
 
 ### Metadata Filter
 
+Available in **Get Many** mode. When searching for data, use this to match with metadata associated with the document.
+
+This is an `AND` query. If you specify more than one metadata filter field, all of them must match.
+
+When inserting data, the metadata is set using the document loader. Refer to [Default Data Loader](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.documentdefaultdataloader.md) for more information on loading documents.
+
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
@@ -100,3 +130,5 @@ Disable this to configure your embeddings in Zep instead of in n8n.
 ## Related resources
 
 Refer to [LangChain's Zep documentation](https://js.langchain.com/docs/integrations/vectorstores/zep/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

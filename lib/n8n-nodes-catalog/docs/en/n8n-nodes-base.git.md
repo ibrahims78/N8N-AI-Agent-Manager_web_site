@@ -1,16 +1,10 @@
----
-title: Git
-description: Documentation for the Git node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
----
-
 # Git
 
 [Git](https://git-scm.com/) is a free and open-source distributed version control system designed to handle everything from small to large projects with speed and efficiency.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/git.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/git.md).
 
 ## Operations
 

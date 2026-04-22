@@ -1,25 +1,31 @@
----
-title: Basic LLM Chain node documentation
-description: Learn how to use the Basic LLM Chain node in n8n. Follow technical documentation to integrate Basic LLM Chain node into your workflows.
-contentType: [integration, reference]
-priority: critical
----
-
 # Basic LLM Chain node
 
 Use the Basic LLM Chain node to set the prompt that the model will use along with setting an optional parser for the response.
 
 On this page, you'll find the node parameters for the Basic LLM Chain node and links to more resources.
 
-/// note | Examples and templates
-For usage examples and templates to help you get started, refer to n8n's [Basic LLM Chain integrations](https://n8n.io/integrations/basic-llm-chain/) page.
-///	
+> **Examples and templates**
+>
+> For usage examples and templates to help you get started, refer to n8n's [Basic LLM Chain integrations](https://n8n.io/integrations/basic-llm-chain/) page.	
 
 ## Node parameters
 
 ### Prompt
 
+Select how you want the node to construct the prompt (also known as the user's query or input from the chat).
+
+Choose from:
+
+* **Take from previous node automatically**: If you select this option, the node expects an input from a previous node called `chatInput`.
+* **Define below**: If you select this option, provide either static text or an expression for dynamic content to serve as the prompt in the **Prompt (User Message)** field.
+
 ### Require Specific Output Format
+
+This parameter controls whether you want the node to require a specific output format. When turned on, n8n prompts you to connect one of these output parsers to the node:
+
+* [Auto-fixing Output Parser](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparserautofixing.md)
+* [Item List Output Parser](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparseritemlist.md)
+* [Structured Output Parser](/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparserstructured/index.md)
 
 ## Chat Messages
 
@@ -60,6 +66,8 @@ For both the **Image** types, select the **Image Details** to control how the mo
 ## Related resources
 
 Refer to [LangChain's documentation on Basic LLM Chains](https://js.langchain.com/docs/tutorials/llm_chain/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.
 
 ## Common issues
 

@@ -1,19 +1,16 @@
----
-title: MQTT node documentation
-description: Learn how to use the MQTT node in n8n. Follow technical documentation to integrate MQTT node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # MQTT node
 
 Use the MQTT node to automate work in MQTT, and integrate MQTT with other applications. n8n supports transporting messages with MQTT.
 
 On this page, you'll find a list of operations the MQTT node supports and links to more resources.
 
-/// note | Credentials
-Refer to [MQTT credentials](/integrations/builtin/credentials/mqtt.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [MQTT credentials](/integrations/builtin/credentials/mqtt.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

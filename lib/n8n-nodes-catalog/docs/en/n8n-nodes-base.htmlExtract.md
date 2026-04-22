@@ -1,20 +1,13 @@
----
-title: HTML
-description: Documentation for the HTML node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: high
----
-
 # HTML
 
 The HTML node provides operations to help you work with HTML in n8n.
 
-/// note | HTML Extract node
-The HTML node replaces the HTML Extract node from version 0.213.0 on. If you're using an older version of n8n, you can still view the [HTML Extract node documentation](https://github.com/n8n-io/n8n-docs/blob/86fe33b681621e618e3adcab9a27e8605dbc23ad/docs/integrations/builtin/core-nodes/n8n-nodes-base.htmlextract.md).
-///
-/// warning | Cross-site scripting
-When using the HTML node to generate an HTML template you can introduce [XSS (cross-site scripting)](https://owasp.org/www-community/attacks/xss/). This is a security risk. Be careful with un-trusted inputs.
-///
+> **HTML Extract node**
+>
+> The HTML node replaces the HTML Extract node from version 0.213.0 on. If you're using an older version of n8n, you can still view the [HTML Extract node documentation](https://github.com/n8n-io/n8n-docs/blob/86fe33b681621e618e3adcab9a27e8605dbc23ad/docs/integrations/builtin/core-nodes/n8n-nodes-base.htmlextract.md).
+> **Cross-site scripting**
+>
+> When using the HTML node to generate an HTML template you can introduce [XSS (cross-site scripting)](https://owasp.org/www-community/attacks/xss/). This is a security risk. Be careful with un-trusted inputs.
 
 ## Operations
 

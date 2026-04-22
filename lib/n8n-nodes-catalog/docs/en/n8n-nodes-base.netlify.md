@@ -1,18 +1,12 @@
----
-title: Netlify node documentation
-description: Learn how to use the Netlify node in n8n. Follow technical documentation to integrate Netlify node into your workflows.
-contentType: [integration, reference]
----
-
 # Netlify node
 
 Use the Netlify node to automate work in Netlify, and integrate Netlify with other applications. n8n has built-in support for a wide range of Netlify features, including getting and cancelling deployments, as well as deleting, and getting sites. 
 
 On this page, you'll find a list of operations the Netlify node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Netlify credentials](/integrations/builtin/credentials/netlify.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Netlify credentials](/integrations/builtin/credentials/netlify.md) for guidance on setting up authentication.
 
 ## Operations
 

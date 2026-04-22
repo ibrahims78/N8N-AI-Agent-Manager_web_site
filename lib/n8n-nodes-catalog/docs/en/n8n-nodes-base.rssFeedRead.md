@@ -1,10 +1,3 @@
----
-title: RSS Read
-description: Documentation for the RSS Read node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: medium
----
-
 # RSS Read
 
 Use the RSS Read node to read data from RSS feeds published on the internet.

@@ -1,19 +1,16 @@
----
-title: Microsoft SQL node documentation
-description: Learn how to use the Microsoft SQL node in n8n. Follow technical documentation to integrate Microsoft SQL node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Microsoft SQL node
 
 Use the Microsoft SQL node to automate work in Microsoft SQL, and integrate Microsoft SQL with other applications. n8n has built-in support for a wide range of Microsoft SQL features, including executing SQL queries, and inserting rows into the database. 
 
 On this page, you'll find a list of operations the Microsoft SQL node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Microsoft SQL credentials](/integrations/builtin/credentials/microsoftsql.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Microsoft SQL credentials](/integrations/builtin/credentials/microsoftsql.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

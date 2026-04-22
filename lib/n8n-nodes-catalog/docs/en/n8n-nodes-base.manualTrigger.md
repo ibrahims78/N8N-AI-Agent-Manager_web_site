@@ -1,10 +1,3 @@
----
-title: Manual Trigger node documentation
-description: Learn how to use the Manual Trigger node in n8n. Follow technical documentation to integrate Manual Trigger node into your workflows.
-contentType: [integration, reference]
-priority: critical
----
-
 # Manual Trigger node
 
 Use this node if you want to start a workflow by selecting **Execute Workflow** and don't want any option for the workflow to run automatically.

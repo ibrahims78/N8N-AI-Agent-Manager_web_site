@@ -1,15 +1,16 @@
----
-title: Token Splitter node documentation
-description: Learn how to use the Token Splitter node in n8n. Follow technical documentation to integrate Token Splitter node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Token Splitter node
 
 The Token Splitter node splits a raw text string by first converting the text into BPE tokens, then splits these tokens into chunks and converts the tokens within a single chunk back into text.
 
 On this page, you'll find the node parameters for the Token Splitter node, and links to more resources.
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -23,3 +24,5 @@ On this page, you'll find the node parameters for the Token Splitter node, and l
 ## Related resources
 
 Refer to [LangChain's token documentation](https://js.langchain.com/docs/concepts/tokens/) and [LangChain's text splitter documentation](https://js.langchain.com/docs/concepts/text_splitters/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

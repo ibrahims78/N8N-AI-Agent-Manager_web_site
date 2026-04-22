@@ -1,21 +1,14 @@
----
-title: GitHub Trigger node documentation
-description: Learn how to use the GitHub Trigger node in n8n. Follow technical documentation to integrate GitHub Trigger node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # GitHub Trigger node
 
 [GitHub](https://github.com/) provides hosting for software development and version control using Git. It offers the distributed version control and source code management (SCM) functionality of Git, access control and several collaboration features such as bug tracking, feature requests, task management, and wikis for every project.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/github.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/github.md).
 
-///  note  | Examples and templates
-For usage examples and templates to help you get started, refer to n8n's [GitHub Trigger integrations](https://n8n.io/integrations/github-trigger/) page.
-///
+> **Examples and templates**
+>
+> For usage examples and templates to help you get started, refer to n8n's [GitHub Trigger integrations](https://n8n.io/integrations/github-trigger/) page.
 
 ## Events
 

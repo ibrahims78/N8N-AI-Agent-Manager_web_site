@@ -1,22 +1,16 @@
----
-title: Microsoft Entra ID node documentation
-description: Learn how to use the Microsoft Entra ID node in n8n. Follow technical documentation to integrate Microsoft Entra ID node into your workflows.
-contentType: [integration, reference]
----
-
 # Microsoft Entra ID node
 
 Use the Microsoft Entra ID node to automate work in Microsoft Entra ID and integrate Microsoft Entra ID with other applications. n8n has built-in support for a wide range of Microsoft Entra ID features, which includes creating, getting, updating, and deleting users and groups, as well as adding users to and removing them from groups.
 
 On this page, you'll find a list of operations the Microsoft Entra ID node supports, and links to more resources.
 
-///  note  | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/microsoftentra.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/microsoftentra.md).
 
-/// tip | Government Cloud Support
-If you're using a government cloud tenant (US Government, US Government DOD, or China), make sure to select the appropriate **Microsoft Graph API Base URL** in your Microsoft Entra ID credentials configuration.
-///
+> **Government Cloud Support**
+>
+> If you're using a government cloud tenant (US Government, US Government DOD, or China), make sure to select the appropriate **Microsoft Graph API Base URL** in your Microsoft Entra ID credentials configuration.
 
 ## Operations
 
@@ -44,6 +38,18 @@ If you're using a government cloud tenant (US Government, US Government DOD, or 
 <!-- vale from-microsoft.We = NO -->
 Refer to [Microsoft Entra ID's documentation](https://learn.microsoft.com/en-us/graph/api/resources/identity-network-access-overview?view=graph-rest-1.0) for more information about the service.
 <!-- vale from-microsoft.We = YES -->
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
 
 ## Common issues
 

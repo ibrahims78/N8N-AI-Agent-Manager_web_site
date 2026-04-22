@@ -1,21 +1,14 @@
----
-title: Local File Trigger node documentation
-description: Learn how to use the Local File Trigger node in n8n. Follow technical documentation to integrate Local File Trigger node into your workflows.
-contentType: [integration, reference]
-priority: high
----
-
 # Local File Trigger node
 
 The Local File Trigger node starts a workflow when it detects changes on the file system. These changes involve a file or folder getting added, changed, or deleted.
 
-/// warning | Security considerations
-The Local File Trigger node can introduce significant security risks in environments that operate with untrusted users. Because of this, the node is [disabled](/hosting/securing/blocking-nodes.md#exclude-nodes) by default starting from version 2.0.
-///
+> **Security considerations**
+>
+> The Local File Trigger node can introduce significant security risks in environments that operate with untrusted users. Because of this, the node is [disabled](/hosting/securing/blocking-nodes.md#exclude-nodes) by default starting from version 2.0.
 
-/// note | Self-hosted n8n only
-This node isn't available on n8n Cloud.
-/// 
+> **Self-hosted n8n only**
+>
+> This node isn't available on n8n Cloud. 
 
 ## Node parameters
 

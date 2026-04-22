@@ -1,19 +1,16 @@
----
-title: Mattermost node documentation
-description: Learn how to use the Mattermost node in n8n. Follow technical documentation to integrate Mattermost node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Mattermost node
 
 Use the Mattermost node to automate work in Mattermost, and integrate Mattermost with other applications. n8n has built-in support for a wide range of Mattermost features, including creating, deleting, and getting channels, and users, as well as posting messages, and adding reactions.
 
 On this page, you'll find a list of operations the Mattermost node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Mattermost credentials](/integrations/builtin/credentials/mattermost.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Mattermost credentials](/integrations/builtin/credentials/mattermost.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 
@@ -48,6 +45,18 @@ Refer to [Mattermost credentials](/integrations/builtin/credentials/mattermost.m
 ## Related resources
 
 Refer to [Mattermost's documentation](https://api.mattermost.com/) for more information about the service.
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
 
 ## Channel ID field error
 

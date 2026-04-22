@@ -1,19 +1,16 @@
----
-title: Odoo node documentation
-description: Learn how to use the Odoo node in n8n. Follow technical documentation to integrate Odoo node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Odoo node
 
 Use the Odoo node to automate work in Odoo, and integrate Odoo with other applications. n8n has built-in support for a wide range of Odoo features, including creating, updating, deleting, and getting contracts, resources, and opportunities. 
 
 On this page, you'll find a list of operations the Odoo node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Odoo credentials](/integrations/builtin/credentials/odoo.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Odoo credentials](/integrations/builtin/credentials/odoo.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

@@ -1,9 +1,3 @@
----
-title: Information Extractor node documentation
-description: Learn how to use the Information Extractor node in n8n. Follow technical documentation to integrate Information Extractor node into your workflows.
-contentType: [integration, reference]
----
-
 # Information Extractor node
 
 Use the Information Extractor node to extract structured information from incoming data.
@@ -24,3 +18,5 @@ and links to more resources.
 * **System Prompt Template**: Use this option to change the system prompt that's used for the information extraction. n8n automatically appends format specification instructions to the prompt.
 
 ## Related resources
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

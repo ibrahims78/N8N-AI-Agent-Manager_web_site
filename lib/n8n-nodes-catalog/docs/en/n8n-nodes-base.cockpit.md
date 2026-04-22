@@ -1,18 +1,12 @@
----
-title: Cockpit node documentation
-description: Learn how to use the Cockpit node in n8n. Follow technical documentation to integrate Cockpit node into your workflows.
-contentType: [integration, reference]
----
-
 # Cockpit node
 
 Use the Cockpit node to automate work in Cockpit, and integrate Cockpit with other applications. n8n has built-in support for a wide range of Cockpit features, including creating a collection entry, storing data from a form submission, and getting singletons.
 
 On this page, you'll find a list of operations the Cockpit node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Cockpit credentials](/integrations/builtin/credentials/cockpit.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Cockpit credentials](/integrations/builtin/credentials/cockpit.md) for guidance on setting up authentication.
 
 ## Operations
 

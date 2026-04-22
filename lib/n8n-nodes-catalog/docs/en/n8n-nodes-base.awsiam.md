@@ -1,18 +1,12 @@
----
-title: AWS IAM node documentation
-description: Learn how to use the AWS IAM node in n8n. Follow technical documentation to integrate AWS IAM node into your workflows.
-contentType: [integration, reference]
----
-
 # AWS IAM node
 
 Use the AWS IAM node to automate work in AWS Identity and Access Management (IAM) and integrate AWS IAM with other applications. n8n has built-in support for a wide range of AWS IAM features, which includes creating, updating, getting and deleting users and groups as well as managing group membership.
 
 On this page, you'll find a list of operations the AWS IAM node supports, and links to more resources.
 
-///  note  | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/aws.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/aws.md).
 
 ## Operations
 
@@ -39,3 +33,15 @@ You can find authentication information for this node [here](/integrations/built
 
 <!-- add a link to the service's documentation. This should usually go direct to the API docs -->
 Refer to the [AWS IAM documentation](https://docs.aws.amazon.com/IAM/latest/APIReference/welcome.html) for more information about the service.
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

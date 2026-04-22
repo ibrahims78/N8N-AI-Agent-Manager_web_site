@@ -1,19 +1,16 @@
----
-title: Hacker News node documentation
-description: Learn how to use the Hacker News node in n8n. Follow technical documentation to integrate Hacker News node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Hacker News node
 
 Use the Hacker News node to automate work in Hacker News, and integrate Hacker News with other applications. n8n has built-in support for a wide range of Hacker News features, including getting articles, and users. 
 
 On this page, you'll find a list of operations the Hacker News node supports and links to more resources.
 
-/// note | Credentials
-This node doesn't require authentication. 
-///
+> **Credentials**
+>
+> This node doesn't require authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

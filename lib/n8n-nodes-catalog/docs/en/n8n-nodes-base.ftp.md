@@ -1,17 +1,10 @@
----
-title: FTP
-description: Documentation for the FTP node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: medium
----
-
 # FTP
 
 The FTP node is useful to access and upload files to an FTP or SFTP server.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/ftp.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/ftp.md).
 
 To connect to an SFTP server, use an SFTP credential. Refer to [FTP credentials](/integrations/builtin/credentials/ftp.md) for more information.
 
@@ -23,9 +16,9 @@ To connect to an SFTP server, use an SFTP credential. Refer to [FTP credentials]
 - [**Rename**](#rename) or move a file or folder
 - [**Upload**](#upload) a file
 
-/// note | Uploading files
-To attach a file for upload, you'll need to use an extra node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node to pass the file as a data property.
-///
+> **Uploading files**
+>
+> To attach a file for upload, you'll need to use an extra node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node to pass the file as a data property.
 
 ## Delete
 
@@ -44,9 +37,9 @@ Configure this operation with these parameters:
 * **Path**: Enter the remote path that you would like to connect to.
 * **Put Output File in Field**: Enter the name of the output binary field to put the file in.
 
-/// Note | Concurrent Reads with SFTP
-When using SFTP, you can enable concurrent reads. This improves download speeds but may not be supported by all SFTP servers.
-///
+> **Concurrent Reads with SFTP**
+>
+> When using SFTP, you can enable concurrent reads. This improves download speeds but may not be supported by all SFTP servers.
 
 ## List
 
@@ -75,9 +68,9 @@ Configure this operation with these parameters:
     * **Input Binary Field**: Displayed if you turn on **Binary File**. Enter the name of the input binary field that contains the file you'll upload in this field.
     * **File Content**: Displayed if you turn off **Binary File** Enter the text content of the file you'll upload in this field.
 
-/// note | Uploading files
-To attach a file for upload, you'll need to use an extra node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node to pass the file as a data property.
-///
+> **Uploading files**
+>
+> To attach a file for upload, you'll need to use an extra node such as the [Read/Write Files from Disk](/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile.md) node or the [HTTP Request](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) node to pass the file as a data property.
 
 ## Templates and examples
 

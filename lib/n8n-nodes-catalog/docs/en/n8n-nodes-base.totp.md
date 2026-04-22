@@ -1,18 +1,16 @@
----
-title: TOTP
-description: Documentation for the TOTP node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
----
-
 # TOTP
 
 The TOTP node provides a way to generate a TOTP (time-based one-time password).
 
-/// note | Credentials
-Refer to [TOTP credentials](/integrations/builtin/credentials/totp.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [TOTP credentials](/integrations/builtin/credentials/totp.md) for guidance on setting up authentication.
 
 ## Node parameters
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 Configure this node with these parameters.
 

@@ -1,18 +1,12 @@
----
-title: Microsoft SharePoint node documentation
-description: Learn how to use the Microsoft SharePoint node in n8n. Follow technical documentation to integrate Microsoft SharePoint node into your workflows.
-contentType: [integration, reference]
----
-
 # Microsoft SharePoint node
 
 Use the Microsoft SharePoint node to automate work in Microsoft SharePoint and integrate Microsoft SharePoint with other applications. n8n has built-in support for a wide range of Microsoft SharePoint features, which includes downloading, uploading, and updating files, managing items in a list, and getting lists and list items.
 
 On this page, you'll find a list of operations the Microsoft SharePoint node supports, and links to more resources.
 
-///  note  | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/microsoft.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/microsoft.md).
 
 ## Operations
 

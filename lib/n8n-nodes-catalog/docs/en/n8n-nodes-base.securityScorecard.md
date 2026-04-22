@@ -1,18 +1,12 @@
----
-title: SecurityScorecard node documentation
-description: Learn how to use the SecurityScorecard node in n8n. Follow technical documentation to integrate SecurityScorecard node into your workflows.
-contentType: [integration, reference]
----
-
 # SecurityScorecard node
 
 Use the SecurityScorecard node to automate work in SecurityScorecard, and integrate SecurityScorecard with other applications. n8n has built-in support for a wide range of SecurityScorecard features, including creating, updating, deleting, and getting portfolio, as well as getting a company's data.
 
 On this page, you'll find a list of operations the SecurityScorecard node supports and links to more resources.
 
-/// note | Credentials
-Refer to [SecurityScorecard credentials](/integrations/builtin/credentials/securityscorecard.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [SecurityScorecard credentials](/integrations/builtin/credentials/securityscorecard.md) for guidance on setting up authentication.
 
 ## Operations
 

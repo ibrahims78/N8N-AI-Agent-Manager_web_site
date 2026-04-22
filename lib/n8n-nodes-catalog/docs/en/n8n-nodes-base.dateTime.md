@@ -1,17 +1,17 @@
----
-title: Date & Time
-description: Documentation for the Date & Time node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: high
----
-
 # Date & Time
 
 The Date & Time node manipulates date and time data and convert it to different formats.
 
-/// note | Date and time in other nodes
-You can work with data and time in the Code node, and in expressions in any node. n8n supports Luxon to help work with date and time in JavaScript. Refer to [Date and time with Luxon](/data/specific-data-types/luxon.md) for more information.
-///
+> **Timezone settings**
+>
+> The node relies on the timezone setting. n8n uses either:
+> 
+> 1. The workflow timezone, if set. Refer to [Workflow settings](/workflows/settings.md) for more information.
+> 2. The n8n instance timezone, if the workflow timezone isn't set. The default is `America/New York` for self-hosted instances. n8n Cloud tries to detect the instance owner's timezone when they sign up, falling back to GMT as the default. Self-hosted users can change the instance setting using [Environment variables](/hosting/configuration/environment-variables/timezone-localization.md). Cloud admins can change the instance timezone in the [Admin dashboard](/manage-cloud/set-cloud-timezone.md).
+
+> **Date and time in other nodes**
+>
+> You can work with data and time in the Code node, and in expressions in any node. n8n supports Luxon to help work with date and time in JavaScript. Refer to [Date and time with Luxon](/data/specific-data-types/luxon.md) for more information.
 
 ## Operations
 
@@ -93,9 +93,9 @@ This operation includes these options:
 * **Include Input Fields**: If you'd like to include all of the input fields in the output, turn this option on. If turned off, only the **Output Field Name** and its contents are output.
 * **Timezone**: Set the timezone to use. If left blank, the node uses the n8n instance's timezone.
 
-/// note | +00:00 timezone
-Use `GMT` for +00:00 timezone.
-///
+> **+00:00 timezone**
+>
+> Use `GMT` for +00:00 timezone.
 
 ## Get Time Between Dates
 

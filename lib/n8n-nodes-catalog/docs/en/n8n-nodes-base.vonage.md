@@ -1,18 +1,12 @@
----
-title: Vonage node documentation
-description: Learn how to use the Vonage node in n8n. Follow technical documentation to integrate Vonage node into your workflows.
-contentType: [integration, reference]
----
-
 # Vonage node
 
 Use the Vonage node to automate work in Vonage, and integrate Vonage with other applications. n8n supports sending SMS with Vonage. 
 
 On this page, you'll find a list of operations the Vonage node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Vonage credentials](/integrations/builtin/credentials/vonage.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Vonage credentials](/integrations/builtin/credentials/vonage.md) for guidance on setting up authentication.
 
 ## Operations
 

@@ -1,18 +1,12 @@
----
-title: Snowflake node documentation
-description: Learn how to use the Snowflake node in n8n. Follow technical documentation to integrate Snowflake node into your workflows.
-contentType: [integration, reference]
----
-
 # Snowflake node
 
 Use the Snowflake node to automate work in Snowflake, and integrate Snowflake with other applications. n8n has built-in support for a wide range of Snowflake features, including executing SQL queries, and inserting rows in a database. 
 
 On this page, you'll find a list of operations the Snowflake node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Snowflake credentials](/integrations/builtin/credentials/snowflake.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Snowflake credentials](/integrations/builtin/credentials/snowflake.md) for guidance on setting up authentication.
 
 ## Operations
 

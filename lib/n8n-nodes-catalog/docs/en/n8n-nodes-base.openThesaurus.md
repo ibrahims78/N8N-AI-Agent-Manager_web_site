@@ -1,18 +1,12 @@
----
-title: OpenThesaurus node documentation
-description: Learn how to use the OpenThesaurus node in n8n. Follow technical documentation to integrate OpenThesaurus node into your workflows.
-contentType: [integration, reference]
----
-
 # OpenThesaurus node
 
 Use the OpenThesaurus node to automate work in OpenThesaurus, and integrate OpenThesaurus with other applications. n8n supports synonym look-up for German words. 
 
 On this page, you'll find a list of operations the OpenThesaurus node supports and links to more resources.
 
-/// note | Credentials
-OpenThesaurus node doesn't require authentication. 
-///
+> **Credentials**
+>
+> OpenThesaurus node doesn't require authentication.
 
 ## Operations
 

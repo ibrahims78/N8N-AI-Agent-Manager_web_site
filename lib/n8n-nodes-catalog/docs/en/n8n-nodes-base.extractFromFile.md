@@ -1,10 +1,3 @@
----
-title: Extract From File
-description: Documentation for the Extract From File node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: high
----
-
 # Extract From File
 
 A common pattern in n8n workflows is to receive a file, either from an [HTTP Request node][] (for files you are fetching from a website), a [Webhook Node][] (for files which are sent to your workflow from elsewhere), or from a local source. Data obtained in this way is often in a binary format, for example a spreadsheet or PDF.
@@ -44,9 +37,9 @@ Set to operate as 'Extract from CSV', the node then outputs the data as a series
   ...
 ```
 
-/// tip | Receiving files with a webhook
-Select the Webhook Node's **Add Options** button and select **Raw body**, then enable that setting to get the node to output the binary file that the subsequent node is expecting.
-///
+> **Receiving files with a webhook**
+>
+> Select the Webhook Node's **Add Options** button and select **Raw body**, then enable that setting to get the node to output the binary file that the subsequent node is expecting.
 
 ## Node parameters
 

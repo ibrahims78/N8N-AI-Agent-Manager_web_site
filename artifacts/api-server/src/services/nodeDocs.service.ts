@@ -522,7 +522,7 @@ async function resolveAiClient(): Promise<AiClient> {
     return {
       apiKey: replitKey,
       baseURL: replitBase,
-      model: "gpt-5-mini",
+      model: "gpt-5-nano",
     };
   }
 
@@ -552,10 +552,10 @@ async function translateMarkdownToArabic(markdown: string): Promise<string> {
   });
 
   const chunks = chunkMarkdown(markdown, 6000);
-  const out: string[] = [];
   // gpt-5 family models only allow temperature=1 (default). Older models accept custom values.
   const supportsCustomTemperature = !/^gpt-5/i.test(client.model);
-  for (const chunk of chunks) {
+
+  const translateOne = async (chunk: string): Promise<string> => {
     const params: Record<string, unknown> = {
       model: client.model,
       messages: [
@@ -567,8 +567,18 @@ async function translateMarkdownToArabic(markdown: string): Promise<string> {
     const resp = await openai.chat.completions.create(
       params as Parameters<typeof openai.chat.completions.create>[0]
     );
-    const txt = resp.choices[0]?.message?.content?.trim() ?? "";
-    out.push(txt);
+    return resp.choices[0]?.message?.content?.trim() ?? "";
+  };
+
+  // Translate chunks in parallel (bounded) so a long doc doesn't take N×latency.
+  const concurrency = 4;
+  const out: string[] = new Array(chunks.length);
+  for (let i = 0; i < chunks.length; i += concurrency) {
+    const batch = chunks.slice(i, i + concurrency);
+    const results = await Promise.all(batch.map((c) => translateOne(c)));
+    results.forEach((r, j) => {
+      out[i + j] = r;
+    });
   }
   return out.join("\n\n");
 }

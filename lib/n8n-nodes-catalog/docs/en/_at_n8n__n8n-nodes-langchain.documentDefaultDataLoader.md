@@ -1,15 +1,16 @@
----
-title: Default Data Loader node documentation
-description: Learn how to use the Default Data Loader node in n8n. Follow technical documentation to integrate Default Data Loader node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Default Data Loader node
 
 Use the Default Data Loader node to load binary data files or JSON data for [vector stores](/glossary.md#ai-vector-store) or summarization.
 
 On this page, you'll find a list of parameters the Default Data Loader node supports, and links to more resources.
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -31,3 +32,7 @@ On this page, you'll find a list of parameters the Default Data Loader node supp
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
 ## Related resources
+
+Refer to [LangChain's documentation on document loaders](https://js.langchain.com/docs/modules/data_connection/document_loaders/integrations/file_loaders/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

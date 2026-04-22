@@ -1,18 +1,12 @@
----
-title: SyncroMSP node documentation
-description: Learn how to use the SyncroMSP node in n8n. Follow technical documentation to integrate SyncroMSP node into your workflows.
-contentType: [integration, reference]
----
-
 # SyncroMSP node
 
 Use the SyncroMSP node to automate work in SyncroMSP, and integrate SyncroMSP with other applications. n8n has built-in support for a wide range of SyncroMSP features, including creating and deleting new customers, tickets, and contacts. 
 
 On this page, you'll find a list of operations the SyncroMSP node supports and links to more resources.
 
-/// note | Credentials
-Refer to [SyncroMSP credentials](/integrations/builtin/credentials/syncromsp.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [SyncroMSP credentials](/integrations/builtin/credentials/syncromsp.md) for guidance on setting up authentication.
 
 ## Operations
 

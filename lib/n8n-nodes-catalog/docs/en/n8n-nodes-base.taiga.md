@@ -1,18 +1,12 @@
----
-title: Taiga node documentation
-description: Learn how to use the Taiga node in n8n. Follow technical documentation to integrate Taiga node into your workflows.
-contentType: [integration, reference]
----
-
 # Taiga node
 
 Use the Taiga node to automate work in Taiga, and integrate Taiga with other applications. n8n has built-in support for a wide range of Taiga features, including creating, updating, deleting, and getting issues. 
 
 On this page, you'll find a list of operations the Taiga node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Taiga credentials](/integrations/builtin/credentials/taiga.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Taiga credentials](/integrations/builtin/credentials/taiga.md) for guidance on setting up authentication.
 
 ## Operations
 

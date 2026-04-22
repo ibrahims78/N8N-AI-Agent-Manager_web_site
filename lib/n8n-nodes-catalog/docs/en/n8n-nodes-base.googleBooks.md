@@ -1,18 +1,12 @@
----
-title: Google Books node documentation
-description: Learn how to use the Google Books node in n8n. Follow technical documentation to integrate Google Books node into your workflows.
-contentType: [integration, reference]
----
-
 # Google Books node
 
 Use the Google Books node to automate work in Google Books, and integrate Google Books with other applications. n8n has built-in support for a wide range of Google Books features, including retrieving a specific bookshelf resource for the specified user, adding volume to a bookshelf, and getting volume.
 
 On this page, you'll find a list of operations the Google Books node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Google credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Google credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -32,3 +26,15 @@ Refer to [Google credentials](/integrations/builtin/credentials/google/index.md)
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

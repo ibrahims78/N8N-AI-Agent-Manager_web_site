@@ -1,10 +1,3 @@
----
-title: Aggregate
-description: Documentation for the Aggregate node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: high
----
-
 # Aggregate
 
 Use the Aggregate node to take separate items, or portions of them, and group them together into individual items.
@@ -48,3 +41,5 @@ You can further configure this node using these **Options**:
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
 ## Related resources
+
+Learn more about [data structure and data flow](/data/index.md) in n8n workflows.

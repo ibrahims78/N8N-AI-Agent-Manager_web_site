@@ -1,18 +1,12 @@
----
-title: Monica CRM node documentation
-description: Learn how to use the Monica CRM node in n8n. Follow technical documentation to integrate Monica CRM node into your workflows.
-contentType: [integration, reference]
----
-
 # Monica CRM node
 
 Use the Monica CRM node to automate work in Monica CRM, and integrate Monica CRM with other applications. n8n has built-in support for a wide range of Monica CRM features, including creating, updating, deleting, and getting activities, calls, contracts, messages, tasks, and notes. 
 
 On this page, you'll find a list of operations the Monica CRM node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Monica CRM credentials](/integrations/builtin/credentials/monicacrm.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Monica CRM credentials](/integrations/builtin/credentials/monicacrm.md) for guidance on setting up authentication.
 
 ## Operations
 

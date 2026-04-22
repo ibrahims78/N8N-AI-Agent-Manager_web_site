@@ -1,25 +1,18 @@
----
-title: HubSpot Trigger node documentation
-description: Learn how to use the HubSpot Trigger node in n8n. Follow technical documentation to integrate HubSpot Trigger node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # HubSpot Trigger node
 
 [HubSpot](https://www.hubspot.com/) provides tools for social media marketing, content management, web analytics, landing pages, customer support, and search engine optimization.
 
-/// warning | Webhooks
-If you activate a second trigger, the previous trigger stops working. This is because the trigger registers a new webhook with HubSpot when activated. HubSpot only allows one webhook at a time. 
-///
+> **Webhooks**
+>
+> If you activate a second trigger, the previous trigger stops working. This is because the trigger registers a new webhook with HubSpot when activated. HubSpot only allows one webhook at a time.
 
-/// note | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/hubspot.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/hubspot.md).
 
-/// note | Examples and templates
-For usage examples and templates to help you get started, refer to n8n's [HubSpot Trigger integrations](https://n8n.io/integrations/hubspot-trigger/) page.
-///
+> **Examples and templates**
+>
+> For usage examples and templates to help you get started, refer to n8n's [HubSpot Trigger integrations](https://n8n.io/integrations/hubspot-trigger/) page.
 
 ## Events
 

@@ -1,19 +1,16 @@
----
-title: Google Calendar node documentation
-description: Learn how to use the Google Calendar node in n8n. Follow technical documentation to integrate Google Calendar node into your workflows.
-contentType: [integration, reference]
-priority: high
----
-
 # Google Calendar node
 
 Use the Google Calendar node to automate work in Google Calendar, and integrate Google Calendar with other applications. n8n has built-in support for a wide range of Google Calendar features, including adding, retrieving, deleting and updating calendar events.
 
 On this page, you'll find a list of operations the Google Calendar node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Google Calendar credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Google Calendar credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 
@@ -37,41 +34,6 @@ n8n provides a trigger node for Google Calendar. You can find the trigger node d
 Refer to [Google Calendar's documentation](https://developers.google.com/calendar/api/v3/reference) for more information about the service.
 
 View [example workflows and related content](https://n8n.io/integrations/google-calendar/) on n8n's website.
-
----
-
-<!-- vale Vale.Repetition = NO -->
-<!-- vale from-write-good.Illusions = NO -->
-# Google Calendar Calendar operations
-<!-- vale from-write-good.Illusions = YES -->
-<!-- vale Vale.Repetition = YES -->
-
-Use this operation to check availability in a calendar in Google Calendar. Refer to [Google Calendar](/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/index.md) for more information on the Google Calendar node itself.
-
-## Availability
-
-Use this operation to check if a time-slot is available in a calendar.
-
-Enter these parameters:
-
-- **Credential to connect with**: Create or select an existing [Google Calendar credentials](/integrations/builtin/credentials/google/index.md).
-- **Resource**: Select **Calendar**.
-- **Operation**: Select **Availability**.
-- **Calendar**: Choose a calendar you want to check against. Select **From list** to choose the title from the dropdown list or **By ID** to enter a calendar ID.
-- **Start Time**: The start time for the time-slot you want to check. By default, uses an expression evaluating to the current time (``).
-- **End Time**: The end time for the time-slot you want to check. By default, uses an expression evaluating to an hour from now (``).
-
-### Options
-
-- **Output Format**: Select the format for the availability information:
-	- **Availability**: Returns if there are already events overlapping with the given time slot or not.
-	- **Booked Slots**: Returns the booked slots.
-	- **RAW**: Returns the RAW data from the API.
-- **Timezone**: The timezone used in the response. By default, uses the n8n timezone.
-
-Refer to the [Freebusy: query | Google Calendar](https://developers.google.com/calendar/api/v3/reference/freebusy/query) API documentation for more information.
-
----
 
 # Google Calendar Event operations
 

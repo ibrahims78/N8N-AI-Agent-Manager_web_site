@@ -1,19 +1,12 @@
----
-title: LangChain Code node documentation
-description: Learn how to use the LangChain Code node in n8n. Follow technical documentation to integrate LangChain Code node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # LangChain Code node
 
 Use the LangChain Code node to import LangChain. This means if there is functionality you need that n8n hasn't created a node for, you can still use it. By configuring the LangChain Code node connectors you can use it as a normal node, root node or sub-node.
 
 On this page, you'll find the node parameters, guidance on configuring the node, and links to more resources.
 
-/// note | Not available on Cloud
-This node is only available on self-hosted n8n.
-///
+> **Not available on Cloud**
+>
+> This node is only available on self-hosted n8n.
 
 ## Node parameters
 
@@ -57,8 +50,20 @@ By configuring the LangChain Code node connectors (inputs and outputs) you can u
 
 n8n provides these methods to make it easier to perform common tasks in the LangChain Code node.
 
+| Method | Description |
+| ------ | ----------- |
+| `this.addInputData(inputName, data)` | Populate the data of a specified non-main input. Useful for mocking data.<ul><li>`inputName` is the input connection type, and must be one of: `ai_agent`, `ai_chain`, `ai_document`, `ai_embedding`, `ai_languageModel`, `ai_memory`, `ai_outputParser`, `ai_retriever`, `ai_textSplitter`, `ai_tool`, `ai_vectorRetriever`, `ai_vectorStore`</li><li>`data` contains the data you want to add. Refer to [Data structure](/data/data-structure.md) for information on the data structure expected by n8n.</li></ul> |
+| `this.addOutputData(outputName, data)` | Populate the data of a specified non-main output. Useful for mocking data.<ul><li>`outputName` is the input connection type, and must be one of: `ai_agent`, `ai_chain`, `ai_document`, `ai_embedding`, `ai_languageModel`, `ai_memory`, `ai_outputParser`, `ai_retriever`, `ai_textSplitter`, `ai_tool`, `ai_vectorRetriever`, `ai_vectorStore`</li><li>`data` contains the data you want to add. Refer to [Data structure](/data/data-structure.md) for information on the data structure expected by n8n.</li></ul> |
+| `this.getInputConnectionData(inputName, itemIndex, inputIndex?)` | Get data from a specified non-main input.<ul><li>`inputName` is the input connection type, and must be one of: `ai_agent`, `ai_chain`, `ai_document`, `ai_embedding`, `ai_languageModel`, `ai_memory`, `ai_outputParser`, `ai_retriever`, `ai_textSplitter`, `ai_tool`, `ai_vectorRetriever`, `ai_vectorStore`</li><li>`itemIndex` should always be `0` (this parameter will be used in upcoming functionality)</li><li>Use `inputIndex` if there is more than one node connected to the specified input.</li></ul> |
+| `this.getInputData(inputIndex?, inputName?)` | Get data from the main input. |
+| `this.getNode()` | Get the current node. |
+| `this.getNodeOutputs()` | Get the outputs of the current node. |
+| `this.getExecutionCancelSignal()` | Use this to stop the execution of a function when the workflow stops. In most cases n8n handles this, but you may need to use it if building your own chains or agents. It replaces the [Cancelling a running LLMChain](https://js.langchain.com/docs/modules/chains/foundational/llm_chain#cancelling-a-running-llmchain) code that you'd use if building a LangChain application normally. |
+
 ## Templates and examples
 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
 ## Related resources
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

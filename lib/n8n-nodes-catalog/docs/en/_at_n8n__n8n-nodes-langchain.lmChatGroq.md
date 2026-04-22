@@ -1,19 +1,20 @@
----
-title: Groq Chat Model node documentation
-description: Learn how to use the Groq Chat Model node in n8n. Follow technical documentation to integrate Groq Chat Model node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Groq Chat Model node
 
 Use the Groq Chat Model node to access Groq's large language models for conversational AI and text generation tasks.
 
 On this page, you'll find the node parameters for the Groq Chat Model node, and links to more resources.
 
-/// note | Credentials 
-You can find authentication information for this node [here](/integrations/builtin/credentials/groq.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/groq.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -31,3 +32,5 @@ You can find authentication information for this node [here](/integrations/built
 ## Related resources
 
 Refer to [Groq's API documentation](https://console.groq.com/docs/quickstart) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

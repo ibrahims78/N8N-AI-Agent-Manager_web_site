@@ -1,18 +1,12 @@
----
-title: Freshservice node documentation
-description: Learn how to use the Freshservice node in n8n. Follow technical documentation to integrate Freshservice node into your workflows.
-contentType: [integration, reference]
----
-
 # Freshservice node
 
 Use the Freshservice node to automate work in Freshservice and integrate Freshservice with other applications. n8n has built-in support for a wide range of Freshdesk features, including creating, updating, deleting, and getting agent information and departments.
 
 On this page, you'll find a list of operations the Freshservice node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Freshservice credentials](/integrations/builtin/credentials/freshservice.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Freshservice credentials](/integrations/builtin/credentials/freshservice.md) for guidance on setting up authentication.
 
 ## Operations
 

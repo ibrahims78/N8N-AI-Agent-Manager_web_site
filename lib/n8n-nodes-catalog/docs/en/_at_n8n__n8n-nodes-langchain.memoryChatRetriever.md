@@ -1,15 +1,22 @@
----
-title: Chat Memory Manager node documentation
-description: Learn how to use the Chat Memory Manager node in n8n. Follow technical documentation to integrate Chat Memory Manager node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Chat Memory Manager node
 
 The Chat Memory Manager node manages chat message [memories](/glossary.md#ai-memory) within your workflows. Use this node to load, insert, and delete chat messages in an in-memory [vector store](/glossary.md#ai-vector-store).
 
+This node is useful when you:
+
+* Can't add a memory node directly.
+* Need to do more complex memory management, beyond what the memory nodes offer. For example, you can add this node to check the memory size of the Agent node's response, and reduce it if needed.
+* Want to inject messages to the AI that look like user messages, to give the AI more context.
+
 On this page, you'll find a list of operations that the Chat Memory Manager node supports, along with links to more resources.
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -37,3 +44,5 @@ On this page, you'll find a list of operations that the Chat Memory Manager node
 ## Related resources
 
 Refer to [LangChain's Memory documentation](https://langchain-ai.github.io/langgraphjs/concepts/memory/) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

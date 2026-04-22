@@ -1,10 +1,3 @@
----
-title: Markdown
-description: Documentation for the Markdown node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: medium
----
-
 # Markdown
 
 The Markdown node converts between Markdown and HTML formats.
@@ -25,9 +18,9 @@ This node's operations are **Modes**:
 
 The node's **Options** depend on the **Mode** selected.
 
-/// note | Test out the options
-Some of the options depend on each other or can interact. We recommend testing out options to confirm the effects are what you want.
-///
+> **Test out the options**
+>
+> Some of the options depend on each other or can interact. We recommend testing out options to confirm the effects are what you want.
 
 ### Markdown to HTML options
 

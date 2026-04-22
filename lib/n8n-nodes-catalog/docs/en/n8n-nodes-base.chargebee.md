@@ -1,18 +1,12 @@
----
-title: Chargebee node documentation
-description: Learn how to use the Chargebee node in n8n. Follow technical documentation to integrate Chargebee node into your workflows.
-contentType: [integration, reference]
----
-
 # Chargebee node
 
 Use the Chargebee node to automate work in Chargebee, and integrate Chargebee with other applications. n8n has built-in support for a wide range of Chargebee features, including creating customers, returning invoices, and canceling subscriptions.
 
 On this page, you'll find a list of operations the Chargebee node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Chargebee credentials](/integrations/builtin/credentials/chargebee.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Chargebee credentials](/integrations/builtin/credentials/chargebee.md) for guidance on setting up authentication.
 
 ## Operations
 

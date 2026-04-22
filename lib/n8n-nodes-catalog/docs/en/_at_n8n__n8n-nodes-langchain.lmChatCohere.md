@@ -1,19 +1,20 @@
----
-title: Cohere Chat Model node documentation
-description: Learn how to use the Cohere Chat Model node in n8n. Follow technical documentation to integrate Cohere Chat Model node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Cohere Chat Model node
 
 Use the Cohere Chat Model node to access Cohere's large language models for conversational AI and text generation tasks.
 
 On this page, you'll find the node parameters for the Cohere Chat Model node, and links to more resources.
 
-/// note | Credentials 
-You can find authentication information for this node [here](/integrations/builtin/credentials/cohere.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/cohere.md).
+
+> **Parameter resolution in sub-nodes**
+>
+> Sub-nodes behave differently to other nodes when processing multiple items using an expression.
+> 
+> Most nodes, including root nodes, take any number of items as input, process these items, and output the results. You can use expressions to refer to input items, and the node resolves the expression for each item in turn. For example, given an input of five `name` values, the expression `` resolves to each name in turn.
+> 
+> In sub-nodes, the expression always resolves to the first item. For example, given an input of five `name` values, the expression `` always resolves to the first name.
 
 ## Node parameters
 
@@ -31,3 +32,5 @@ You can find authentication information for this node [here](/integrations/built
 ## Related resources
 
 Refer to [Cohere's API documentation](https://docs.cohere.com/v2/reference/about) for more information about the service.
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

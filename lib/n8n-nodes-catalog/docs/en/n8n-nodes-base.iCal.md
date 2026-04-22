@@ -1,17 +1,10 @@
----
-title: Convert to File
-description: Documentation for the Convert to File node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: critical
----
-
 # Convert to File
 
 Use the Convert to File node to take input data and output it as a file. This converts the input JSON data into a binary format.
 
-/// note | Extract From File
-To extract data from a file and convert it to JSON, use the [Extract from File](/integrations/builtin/core-nodes/n8n-nodes-base.extractfromfile.md) node.
-///
+> **Extract From File**
+>
+> To extract data from a file and convert it to JSON, use the [Extract from File](/integrations/builtin/core-nodes/n8n-nodes-base.extractfromfile.md) node.
 
 ## Operations
 

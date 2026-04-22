@@ -1,10 +1,3 @@
----
-title: Summarize
-description: Documentation for the Summarize node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: high
----
-
 # Summarize
 
 Use the Summarize node to aggregate items together, in a manner similar to Excel pivot tables.
@@ -63,3 +56,5 @@ Set whether to ignore input items that don't contain the **Fields to Split By** 
 <!-- see https://www.notion.so/n8n/Pull-in-templates-for-the-integrations-pages-37c716837b804d30a33b47475f6e3780 -->
 
 ## Related resources
+
+Learn more about [data structure and data flow](/data/index.md) in n8n workflows.

@@ -1,19 +1,12 @@
----
-title: Google Sheets
-description: Documentation for the Google Sheets node in n8n, a workflow automation platform. Includes details of operations and configuration, and links to examples and credentials information.
-contentType: [integration, reference]
-priority: critical
----
-
 # Google Sheets
 
 Use the Google Sheets node to automate work in Google Sheets, and integrate Google Sheets with other applications. n8n has built-in support for a wide range of Google Sheets features, including creating, updating, deleting, appending, removing and getting documents. 
 
 On this page, you'll find a list of operations the Google Sheets node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Google Sheets credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Google Sheets credentials](/integrations/builtin/credentials/google/index.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -58,36 +51,17 @@ This example uses the Customer Datastore node to provide sample data to load int
 
 For common questions or issues and suggested solutions, refer to [Common issues](/integrations/builtin/app-nodes/n8n-nodes-base.googlesheets/common-issues.md).
 
----
+## What to do if your operation isn't supported
 
-# Google Sheets node common issues
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
 
-Here are some common errors and issues with the [Google Sheets node](/integrations/builtin/app-nodes/n8n-nodes-base.googlesheets/index.md) and steps to resolve or troubleshoot them.
+You can use the credential you created for this service in the HTTP Request node: 
 
-## Append an array
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
 
-To insert an array of data into Google Sheets, you must convert the array into a valid JSON (key, value) format.
-
-To do so, consider using:
-
-1. The [Split Out](/integrations/builtin/core-nodes/n8n-nodes-base.splitout.md) node.
-1. The [AI Transform](/integrations/builtin/core-nodes/n8n-nodes-base.aitransform.md) node. For example, try entering something like:
-    ```
-    Convert 'languages' array to JSON (key, value) pairs.
-    ```
-1. The [Code node](/integrations/builtin/core-nodes/n8n-nodes-base.code/index.md).
-
-<!-- vale off -->
-## Column names were updated after the node's setup
-<!-- vale on -->
-
-You'll receive this error if the Google Sheet's column names have changed since you set up the node.
-
-To refresh the column names, re-select **Mapping Column Mode**. This should prompt the node to fetch the column names again.
-
-Once the column names refresh, update the node parameters.
-
----
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
 
 # Google Sheets Document operations
 
@@ -317,9 +291,9 @@ Enter these parameters:
         - **Serial Number**: Number of days since  December 30th 1899. 
     - **When Filter Has Multiple Matches**: Set to **Return All Matches** to get multiple matches. By default only the first result gets returned. 
 
-/// note | First row
-n8n treats the first row in a Google Sheet as a heading row, and doesn't return it when reading all rows. If you want to read the first row, use the **Options** to set **Data Location on Sheet**.
-///
+> **First row**
+>
+> n8n treats the first row in a Google Sheet as a heading row, and doesn't return it when reading all rows. If you want to read the first row, use the **Options** to set **Data Location on Sheet**.
 
 Refer to the [Method: spreadsheets.batchUpdate | Google Sheets](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/batchUpdate) API documentation for more information.
 

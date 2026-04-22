@@ -1,10 +1,3 @@
----
-title: Wait
-description: Documentation for the Wait node in n8n, a workflow automation platform. Includes guidance on usage, and links to examples.
-contentType: [integration, reference]
-priority: critical
----
-
 # Wait
 
 Use the Wait node pause your workflow's execution. When the workflow pauses it offloads the execution data to the database. When the resume condition is met, the workflow reloads the data and the execution continues.
@@ -60,9 +53,9 @@ Select if and how incoming resume-webhook-requests to `$execution.resumeUrl` sho
 * **JWT Auth**: Use JWT authentication. Select or enter a new **Credential for JWT Auth** to use.
 * **None**: Don't use authentication.
 
-/// note | Auth reference
-Refer to the [Webhook node | Authentication documentation](/integrations/builtin/core-nodes/n8n-nodes-base.webhook/index.md#supported-authentication-methods) for more information on each auth type.
-///
+> **Auth reference**
+>
+> Refer to the [Webhook node | Authentication documentation](/integrations/builtin/core-nodes/n8n-nodes-base.webhook/index.md#supported-authentication-methods) for more information on each auth type.
 
 #### HTTP Method
 

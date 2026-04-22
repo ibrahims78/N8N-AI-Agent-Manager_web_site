@@ -1,18 +1,12 @@
----
-title: ConvertKit node documentation
-description: Learn how to use the ConvertKit node in n8n. Follow technical documentation to integrate ConvertKit node into your workflows.
-contentType: [integration, reference]
----
-
 # ConvertKit node
 
 Use the ConvertKit node to automate work in ConvertKit, and integrate ConvertKit with other applications. n8n has built-in support for a wide range of ConvertKit features, including creating and deleting custom fields, getting tags, and adding subscribers.
 
 On this page, you'll find a list of operations the ConvertKit node supports and links to more resources.
 
-/// note | Credentials
-Refer to [ConvertKit credentials](/integrations/builtin/credentials/convertkit.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [ConvertKit credentials](/integrations/builtin/credentials/convertkit.md) for guidance on setting up authentication.
 
 ## Operations
 

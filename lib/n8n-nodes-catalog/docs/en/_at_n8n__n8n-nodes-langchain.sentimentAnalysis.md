@@ -1,9 +1,3 @@
----
-title: Sentiment Analysis node documentation
-description: Learn how to use the Sentiment Analysis node in n8n. Follow technical documentation to integrate Sentiment Analysis node into your workflows.
-contentType: [integration, reference]
----
-
 # Sentiment Analysis node
 
 Use the Sentiment Analysis node to analyze the sentiment of incoming text data.
@@ -59,3 +53,5 @@ For complex sentiment analysis tasks, you may need to iteratively refine the sys
 3. Use this setup to analyze customer feedback with more nuanced emotional categories.
 
 ## Related resources
+
+View n8n's [Advanced AI](/advanced-ai/index.md) documentation.

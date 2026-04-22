@@ -1,18 +1,12 @@
----
-title: MSG91 node documentation
-description: Learn how to use the MSG91 node in n8n. Follow technical documentation to integrate MSG91 node into your workflows.
-contentType: [integration, reference]
----
-
 # MSG91 node
 
 Use the MSG91 node to automate work in MSG91, and integrate MSG91 with other applications. n8n supports sending SMS with MSG91.
 
 On this page, you'll find a list of operations the MSG91 node supports and links to more resources.
 
-/// note | Credentials
-Refer to [MSG91 credentials](/integrations/builtin/credentials/msg91.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [MSG91 credentials](/integrations/builtin/credentials/msg91.md) for guidance on setting up authentication.
 
 ## Operations
 

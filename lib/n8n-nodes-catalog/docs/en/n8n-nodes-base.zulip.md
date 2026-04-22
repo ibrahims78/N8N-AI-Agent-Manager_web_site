@@ -1,18 +1,12 @@
----
-title: Zulip node documentation
-description: Learn how to use the Zulip node in n8n. Follow technical documentation to integrate Zulip node into your workflows.
-contentType: [integration, reference]
----
-
 # Zulip node
 
 Use the Zulip node to automate work in Zulip, and integrate Zulip with other applications. n8n has built-in support for a wide range of Zulip features, including creating, deleting, and getting users and streams, as well as sending messages. 
 
 On this page, you'll find a list of operations the Zulip node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Zulip credentials](/integrations/builtin/credentials/zulip.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Zulip credentials](/integrations/builtin/credentials/zulip.md) for guidance on setting up authentication.
 
 ## Operations
 

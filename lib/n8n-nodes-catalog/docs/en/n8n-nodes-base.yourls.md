@@ -1,18 +1,12 @@
----
-title: Yourls node documentation
-description: Learn how to use the Yourls node in n8n. Follow technical documentation to integrate Yourls node into your workflows.
-contentType: [integration, reference]
----
-
 # Yourls node
 
 Use the Yourls node to automate work in Yourls, and integrate Yourls with other applications. n8n has built-in support for a wide range of Yourls features, including expanding and shortening URLs. 
 
 On this page, you'll find a list of operations the Yourls node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Yourls credentials](/integrations/builtin/credentials/yourls.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Yourls credentials](/integrations/builtin/credentials/yourls.md) for guidance on setting up authentication.
 
 ## Operations
 

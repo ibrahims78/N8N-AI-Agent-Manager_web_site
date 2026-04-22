@@ -1,18 +1,12 @@
----
-title: Emelia node documentation
-description: Learn how to use the Emelia node in n8n. Follow technical documentation to integrate Emelia node into your workflows.
-contentType: [integration, reference]
----
-
 # Emelia node
 
 Use the Emelia node to automate work in Emelia, and integrate Emelia with other applications. n8n has built-in support for a wide range of Emelia features, including creating campaigns, and adding contacts to a list. 
 
 On this page, you'll find a list of operations the Emelia node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Emelia credentials](/integrations/builtin/credentials/emelia.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Emelia credentials](/integrations/builtin/credentials/emelia.md) for guidance on setting up authentication.
 
 ## Operations
 

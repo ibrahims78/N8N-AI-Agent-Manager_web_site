@@ -1,17 +1,17 @@
----
-title: Schedule Trigger node documentation
-description: Learn how to use the Schedule Trigger node in n8n. Follow technical documentation to integrate Schedule Trigger node into your workflows.
-contentType: [integration, reference]
-priority: critical
----
-
 # Schedule Trigger node
 
 Use the Schedule Trigger node to run workflows at fixed intervals and times. This works in a similar way to the Cron software utility in Unix-like systems.
 
-/// note | You must publish the workflow
-If a workflow uses the Schedule node as a trigger, make sure that you save and publish the workflow. 
-///
+> **You must publish the workflow**
+>
+> If a workflow uses the Schedule node as a trigger, make sure that you save and publish the workflow.
+
+> **Timezone settings**
+>
+> The node relies on the timezone setting. n8n uses either:
+> 
+> 1. The workflow timezone, if set. Refer to [Workflow settings](/workflows/settings.md) for more information.
+> 2. The n8n instance timezone, if the workflow timezone isn't set. The default is `America/New York` for self-hosted instances. n8n Cloud tries to detect the instance owner's timezone when they sign up, falling back to GMT as the default. Self-hosted users can change the instance setting using [Environment variables](/hosting/configuration/environment-variables/timezone-localization.md). Cloud admins can change the instance timezone in the [Admin dashboard](/manage-cloud/set-cloud-timezone.md).
 
 ## Node parameters
 
@@ -97,9 +97,9 @@ To generate a Cron expression, you can use [crontab guru](https://crontab.guru).
 |Quarterly|`0 0 1 1,4,7,10 *`|At midnight on the 1st of January, April, July, and October.|
 <!-- vale from-write-good.Weasel = YES -->
 
-/// warning | Using variables in the Cron expression
-While variables can be used in the scheduled trigger, their values only get evaluated when the workflow is published. If you alter a variable's value in the settings after a workflow is published, the changes won't alter the cron schedule. To re-evaluate the variable, unpublish the workflow and then re-publish it.
-/// 
+> **Using variables in the Cron expression**
+>
+> While variables can be used in the scheduled trigger, their values only get evaluated when the workflow is published. If you alter a variable's value in the settings after a workflow is published, the changes won't alter the cron schedule. To re-evaluate the variable, unpublish the workflow and then re-publish it. 
 
 #### Why there are six asterisks in the Cron expression
 

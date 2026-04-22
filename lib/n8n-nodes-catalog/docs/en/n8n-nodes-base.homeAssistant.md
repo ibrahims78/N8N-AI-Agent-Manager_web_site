@@ -1,19 +1,16 @@
----
-title: Home Assistant node documentation
-description: Learn how to use the Home Assistant node in n8n. Follow technical documentation to integrate Home Assistant node into your workflows.
-contentType: [integration, reference]
-priority: medium
----
-
 # Home Assistant node
 
 Use the Home Assistant node to automate work in Home Assistant, and integrate Home Assistant with other applications. n8n has built-in support for a wide range of Home Assistant features, including getting, creating, and checking camera proxies, configurations, logs, services, and templates. 
 
 On this page, you'll find a list of operations the Home Assistant node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Home Assistant credentials](/integrations/builtin/credentials/homeassistant.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Home Assistant credentials](/integrations/builtin/credentials/homeassistant.md) for guidance on setting up authentication.
+
+> **This node can be used as an AI tool**
+>
+> This node can be used to enhance the capabilities of an AI agent. When used in this way, many parameters can be set automatically, or with information directed by AI - find out more in the [AI tool parameters documentation](/advanced-ai/examples/using-the-fromai-function.md).
 
 ## Operations
 

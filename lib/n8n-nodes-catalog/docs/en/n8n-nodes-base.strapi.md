@@ -1,18 +1,12 @@
----
-title: Strapi node documentation
-description: Learn how to use the Strapi node in n8n. Follow technical documentation to integrate Strapi node into your workflows.
-contentType: [integration, reference]
----
-
 # Strapi node
 
 Use the Strapi node to automate work in Strapi, and integrate Strapi with other applications. n8n has built-in support for a wide range of Strapi features, including creating and deleting entries. 
 
 On this page, you'll find a list of operations the Strapi node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Strapi credentials](/integrations/builtin/credentials/strapi.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Strapi credentials](/integrations/builtin/credentials/strapi.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -30,3 +24,15 @@ Refer to [Strapi credentials](/integrations/builtin/credentials/strapi.md) for g
 ## Related resources
 
 Refer to [Strapi's documentation](https://docs.strapi.io/dev-docs/api/rest) for more information about the service.
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.

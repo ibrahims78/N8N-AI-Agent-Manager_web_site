@@ -1,19 +1,12 @@
----
-title: Airtable node documentation
-description: Learn how to use the Airtable node in n8n. Follow technical documentation to integrate Airtable node into your workflows.
-contentType: [integration, reference]
-priority: high
----
-
 # Airtable node
 
 Use the Airtable node to automate work in Airtable, and integrate Airtable with other applications. n8n has built-in support for a wide range of Airtable features, including creating, reading, listing, updating and deleting tables.
 
 On this page, you'll find a list of operations the Airtable node supports and links to more resources.
 
-/// note | Credentials
-Refer to [Airtable credentials](/integrations/builtin/credentials/airtable.md) for guidance on setting up authentication. 
-///
+> **Credentials**
+>
+> Refer to [Airtable credentials](/integrations/builtin/credentials/airtable.md) for guidance on setting up authentication.
 
 ## Operations
 
@@ -32,6 +25,18 @@ Refer to [Airtable credentials](/integrations/builtin/credentials/airtable.md) f
 n8n provides a trigger node for Airtable. You can find the trigger node docs [here](/integrations/builtin/trigger-nodes/n8n-nodes-base.airtabletrigger.md).
 
 Refer to [Airtable's documentation](https://airtable.com/developers/web/api/introduction) for more information about the service.
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
 
 ## Node reference
 

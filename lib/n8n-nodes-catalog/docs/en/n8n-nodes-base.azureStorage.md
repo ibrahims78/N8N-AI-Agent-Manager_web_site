@@ -1,18 +1,12 @@
----
-title: Azure Storage node documentation
-description: Learn how to use the Azure Storage node in n8n. Follow technical documentation to integrate Azure Storage node into your workflows.
-contentType: [integration, reference]
----
-
 # Azure Storage node
 
 The Azure Storage node has built-in support for a wide range of features, which includes creating, getting, and deleting blobs and containers. Use this node to automate work within the Azure Storage service or integrate it with other services in your workflow.
 
 On this page, you'll find a list of operations the Azure Storage node supports, and links to more resources.
 
-///  note  | Credentials
-You can find authentication information for this node [here](/integrations/builtin/credentials/azurestorage.md).
-///
+> **Credentials**
+>
+> You can find authentication information for this node [here](/integrations/builtin/credentials/azurestorage.md).
 
 ## Operations
 
@@ -35,3 +29,15 @@ You can find authentication information for this node [here](/integrations/built
 
 <!-- add a link to the service's documentation. This should usually go direct to the API docs -->
 Refer to [Microsoft's Azure Storage documentation](https://learn.microsoft.com/en-us/rest/api/storageservices/) for more information about the service.
+
+## What to do if your operation isn't supported
+
+If this node doesn't support the operation you want to do, you can use the [HTTP Request node](/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/index.md) to call the service's API.
+
+You can use the credential you created for this service in the HTTP Request node: 
+
+1. In the HTTP Request node, select **Authentication** > **Predefined Credential Type**.
+1. Select the service you want to connect to.
+1. Select your credential.
+
+Refer to [Custom API operations](/integrations/custom-operations.md) for more information.
