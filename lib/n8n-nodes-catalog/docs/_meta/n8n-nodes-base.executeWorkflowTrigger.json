@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.executeWorkflowTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.executeworkflowtrigger.md",
-  "fetchedAt": "2026-04-22T18:36:01.984Z",
+  "fetchedAt": "2026-04-22T18:53:08.815Z",
   "frontmatter": {
     "raw": {
       "title": "Execute Sub-workflow Trigger node documentation",
