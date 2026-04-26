@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.awsCertificateManager",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.awscertificatemanager.md",
-  "fetchedAt": "2026-04-22T18:58:20.805Z",
+  "fetchedAt": "2026-04-26T07:39:39.567Z",
   "frontmatter": {
     "raw": {
       "title": "AWS Certificate Manager node documentation",

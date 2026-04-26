@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.zendeskTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.zendesktrigger.md",
-  "fetchedAt": "2026-04-22T18:58:29.261Z",
+  "fetchedAt": "2026-04-26T07:39:51.334Z",
   "frontmatter": {
     "raw": {
       "title": "Zendesk Trigger node documentation",

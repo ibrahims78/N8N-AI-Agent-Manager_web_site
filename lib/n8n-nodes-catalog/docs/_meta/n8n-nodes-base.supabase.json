@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.supabase",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.supabase/index.md",
-  "fetchedAt": "2026-04-22T18:58:27.744Z",
+  "fetchedAt": "2026-04-26T07:39:49.256Z",
   "frontmatter": {
     "raw": {
       "title": "Supabase node documentation",

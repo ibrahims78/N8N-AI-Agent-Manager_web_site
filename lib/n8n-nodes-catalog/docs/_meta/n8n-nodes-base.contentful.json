@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.contentful",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.contentful.md",
-  "fetchedAt": "2026-04-22T18:58:21.495Z",
+  "fetchedAt": "2026-04-26T07:39:40.725Z",
   "frontmatter": {
     "raw": {
       "title": "Contentful node documentation",

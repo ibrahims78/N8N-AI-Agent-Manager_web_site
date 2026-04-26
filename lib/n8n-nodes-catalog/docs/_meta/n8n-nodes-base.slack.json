@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.slack",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.slack.md",
-  "fetchedAt": "2026-04-22T18:58:27.316Z",
+  "fetchedAt": "2026-04-26T07:39:48.899Z",
   "frontmatter": {
     "raw": {
       "title": "Slack node documentation",

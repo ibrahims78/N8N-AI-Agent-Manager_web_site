@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatdeepseek.md",
-  "fetchedAt": "2026-04-22T18:58:30.326Z",
+  "fetchedAt": "2026-04-26T07:39:52.913Z",
   "frontmatter": {
     "raw": {
       "title": "DeepSeek Chat Model node documentation",

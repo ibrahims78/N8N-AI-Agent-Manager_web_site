@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.set",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.set.md",
-  "fetchedAt": "2026-04-22T18:58:27.453Z",
+  "fetchedAt": "2026-04-26T07:39:48.980Z",
   "frontmatter": {
     "raw": {
       "title": "Edit Fields (Set)",

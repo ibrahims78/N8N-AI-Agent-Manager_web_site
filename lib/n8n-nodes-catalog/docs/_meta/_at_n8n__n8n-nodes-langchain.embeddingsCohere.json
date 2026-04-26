@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.embeddingsCohere",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingscohere.md",
-  "fetchedAt": "2026-04-22T18:58:29.833Z",
+  "fetchedAt": "2026-04-26T07:39:52.197Z",
   "frontmatter": {
     "raw": {
       "title": "Embeddings Cohere node documentation",

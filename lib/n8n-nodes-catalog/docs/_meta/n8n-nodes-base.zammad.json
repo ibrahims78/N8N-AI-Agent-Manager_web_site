@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.zammad",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.zammad.md",
-  "fetchedAt": "2026-04-22T18:58:29.121Z",
+  "fetchedAt": "2026-04-26T07:39:51.269Z",
   "frontmatter": {
     "raw": {
       "title": "Zammad node documentation",

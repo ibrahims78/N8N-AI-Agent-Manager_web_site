@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.strapi",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.strapi.md",
-  "fetchedAt": "2026-04-22T18:58:27.622Z",
+  "fetchedAt": "2026-04-26T07:39:49.377Z",
   "frontmatter": {
     "raw": {
       "title": "Strapi node documentation",

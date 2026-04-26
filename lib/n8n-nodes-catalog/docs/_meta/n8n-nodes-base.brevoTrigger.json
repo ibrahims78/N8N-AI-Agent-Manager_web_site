@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.brevoTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.brevotrigger.md",
-  "fetchedAt": "2026-04-22T18:58:20.994Z",
+  "fetchedAt": "2026-04-26T07:39:40.259Z",
   "frontmatter": {
     "raw": {
       "title": "Brevo Trigger node documentation",

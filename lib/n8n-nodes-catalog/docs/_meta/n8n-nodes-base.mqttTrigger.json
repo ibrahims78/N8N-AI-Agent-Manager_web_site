@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.mqttTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.mqtttrigger.md",
-  "fetchedAt": "2026-04-22T18:58:24.910Z",
+  "fetchedAt": "2026-04-26T07:39:45.584Z",
   "frontmatter": {
     "raw": {
       "title": "MQTT Trigger node documentation",

@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.googleDrive",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.googledrive/index.md",
-  "fetchedAt": "2026-04-22T18:58:23.278Z",
+  "fetchedAt": "2026-04-26T07:39:43.837Z",
   "frontmatter": {
     "raw": {
       "title": "Google Drive node documentation",
@@ -15,10 +15,10 @@
   },
   "siblings": [
     "file-folder-operations.md",
-    "common-issues.md",
+    "file-operations.md",
     "folder-operations.md",
     "shared-drive-operations.md",
-    "file-operations.md"
+    "common-issues.md"
   ],
   "assets": []
 }

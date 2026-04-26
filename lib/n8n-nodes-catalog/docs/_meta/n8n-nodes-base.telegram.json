@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.telegram",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.telegram/index.md",
-  "fetchedAt": "2026-04-22T18:58:28.210Z",
+  "fetchedAt": "2026-04-26T07:39:49.898Z",
   "frontmatter": {
     "raw": {
       "title": "Telegram node documentation",
@@ -15,10 +15,10 @@
   },
   "siblings": [
     "common-issues.md",
+    "callback-operations.md",
     "chat-operations.md",
     "file-operations.md",
-    "message-operations.md",
-    "callback-operations.md"
+    "message-operations.md"
   ],
   "assets": []
 }

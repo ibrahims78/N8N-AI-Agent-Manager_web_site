@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.grist",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.grist.md",
-  "fetchedAt": "2026-04-22T18:58:23.840Z",
+  "fetchedAt": "2026-04-26T07:39:44.325Z",
   "frontmatter": {
     "raw": {
       "title": "Grist node documentation",

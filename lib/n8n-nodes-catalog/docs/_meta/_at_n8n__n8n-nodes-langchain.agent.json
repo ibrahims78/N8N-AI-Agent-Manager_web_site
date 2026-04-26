@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.agent",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent/index.md",
-  "fetchedAt": "2026-04-22T18:58:29.540Z",
+  "fetchedAt": "2026-04-26T07:39:51.741Z",
   "frontmatter": {
     "raw": {
       "title": "AI Agent node documentation",
@@ -15,12 +15,12 @@
   },
   "siblings": [
     "tools-agent.md",
-    "conversational-agent.md",
-    "react-agent.md",
     "common-issues.md",
-    "sql-agent.md",
+    "react-agent.md",
+    "conversational-agent.md",
     "openai-functions-agent.md",
-    "plan-execute-agent.md"
+    "plan-execute-agent.md",
+    "sql-agent.md"
   ],
   "assets": []
 }

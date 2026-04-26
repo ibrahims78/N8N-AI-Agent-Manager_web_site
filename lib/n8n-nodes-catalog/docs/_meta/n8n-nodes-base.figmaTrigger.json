@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.figmaTrigger",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/trigger-nodes/n8n-nodes-base.figmatrigger.md",
-  "fetchedAt": "2026-04-22T18:58:22.452Z",
+  "fetchedAt": "2026-04-26T07:39:42.418Z",
   "frontmatter": {
     "raw": {
       "title": "Figma Trigger (Beta) node documentation",

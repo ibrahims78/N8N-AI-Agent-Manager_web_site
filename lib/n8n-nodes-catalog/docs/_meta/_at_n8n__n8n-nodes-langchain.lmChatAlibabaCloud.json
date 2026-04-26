@@ -1,0 +1,17 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatAlibabaCloud",
+  "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatalibabacloud.md",
+  "fetchedAt": "2026-04-26T07:39:52.695Z",
+  "frontmatter": {
+    "raw": {
+      "title": "Alibaba Cloud Chat Model node documentation",
+      "description": "The Alibaba Cloud Chat Model node sends prompts to Alibaba Cloud's conversational models (for advanced AI chains). This page explains how to configure the node in n8n workflows and covers common uses such as generating chat responses, tweaking sampling parameters (temperature, top_p), and limiting output length.",
+      "contentType": "[integration, reference]"
+    },
+    "title": "Alibaba Cloud Chat Model node documentation",
+    "description": "The Alibaba Cloud Chat Model node sends prompts to Alibaba Cloud's conversational models (for advanced AI chains). This page explains how to configure the node in n8n workflows and covers common uses such as generating chat responses, tweaking sampling parameters (temperature, top_p), and limiting output length.",
+    "contentType": "[integration, reference]"
+  },
+  "siblings": [],
+  "assets": []
+}

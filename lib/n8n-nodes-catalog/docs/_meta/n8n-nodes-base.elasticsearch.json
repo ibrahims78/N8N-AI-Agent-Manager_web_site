@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.elasticsearch",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.elasticsearch.md",
-  "fetchedAt": "2026-04-22T18:58:22.270Z",
+  "fetchedAt": "2026-04-26T07:39:41.803Z",
   "frontmatter": {
     "raw": {
       "title": "Elasticsearch node documentation",

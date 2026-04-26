@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.syncroMsp",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.syncromsp.md",
-  "fetchedAt": "2026-04-22T18:58:27.806Z",
+  "fetchedAt": "2026-04-26T07:39:49.516Z",
   "frontmatter": {
     "raw": {
       "title": "SyncroMSP node documentation",

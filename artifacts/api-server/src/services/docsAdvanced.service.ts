@@ -1085,11 +1085,37 @@ async function inlineLocalAssetsAsDataUri(md: string): Promise<string> {
 }
 
 /**
- * Some older Arabic docs were stored before the asset pipeline ran, so they
- * still contain raw n8n image paths like `/_images/.../foo.png`. Rewrite them
- * to absolute n8n CDN URLs (`https://docs.n8n.io/_images/.../foo.png`) so the
- * images actually load in the exported book.
+ * Split the combined export markdown into chapters at every top-level `# `
+ * heading, then for each chapter pair every TOC bullet (`* [text](#anchor)`)
+ * with a heading text via in-order traversal. Returns one ordered list of
+ * `{text, anchor}` pairs per chapter so the renderer can stamp matching
+ * `id=` attributes on the heading tokens as they stream past.
  */
+function buildPerChapterAnchorMaps(
+  md: string
+): Array<Array<{ text: string; anchor: string }>> {
+  const stripFmt = (s: string) =>
+    s.replace(/[*_`]+/g, "").replace(/\s+/g, " ").trim();
+  const chapters: string[][] = [];
+  let cur: string[] | null = null;
+  for (const line of md.split("\n")) {
+    if (/^#\s+/.test(line)) {
+      cur = [line];
+      chapters.push(cur);
+    } else if (cur) {
+      cur.push(line);
+    }
+  }
+  return chapters.map((chap) => {
+    const items: Array<{ text: string; anchor: string }> = [];
+    for (const line of chap) {
+      const m = line.match(/^\s*[*\-]\s+\[(.+?)\]\(#([^)\s]+)\)/);
+      if (m) items.push({ text: stripFmt(m[1]), anchor: m[2] });
+    }
+    return items;
+  });
+}
+
 function rewriteRawN8nImagePaths(md: string): string {
   return md.replace(
     /(!\[[^\]]*\]\()(\/_images\/[^)\s]+)(\))/g,
@@ -1144,11 +1170,62 @@ export async function exportAllDocsHtml(language: DocLang = "ar"): Promise<strin
   const { default: MarkdownIt } = await import("markdown-it");
   const mdIt = new MarkdownIt({ html: false, linkify: true, breaks: false });
 
-  // Rewrite n8n's relative doc links (e.g. "/integrations/builtin/.../index.md"
-  // or "/glossary.md#anchor") into absolute https://docs.n8n.io/... URLs so
-  // they actually open when the book is downloaded as a standalone HTML/PDF.
-  // Strip the trailing ".md" / "/index.md" because the n8n docs site serves
-  // extensionless URLs.
+  // Build TOC anchor maps PER chapter so that each chapter's local TOC
+  // (e.g. `* [حذف](#delete)`) lands on the same chapter's heading
+  // (`### حذف` → `id="delete"`). Anchor IDs in markdown-it heading_open
+  // tokens are matched against the heading text we extracted from source.
+  const chapterAnchorMaps = buildPerChapterAnchorMaps(md);
+  const slugify = (s: string, used: Set<string>) => {
+    const base = s
+      .replace(/[*_`]+/g, "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\p{L}\p{N}\-_]+/gu, "")
+      .slice(0, 80) || "section";
+    let id = base;
+    let n = 1;
+    while (used.has(id)) id = `${base}-${++n}`;
+    used.add(id);
+    return id;
+  };
+  const usedIds = new Set<string>();
+  // Sequential anchor lookup mirrors the viewer-side approach: as we
+  // encounter each heading we consume the next matching anchor from the
+  // current chapter's TOC, falling back to a slugified version so every
+  // heading gets a unique id.
+  let chapterCursor = -1;
+  let tocCursor = 0;
+  mdIt.renderer.rules.heading_open = function (tokens, idx, _options, _env, self) {
+    const inline = tokens[idx + 1];
+    const text = inline?.content?.trim() || "";
+    // The first H1 of the document marks the start of a chapter. Reset
+    // the per-chapter TOC cursor each time we hit one.
+    if (tokens[idx].tag === "h1") {
+      chapterCursor++;
+      tocCursor = 0;
+    }
+    let id: string | undefined;
+    const map = chapterAnchorMaps[chapterCursor];
+    if (map) {
+      // Walk forward in the TOC list looking for the heading text.
+      while (tocCursor < map.length) {
+        const entry = map[tocCursor++];
+        if (entry.text === text) {
+          id = entry.anchor;
+          usedIds.add(id);
+          break;
+        }
+      }
+    }
+    if (!id) id = slugify(text, usedIds);
+    tokens[idx].attrSet("id", id);
+    return self.renderToken(tokens, idx, _options);
+  };
+
+  // Rewrite n8n's relative doc links into absolute https://docs.n8n.io/...
+  // URLs so they open when the book is shared as a standalone HTML/PDF.
+  // In-page anchors (`#foo`) and our own /api/ asset URLs stay as-is.
   const defaultLinkOpen =
     mdIt.renderer.rules.link_open ||
     function (tokens, idx, options, _env, self) {
@@ -1158,9 +1235,9 @@ export async function exportAllDocsHtml(language: DocLang = "ar"): Promise<strin
     const hrefIdx = tokens[idx].attrIndex("href");
     if (hrefIdx >= 0) {
       const href = tokens[idx].attrs![hrefIdx][1];
-      if (href.startsWith("/api/")) {
-        // Our own API endpoints (assets, etc.) — leave untouched so the
-        // base64 inliner / live server can serve them.
+      if (href.startsWith("#")) {
+        // In-page anchor — keep it local, don't open a new tab.
+      } else if (href.startsWith("/api/")) {
         tokens[idx].attrSet("target", "_blank");
         tokens[idx].attrSet("rel", "noopener");
       } else if (href.startsWith("/")) {

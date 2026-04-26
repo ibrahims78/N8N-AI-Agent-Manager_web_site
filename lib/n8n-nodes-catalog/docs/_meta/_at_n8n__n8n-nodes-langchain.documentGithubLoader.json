@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.documentGithubLoader",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.documentgithubloader.md",
-  "fetchedAt": "2026-04-22T18:58:29.685Z",
+  "fetchedAt": "2026-04-26T07:39:52.048Z",
   "frontmatter": {
     "raw": {
       "title": "GitHub Document Loader node documentation",

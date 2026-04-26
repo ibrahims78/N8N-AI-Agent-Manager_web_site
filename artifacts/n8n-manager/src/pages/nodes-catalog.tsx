@@ -1258,6 +1258,65 @@ function rawDocsUrlToHumanUrl(raw: string): string {
 }
 
 /**
+ * Build a map: heading-text → in-page anchor id, by pairing the TOC list at
+ * the top of the doc (e.g. `* [Delete](#delete)`) with the headings that
+ * appear below in the same order. This lets us assign the original English
+ * anchor (e.g. `delete`) to the translated Arabic heading (e.g. `حذف`), so
+ * the TOC link `#delete` actually scrolls to that heading.
+ *
+ * Works for both EN and AR docs without any pipeline change.
+ */
+function buildHeadingAnchorMap(md: string): Map<string, string> {
+  const map = new Map<string, string>();
+  if (!md) return map;
+  const stripFormatting = (s: string) =>
+    s.replace(/[*_`]+/g, "").replace(/\s+/g, " ").trim();
+
+  // 1. Collect TOC items: `* [text](#anchor)` or `- [text](#anchor)` lines.
+  const tocItems: Array<{ text: string; anchor: string }> = [];
+  for (const line of md.split("\n")) {
+    const m = line.match(/^\s*[*\-]\s+\[(.+?)\]\(#([^)\s]+)\)/);
+    if (m) tocItems.push({ text: stripFormatting(m[1]), anchor: m[2] });
+  }
+  if (tocItems.length === 0) return map;
+
+  // 2. Walk through headings (`##`–`####`) in document order.
+  const headingTexts: string[] = [];
+  for (const line of md.split("\n")) {
+    const m = line.match(/^(#{2,4})\s+(.+?)\s*$/);
+    if (m) headingTexts.push(stripFormatting(m[2]));
+  }
+
+  // 3. Assign sequentially: for each TOC item, find the next heading whose
+  //    plain text matches and assign the anchor.
+  let hIdx = 0;
+  for (const item of tocItems) {
+    while (hIdx < headingTexts.length) {
+      const ht = headingTexts[hIdx++];
+      if (ht === item.text) {
+        map.set(ht, item.anchor);
+        break;
+      }
+    }
+  }
+  return map;
+}
+
+/** Recursively flatten React children to plain text for heading-id lookup. */
+function reactChildrenToText(children: React.ReactNode): string {
+  if (children == null || typeof children === "boolean") return "";
+  if (typeof children === "string" || typeof children === "number")
+    return String(children);
+  if (Array.isArray(children)) return children.map(reactChildrenToText).join("");
+  if (typeof children === "object" && "props" in (children as object)) {
+    return reactChildrenToText(
+      (children as { props: { children?: React.ReactNode } }).props.children
+    );
+  }
+  return "";
+}
+
+/**
  * Defensive in-viewer rewriter for `<a href>` props produced by ReactMarkdown.
  * Some stored docs (especially older AR translations) still contain root-
  * relative paths like `/integrations/builtin/credentials/foo.md` — those
@@ -1319,6 +1378,13 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
     retry: false,
     staleTime: 5 * 60_000,
   });
+
+  // Pair the doc's TOC links with its headings so in-page anchors actually
+  // scroll to the right section (works for AR + EN docs alike).
+  const anchorMap = useMemo(
+    () => buildHeadingAnchorMap(data?.markdown || ""),
+    [data?.markdown]
+  );
 
   async function refreshDoc() {
     setRefreshing(true);
@@ -1452,15 +1518,40 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  a: ({ href, ...props }) => (
-                    <a
-                      {...props}
-                      href={normalizeDocLink(href)}
-                      target="_blank"
-                      rel="noreferrer"
-                    />
-                  ),
+                  a: ({ href, ...props }) => {
+                    // In-page anchors must NOT open in a new tab — they
+                    // should scroll within the current document.
+                    const isAnchor = !!href && href.startsWith("#");
+                    return (
+                      <a
+                        {...props}
+                        href={normalizeDocLink(href)}
+                        {...(isAnchor
+                          ? {}
+                          : { target: "_blank", rel: "noreferrer" })}
+                      />
+                    );
+                  },
                   img: ({ ...props }) => <img {...props} loading="lazy" />,
+                  // Add an `id` to each heading so the TOC anchors work.
+                  // We pair TOC entries (e.g. `[حذف](#delete)`) with the
+                  // headings below them in document order.
+                  h1: ({ children, ...rest }) => {
+                    const text = reactChildrenToText(children);
+                    return <h1 id={anchorMap.get(text) || rest.id}>{children}</h1>;
+                  },
+                  h2: ({ children, ...rest }) => {
+                    const text = reactChildrenToText(children);
+                    return <h2 id={anchorMap.get(text) || rest.id}>{children}</h2>;
+                  },
+                  h3: ({ children, ...rest }) => {
+                    const text = reactChildrenToText(children);
+                    return <h3 id={anchorMap.get(text) || rest.id}>{children}</h3>;
+                  },
+                  h4: ({ children, ...rest }) => {
+                    const text = reactChildrenToText(children);
+                    return <h4 id={anchorMap.get(text) || rest.id}>{children}</h4>;
+                  },
                 }}
               >
                 {data.markdown}

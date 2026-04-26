@@ -1,7 +1,7 @@
 {
   "nodeType": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatanthropic.md",
-  "fetchedAt": "2026-04-22T18:58:30.038Z",
+  "fetchedAt": "2026-04-26T07:39:52.384Z",
   "frontmatter": {
     "raw": {
       "title": "Anthropic Chat Model node documentation",

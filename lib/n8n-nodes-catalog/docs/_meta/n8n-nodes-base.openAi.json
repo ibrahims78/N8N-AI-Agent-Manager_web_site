@@ -1,7 +1,7 @@
 {
   "nodeType": "n8n-nodes-base.openAi",
   "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/index.md",
-  "fetchedAt": "2026-04-22T18:58:26.366Z",
+  "fetchedAt": "2026-04-26T07:39:47.546Z",
   "frontmatter": {
     "raw": {
       "title": "OpenAI node documentation",
@@ -15,13 +15,13 @@
     "contentType": "[integration, reference]"
   },
   "siblings": [
-    "file-operations.md",
-    "audio-operations.md",
-    "text-operations.md",
     "image-operations.md",
     "common-issues.md",
-    "video-operations.md",
     "assistant-operations.md",
+    "text-operations.md",
+    "file-operations.md",
+    "audio-operations.md",
+    "video-operations.md",
     "conversation-operations.md"
   ],
   "assets": []
