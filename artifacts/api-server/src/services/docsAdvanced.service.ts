@@ -1085,21 +1085,68 @@ async function inlineLocalAssetsAsDataUri(md: string): Promise<string> {
 }
 
 /**
- * Split the combined export markdown into chapters at every top-level `# `
- * heading, then for each chapter pair every TOC bullet (`* [text](#anchor)`)
- * with a heading text via in-order traversal. Returns one ordered list of
- * `{text, anchor}` pairs per chapter so the renderer can stamp matching
- * `id=` attributes on the heading tokens as they stream past.
+ * Arabic-aware normalization for fuzzy heading matching during export. Mirrors
+ * the viewer-side helper so anchors line up between the in-app docs viewer and
+ * the standalone HTML/PDF export.
+ */
+function normalizeHeadingForExport(s: string): string {
+  if (!s) return "";
+  let t = s.replace(/[*_`]+/g, "").replace(/\s+/g, " ").trim().toLowerCase();
+  t = t.replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "");
+  t = t.replace(/[\u0622\u0623\u0625\u0671]/g, "\u0627");
+  t = t
+    .replace(/\u0649/g, "\u064A")
+    .replace(/\u0629/g, "\u0647")
+    .replace(/\u0624/g, "\u0648")
+    .replace(/\u0626/g, "\u064A");
+  t = t.replace(/(^|\s)ال(?=[\u0600-\u06FF]{2,})/g, "$1");
+  t = t.replace(/[^\p{L}\p{N}\s]+/gu, " ").replace(/\s+/g, " ").trim();
+  return t;
+}
+
+function levenshteinSimilarity(a: string, b: string): number {
+  if (a === b) return 1;
+  if (!a.length || !b.length) return 0;
+  const m = a.length;
+  const n = b.length;
+  const dp: number[] = new Array(n + 1);
+  for (let j = 0; j <= n; j++) dp[j] = j;
+  for (let i = 1; i <= m; i++) {
+    let prev = dp[0];
+    dp[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const tmp = dp[j];
+      dp[j] = a.charCodeAt(i - 1) === b.charCodeAt(j - 1)
+        ? prev
+        : 1 + Math.min(prev, dp[j], dp[j - 1]);
+      prev = tmp;
+    }
+  }
+  return 1 - dp[n] / Math.max(m, n);
+}
+
+/**
+ * Split the combined export markdown into chapters and pair each chapter's
+ * TOC bullets (`* [text](#anchor)`) with its headings.
+ *
+ * `exportAllDocsMarkdown` emits the cover page as `# title` and each per-node
+ * chapter as `## <a id="…"></a>node-type`, so chapter boundaries are H2 (not
+ * H1). We split on `^##\s+` accordingly — splitting on `^#\s+` would lump
+ * every node into one giant chapter and let early TOC entries stamp anchors
+ * onto unrelated nodes' headings.
+ *
+ * Pre-normalizes heading and TOC text using Arabic-aware rules so that
+ * matching is robust to "ال" article variations and minor diacritic noise.
  */
 function buildPerChapterAnchorMaps(
   md: string
-): Array<Array<{ text: string; anchor: string }>> {
+): Array<Array<{ text: string; norm: string; anchor: string }>> {
   const stripFmt = (s: string) =>
     s.replace(/[*_`]+/g, "").replace(/\s+/g, " ").trim();
   const chapters: string[][] = [];
   let cur: string[] | null = null;
   for (const line of md.split("\n")) {
-    if (/^#\s+/.test(line)) {
+    if (/^##\s+/.test(line)) {
       cur = [line];
       chapters.push(cur);
     } else if (cur) {
@@ -1107,10 +1154,13 @@ function buildPerChapterAnchorMaps(
     }
   }
   return chapters.map((chap) => {
-    const items: Array<{ text: string; anchor: string }> = [];
+    const items: Array<{ text: string; norm: string; anchor: string }> = [];
     for (const line of chap) {
       const m = line.match(/^\s*[*\-]\s+\[(.+?)\]\(#([^)\s]+)\)/);
-      if (m) items.push({ text: stripFmt(m[1]), anchor: m[2] });
+      if (m) {
+        const text = stripFmt(m[1]);
+        items.push({ text, norm: normalizeHeadingForExport(text), anchor: m[2] });
+      }
     }
     return items;
   });
@@ -1191,31 +1241,55 @@ export async function exportAllDocsHtml(language: DocLang = "ar"): Promise<strin
   };
   const usedIds = new Set<string>();
   // Sequential anchor lookup mirrors the viewer-side approach: as we
-  // encounter each heading we consume the next matching anchor from the
-  // current chapter's TOC, falling back to a slugified version so every
-  // heading gets a unique id.
+  // encounter each heading we look ahead in the current chapter's TOC for
+  // a normalized exact match (with a small fuzzy fallback window), falling
+  // back to a slugified version so every heading gets a unique id. We
+  // never advance past an unmatched heading — a missing TOC entry mustn't
+  // cause every later anchor to slide onto the wrong section.
+  //
+  // Chapters are H2 (`## node-type`) because that's how exportAllDocsMarkdown
+  // emits them; only the cover-page title is H1.
+  const FUZZY_THRESHOLD = 0.85;
   let chapterCursor = -1;
   let tocCursor = 0;
   mdIt.renderer.rules.heading_open = function (tokens, idx, _options, _env, self) {
     const inline = tokens[idx + 1];
     const text = inline?.content?.trim() || "";
-    // The first H1 of the document marks the start of a chapter. Reset
-    // the per-chapter TOC cursor each time we hit one.
-    if (tokens[idx].tag === "h1") {
+    if (tokens[idx].tag === "h2") {
       chapterCursor++;
       tocCursor = 0;
     }
     let id: string | undefined;
     const map = chapterAnchorMaps[chapterCursor];
-    if (map) {
-      // Walk forward in the TOC list looking for the heading text.
-      while (tocCursor < map.length) {
-        const entry = map[tocCursor++];
-        if (entry.text === text) {
-          id = entry.anchor;
-          usedIds.add(id);
-          break;
+    if (map && map.length > 0) {
+      const target = normalizeHeadingForExport(text);
+      if (target) {
+        // Pass 1: exact normalized match starting at the cursor.
+        for (let j = tocCursor; j < map.length; j++) {
+          if (map[j].norm === target) {
+            id = map[j].anchor;
+            tocCursor = j + 1;
+            break;
+          }
         }
+        // Pass 2: fuzzy match within a small forward window.
+        if (!id) {
+          const windowEnd = Math.min(map.length, tocCursor + 6);
+          let best = -1;
+          let bestScore = 0;
+          for (let j = tocCursor; j < windowEnd; j++) {
+            const s = levenshteinSimilarity(map[j].norm, target);
+            if (s > bestScore) {
+              bestScore = s;
+              best = j;
+            }
+          }
+          if (bestScore >= FUZZY_THRESHOLD && best !== -1) {
+            id = map[best].anchor;
+            tocCursor = best + 1;
+          }
+        }
+        if (id) usedIds.add(id);
       }
     }
     if (!id) id = slugify(text, usedIds);

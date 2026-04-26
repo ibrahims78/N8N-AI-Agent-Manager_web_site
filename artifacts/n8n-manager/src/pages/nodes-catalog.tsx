@@ -1258,13 +1258,69 @@ function rawDocsUrlToHumanUrl(raw: string): string {
 }
 
 /**
+ * Normalize Arabic (and Latin) heading text for fuzzy matching:
+ *  - strip Markdown formatting and collapse whitespace
+ *  - remove tashkeel (Arabic diacritics) and tatweel
+ *  - unify alef forms (أ إ آ ٱ → ا), ى → ي, ة → ه, ؤ → و, ئ → ي
+ *  - drop the leading "ال" definite article from each whitespace-separated word
+ *  - lowercase
+ * This makes "تنفيذ الاستعلام" and "تنفيذ استعلام" compare equal.
+ */
+function normalizeHeading(s: string): string {
+  if (!s) return "";
+  let t = s.replace(/[*_`]+/g, "").replace(/\s+/g, " ").trim().toLowerCase();
+  // Tashkeel + tatweel
+  t = t.replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "");
+  // Alef variations → ا
+  t = t.replace(/[\u0622\u0623\u0625\u0671]/g, "\u0627");
+  // ى → ي, ة → ه, ؤ → و, ئ → ي
+  t = t
+    .replace(/\u0649/g, "\u064A")
+    .replace(/\u0629/g, "\u0647")
+    .replace(/\u0624/g, "\u0648")
+    .replace(/\u0626/g, "\u064A");
+  // Drop leading "ال" article from each word (only when followed by ≥2 letters)
+  t = t.replace(/(^|\s)ال(?=[\u0600-\u06FF]{2,})/g, "$1");
+  // Strip non-letter/digit/space punctuation that often differs between
+  // TOC entries and headings (e.g. parentheses, colons, commas).
+  t = t.replace(/[^\p{L}\p{N}\s]+/gu, " ").replace(/\s+/g, " ").trim();
+  return t;
+}
+
+/** Levenshtein-distance-based similarity in [0..1]. Used as a fuzzy fallback. */
+function similarity(a: string, b: string): number {
+  if (a === b) return 1;
+  if (!a.length || !b.length) return 0;
+  const m = a.length;
+  const n = b.length;
+  const dp: number[] = new Array(n + 1);
+  for (let j = 0; j <= n; j++) dp[j] = j;
+  for (let i = 1; i <= m; i++) {
+    let prev = dp[0];
+    dp[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const tmp = dp[j];
+      dp[j] = a.charCodeAt(i - 1) === b.charCodeAt(j - 1)
+        ? prev
+        : 1 + Math.min(prev, dp[j], dp[j - 1]);
+      prev = tmp;
+    }
+  }
+  const dist = dp[n];
+  return 1 - dist / Math.max(m, n);
+}
+
+/**
  * Build a map: heading-text → in-page anchor id, by pairing the TOC list at
  * the top of the doc (e.g. `* [Delete](#delete)`) with the headings that
  * appear below in the same order. This lets us assign the original English
  * anchor (e.g. `delete`) to the translated Arabic heading (e.g. `حذف`), so
  * the TOC link `#delete` actually scrolls to that heading.
  *
- * Works for both EN and AR docs without any pipeline change.
+ * Works for both EN and AR docs. Uses Arabic-aware normalization plus a
+ * Levenshtein fuzzy fallback (≥0.85 similarity), and crucially does NOT
+ * advance the heading cursor when a TOC entry has no plausible match —
+ * otherwise a single bad TOC line would consume every remaining heading.
  */
 function buildHeadingAnchorMap(md: string): Map<string, string> {
   const map = new Map<string, string>();
@@ -1286,18 +1342,48 @@ function buildHeadingAnchorMap(md: string): Map<string, string> {
     const m = line.match(/^(#{2,4})\s+(.+?)\s*$/);
     if (m) headingTexts.push(stripFormatting(m[2]));
   }
+  if (headingTexts.length === 0) return map;
 
-  // 3. Assign sequentially: for each TOC item, find the next heading whose
-  //    plain text matches and assign the anchor.
+  const normHeadings = headingTexts.map(normalizeHeading);
+
+  // 3. For each TOC item: scan forward from the cursor for an exact (normalized)
+  //    match within a small window first; if none, try a Levenshtein fuzzy
+  //    match (≥0.85). Only advance the cursor when we actually consume a
+  //    heading — a missing TOC entry must NOT eat the rest of the list.
+  const FUZZY_THRESHOLD = 0.85;
   let hIdx = 0;
   for (const item of tocItems) {
-    while (hIdx < headingTexts.length) {
-      const ht = headingTexts[hIdx++];
-      if (ht === item.text) {
-        map.set(ht, item.anchor);
+    const target = normalizeHeading(item.text);
+    if (!target) continue;
+
+    // Pass 1: exact normalized match from the cursor onward.
+    let matchedAt = -1;
+    for (let j = hIdx; j < normHeadings.length; j++) {
+      if (normHeadings[j] === target) {
+        matchedAt = j;
         break;
       }
     }
+    // Pass 2: fuzzy match, restricted to a forward window so we don't
+    // accidentally jump backwards or to a much later unrelated section.
+    if (matchedAt === -1) {
+      const windowEnd = Math.min(normHeadings.length, hIdx + 6);
+      let best = -1;
+      let bestScore = 0;
+      for (let j = hIdx; j < windowEnd; j++) {
+        const s = similarity(normHeadings[j], target);
+        if (s > bestScore) {
+          bestScore = s;
+          best = j;
+        }
+      }
+      if (bestScore >= FUZZY_THRESHOLD) matchedAt = best;
+    }
+    if (matchedAt !== -1) {
+      map.set(headingTexts[matchedAt], item.anchor);
+      hIdx = matchedAt + 1;
+    }
+    // else: skip this TOC entry without consuming any heading.
   }
   return map;
 }
@@ -1520,15 +1606,38 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
                 components={{
                   a: ({ href, ...props }) => {
                     // In-page anchors must NOT open in a new tab — they
-                    // should scroll within the current document.
+                    // should scroll within the current document. Inside a
+                    // Radix Dialog the browser's native hashchange scroll
+                    // doesn't reach our nested scroll container, so we
+                    // intercept the click and scroll the heading into view
+                    // ourselves.
                     const isAnchor = !!href && href.startsWith("#");
+                    if (isAnchor) {
+                      return (
+                        <a
+                          {...props}
+                          href={href}
+                          onClick={(e) => {
+                            const id = decodeURIComponent(href!.slice(1));
+                            if (!id) return;
+                            const el = document.getElementById(id);
+                            if (el) {
+                              e.preventDefault();
+                              el.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start",
+                              });
+                            }
+                          }}
+                        />
+                      );
+                    }
                     return (
                       <a
                         {...props}
                         href={normalizeDocLink(href)}
-                        {...(isAnchor
-                          ? {}
-                          : { target: "_blank", rel: "noreferrer" })}
+                        target="_blank"
+                        rel="noreferrer"
                       />
                     );
                   },
