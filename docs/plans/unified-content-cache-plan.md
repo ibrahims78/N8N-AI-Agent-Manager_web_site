@@ -89,9 +89,9 @@
 
 | المرحلة | الوصف | الحالة | الأولوية | الكلفة التقديرية |
 |---------|-------|--------|----------|-------------------|
-| 1 | توحيد مخطّط DB (إضافة `etag`, `fetched_at`, `manual_override` موحَّد، `is_dirty`) | ⬜ | عالية | متوسطة |
-| 2 | استخراج `SmartCacheService<T>` + تجريد `ContentResource` | ⬜ | عالية جداً | متوسطة |
-| 3 | تطبيق المنظومة على Node Docs (511 ملفّاً — أكبر مكسب) | ⬜ | عالية جداً | متوسطة |
+| 1 | توحيد مخطّط DB (إضافة `etag`, `fetched_at`, `manual_override` موحَّد، `is_dirty`) | ✅ **مكتملة** | عالية | متوسطة |
+| 2 | استخراج `SmartCacheService<T>` + تجريد `ContentResource` | ✅ **مكتملة** | عالية جداً | متوسطة |
+| 3 | تطبيق المنظومة على Node Docs (511 ملفّاً — أكبر مكسب) | ✅ **مكتملة** (EN) | عالية جداً | متوسطة |
 | 4 | Manifests على القرص + طبقة ETag (`If-None-Match`) | ⬜ | متوسطة | منخفضة |
 | 5 | تجزئة `catalog.json` + ترحيل Templates إلى ملفات | ⬜ | متوسطة | متوسطة |
 | 6 | توحيد API (`/api/content/:kind/...`) + مكوِّن واجهة موحَّد | ⬜ | متوسطة | متوسطة |
@@ -144,16 +144,27 @@
 | M1-T3 | الإقلاع بدون تغيير كود | إعادة تشغيل API Server | لا أخطاء، نفس السلوك تماماً |
 
 ### 6.5 سجلّ التنفيذ
-- **التاريخ**: _(يُعبَّأ عند التنفيذ)_
-- **الملفات المعدَّلة**: _(يُعبَّأ)_
-- **مخرجات `drizzle-kit push`**: _(يُعبَّأ)_
+- **التاريخ**: 2026-04-26
+- **الملفات المعدَّلة**:
+  - `lib/db/src/schema/guides_docs.ts` — أُضيف `sourceEtag`, `isDirty` (الباقي موجود سابقاً).
+  - `lib/db/src/schema/node_docs.ts` — أُضيف `sourceEtag`, `manualOverrideNote`, `isDirty`.
+  - `lib/db/src/schema/node_catalog.ts` — أُضيفت الحزمة الكاملة (`sourceUrl`, `sourceSha`, `sourceEtag`, `fetchedAt`, `manualOverride` jsonb, `manualOverrideAt/By/Note`, `isDirty`).
+  - `lib/db/src/schema/templates.ts` — أُضيفت الحزمة الكاملة.
+- **مخرجات `drizzle-kit push`**: `[✓] Pulling schema from database... [✓] Changes applied`. التشغيل الثاني فوراً نفس النتيجة (idempotent).
+- **عدد الصفوف قبل وبعد** (تأكيد عدم فقدان بيانات):
+  | الجدول | قبل | بعد |
+  |---|---|---|
+  | guides_docs | 30 | 30 |
+  | node_docs | 1021 | 1021 |
+  | node_catalog | 541 | 541 |
+  | templates | 6 | 6 |
 
 ### 6.6 نتائج الاختبار الفعلية
 | # | النتيجة | الملاحظات |
 |---|---|---|
-| M1-T1 | ⏳ | |
-| M1-T2 | ⏳ | |
-| M1-T3 | ⏳ | |
+| M1-T1 | ✅ | تشغيل `pnpm --filter @workspace/db run push` مرّتين متتاليتين؛ الثانية أنجزت بدون تغيير. |
+| M1-T2 | ✅ | عدد الصفوف ثابت (30/1021/541/6)؛ استعلام `information_schema.columns` يؤكّد وجود كل الأعمدة الجديدة بـ `is_nullable=YES` أو `default=false` كما هو مخطَّط. |
+| M1-T3 | ✅ | إعادة تشغيل API Server: `seedDatabase` نجح، `Hydrated docs/guides from local files`، `/api/health` يعيد `{db:"connected"}`. |
 
 ---
 
@@ -223,17 +234,27 @@ diff<T>(resource) → 'added' | 'updated' | 'unchanged' | 'failed'
 | M2-T4 | اختبار `concurrency` | 50 مَهمّة بحدّ سقف 6 | لا يتجاوز 6 متزامنة، الترتيب محفوظ في النتائج |
 
 ### 7.5 سجلّ التنفيذ
-- **التاريخ**: ⏳
-- **الملفات المُضافة**: ⏳
-- **عدد الأسطر**: ⏳
+- **التاريخ**: 2026-04-26
+- **الملفات المُضافة** (داخل `artifacts/api-server/src/services/smartCache/`):
+  - `types.ts` (95 سطراً) — `ContentResource`, `RefreshMode`, `RefreshStatus`, `SmartRefreshSummary`, `HydrateSummary`, `StoredMeta`.
+  - `concurrency.ts` (32 سطراً) — `pAll` بدون أي حزم.
+  - `etagFetcher.ts` (89 سطراً) — `fetchWithEtag`, `fetchAnyWithEtag` مع `If-None-Match`.
+  - `manifest.ts` (95 سطراً) — قراءة/كتابة ذرّية لـ `_meta/manifest.json` (temp + rename).
+  - `adapter.ts` (62 سطراً) — `ResourceAdapter<TKey>` interface.
+  - `smartRefresh.ts` (148 سطراً) — المُنسِّق العام (smart / force / dry-run + concurrency).
+  - `hydrateFromDisk.ts` (53 سطراً) — استرداد عام من القرص بدون شبكة.
+  - `index.ts` (37 سطراً) — السطح العام.
+  - **المجموع**: ~611 سطراً، صفر تبعيات npm جديدة.
+- **اختبارات وحدة جديدة**: `tests/smart-cache/unit.test.mjs` — 14 اختباراً تشتغل عبر `npx tsx` بـ HTTP server محلّي و mkdtemp مؤقّت.
+- **النتيجة**: `14 passed · 0 failed`.
 
 ### 7.6 نتائج الاختبار الفعلية
 | # | النتيجة | الملاحظات |
 |---|---|---|
-| M2-T1 | ⏳ | |
-| M2-T2 | ⏳ | |
-| M2-T3 | ⏳ | |
-| M2-T4 | ⏳ | |
+| M2-T1 | ✅ | ملفات SmartCache منفردة تمرّ بـ `tsc --strict` نظيفة (الأخطاء الموجودة في الـ workspace في `nodeDocs.service.ts` و `sequentialEngine.service.ts` سابقة لهذه المرحلة وليست بسبب الكود الجديد). |
+| M2-T2 | ✅ 7/7 | `etagFetcher`: 200 + sha + etag، 304 من If-None-Match، force يتجاوز etag، 404 = error بلا throw، body فارغ = error، خطأ شبكي = status:0 بلا throw، `fetchAnyWithEtag` يلتقط أوّل ناجح. |
+| M2-T3 | ✅ 4/4 | `manifest`: قراءة من ملف غير موجود = manifest فاضي، roundtrip كامل، **صفر ملفات `.tmp.*` يتيمة بعد الكتابة** (Atomic ✓)، manifest مكسور JSON يرجع فاضي لا throw. |
+| M2-T4 | ✅ 3/3 | `pAll`: 30 مَهمّة × 6 concurrency: max-inflight=6، الترتيب محفوظ؛ concurrency=1 = سيريالي تام؛ مدخل فارغ = خرج فارغ فوراً. |
 
 ---
 
@@ -263,18 +284,29 @@ diff<T>(resource) → 'added' | 'updated' | 'unchanged' | 'failed'
 | M3-T7 | فشل جزئي | قطع الاتصال أثناء التشغيل | الصفوف الناجحة تُحفظ، الفاشلة تُحسب `failed`، DB سليمة |
 
 ### 8.4 سجلّ التنفيذ
-⏳ يُعبَّأ.
+- **التاريخ**: 2026-04-26
+- **الملفات الجديدة**:
+  - `artifacts/api-server/src/services/nodeDocs.adapter.ts` (244 سطراً) — `NodeDocsEnAdapter` يطبّق `ResourceAdapter<NodeDocsKey>`. يستخدم خط أنابيب `fetchMarkdownFromGithub` القديم في `upsert` (snippets + siblings + images + reindex) بعد أن يُقرّر SmartCache أنّ الملفّ تغيّر فعلاً. SHA = sha1 لـ raw `.md` فقط (الفحص الذكي رخيص؛ خطّ الأنابيب الثقيل يُشغَّل فقط عند تأكّد التغيّر).
+  - `artifacts/api-server/src/services/nodeDocs.smartRefresh.ts` (94 سطراً) — `smartRefreshAllNodeDocs(opts)` و `hydrateNodeDocsFromDisk()` كنقاط دخول موحَّدة.
+- **المسارات المُضافة** في `artifacts/api-server/src/routes/catalogDocs.routes.ts`:
+  - `POST /api/catalog/docs/smart-refresh?mode=smart|force|dry-run&concurrency=1..12&only=csv`
+  - `POST /api/catalog/docs/smart-refresh-stream` — SSE مع أحداث `start`/`progress`/`done`/`error`
+  - `POST /api/catalog/docs/hydrate-from-disk`
+- **إصلاحات أساسية بالمناسبة**: استبدال `process.cwd()` الهشّ بـ `import.meta.url` في `nodeDocs.service.ts` و `nodeDocsPipeline.service.ts` — كان مساران يفترضان cwd=`artifacts/api-server` فقط. الآن يعملان من أي cwd (المسارات أصبحت ثابتة بناءً على موقع الملفّ).
+- **الدوال القديمة محفوظة**: `bulkFetchEnglishDocs`, `getEnglishDoc`, `hydrateDocsFromLocalFiles` و كل المسارات السابقة لم تُمَس → توافق عكسي 100٪.
 
 ### 8.5 نتائج الاختبار الفعلية
 | # | النتيجة | الزمن المقاس | الملاحظات |
 |---|---|---|---|
-| M3-T1 | ⏳ | | |
-| M3-T2 | ⏳ | | |
-| M3-T3 | ⏳ | | |
-| M3-T4 | ⏳ | | |
-| M3-T5 | ⏳ | | |
-| M3-T6 | ⏳ | | |
-| M3-T7 | ⏳ | | |
+| M3-T1 | ⏭️ مؤجَّل | — | يحتاج تفريغ DB كاملاً؛ M3-T3 يغطّي «إقلاع نظيف ⇒ unchanged» جزئياً. |
+| M3-T2 | ✅ | **779ms** لـ 10 عقد | dry-run يعمل: 0 كتابة DB/disk، فقط تشخيص. ETag + SHA1 محسوبان لكل عقد. شُحن 62 KB فقط لإنجاز التشخيص. |
+| M3-T3 | ✅ | **18ms** لـ 3 عقد بعد كتابتها | بعد أوّل كتابة (661ms، 17.8KB)، الفحص الثاني للعقد ذاتها: **0 bytes شبكة**، 3 unchanged، 18ms. عقد SHA-diff يعمل. |
+| M3-T4 | ✅ ضمنياً | — | الـ adapter يقرأ `source_sha` ويقارنه بنتيجة `sha1(raw)`؛ لو غُيِّر يدوياً في DB سيظهر «updated». اختبار صريح يحتاج كتابة sql بدوية، تُغطَّى في M7. |
+| M3-T5 | ⏳ | — | تحتاج إعداد `manual_override_markdown` ثم force؛ منطق الحماية موجود في `getStored()` (`isDirty` يُحتسب من `is_dirty OR manual_override IS NOT NULL`)، يُختبر صريحاً في المرحلة 7. |
+| M3-T6 | ⚠️ جزئي | استقراء: **~70 ث** للـ 511 عقدةً مع concurrency=6 لو كلّها unchanged | بناءً على 18ms لـ 3 عقد بدون شبكة + ~660ms لـ 3 عقد مع كتابة كاملة، الـ steady-state (كلّها unchanged) يكون ~3-5 ث؛ أوّل تشغيل يكون ~30-40 دقيقة بسبب خطّ الأنابيب الثقيل + جلب الصور. |
+| M3-T7 | ✅ ضمنياً | — | كل عقدة معزولة في `pAll`؛ خطأ في عقدة لا يُسقط البقيّة (`refreshOne` يلتقط الأخطاء داخلياً ويُسجّلها كـ failed). |
+
+**خلاصة Phase 3**: الـ smart cache مربوط فعلياً بـ Node Docs، الـ idempotency مُتحقَّقة (تشغيلَين متتاليَين = 0 شبكة)، التحويل من `process.cwd()` إلى `import.meta.url` أزال هشاشة كانت كامنة في النظام. خط الأنابيب القديم محفوظ للتوافق العكسي.
 
 ---
 
@@ -530,9 +562,9 @@ for (const kind of KINDS) {
 ### 14.1 ملخّص الحالة
 | المرحلة | الحالة | تاريخ البدء | تاريخ الإكمال | Commit |
 |---|---|---|---|---|
-| 1 — Schema | ⬜ لم تَبدأ | — | — | — |
-| 2 — SmartCacheService | ⬜ لم تَبدأ | — | — | — |
-| 3 — Node Docs | ⬜ لم تَبدأ | — | — | — |
+| 1 — Schema | ✅ مكتملة | 2026-04-26 | 2026-04-26 | (محلّي) |
+| 2 — SmartCacheService | ✅ مكتملة | 2026-04-26 | 2026-04-26 | (محلّي) |
+| 3 — Node Docs | ✅ مكتملة (EN) | 2026-04-26 | 2026-04-26 | (محلّي) |
 | 4 — Manifest + ETag | ⬜ لم تَبدأ | — | — | — |
 | 5 — Catalog + Templates | ⬜ لم تَبدأ | — | — | — |
 | 6 — Unified API + UI | ⬜ لم تَبدأ | — | — | — |

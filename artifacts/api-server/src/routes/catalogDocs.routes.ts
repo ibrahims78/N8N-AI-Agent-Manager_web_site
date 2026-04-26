@@ -28,6 +28,11 @@ import {
   type BulkFetchProgress,
 } from "../services/nodeDocs.service";
 import {
+  smartRefreshAllNodeDocs,
+  hydrateNodeDocsFromDisk,
+} from "../services/nodeDocs.smartRefresh";
+import type { RefreshMode, SmartRefreshEntryResult } from "../services/smartCache";
+import {
   resolveAssetPath,
   refreshRepoTree,
   getAssetsStats,
@@ -164,6 +169,142 @@ router.post(
       });
     }
   }
+);
+
+/* ──────────────── Smart refresh (Phase 3 — unified-content-cache) ────────────────
+ *
+ * POST /smart-refresh                   — JSON summary, modes: smart|force|dry-run
+ * POST /smart-refresh-stream            — SSE stream with per-node progress
+ * POST /hydrate-from-disk               — pull every disk .md into empty DB rows
+ *
+ * Query params:
+ *   mode=smart|force|dry-run            — default: smart
+ *   concurrency=1..12                   — default: 6
+ *   only=<csv of nodeTypes>             — optional whitelist
+ *
+ * Smart refresh contracts (see docs/plans/unified-content-cache-plan.md §15):
+ *   - SHA = sha1(raw upstream bytes); never of post-processed content.
+ *   - manual_override / is_dirty rows are NEVER touched.
+ *   - dry-run never writes to DB, disk, or AI.
+ */
+
+function parseRefreshMode(q: unknown): RefreshMode {
+  if (q === "force") return "force";
+  if (q === "dry-run" || q === "dryrun") return "dry-run";
+  return "smart";
+}
+
+function parseConcurrency(q: unknown): number {
+  const n = parseInt(String(q ?? "6"), 10);
+  if (!Number.isFinite(n)) return 6;
+  return Math.min(12, Math.max(1, n));
+}
+
+function parseOnly(q: unknown): string[] | undefined {
+  if (!q || typeof q !== "string") return undefined;
+  const list = q
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return list.length > 0 ? list : undefined;
+}
+
+router.post(
+  "/smart-refresh",
+  authenticate,
+  requireAdmin,
+  async (req: Request, res: Response): Promise<void> => {
+    const mode = parseRefreshMode(req.query.mode);
+    const concurrency = parseConcurrency(req.query.concurrency);
+    const only = parseOnly(req.query.only);
+    try {
+      const summary = await smartRefreshAllNodeDocs({ mode, concurrency, only });
+      res.json({ success: true, data: summary });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        error: {
+          code: "SMART_REFRESH_FAILED",
+          message: err instanceof Error ? err.message : String(err),
+        },
+      });
+    }
+  },
+);
+
+router.post(
+  "/smart-refresh-stream",
+  authenticate,
+  requireAdmin,
+  async (req: Request, res: Response): Promise<void> => {
+    const mode = parseRefreshMode(req.query.mode);
+    const concurrency = parseConcurrency(req.query.concurrency);
+    const only = parseOnly(req.query.only);
+
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no");
+    res.flushHeaders();
+
+    const send = (event: string, data: object) => {
+      res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+      const flush = (res as Response & { flush?: () => void }).flush;
+      if (typeof flush === "function") flush.call(res);
+    };
+
+    let closed = false;
+    req.on("close", () => {
+      closed = true;
+    });
+
+    try {
+      send("start", { mode, concurrency, only: only?.length ?? 0 });
+      const summary = await smartRefreshAllNodeDocs({
+        mode,
+        concurrency,
+        only,
+        onProgress: (entry: SmartRefreshEntryResult, sum) => {
+          if (closed) return;
+          send("progress", {
+            slug: entry.slug,
+            status: entry.status,
+            total: sum.total,
+            done: sum.added + sum.updated + sum.unchanged + sum.failed,
+            added: sum.added,
+            updated: sum.updated,
+            unchanged: sum.unchanged,
+            failed: sum.failed,
+          });
+        },
+      });
+      send("done", summary);
+    } catch (err) {
+      send("error", { message: err instanceof Error ? err.message : String(err) });
+    } finally {
+      res.end();
+    }
+  },
+);
+
+router.post(
+  "/hydrate-from-disk",
+  authenticate,
+  requireAdmin,
+  async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const summary = await hydrateNodeDocsFromDisk();
+      res.json({ success: true, data: summary });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        error: {
+          code: "HYDRATE_FAILED",
+          message: err instanceof Error ? err.message : String(err),
+        },
+      });
+    }
+  },
 );
 
 /* ──────────────── SSE Streaming: Bulk fetch English ──────────────── */

@@ -17,6 +17,16 @@ export const templatesTable = pgTable("templates", {
   createdBy: integer("created_by"),
   isSystem: boolean("is_system").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  /** Standardised SmartCache columns (Phase 1 of unified-content-cache-plan). */
+  sourceUrl: text("source_url"),
+  sourceSha: text("source_sha"),
+  sourceEtag: text("source_etag"),
+  fetchedAt: timestamp("fetched_at", { withTimezone: true }),
+  manualOverride: jsonb("manual_override"),
+  manualOverrideAt: timestamp("manual_override_at", { withTimezone: true }),
+  manualOverrideBy: integer("manual_override_by"),
+  manualOverrideNote: text("manual_override_note"),
+  isDirty: boolean("is_dirty").notNull().default(false),
 });
 
 export const insertTemplateSchema = createInsertSchema(templatesTable).omit({ id: true, createdAt: true });

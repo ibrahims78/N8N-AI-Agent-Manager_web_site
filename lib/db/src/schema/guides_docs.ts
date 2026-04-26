@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, timestamp, index, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, boolean, index, uniqueIndex } from "drizzle-orm/pg-core";
 
 /**
  * guides_docs: توثيقات n8n العامة (غير المرتبطة بعقدة بعينها):
@@ -22,6 +22,11 @@ export const guidesDocsTable = pgTable(
     manualOverrideNote: text("manual_override_note"),
     sourceUrl: text("source_url"),
     sourceSha: text("source_sha"),
+    /** ETag returned by the upstream HTTP source (for cheap If-None-Match). */
+    sourceEtag: text("source_etag"),
+    /** Quick flag: this row has a manual override active. Maintained by the
+     * override mutation paths. The unified SmartCacheService respects this. */
+    isDirty: boolean("is_dirty").notNull().default(false),
     error: text("error"),
     fetchedAt: timestamp("fetched_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })

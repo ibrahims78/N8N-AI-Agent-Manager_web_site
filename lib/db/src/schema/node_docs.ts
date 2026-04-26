@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp, integer, index, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp, integer, boolean, index, uniqueIndex } from "drizzle-orm/pg-core";
 
 /**
  * node_docs: caches the full Markdown documentation for each n8n node,
@@ -20,11 +20,17 @@ export const nodeDocsTable = pgTable(
     markdown: text("markdown"),
     sourceUrl: text("source_url"),
     sourceSha: text("source_sha"),
+    /** ETag returned by the upstream HTTP source (for cheap If-None-Match). */
+    sourceEtag: text("source_etag"),
     error: text("error"),
     /** نسخة محرَّرة يدوياً (لها أولوية على markdown عند العرض). */
     manualOverrideMarkdown: text("manual_override_markdown"),
     manualOverrideAt: timestamp("manual_override_at", { withTimezone: true }),
     manualOverrideBy: integer("manual_override_by"),
+    /** ملاحظة اختيارية على التعديل اليدوي. */
+    manualOverrideNote: text("manual_override_note"),
+    /** Quick flag: this row has a manual override active. */
+    isDirty: boolean("is_dirty").notNull().default(false),
     fetchedAt: timestamp("fetched_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()

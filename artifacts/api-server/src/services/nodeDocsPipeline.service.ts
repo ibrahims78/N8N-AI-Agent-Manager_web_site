@@ -39,6 +39,7 @@
  */
 import fs from "fs/promises";
 import path from "path";
+import { fileURLToPath } from "url";
 import { logger } from "../lib/logger";
 
 const DOCS_REPO_RAW = "https://raw.githubusercontent.com/n8n-io/n8n-docs/main";
@@ -46,9 +47,15 @@ const DOCS_REPO_TREE_API =
   "https://api.github.com/repos/n8n-io/n8n-docs/git/trees/main?recursive=1";
 const DOCS_SITE_BASE = "https://docs.n8n.io";
 
+/**
+ * Resolved relative to *this file* (not `process.cwd()`) so paths are stable
+ * whether invoked from the workflow cwd (artifacts/api-server) or the monorepo
+ * root. See nodeDocs.adapter.ts for the same pattern. Phase 3 of
+ * unified-content-cache-plan.md.
+ */
 const LOCAL_DOCS_DIR = path.resolve(
-  process.cwd(),
-  "../../lib/n8n-nodes-catalog/docs"
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../../../../lib/n8n-nodes-catalog/docs",
 );
 const ASSETS_DIR = path.join(LOCAL_DOCS_DIR, "_assets");
 const META_DIR = path.join(LOCAL_DOCS_DIR, "_meta");
