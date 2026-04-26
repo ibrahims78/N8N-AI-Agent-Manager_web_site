@@ -1232,6 +1232,61 @@ function EmptyState({ icon, title, hint }: { icon: React.ReactNode; title: strin
 }
 
 /* ─────────────────────────────────────────────────── */
+/* Docs viewer helpers                                  */
+/* ─────────────────────────────────────────────────── */
+
+/**
+ * Convert the GitHub raw URL we use as `source_url`
+ *   https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/app-nodes/n8n-nodes-base.databricks.md
+ * into the human-readable docs site URL the user expects to see when
+ * clicking "Source":
+ *   https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.databricks/
+ *
+ * Falls back to the original URL if the pattern doesn't match.
+ */
+function rawDocsUrlToHumanUrl(raw: string): string {
+  if (!raw) return raw;
+  const m = raw.match(
+    /^https:\/\/raw\.githubusercontent\.com\/n8n-io\/n8n-docs\/[^/]+\/docs\/(.+)$/i
+  );
+  if (!m) return raw;
+  let p = m[1]
+    .replace(/\/index\.md$/i, "/")
+    .replace(/\.md$/i, "/");
+  if (!p.endsWith("/")) p += "/";
+  return `https://docs.n8n.io/${p}`;
+}
+
+/**
+ * Defensive in-viewer rewriter for `<a href>` props produced by ReactMarkdown.
+ * Some stored docs (especially older AR translations) still contain root-
+ * relative paths like `/integrations/builtin/credentials/foo.md` — those
+ * would resolve against our app origin and 404. Convert them to absolute
+ * docs.n8n.io URLs so the user lands on the real n8n documentation page.
+ *
+ *   /foo/bar.md           → https://docs.n8n.io/foo/bar/
+ *   /foo/bar/index.md#a   → https://docs.n8n.io/foo/bar/#a
+ *   /foo/bar              → https://docs.n8n.io/foo/bar/
+ *   /api/catalog/...      → unchanged (our own asset endpoints)
+ *   #anchor               → unchanged (in-page anchor)
+ *   https://...           → unchanged (already absolute)
+ */
+function normalizeDocLink(href: string | undefined): string | undefined {
+  if (!href) return href;
+  if (/^(https?:|mailto:|tel:|data:)/i.test(href)) return href;
+  if (href.startsWith("#")) return href;
+  if (href.startsWith("/api/")) return href;
+  if (!href.startsWith("/")) return href; // truly relative — leave alone
+  // Split off anchor / query
+  const hashIdx = href.search(/[#?]/);
+  let path = hashIdx >= 0 ? href.slice(0, hashIdx) : href;
+  const tail = hashIdx >= 0 ? href.slice(hashIdx) : "";
+  path = path.replace(/\/index\.md$/i, "/").replace(/\.md$/i, "/");
+  if (!path.endsWith("/")) path += "/";
+  return `https://docs.n8n.io${path}${tail}`;
+}
+
+/* ─────────────────────────────────────────────────── */
 /* Docs viewer (EN/AR with lazy translate)             */
 /* ─────────────────────────────────────────────────── */
 function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boolean; isAdmin: boolean }) {
@@ -1310,9 +1365,10 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
         )}
         {data?.sourceUrl && (
           <a
-            href={data.sourceUrl.replace("raw.githubusercontent.com", "github.com").replace("/main/", "/blob/main/")}
+            href={rawDocsUrlToHumanUrl(data.sourceUrl)}
             target="_blank" rel="noreferrer"
             className="text-[10px] text-muted-foreground hover:text-accent inline-flex items-center gap-1 ms-auto"
+            title={rawDocsUrlToHumanUrl(data.sourceUrl)}
           >
             <ExternalLink size={10} />{isRTL ? "المصدر" : "source"}
           </a>
@@ -1396,7 +1452,14 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  a: ({ ...props }) => <a {...props} target="_blank" rel="noreferrer" />,
+                  a: ({ href, ...props }) => (
+                    <a
+                      {...props}
+                      href={normalizeDocLink(href)}
+                      target="_blank"
+                      rel="noreferrer"
+                    />
+                  ),
                   img: ({ ...props }) => <img {...props} loading="lazy" />,
                 }}
               >
