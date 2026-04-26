@@ -232,17 +232,25 @@ export class NodeDocsEnAdapter implements ResourceAdapter<NodeDocsKey> {
    * Hydration insert with `WHERE markdown IS NULL AND manual_override IS NULL`
    * built into the conflict resolution. NEVER overwrites live content or
    * manual overrides — Plan §15.3.
+   *
+   * Phase 4: when the manifest has a matching entry, `meta.sha`/`meta.etag`/
+   * `meta.sourceUrl` are written together with the markdown so the very next
+   * smart-refresh can send `If-None-Match` and short-circuit on 304s.
    */
-  async hydrateInsert(key: NodeDocsKey, content: string): Promise<boolean> {
+  async hydrateInsert(
+    key: NodeDocsKey,
+    content: string,
+    meta?: { sha?: string; etag?: string; sourceUrl?: string },
+  ): Promise<boolean> {
     const inserted = await db
       .insert(nodeDocsTable)
       .values({
         nodeType: key.nodeType,
         language: "en",
         markdown: content,
-        sourceUrl: null,
-        sourceSha: null,
-        sourceEtag: null,
+        sourceUrl: meta?.sourceUrl ?? null,
+        sourceSha: meta?.sha ?? null,
+        sourceEtag: meta?.etag ?? null,
         error: null,
         fetchedAt: new Date(),
       })
@@ -250,6 +258,12 @@ export class NodeDocsEnAdapter implements ResourceAdapter<NodeDocsKey> {
         target: [nodeDocsTable.nodeType, nodeDocsTable.language],
         set: {
           markdown: sql`COALESCE(${nodeDocsTable.markdown}, EXCLUDED.markdown)`,
+          // Only fill metadata columns when they're currently empty, so we
+          // never clobber values written by a real upsert with stale manifest
+          // values (manifest could be older than the live row).
+          sourceUrl: sql`COALESCE(${nodeDocsTable.sourceUrl}, EXCLUDED.source_url)`,
+          sourceSha: sql`COALESCE(${nodeDocsTable.sourceSha}, EXCLUDED.source_sha)`,
+          sourceEtag: sql`COALESCE(${nodeDocsTable.sourceEtag}, EXCLUDED.source_etag)`,
           fetchedAt: sql`CASE WHEN ${nodeDocsTable.markdown} IS NULL THEN NOW() ELSE ${nodeDocsTable.fetchedAt} END`,
         },
         where: and(

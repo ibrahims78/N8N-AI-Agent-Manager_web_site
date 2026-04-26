@@ -1,15 +1,18 @@
 /**
  * Per-kind on-disk manifest: a flat JSON describing every cached entry.
  *
- * Layout: `lib/n8n-nodes-catalog/<kind>/_meta/manifest.json`
+ * Layout: `<rootDir>/_meta/<kind>.manifest.json`
+ *   e.g. `lib/n8n-nodes-catalog/docs/_meta/node-docs.manifest.json`
  *
  * Purpose:
  *   - Survival of DB resets: if DB is wiped, we can rebuild knowledge of
  *     "what's on disk" from the manifest alone, no network needed.
- *   - Cheap second-level cache: ETag/SHA stored beside the file mirror.
+ *   - Cheap second-level cache: ETag/SHA stored beside the file mirror so
+ *     `If-None-Match` works on the very first request after a DB wipe.
  *
  * All writes are **atomic** (temp file + rename) so a crash mid-write never
- * leaves a corrupted manifest.
+ * leaves a corrupted manifest. The temp filename always lives next to the
+ * target so `rename(2)` stays inside one filesystem.
  */
 import { promises as fs } from "node:fs";
 import path from "node:path";
@@ -37,7 +40,7 @@ export function manifestKey(slug: string, language?: DocLang): string {
 }
 
 export function manifestPath(rootDir: string, kind: string): string {
-  return path.join(rootDir, kind, "_meta", "manifest.json");
+  return path.join(rootDir, "_meta", `${kind}.manifest.json`);
 }
 
 export async function readManifest(rootDir: string, kind: string): Promise<Manifest> {

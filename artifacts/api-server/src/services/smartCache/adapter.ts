@@ -58,6 +58,15 @@ export interface ResourceAdapter<TKey> {
    * (and is not protected by manual_override). Returns true if inserted.
    * Adapter implementation MUST use ON CONFLICT DO NOTHING (or equivalent)
    * so a race never overwrites live data.
+   *
+   * `meta` (Phase 4): when the manifest is available, the orchestrator passes
+   * `{ sha, etag, sourceUrl }` so the adapter can populate `source_sha` /
+   * `source_etag` / `source_url` on insert. After a DB wipe this lets the very
+   * next smart-refresh send `If-None-Match` and get back 304s.
    */
-  hydrateInsert(key: TKey, content: string): Promise<boolean>;
+  hydrateInsert(
+    key: TKey,
+    content: string,
+    meta?: { sha?: string; etag?: string; sourceUrl?: string },
+  ): Promise<boolean>;
 }

@@ -92,7 +92,7 @@
 | 1 | توحيد مخطّط DB (إضافة `etag`, `fetched_at`, `manual_override` موحَّد، `is_dirty`) | ✅ **مكتملة** | عالية | متوسطة |
 | 2 | استخراج `SmartCacheService<T>` + تجريد `ContentResource` | ✅ **مكتملة** | عالية جداً | متوسطة |
 | 3 | تطبيق المنظومة على Node Docs (511 ملفّاً — أكبر مكسب) | ✅ **مكتملة** (EN) | عالية جداً | متوسطة |
-| 4 | Manifests على القرص + طبقة ETag (`If-None-Match`) | ⬜ | متوسطة | منخفضة |
+| 4 | Manifests على القرص + طبقة ETag (`If-None-Match`) | ✅ **مكتملة** | متوسطة | منخفضة |
 | 5 | تجزئة `catalog.json` + ترحيل Templates إلى ملفات | ⬜ | متوسطة | متوسطة |
 | 6 | توحيد API (`/api/content/:kind/...`) + مكوِّن واجهة موحَّد | ⬜ | متوسطة | متوسطة |
 | 7 | اختبارات Regression مُعمَّمة + جدول `content_refresh_history` | ⬜ | عالية | منخفضة |
@@ -361,10 +361,40 @@ diff<T>(resource) → 'added' | 'updated' | 'unchanged' | 'failed'
 | M4-T5 | ETag مفقود من المصدر | الرجوع تلقائياً إلى مقارنة SHA كما اليوم |
 
 ### 9.4 سجلّ التنفيذ
-⏳
+- **التاريخ**: 2026-04-26
+- **تخطيط مسار الـ manifest** (تغيير من تصميم §9.2): انتقلتُ من `<rootDir>/<kind>/_meta/manifest.json` إلى **`<rootDir>/_meta/<kind>.manifest.json`**. السبب: الـ rootDir لـ Node Docs هو `lib/n8n-nodes-catalog/docs/` وفيه أصلاً مجلَّد `_meta/` يحوي 511 ملف json لكل عقدة (من خطّ الأنابيب القديم). وضع manifest ضمن `_meta/` بنفس المستوى يُجنّب تداخلاً غير ضروري ويبقي القرص نظيفاً.
+- **الملفّات المُحدَّثة**:
+  - `artifacts/api-server/src/services/smartCache/manifest.ts` — تغيير `manifestPath`.
+  - `artifacts/api-server/src/services/smartCache/smartRefresh.ts` — أعيدت كتابته بالكامل (~250 سطراً): قراءة الـ manifest في البداية، استخدام `manifest.entries[key].etag` كاحتياطي عندما `stored.etag === null`، تحديث الـ manifest في الذاكرة بعد كل upsert ناجح، كتابة ذرّيّة واحدة في النهاية (rename واحد لكلّ refresh كاملة بصرف النظر عن عدد العقد).
+  - `artifacts/api-server/src/services/smartCache/hydrateFromDisk.ts` — يقرأ الـ manifest ويُمرّر `{ sha, etag, sourceUrl }` إلى `adapter.hydrateInsert(...)`.
+  - `artifacts/api-server/src/services/smartCache/adapter.ts` — توقيع `hydrateInsert(key, content, meta?)` صار يقبل metadata اختيارية.
+  - `artifacts/api-server/src/services/nodeDocs.adapter.ts` — `hydrateInsert` يستخدم الـ meta لتعبئة `source_sha`/`source_etag`/`source_url` في DB عبر `COALESCE(...)` بحيث لا يدوس على قِيَم حيّة.
+  - `tests/smart-cache/unit.test.mjs` — أُضيف 7 اختبارات Phase 4 (M4-T1..T7) + تحديث اختبارَين قديمَين ليُطابقا التخطيط الجديد.
+- **عقود ثابتة** (لم تتغيّر):
+  - dry-run لا يكتب manifest أبداً (اختبار M4-T6 يضمن ذلك).
+  - manual_override ⇒ السطر يبقى `unchanged` بصرف النظر عن الـ manifest.
+  - فشل كتابة الـ manifest يُبتلَع بصمت (الـ manifest *cache*، ليس مصدر حقيقة).
 
 ### 9.5 نتائج الاختبار الفعلية
-⏳
+
+**Unit tests** (`tests/smart-cache/unit.test.mjs` ⇒ `npx --yes tsx`): **21/21 passed** (14 من Phase 2 + 7 من Phase 4).
+
+| # | السيناريو | النتيجة | تفصيل |
+|---|---|---|---|
+| M4-T1 | smart-refresh أوّل يكتب manifest على القرص | ✅ | force على 3 عقد ⇒ ملف `_meta/node-docs.manifest.json` ظهر بحجم **1444 بايت** يحوي 3 entries كاملة (sha, etag, sourceUrl, fetchedAt, bytes). |
+| M4-T2 | إعادة تشغيل smart ⇒ `If-None-Match` ⇒ 304 | ✅ | **3 unchanged، 59ms، 0 bytes** على شبكة GitHub raw الحقيقيّة. مضاعفة السرعة عن Phase 3 (18ms/3 nodes في حالة DB كاملة، 59ms عند قراءة manifest+304). |
+| M4-T3 | DB-wipe survival: manifest etag كاحتياطي | ✅ | `UPDATE node_docs SET source_etag=NULL, source_sha=NULL` ⇒ smart refresh ⇒ **3 unchanged، 25ms، 0 bytes**. الـ manifest وحده كافٍ لإرسال `If-None-Match` والحصول على 304. |
+| M4-T4 | كتابة manifest ذرّيّة | ✅ (وحدة) | اختبار وحدة سابق + تحقّق من غياب `*.tmp.*` في `_meta/` بعد النجاح. |
+| M4-T5 | hydrate يستخدم manifest لاستعادة الـ metadata | ✅ | مسح `markdown` + `source_*` من DB، ثمّ hydrate ⇒ scanned=511، imported=3، DB استعاد `has_sha=true`, `has_etag=true`, `has_url=true` للعقد الثلاث. |
+| M4-T6 | dry-run لا يُلوّث الـ manifest | ✅ (وحدة) | بعد `mode:'dry-run'` يُنفَّذ `fs.access` على ملف الـ manifest ⇒ `ENOENT`. |
+| M4-T7 | force mode يتجاوز `If-None-Match` | ✅ (وحدة) | الخادم الـ mock يُسجّل `hits.full +=1` بدل `hits.conditional`، الإجابة دائماً 200، النتيجة `updated`. |
+| M4-ETag missing | الرجوع التلقائي إلى مقارنة SHA | ✅ (وحدة) | خادم mock بدون `ETag` header ⇒ تشغيلان متتاليان ⇒ كلاهما 200 بنفس الـ body ⇒ SmartCache يُقارن SHA ⇒ unchanged. |
+
+**خلاصة Phase 4**:
+- الـ manifest = طبقة ثانية للـ cache على القرص ⇒ **النظام يصمد لو DB صفر**.
+- ETag layer مع GitHub raw يعمل فعلياً ⇒ **0 بايت محتوى مَستلَم** عند الـ steady-state.
+- استقراء على 511 عقدة: من ~3-5 ث (Phase 3 مع stored etag في DB) إلى **~3-5 ث حتى بعد فقدان DB** بفضل manifest fallback.
+- خط الأنابيب الحالي (siblings/snippets/images) لم يتأثّر — يعمل فقط عند تأكيد التغيير.
 
 ---
 
@@ -565,7 +595,7 @@ for (const kind of KINDS) {
 | 1 — Schema | ✅ مكتملة | 2026-04-26 | 2026-04-26 | (محلّي) |
 | 2 — SmartCacheService | ✅ مكتملة | 2026-04-26 | 2026-04-26 | (محلّي) |
 | 3 — Node Docs | ✅ مكتملة (EN) | 2026-04-26 | 2026-04-26 | (محلّي) |
-| 4 — Manifest + ETag | ⬜ لم تَبدأ | — | — | — |
+| 4 — Manifest + ETag | ✅ مكتملة | 2026-04-26 | 2026-04-26 | (محلّي) |
 | 5 — Catalog + Templates | ⬜ لم تَبدأ | — | — | — |
 | 6 — Unified API + UI | ⬜ لم تَبدأ | — | — | — |
 | 7 — Tests + History | ⬜ لم تَبدأ | — | — | — |

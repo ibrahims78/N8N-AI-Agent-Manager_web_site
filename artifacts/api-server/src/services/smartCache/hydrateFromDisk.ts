@@ -7,7 +7,19 @@
  * filled — including by a manual_override — is never overwritten.
  *
  * Hydration NEVER touches the network and NEVER calls AI. (Plan §15.3.)
+ *
+ * Phase 4 — Manifest layer:
+ *   - Reads `<rootDir>/_meta/<kind>.manifest.json` once.
+ *   - For every disk key, passes the matching manifest entry's `sha`/`etag`/
+ *     `sourceUrl` into `adapter.hydrateInsert(key, content, meta)` so the DB
+ *     wakes up fully primed for a 304-only next smart-refresh.
  */
+import {
+  emptyManifest,
+  manifestKey,
+  readManifest,
+  type Manifest,
+} from "./manifest";
 import type { ResourceAdapter } from "./adapter";
 import type { DocLang, HydrateSummary } from "./types";
 
@@ -24,6 +36,14 @@ export async function hydrateFromDisk<TKey>(
     failed: 0,
   };
 
+  // Phase 4: read manifest once; if missing/corrupt, fall back to empty.
+  let manifest: Manifest = emptyManifest(adapter.kind);
+  try {
+    manifest = await readManifest(adapter.rootDir, adapter.kind);
+  } catch {
+    manifest = emptyManifest(adapter.kind);
+  }
+
   let keys: TKey[];
   try {
     keys = await adapter.listDiskKeys(language);
@@ -39,7 +59,12 @@ export async function hydrateFromDisk<TKey>(
         summary.skipped += 1;
         continue;
       }
-      const inserted = await adapter.hydrateInsert(key, content);
+      const desc = adapter.describe(key);
+      const mEntry = manifest.entries[manifestKey(desc.slug, desc.language)];
+      const meta = mEntry
+        ? { sha: mEntry.sha, etag: mEntry.etag, sourceUrl: mEntry.sourceUrl }
+        : undefined;
+      const inserted = await adapter.hydrateInsert(key, content, meta);
       if (inserted) summary.imported += 1;
       else summary.skipped += 1;
     } catch {
