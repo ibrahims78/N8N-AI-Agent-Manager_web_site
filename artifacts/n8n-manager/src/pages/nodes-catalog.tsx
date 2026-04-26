@@ -10,18 +10,18 @@
  *  - حوار تفاصيل بـ 3 تبويبات: معلومات، أمثلة، توثيق (EN/AR + تحرير + إصدارات).
  *  - لوحة تحكم الأدمن: تحديث الكتالوج، جلب التوثيقات، الترجمة، المزامنة الدورية، التصدير.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
   Search, ExternalLink, BookOpen, KeyRound, Filter, Loader2,
   Zap, Package, ChevronLeft, ChevronRight, Tag, RefreshCw, Globe,
-  Languages, FileText, CheckCircle2, AlertCircle, Database,
-  HardDrive, FolderOpen, ChevronDown, ChevronUp, X, SlidersHorizontal,
-  Sparkles,
+  Languages, FileText, CheckCircle2, AlertCircle,
+  HardDrive, X, SlidersHorizontal, Sparkles, Settings as SettingsIcon,
 } from "lucide-react";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -40,7 +40,6 @@ import {
   OperationsPanel, HistoryPanel, ManualEditor, WorkflowJsonViewer,
 } from "@/components/docs/AdvancedDocsTools";
 import { GlobalDocsSearch } from "@/components/docs/GlobalDocsSearch";
-import { SyncSettingsCard } from "@/components/docs/SyncSettingsCard";
 
 interface CatalogItem {
   id: number;
@@ -83,392 +82,13 @@ interface DocsStats {
 
 interface DocCoverageEntry { nodeType: string; en: boolean; ar: boolean }
 
-interface BulkProgress {
-  total: number;
-  attempted: number;
-  fetched: number;
-  failed: number;
-  current?: string;
-}
-
 const PAGE_SIZE = 24;
 
 /* ─────────────────────────────────────────────────── */
-/* SSE streaming hook                                  */
+/* (Admin panel + SSE hook + StatCard/ActionCard moved │
+/*  to components/docs/CatalogAdminPanel.tsx.)         */
 /* ─────────────────────────────────────────────────── */
-interface SSEError { message: string; code?: string }
 
-function useSSEOperation() {
-  const [running, setRunning] = useState(false);
-  const [progress, setProgress] = useState<BulkProgress | null>(null);
-  const [done, setDone] = useState<BulkProgress | null>(null);
-  const [error, setError] = useState<SSEError | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
-
-  const start = useCallback(async (
-    url: string,
-    onDone?: (result: { done: BulkProgress | null; error: SSEError | null }) => void
-  ) => {
-    if (running) return;
-    setRunning(true);
-    setProgress(null);
-    setDone(null);
-    setError(null);
-
-    let finalDone: BulkProgress | null = null;
-    let finalError: SSEError | null = null;
-
-    abortRef.current = new AbortController();
-    try {
-      const resp = await fetch(`${API_BASE}${url}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...getAuthHeader() },
-        credentials: "include",
-        signal: abortRef.current.signal,
-      });
-
-      if (!resp.body) throw new Error("No response body");
-
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      while (true) {
-        const { done: streamDone, value } = await reader.read();
-        if (streamDone) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const events = buffer.split("\n\n");
-        buffer = events.pop() ?? "";
-
-        for (const event of events) {
-          const lines = event.split("\n");
-          let eventType = "message";
-          let dataStr = "";
-          for (const line of lines) {
-            if (line.startsWith("event: ")) eventType = line.slice(7).trim();
-            else if (line.startsWith("data: ")) dataStr = line.slice(6).trim();
-          }
-          if (!dataStr) continue;
-          try {
-            const data = JSON.parse(dataStr) as BulkProgress & { message?: string; code?: string };
-            if (eventType === "done") {
-              finalDone = data;
-              setDone(data);
-              setProgress(data);
-            } else if (eventType === "error") {
-              finalError = { message: data.message || "Unknown error", code: data.code };
-              setError(finalError);
-            } else {
-              setProgress(data);
-            }
-          } catch {
-            // ignore parse errors
-          }
-        }
-      }
-    } catch (err) {
-      if ((err as Error).name !== "AbortError") {
-        finalError = { message: (err as Error).message || String(err) };
-        setError(finalError);
-        console.error("SSE error:", err);
-      }
-    } finally {
-      setRunning(false);
-      onDone?.({ done: finalDone, error: finalError });
-    }
-  }, [running]);
-
-  const stop = useCallback(() => {
-    abortRef.current?.abort();
-    setRunning(false);
-  }, []);
-
-  return { running, progress, done, error, start, stop };
-}
-
-/* ─────────────────────────────────────────────────── */
-/* Progress Bar                                        */
-/* ─────────────────────────────────────────────────── */
-function ProgressBar({ value, max, color = "bg-accent" }: { value: number; max: number; color?: string }) {
-  const pct = max > 0 ? Math.round((value / max) * 100) : 0;
-  return (
-    <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
-      <motion.div
-        className={`h-full rounded-full ${color}`}
-        initial={{ width: 0 }}
-        animate={{ width: `${pct}%` }}
-        transition={{ duration: 0.3 }}
-      />
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────── */
-/* Admin Panel                                         */
-/* ─────────────────────────────────────────────────── */
-function CatalogAdminPanel({
-  isRTL,
-  docsStats,
-  status,
-  onRefreshed,
-}: {
-  isRTL: boolean;
-  docsStats: DocsStats | undefined;
-  status: StatusItem | undefined;
-  onRefreshed: () => void;
-}) {
-  const { toast } = useToast();
-  const [open, setOpen] = useState(false);
-  const [refreshingCatalog, setRefreshingCatalog] = useState(false);
-  const fetchOp = useSSEOperation();
-  const translateOp = useSSEOperation();
-
-  async function authedFetch(path: string, init?: RequestInit) {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-      ...getAuthHeader(),
-      ...(init?.headers as Record<string, string> | undefined),
-    };
-    return fetch(`${API_BASE}${path}`, { ...init, headers, credentials: "include" });
-  }
-
-  async function refreshCatalog() {
-    setRefreshingCatalog(true);
-    try {
-      const r = await authedFetch(`/catalog/refresh`, { method: "POST" });
-      const j = await r.json();
-      if (j.success) {
-        toast({
-          title: isRTL ? "تم تحديث الكتالوج ✅" : "Catalog refreshed ✅",
-          description: isRTL ? `إجمالي العقد: ${j.data.status.totalNodes}` : `Total nodes: ${j.data.status.totalNodes}`,
-        });
-        onRefreshed();
-      } else {
-        toast({ title: isRTL ? "فشل التحديث" : "Refresh failed", description: j.error?.message, variant: "destructive" });
-      }
-    } catch (err) {
-      toast({ title: isRTL ? "خطأ" : "Error", description: String(err), variant: "destructive" });
-    } finally {
-      setRefreshingCatalog(false);
-    }
-  }
-
-  function handleFetchDone(result: { done: BulkProgress | null; error: SSEError | null }) {
-    if (result.error) {
-      toast({
-        title: isRTL ? "فشل جلب التوثيقات" : "Documentation fetch failed",
-        description: result.error.message,
-        variant: "destructive",
-      });
-      onRefreshed();
-      return;
-    }
-    const d = result.done;
-    const fetched = d?.fetched ?? 0;
-    const total = d?.total ?? 0;
-    const failed = d?.failed ?? 0;
-    toast({
-      title: isRTL ? "اكتمل جلب التوثيقات ✅" : "Documentation fetch complete ✅",
-      description: isRTL
-        ? `جُلب ${fetched} من ${total} عقدة${failed ? ` (فشل ${failed})` : ""}`
-        : `Fetched ${fetched} of ${total} nodes${failed ? ` (${failed} failed)` : ""}`,
-      variant: failed > 0 && fetched === 0 ? "destructive" : undefined,
-    });
-    onRefreshed();
-  }
-
-  function handleTranslateDone(result: { done: BulkProgress | null; error: SSEError | null }) {
-    // Distinguish three states:
-    //   1. Pre-flight error (no AI key) — actionable, send the user to Settings
-    //   2. All attempts failed — likely AI/quota issue mid-run
-    //   3. Real success (full or partial)
-    if (result.error) {
-      const isNoKey = result.error.code === "no_ai_key";
-      toast({
-        title: isNoKey
-          ? (isRTL ? "لم تبدأ الترجمة — مفتاح AI مفقود" : "Translation didn't start — AI key missing")
-          : (isRTL ? "فشلت الترجمة" : "Translation failed"),
-        description: isNoKey
-          ? (isRTL
-              ? "أضف مفتاح OpenAI من صفحة الإعدادات → تكامل الذكاء الاصطناعي ثم أعد المحاولة."
-              : "Add an OpenAI key from Settings → AI Integrations and try again.")
-          : result.error.message,
-        variant: "destructive",
-      });
-      onRefreshed();
-      return;
-    }
-    const d = result.done;
-    const translated = d?.fetched ?? 0;
-    const total = d?.total ?? 0;
-    const failed = d?.failed ?? 0;
-    if (total === 0) {
-      toast({
-        title: isRTL ? "لا يوجد ما يُترجم" : "Nothing to translate",
-        description: isRTL
-          ? "كل التوثيقات الإنجليزية المتوفرة مترجمة بالفعل."
-          : "All available English docs are already translated.",
-      });
-      onRefreshed();
-      return;
-    }
-    if (translated === 0) {
-      toast({
-        title: isRTL ? "لم تنجح الترجمة" : "Translation didn't succeed",
-        description: isRTL
-          ? `فشلت ${failed} محاولة من ${total}. تحقق من مفتاح AI وحصة الاستخدام.`
-          : `${failed} of ${total} attempts failed. Check your AI key and quota.`,
-        variant: "destructive",
-      });
-      onRefreshed();
-      return;
-    }
-    toast({
-      title: isRTL ? "اكتملت الترجمة ✅" : "Translation complete ✅",
-      description: isRTL
-        ? `تُرجم ${translated} من ${total}${failed ? ` (فشل ${failed})` : ""}`
-        : `Translated ${translated} of ${total}${failed ? ` (${failed} failed)` : ""}`,
-    });
-    onRefreshed();
-  }
-
-  return (
-    <Card className="border-accent/30 overflow-hidden">
-      {/* Header */}
-      <button
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
-        onClick={() => setOpen((v) => !v)}
-      >
-        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-          <Database size={16} className="text-accent" />
-          {isRTL ? "لوحة تحكم التوثيق (مدير)" : "Documentation Control Panel (Admin)"}
-          {(fetchOp.running || translateOp.running || refreshingCatalog) && (
-            <span className="inline-flex items-center gap-1 text-[10px] text-accent bg-accent/10 rounded-full px-2 py-0.5">
-              <Loader2 size={9} className="animate-spin" />
-              {isRTL ? "جاري التنفيذ..." : "Running..."}
-            </span>
-          )}
-        </div>
-        {open ? <ChevronUp size={16} className="text-muted-foreground" /> : <ChevronDown size={16} className="text-muted-foreground" />}
-      </button>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="px-4 pb-4 space-y-4 border-t border-border pt-4">
-              {/* Stats Grid */}
-              {docsStats && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <StatCard
-                    icon={<Package size={16} className="text-accent" />}
-                    label={isRTL ? "إجمالي العقد" : "Total Nodes"}
-                    value={docsStats.totalNodes}
-                    isRTL={isRTL}
-                  />
-                  <StatCard
-                    icon={<BookOpen size={16} className="text-emerald-500" />}
-                    label={isRTL ? "توثيقات EN" : "EN Docs"}
-                    value={docsStats.enFetched}
-                    total={docsStats.totalNodes}
-                    color="bg-emerald-500"
-                    isRTL={isRTL}
-                  />
-                  <StatCard
-                    icon={<Languages size={16} className="text-blue-500" />}
-                    label={isRTL ? "مترجم AR" : "AR Translated"}
-                    value={docsStats.arTranslated}
-                    total={docsStats.enFetched}
-                    color="bg-blue-500"
-                    isRTL={isRTL}
-                  />
-                  <StatCard
-                    icon={<HardDrive size={16} className="text-purple-500" />}
-                    label={isRTL ? "ملفات محلية" : "Local Files"}
-                    value={docsStats.localFiles.en + docsStats.localFiles.ar}
-                    subtitle={`EN: ${docsStats.localFiles.en} · AR: ${docsStats.localFiles.ar}`}
-                    isRTL={isRTL}
-                  />
-                </div>
-              )}
-
-              {/* Actions */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-
-                {/* 1: Refresh Catalog */}
-                <ActionCard
-                  icon={<RefreshCw size={14} />}
-                  title={isRTL ? "تحديث قائمة العقد" : "Update Node List"}
-                  description={isRTL
-                    ? "يجلب أحدث قائمة عقد من مستودع n8n الرسمي"
-                    : "Fetches the latest node list from the official n8n repo"}
-                  buttonLabel={isRTL ? "تحديث الآن" : "Update Now"}
-                  running={refreshingCatalog}
-                  disabled={fetchOp.running || translateOp.running}
-                  onAction={refreshCatalog}
-                  isRTL={isRTL}
-                />
-
-                {/* 2: Fetch English Docs */}
-                <ActionCard
-                  icon={<FileText size={14} />}
-                  title={isRTL ? "جلب التوثيقات الإنجليزية" : "Fetch English Docs"}
-                  description={isRTL
-                    ? "يجلب التوثيق من GitHub ويحفظه في DB والملفات المحلية"
-                    : "Fetches docs from GitHub and saves to DB + local files"}
-                  buttonLabel={fetchOp.running ? (isRTL ? "جاري الجلب..." : "Fetching...") : (isRTL ? "جلب التوثيقات" : "Fetch Docs")}
-                  running={fetchOp.running}
-                  disabled={refreshingCatalog || translateOp.running}
-                  onAction={() => fetchOp.start("/catalog/docs/fetch-all-stream?force=true", handleFetchDone)}
-                  onStop={fetchOp.stop}
-                  progress={fetchOp.progress}
-                  progressColor="bg-emerald-500"
-                  isRTL={isRTL}
-                />
-
-                {/* 3: Translate to Arabic */}
-                <ActionCard
-                  icon={<Languages size={14} />}
-                  title={isRTL ? "ترجمة التوثيقات للعربية" : "Translate to Arabic"}
-                  description={isRTL
-                    ? "يترجم جميع التوثيقات للعربية ويحفظها محلياً"
-                    : "Translates all docs to Arabic and saves locally"}
-                  buttonLabel={translateOp.running ? (isRTL ? "جاري الترجمة..." : "Translating...") : (isRTL ? "ترجمة الكل" : "Translate All")}
-                  running={translateOp.running}
-                  disabled={refreshingCatalog || fetchOp.running}
-                  onAction={() => translateOp.start("/catalog/docs/translate-all-stream?force=true", handleTranslateDone)}
-                  onStop={translateOp.stop}
-                  progress={translateOp.progress}
-                  progressColor="bg-blue-500"
-                  isRTL={isRTL}
-                />
-              </div>
-
-              {/* Local files notice */}
-              <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 border border-border">
-                <FolderOpen size={13} className="shrink-0 mt-0.5 text-accent" />
-                <span>
-                  {isRTL
-                    ? "يتم حفظ التوثيقات محلياً في مجلد lib/n8n-nodes-catalog/docs/ بصيغة Markdown لكل لغة على حدة، مما يتيح الوصول دون اتصال بالإنترنت."
-                    : "Documentation is saved locally under lib/n8n-nodes-catalog/docs/ as Markdown files per language, enabling offline access."}
-                </span>
-              </div>
-
-              {/* Sync settings + export tools */}
-              <SyncSettingsCard isRTL={isRTL} />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </Card>
-  );
-}
 
 /** Compact stat tile used in the page hero (visible to all users). */
 function HeroStat({
@@ -501,95 +121,6 @@ function HeroStat({
   );
 }
 
-function StatCard({
-  icon, label, value, total, subtitle, color = "bg-accent", isRTL,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-  total?: number;
-  subtitle?: string;
-  color?: string;
-  isRTL: boolean;
-}) {
-  return (
-    <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5">
-      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-        {icon}{label}
-      </div>
-      <div className="text-xl font-bold text-foreground">{value.toLocaleString()}</div>
-      {total != null && (
-        <ProgressBar value={value} max={total} color={color} />
-      )}
-      {subtitle && (
-        <div className="text-[10px] text-muted-foreground">{subtitle}</div>
-      )}
-    </div>
-  );
-}
-
-function ActionCard({
-  icon, title, description, buttonLabel, running, disabled,
-  onAction, onStop, progress, progressColor = "bg-accent", isRTL,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  buttonLabel: string;
-  running: boolean;
-  disabled?: boolean;
-  onAction: () => void;
-  onStop?: () => void;
-  progress?: BulkProgress | null;
-  progressColor?: string;
-  isRTL: boolean;
-}) {
-  return (
-    <div className="rounded-lg border border-border bg-background p-3 space-y-2.5 flex flex-col">
-      <div className="flex items-start gap-2">
-        <div className="p-1.5 rounded-md bg-muted text-muted-foreground shrink-0">{icon}</div>
-        <div className="min-w-0">
-          <div className="text-xs font-semibold text-foreground">{title}</div>
-          <div className="text-[11px] text-muted-foreground leading-relaxed">{description}</div>
-        </div>
-      </div>
-
-      {running && progress && (
-        <div className="space-y-1">
-          <ProgressBar value={progress.attempted} max={progress.total} color={progressColor} />
-          <div className="flex justify-between items-center text-[10px] text-muted-foreground">
-            <span>{progress.attempted} / {progress.total}</span>
-            <span className="text-emerald-500">{progress.fetched} ✓</span>
-            {progress.failed > 0 && <span className="text-red-500">{progress.failed} ✗</span>}
-          </div>
-          {progress.current && (
-            <div className="text-[10px] text-muted-foreground truncate font-mono" title={progress.current} dir="ltr">
-              ↳ {progress.current}
-            </div>
-          )}
-        </div>
-      )}
-
-      <div className="flex gap-2 mt-auto">
-        <Button
-          size="sm"
-          variant={running ? "secondary" : "outline"}
-          className="flex-1 gap-1.5 text-xs h-7"
-          disabled={disabled && !running}
-          onClick={onAction}
-        >
-          {running ? <Loader2 size={12} className="animate-spin" /> : icon}
-          {buttonLabel}
-        </Button>
-        {running && onStop && (
-          <Button size="sm" variant="ghost" className="h-7 px-2 text-muted-foreground hover:text-foreground" onClick={onStop}>
-            <X size={12} />
-          </Button>
-        )}
-      </div>
-    </div>
-  );
-}
 
 /* ─────────────────────────────────────────────────── */
 /* Main Page                                           */
@@ -708,15 +239,28 @@ export default function NodesCatalogPage() {
                 : "Professional reference for every n8n node with full docs in Arabic & English, sub-operations, version history, manual editing, and periodic sync with the official repo."}
             </p>
           </div>
-          {status?.fetchedAt && (
-            <div className="text-[11px] text-muted-foreground bg-background/60 rounded-md px-3 py-1.5 border border-border">
-              <CheckCircle2 size={11} className="inline -mt-0.5 me-1 text-emerald-500" />
-              {isRTL ? "آخر مزامنة: " : "Last sync: "}
-              <strong className="text-foreground">
-                {new Date(status.fetchedAt).toLocaleString(isRTL ? "ar" : "en")}
-              </strong>
-            </div>
-          )}
+          <div className="flex flex-col items-end gap-2 shrink-0">
+            {status?.fetchedAt && (
+              <div className="text-[11px] text-muted-foreground bg-background/60 rounded-md px-3 py-1.5 border border-border">
+                <CheckCircle2 size={11} className="inline -mt-0.5 me-1 text-emerald-500" />
+                {isRTL ? "آخر مزامنة: " : "Last sync: "}
+                <strong className="text-foreground">
+                  {new Date(status.fetchedAt).toLocaleString(isRTL ? "ar" : "en")}
+                </strong>
+              </div>
+            )}
+            {/* Admin shortcut to the relocated documentation control panel. */}
+            {isAdmin && (
+              <Link
+                href="/settings#docs-admin"
+                className="inline-flex items-center gap-1.5 text-[11px] font-medium text-accent hover:text-accent/80 bg-accent/10 hover:bg-accent/15 rounded-md px-2.5 py-1.5 border border-accent/20 transition-colors"
+                title={isRTL ? "الذهاب إلى لوحة تحكم التوثيق في الإعدادات" : "Open the documentation control panel in Settings"}
+              >
+                <SettingsIcon size={12} />
+                {isRTL ? "إدارة التوثيق →" : "Manage docs →"}
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* ─── Header stats strip (visible to everyone) ─── */}
@@ -751,15 +295,8 @@ export default function NodesCatalogPage() {
         </div>
       </div>
 
-      {/* ─── Admin Panel ─── */}
-      {isAdmin && (
-        <CatalogAdminPanel
-          isRTL={isRTL}
-          docsStats={docsStats}
-          status={status}
-          onRefreshed={invalidateAll}
-        />
-      )}
+      {/* Admin panel relocated to the Settings page (/settings#docs-admin).
+          A shortcut link is rendered in the page header for admins. */}
 
       {/* ─── Global content search (BM25) ─── */}
       <Card className="p-4 space-y-2">

@@ -1,13 +1,12 @@
-```yaml
-contentType: [integration, reference]
+---
+contentType: [تكامل, مرجع]
 tags:
-  - code node
-  - code
+  - عقدة الكود
+  - كود
 hide:
   - tags
 ---
 
-# استخدام عقدة Code
+# استخدام عقدة الكود
 
 --8<-- "_snippets/integrations/builtin/core-nodes/code-node.md"
-```
