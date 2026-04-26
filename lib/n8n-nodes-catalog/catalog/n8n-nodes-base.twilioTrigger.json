@@ -1,0 +1,25 @@
+{
+  "nodeType": "n8n-nodes-base.twilioTrigger",
+  "displayName": "Twilio",
+  "fileName": "TwilioTrigger",
+  "folder": "Twilio",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "SMS",
+    "Phone",
+    "Voice"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/twilio/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.twiliotrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Twilio/twilio.svg",
+  "sourcePath": "packages/nodes-base/nodes/Twilio/TwilioTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

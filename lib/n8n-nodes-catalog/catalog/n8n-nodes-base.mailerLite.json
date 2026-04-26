@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.mailerLite",
+  "displayName": "MailerLite",
+  "fileName": "MailerLite",
+  "folder": "MailerLite",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/mailerlite/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mailerlite/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/MailerLite/mailerlite.svg",
+  "sourcePath": "packages/nodes-base/nodes/MailerLite/MailerLite.node.json",
+  "packageName": "n8n-nodes-base"
+}

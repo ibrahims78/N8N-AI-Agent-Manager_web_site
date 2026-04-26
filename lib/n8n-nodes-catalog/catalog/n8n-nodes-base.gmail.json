@@ -1,0 +1,68 @@
+{
+  "nodeType": "n8n-nodes-base.gmail",
+  "displayName": "",
+  "fileName": "",
+  "folder": "",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "HITL"
+  ],
+  "subcategories": {
+    "HITL": [
+      "Human in the Loop"
+    ]
+  },
+  "aliases": [
+    "email",
+    "human",
+    "form",
+    "wait",
+    "hitl",
+    "approval"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/google/oauth-single-service/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gmail/",
+  "examples": [
+    {
+      "label": "Why business process automation with n8n can change your daily life",
+      "url": "https://n8n.io/blog/why-business-process-automation-with-n8n-can-change-your-daily-life/",
+      "icon": "🧬"
+    },
+    {
+      "label": "Supercharging your conference registration process with n8n",
+      "url": "https://n8n.io/blog/supercharging-your-conference-registration-process-with-n8n/",
+      "icon": "🎫"
+    },
+    {
+      "label": "6 e-commerce workflows to power up your Shopify s",
+      "url": "https://n8n.io/blog/no-code-ecommerce-workflow-automations/",
+      "icon": "store"
+    },
+    {
+      "label": "How to get started with CRM automation (with 3 no-code workflow ideas",
+      "url": "https://n8n.io/blog/how-to-get-started-with-crm-automation-and-no-code-workflow-ideas/",
+      "icon": "👥"
+    },
+    {
+      "label": "15 Google apps you can combine and automate to increase productivity",
+      "url": "https://n8n.io/blog/automate-google-apps-for-productivity/",
+      "icon": "💡"
+    },
+    {
+      "label": "Hey founders! Your business doesn't need you to operate",
+      "url": "https://n8n.io/blog/your-business-doesnt-need-you-to-operate/",
+      "icon": " 🖥️"
+    },
+    {
+      "label": "Using Automation to Boost Productivity in the Workplace",
+      "url": "https://n8n.io/blog/using-automation-to-boost-productivity-in-the-workplace/",
+      "icon": "💪"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes//.svg",
+  "sourcePath": "packages/nodes-base/nodes/Google/Gmail/Gmail.node.json",
+  "packageName": "n8n-nodes-base"
+}

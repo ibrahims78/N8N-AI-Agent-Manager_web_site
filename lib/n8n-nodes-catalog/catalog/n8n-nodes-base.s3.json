@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.s3",
+  "displayName": "S3",
+  "fileName": "S3",
+  "folder": "S3",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/s3/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.s3/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/S3/s3.svg",
+  "sourcePath": "packages/nodes-base/nodes/S3/S3.node.json",
+  "packageName": "n8n-nodes-base"
+}

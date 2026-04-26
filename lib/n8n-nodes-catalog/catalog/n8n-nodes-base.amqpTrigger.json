@@ -1,0 +1,27 @@
+{
+  "nodeType": "n8n-nodes-base.amqpTrigger",
+  "displayName": "Amqp",
+  "fileName": "AmqpTrigger",
+  "folder": "Amqp",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/amqp/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.amqptrigger/",
+  "examples": [
+    {
+      "label": "Learn to Automate Your Factory's Incident Reporting: A Step by Step Guide",
+      "url": "https://n8n.io/blog/learn-to-automate-your-factorys-incident-reporting-a-step-by-step-guide/",
+      "icon": "🏭"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Amqp/amqp.svg",
+  "sourcePath": "packages/nodes-base/nodes/Amqp/AmqpTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

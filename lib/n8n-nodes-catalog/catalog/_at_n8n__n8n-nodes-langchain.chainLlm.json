@@ -1,0 +1,28 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.chainLlm",
+  "displayName": "Basic LLM Chain",
+  "fileName": "ChainLlm",
+  "folder": "ChainLLM",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Chains",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [
+    "LangChain"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainllm/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/chains/ChainLLM/ChainLlm.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "A simple chain to prompt a large language model"
+}

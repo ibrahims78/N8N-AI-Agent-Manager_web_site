@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.uptimeRobot",
+  "displayName": "UptimeRobot",
+  "fileName": "UptimeRobot",
+  "folder": "UptimeRobot",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/uptimerobot/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.uptimerobot/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/UptimeRobot/uptimerobot.svg",
+  "sourcePath": "packages/nodes-base/nodes/UptimeRobot/UptimeRobot.node.json",
+  "packageName": "n8n-nodes-base"
+}

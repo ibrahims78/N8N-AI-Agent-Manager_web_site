@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.erpNext",
+  "displayName": "ERPNext",
+  "fileName": "ERPNext",
+  "folder": "ERPNext",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Finance & Accounting",
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/erpnext/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.erpnext/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ERPNext/erpnext.svg",
+  "sourcePath": "packages/nodes-base/nodes/ERPNext/ERPNext.node.json",
+  "packageName": "n8n-nodes-base"
+}

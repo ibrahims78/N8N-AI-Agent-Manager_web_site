@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.autopilot",
+  "displayName": "Autopilot",
+  "fileName": "Autopilot",
+  "folder": "Autopilot",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/autopilot/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.autopilot/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Autopilot/autopilot.svg",
+  "sourcePath": "packages/nodes-base/nodes/Autopilot/Autopilot.node.json",
+  "packageName": "n8n-nodes-base"
+}

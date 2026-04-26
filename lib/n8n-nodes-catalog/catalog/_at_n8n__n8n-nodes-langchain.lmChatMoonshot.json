@@ -1,0 +1,29 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatMoonshot",
+  "displayName": "Moonshot Kimi Chat Model",
+  "fileName": "LmChatMoonshot",
+  "folder": "LmChatMoonshot",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Language Models",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [
+    "kimi",
+    "moonshot"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatmoonshot/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/llms/LmChatMoonshot/LmChatMoonshot.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "For advanced usage with an AI chain"
+}

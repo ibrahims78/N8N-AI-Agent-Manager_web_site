@@ -1,0 +1,31 @@
+{
+  "nodeType": "n8n-nodes-base.errorTrigger",
+  "displayName": "ErrorTrigger",
+  "fileName": "ErrorTrigger",
+  "folder": "ErrorTrigger",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Other Trigger Nodes"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.errortrigger/",
+  "examples": [
+    {
+      "label": "Creating Error Workflows in n8n",
+      "url": "https://n8n.io/blog/creating-error-workflows-in-n8n/",
+      "icon": "🌪"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ErrorTrigger/errortrigger.svg",
+  "sourcePath": "packages/nodes-base/nodes/ErrorTrigger/ErrorTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

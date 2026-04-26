@@ -1,0 +1,21 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.manualChatTrigger",
+  "displayName": "Manual Chat Trigger",
+  "fileName": "ManualChatTrigger",
+  "folder": "ManualChatTrigger",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/trigger/ManualChatTrigger/ManualChatTrigger.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Runs the flow on new manual chat message"
+}

@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.n8nTrigger",
+  "displayName": "N8nTrigger",
+  "fileName": "N8nTrigger",
+  "folder": "N8nTrigger",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Flow",
+      "Other Trigger Nodes",
+      "Helpers"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.n8ntrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/N8nTrigger/n8ntrigger.svg",
+  "sourcePath": "packages/nodes-base/nodes/N8nTrigger/N8nTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

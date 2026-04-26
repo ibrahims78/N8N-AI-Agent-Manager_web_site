@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.calTrigger",
+  "displayName": "Cal",
+  "fileName": "CalTrigger",
+  "folder": "Cal",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity",
+    "Utility"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/cal/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.caltrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Cal/cal.svg",
+  "sourcePath": "packages/nodes-base/nodes/Cal/CalTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

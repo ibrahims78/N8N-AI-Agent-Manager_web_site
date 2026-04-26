@@ -1,0 +1,28 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.memoryZep",
+  "displayName": "Zep",
+  "fileName": "MemoryZep",
+  "folder": "MemoryZep",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Memory"
+    ],
+    "Memory": [
+      "Other memories"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memoryzep/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/memory/MemoryZep/MemoryZep.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Use Zep Memory"
+}

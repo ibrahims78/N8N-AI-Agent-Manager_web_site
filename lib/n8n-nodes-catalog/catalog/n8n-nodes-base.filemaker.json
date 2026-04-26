@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.filemaker",
+  "displayName": "FileMaker",
+  "fileName": "FileMaker",
+  "folder": "FileMaker",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/filemaker/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.filemaker/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/FileMaker/filemaker.svg",
+  "sourcePath": "packages/nodes-base/nodes/FileMaker/FileMaker.node.json",
+  "packageName": "n8n-nodes-base"
+}

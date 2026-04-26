@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.mocean",
+  "displayName": "Mocean",
+  "fileName": "Mocean",
+  "folder": "Mocean",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/mocean/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mocean/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Mocean/mocean.svg",
+  "sourcePath": "packages/nodes-base/nodes/Mocean/Mocean.node.json",
+  "packageName": "n8n-nodes-base"
+}

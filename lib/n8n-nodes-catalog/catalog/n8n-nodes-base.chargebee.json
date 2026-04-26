@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.chargebee",
+  "displayName": "Chargebee",
+  "fileName": "Chargebee",
+  "folder": "Chargebee",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Finance & Accounting"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/chargebee/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.chargebee/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Chargebee/chargebee.svg",
+  "sourcePath": "packages/nodes-base/nodes/Chargebee/Chargebee.node.json",
+  "packageName": "n8n-nodes-base"
+}

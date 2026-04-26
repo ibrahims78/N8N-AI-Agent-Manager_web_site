@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.eventbriteTrigger",
+  "displayName": "Eventbrite",
+  "fileName": "EventbriteTrigger",
+  "folder": "Eventbrite",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/eventbrite/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.eventbritetrigger/",
+  "examples": [
+    {
+      "label": "Hey founders! Your business doesn't need you to operate",
+      "url": "https://n8n.io/blog/your-business-doesnt-need-you-to-operate/",
+      "icon": " 🖥️"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Eventbrite/eventbrite.svg",
+  "sourcePath": "packages/nodes-base/nodes/Eventbrite/EventbriteTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

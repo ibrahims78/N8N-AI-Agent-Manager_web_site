@@ -1,0 +1,28 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.chainRetrievalQa",
+  "displayName": "Question and Answer Chain",
+  "fileName": "ChainRetrievalQa",
+  "folder": "ChainRetrievalQA",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Chains",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [
+    "LangChain"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.chainretrievalqa/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/chains/ChainRetrievalQA/ChainRetrievalQa.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Answer questions about retrieved documents"
+}

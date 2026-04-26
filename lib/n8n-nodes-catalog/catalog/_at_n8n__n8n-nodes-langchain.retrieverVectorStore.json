@@ -1,0 +1,25 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.retrieverVectorStore",
+  "displayName": "Vector Store Retriever",
+  "fileName": "RetrieverVectorStore",
+  "folder": "RetrieverVectorStore",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Retrievers"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.retrievervectorstore/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/retrievers/RetrieverVectorStore/RetrieverVectorStore.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Use a Vector Store as Retriever"
+}

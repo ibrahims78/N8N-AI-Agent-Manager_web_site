@@ -1,0 +1,46 @@
+{
+  "nodeType": "n8n-nodes-base.htmlExtract",
+  "displayName": "HtmlExtract",
+  "fileName": "HtmlExtract",
+  "folder": "HtmlExtract",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers",
+      "Data Transformation"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.html/",
+  "examples": [
+    {
+      "label": "Why business process automation with n8n can change your daily life",
+      "url": "https://n8n.io/blog/why-business-process-automation-with-n8n-can-change-your-daily-life/",
+      "icon": "🧬"
+    },
+    {
+      "label": "5 tasks you can automate with the new Notion API ",
+      "url": "https://n8n.io/blog/5-tasks-you-can-automate-with-notion-api/",
+      "icon": "⚡️"
+    },
+    {
+      "label": "How uProc scraped a multi-page website with a low-code workflow",
+      "url": "https://n8n.io/blog/how-uproc-scraped-a-multi-page-website-with-a-low-code-workflow/",
+      "icon": " 🕸️"
+    },
+    {
+      "label": "How to use the HTTP Request Node - The Swiss Army Knife for Workflow Automation",
+      "url": "https://n8n.io/blog/how-to-use-the-http-request-node-the-swiss-army-knife-for-workflow-automation/",
+      "icon": "🧰"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/HtmlExtract/htmlextract.svg",
+  "sourcePath": "packages/nodes-base/nodes/HtmlExtract/HtmlExtract.node.json",
+  "packageName": "n8n-nodes-base"
+}

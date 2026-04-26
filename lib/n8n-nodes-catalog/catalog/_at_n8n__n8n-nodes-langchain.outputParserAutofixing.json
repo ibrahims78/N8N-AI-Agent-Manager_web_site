@@ -1,0 +1,25 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+  "displayName": "Auto-fixing Output Parser",
+  "fileName": "OutputParserAutofixing",
+  "folder": "OutputParserAutofixing",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Output Parsers"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparserautofixing/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/output_parser/OutputParserAutofixing/OutputParserAutofixing.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Deprecated, use structured output parser"
+}

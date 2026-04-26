@@ -1,0 +1,28 @@
+{
+  "nodeType": "n8n-nodes-base.stickyNote",
+  "displayName": "StickyNote",
+  "fileName": "StickyNote",
+  "folder": "StickyNote",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers"
+    ]
+  },
+  "aliases": [
+    "Comments",
+    "Notes",
+    "Sticky"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": null,
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/StickyNote/stickynote.svg",
+  "sourcePath": "packages/nodes-base/nodes/StickyNote/StickyNote.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,25 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.vectorStorePineconeLoad",
+  "displayName": "Pinecone: Load",
+  "fileName": "VectorStorePineconeLoad",
+  "folder": "VectorStorePineconeLoad",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Vector Stores"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.vectorstorepinecone/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/vector_store/VectorStorePineconeLoad/VectorStorePineconeLoad.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Load data from Pinecone Vector Store index"
+}

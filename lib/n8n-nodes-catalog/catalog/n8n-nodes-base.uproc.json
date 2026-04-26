@@ -1,0 +1,31 @@
+{
+  "nodeType": "n8n-nodes-base.uproc",
+  "displayName": "UProc",
+  "fileName": "UProc",
+  "folder": "UProc",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/uproc/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.uproc/",
+  "examples": [
+    {
+      "label": "How uProc scraped a multi-page website with a low-code workflow",
+      "url": "https://n8n.io/blog/how-uproc-scraped-a-multi-page-website-with-a-low-code-workflow/",
+      "icon": " 🕸️"
+    },
+    {
+      "label": "7 no-code workflow automations for Amazon Web Services",
+      "url": "https://n8n.io/blog/aws-workflow-automation/",
+      "icon": ""
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/UProc/uproc.svg",
+  "sourcePath": "packages/nodes-base/nodes/UProc/UProc.node.json",
+  "packageName": "n8n-nodes-base"
+}

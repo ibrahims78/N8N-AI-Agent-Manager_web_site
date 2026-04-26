@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.zoom",
+  "displayName": "Zoom",
+  "fileName": "Zoom",
+  "folder": "Zoom",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/zoom/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.zoom/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Zoom/zoom.svg",
+  "sourcePath": "packages/nodes-base/nodes/Zoom/Zoom.node.json",
+  "packageName": "n8n-nodes-base"
+}

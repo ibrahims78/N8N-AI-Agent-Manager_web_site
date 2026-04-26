@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.perplexity",
+  "displayName": "Perplexity",
+  "fileName": "Perplexity",
+  "folder": "Perplexity",
+  "isTrigger": false,
+  "nodeVersion": "1.1",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI",
+    "Utility"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/perplexity/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.perplexity/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Perplexity/perplexity.svg",
+  "sourcePath": "packages/nodes-base/nodes/Perplexity/Perplexity.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.quickbase",
+  "displayName": "QuickBase",
+  "fileName": "QuickBase",
+  "folder": "QuickBase",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/quickbase/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.quickbase/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/QuickBase/quickbase.svg",
+  "sourcePath": "packages/nodes-base/nodes/QuickBase/QuickBase.node.json",
+  "packageName": "n8n-nodes-base"
+}

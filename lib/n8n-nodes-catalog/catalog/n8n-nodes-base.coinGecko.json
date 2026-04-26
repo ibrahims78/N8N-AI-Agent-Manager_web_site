@@ -1,0 +1,27 @@
+{
+  "nodeType": "n8n-nodes-base.coinGecko",
+  "displayName": "CoinGecko",
+  "fileName": "CoinGecko",
+  "folder": "CoinGecko",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity",
+    "Finance & Accounting"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.coingecko/",
+  "examples": [
+    {
+      "label": "2021: The Year to Automate the New You with n8n",
+      "url": "https://n8n.io/blog/2021-the-year-to-automate-the-new-you-with-n8n/",
+      "icon": "☀️"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/CoinGecko/coingecko.svg",
+  "sourcePath": "packages/nodes-base/nodes/CoinGecko/CoinGecko.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,27 @@
+{
+  "nodeType": "n8n-nodes-base.mailchimp",
+  "displayName": "Mailchimp",
+  "fileName": "Mailchimp",
+  "folder": "Mailchimp",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/mailchimp/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mailchimp/",
+  "examples": [
+    {
+      "label": "6 e-commerce workflows to power up your Shopify s",
+      "url": "https://n8n.io/blog/no-code-ecommerce-workflow-automations/",
+      "icon": "store"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Mailchimp/mailchimp.svg",
+  "sourcePath": "packages/nodes-base/nodes/Mailchimp/Mailchimp.node.json",
+  "packageName": "n8n-nodes-base"
+}

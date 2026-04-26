@@ -1,0 +1,56 @@
+{
+  "kind": "templates",
+  "version": 1,
+  "count": 6,
+  "updatedAt": "2026-04-26T22:51:22.019Z",
+  "entries": {
+    "automated-email-sender": {
+      "file": "automated-email-sender.json",
+      "sha": "2c5a6d6082c67e050c2bb4cacc2c32bfbfd041af",
+      "bytes": 2896,
+      "name": "إرسال إيميل تلقائي",
+      "nameEn": "Automated Email Sender",
+      "category": "email"
+    },
+    "webhook-data-receiver": {
+      "file": "webhook-data-receiver.json",
+      "sha": "bc65d79145b34ba5810d6d9b5cb7a751796182dd",
+      "bytes": 4027,
+      "name": "استقبال Webhook ومعالجة البيانات",
+      "nameEn": "Webhook Data Receiver & Processor",
+      "category": "api"
+    },
+    "automated-daily-report": {
+      "file": "automated-daily-report.json",
+      "sha": "c23d9aad7f92d72a6fd3e883ca396269c48650f9",
+      "bytes": 4339,
+      "name": "تقرير يومي تلقائي",
+      "nameEn": "Automated Daily Report",
+      "category": "reports"
+    },
+    "google-sheets-sync": {
+      "file": "google-sheets-sync.json",
+      "sha": "0bccd23df05311836e9e34feaf2fc90583f9e37c",
+      "bytes": 3206,
+      "name": "مزامنة Google Sheets",
+      "nameEn": "Google Sheets Sync",
+      "category": "reports"
+    },
+    "cron-task-scheduler": {
+      "file": "cron-task-scheduler.json",
+      "sha": "2acf511ddb389e86a0ac29702fd20f2028239cbf",
+      "bytes": 4621,
+      "name": "جدولة مهام زمنية",
+      "nameEn": "Cron Task Scheduler",
+      "category": "scheduling"
+    },
+    "periodic-database-cleanup": {
+      "file": "periodic-database-cleanup.json",
+      "sha": "394d02046ec6d56e0cdf2825b52a097812794fac",
+      "bytes": 3506,
+      "name": "تنظيف قاعدة البيانات الدورية",
+      "nameEn": "Periodic Database Cleanup",
+      "category": "database"
+    }
+  }
+}

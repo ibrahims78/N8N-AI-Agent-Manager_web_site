@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.tapfiliate",
+  "displayName": "Tapfiliate",
+  "fileName": "Tapfiliate",
+  "folder": "Tapfiliate",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/tapfiliate/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.tapfiliate/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Tapfiliate/tapfiliate.svg",
+  "sourcePath": "packages/nodes-base/nodes/Tapfiliate/Tapfiliate.node.json",
+  "packageName": "n8n-nodes-base"
+}

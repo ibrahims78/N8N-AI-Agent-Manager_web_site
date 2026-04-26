@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.agileCrm",
+  "displayName": "AgileCrm",
+  "fileName": "AgileCrm",
+  "folder": "AgileCrm",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing",
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/agilecrm/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.agilecrm/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/AgileCrm/agilecrm.svg",
+  "sourcePath": "packages/nodes-base/nodes/AgileCrm/AgileCrm.node.json",
+  "packageName": "n8n-nodes-base"
+}

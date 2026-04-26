@@ -1,0 +1,41 @@
+{
+  "nodeType": "n8n-nodes-base.functionItem",
+  "displayName": "FunctionItem",
+  "fileName": "FunctionItem",
+  "folder": "FunctionItem",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Data Transformation"
+    ]
+  },
+  "aliases": [
+    "Javascript",
+    "Code",
+    "Custom Code",
+    "JS"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.code/",
+  "examples": [
+    {
+      "label": "How uProc scraped a multi-page website with a low-code workflow",
+      "url": "https://n8n.io/blog/how-uproc-scraped-a-multi-page-website-with-a-low-code-workflow/",
+      "icon": " 🕸️"
+    },
+    {
+      "label": "7 no-code workflow automations for Amazon Web Services",
+      "url": "https://n8n.io/blog/aws-workflow-automation/",
+      "icon": ""
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/FunctionItem/functionitem.svg",
+  "sourcePath": "packages/nodes-base/nodes/FunctionItem/FunctionItem.node.json",
+  "packageName": "n8n-nodes-base"
+}

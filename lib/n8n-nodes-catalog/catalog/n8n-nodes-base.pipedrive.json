@@ -1,0 +1,31 @@
+{
+  "nodeType": "n8n-nodes-base.pipedrive",
+  "displayName": "Pipedrive",
+  "fileName": "Pipedrive",
+  "folder": "Pipedrive",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/pipedrive/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.pipedrive/",
+  "examples": [
+    {
+      "label": "How to synchronize data between two systems (one-way vs. two-way sync",
+      "url": "https://n8n.io/blog/how-to-sync-data-between-two-systems/",
+      "icon": "🏬"
+    },
+    {
+      "label": "How to get started with CRM automation (with 3 no-code workflow ideas",
+      "url": "https://n8n.io/blog/how-to-get-started-with-crm-automation-and-no-code-workflow-ideas/",
+      "icon": "👥"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Pipedrive/pipedrive.svg",
+  "sourcePath": "packages/nodes-base/nodes/Pipedrive/Pipedrive.node.json",
+  "packageName": "n8n-nodes-base"
+}

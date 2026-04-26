@@ -1,0 +1,46 @@
+{
+  "nodeType": "n8n-nodes-base.hubspot",
+  "displayName": "Hubspot",
+  "fileName": "Hubspot",
+  "folder": "Hubspot",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/hubspot/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.hubspot/",
+  "examples": [
+    {
+      "label": "How to synchronize data between two systems (one-way vs. two-way sync",
+      "url": "https://n8n.io/blog/how-to-sync-data-between-two-systems/",
+      "icon": "🏬"
+    },
+    {
+      "label": "How to get started with CRM automation (with 3 no-code workflow ideas",
+      "url": "https://n8n.io/blog/how-to-get-started-with-crm-automation-and-no-code-workflow-ideas/",
+      "icon": "👥"
+    },
+    {
+      "label": "Hey founders! Your business doesn't need you to operate",
+      "url": "https://n8n.io/blog/your-business-doesnt-need-you-to-operate/",
+      "icon": " 🖥️"
+    },
+    {
+      "label": "Benefits of automation and n8n: An interview with HubSpot's Hugh Durkin",
+      "url": "https://n8n.io/blog/benefits-of-automation-and-n8n-an-interview-with-hubspots-hugh-durkin/",
+      "icon": "🎖"
+    },
+    {
+      "label": "How Goomer automated their operations with over 200 n8n workflows",
+      "url": "https://n8n.io/blog/how-goomer-automated-their-operations-with-over-200-n8n-workflows/",
+      "icon": "🛵"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Hubspot/hubspot.svg",
+  "sourcePath": "packages/nodes-base/nodes/Hubspot/Hubspot.node.json",
+  "packageName": "n8n-nodes-base"
+}

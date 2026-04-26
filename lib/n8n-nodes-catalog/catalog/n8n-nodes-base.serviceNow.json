@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.serviceNow",
+  "displayName": "ServiceNow",
+  "fileName": "ServiceNow",
+  "folder": "ServiceNow",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/servicenow/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.servicenow/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ServiceNow/servicenow.svg",
+  "sourcePath": "packages/nodes-base/nodes/ServiceNow/ServiceNow.node.json",
+  "packageName": "n8n-nodes-base"
+}

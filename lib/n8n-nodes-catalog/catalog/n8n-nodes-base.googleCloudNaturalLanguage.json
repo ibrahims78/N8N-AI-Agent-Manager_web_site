@@ -1,0 +1,36 @@
+{
+  "nodeType": "n8n-nodes-base.googleCloudNaturalLanguage",
+  "displayName": "",
+  "fileName": "",
+  "folder": "",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Analytics"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/google/oauth-single-service/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecloudnaturallanguage/",
+  "examples": [
+    {
+      "label": "Automate your data processing pipeline in 9 steps",
+      "url": "https://n8n.io/blog/automate-your-data-processing-pipeline-in-9-steps-with-n8n/",
+      "icon": "⚙️"
+    },
+    {
+      "label": "5 tasks you can automate with the new Notion API ",
+      "url": "https://n8n.io/blog/5-tasks-you-can-automate-with-notion-api/",
+      "icon": "⚡️"
+    },
+    {
+      "label": "15 Google apps you can combine and automate to increase productivity",
+      "url": "https://n8n.io/blog/automate-google-apps-for-productivity/",
+      "icon": "💡"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes//.svg",
+  "sourcePath": "packages/nodes-base/nodes/Google/CloudNaturalLanguage/GoogleCloudNaturalLanguage.node.json",
+  "packageName": "n8n-nodes-base"
+}

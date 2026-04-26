@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.egoi",
+  "displayName": "Egoi",
+  "fileName": "Egoi",
+  "folder": "Egoi",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/egoi/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.egoi/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Egoi/egoi.svg",
+  "sourcePath": "packages/nodes-base/nodes/Egoi/Egoi.node.json",
+  "packageName": "n8n-nodes-base"
+}

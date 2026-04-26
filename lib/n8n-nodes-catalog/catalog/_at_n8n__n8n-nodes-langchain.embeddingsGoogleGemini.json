@@ -1,0 +1,25 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+  "displayName": "Embeddings Google Gemini",
+  "fileName": "EmbeddingsGoogleGemini",
+  "folder": "EmbeddingsGoogleGemini",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Embeddings"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingsgooglegemini/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/embeddings/EmbeddingsGoogleGemini/EmbeddingsGoogleGemini.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Use Google Gemini Embeddings"
+}

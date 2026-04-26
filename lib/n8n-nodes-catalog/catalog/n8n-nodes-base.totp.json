@@ -1,0 +1,31 @@
+{
+  "nodeType": "n8n-nodes-base.totp",
+  "displayName": "Totp",
+  "fileName": "Totp",
+  "folder": "Totp",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": [
+    "Helpers"
+  ],
+  "aliases": [
+    "2FA",
+    "MFA",
+    "authentication",
+    "Security",
+    "OTP",
+    "password",
+    "multi",
+    "factor"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.totp/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Totp/totp.svg",
+  "sourcePath": "packages/nodes-base/nodes/Totp/Totp.node.json",
+  "packageName": "n8n-nodes-base"
+}

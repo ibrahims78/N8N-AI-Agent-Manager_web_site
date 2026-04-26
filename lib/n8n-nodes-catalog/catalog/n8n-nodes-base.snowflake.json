@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.snowflake",
+  "displayName": "Snowflake",
+  "fileName": "Snowflake",
+  "folder": "Snowflake",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/snowflake/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.snowflake/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Snowflake/snowflake.svg",
+  "sourcePath": "packages/nodes-base/nodes/Snowflake/Snowflake.node.json",
+  "packageName": "n8n-nodes-base"
+}

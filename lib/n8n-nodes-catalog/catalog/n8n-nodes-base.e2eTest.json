@@ -1,0 +1,24 @@
+{
+  "nodeType": "n8n-nodes-base.e2eTest",
+  "displayName": "E2eTest",
+  "fileName": "E2eTest",
+  "folder": "E2eTest",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.editimage/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/E2eTest/e2etest.svg",
+  "sourcePath": "packages/nodes-base/nodes/E2eTest/E2eTest.node.json",
+  "packageName": "n8n-nodes-base"
+}

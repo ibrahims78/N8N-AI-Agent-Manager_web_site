@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.invoiceNinja",
+  "displayName": "InvoiceNinja",
+  "fileName": "InvoiceNinja",
+  "folder": "InvoiceNinja",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Finance & Accounting"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/invoiceninja/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.invoiceninja/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/InvoiceNinja/invoiceninja.svg",
+  "sourcePath": "packages/nodes-base/nodes/InvoiceNinja/InvoiceNinja.node.json",
+  "packageName": "n8n-nodes-base"
+}

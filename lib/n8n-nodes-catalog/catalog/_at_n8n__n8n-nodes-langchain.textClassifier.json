@@ -1,0 +1,26 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.textClassifier",
+  "displayName": "Text Classifier",
+  "fileName": "TextClassifier",
+  "folder": "TextClassifier",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Chains",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.text-classifier/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/chains/TextClassifier/TextClassifier.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Classify your text into distinct categories"
+}

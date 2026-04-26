@@ -1,0 +1,22 @@
+{
+  "nodeType": "n8n-nodes-base.freshservice",
+  "displayName": "Freshservice",
+  "fileName": "Freshservice",
+  "folder": "Freshservice",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "Freshdesk"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/freshservice/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.freshservice/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Freshservice/freshservice.svg",
+  "sourcePath": "packages/nodes-base/nodes/Freshservice/Freshservice.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,21 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.microsoftAgent365Trigger",
+  "displayName": "Microsoft Agent 365 Trigger",
+  "fileName": "MicrosoftAgent365Trigger",
+  "folder": "Microsoft",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.microsoftAgent365Trigger/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/vendors/Microsoft/MicrosoftAgent365Trigger.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Trigger for Microsoft Agent 365"
+}

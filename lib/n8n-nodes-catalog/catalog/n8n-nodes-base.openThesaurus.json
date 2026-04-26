@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.openThesaurus",
+  "displayName": "OpenThesaurus",
+  "fileName": "OpenThesaurus",
+  "folder": "OpenThesaurus",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Utility"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.openthesaurus/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/OpenThesaurus/openthesaurus.svg",
+  "sourcePath": "packages/nodes-base/nodes/OpenThesaurus/OpenThesaurus.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.googleDocs",
+  "displayName": "",
+  "fileName": "",
+  "folder": "",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Miscellaneous"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/google/oauth-single-service/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googledocs/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes//.svg",
+  "sourcePath": "packages/nodes-base/nodes/Google/Docs/GoogleDocs.node.json",
+  "packageName": "n8n-nodes-base"
+}

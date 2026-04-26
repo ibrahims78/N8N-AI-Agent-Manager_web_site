@@ -1,0 +1,25 @@
+{
+  "nodeType": "n8n-nodes-base.respondToWebhook",
+  "displayName": "RespondToWebhook",
+  "fileName": "RespondToWebhook",
+  "folder": "RespondToWebhook",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes",
+    "Utility"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.respondtowebhook/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/RespondToWebhook/respondtowebhook.svg",
+  "sourcePath": "packages/nodes-base/nodes/RespondToWebhook/RespondToWebhook.node.json",
+  "packageName": "n8n-nodes-base"
+}

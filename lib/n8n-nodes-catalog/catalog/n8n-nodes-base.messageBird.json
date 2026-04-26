@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.messageBird",
+  "displayName": "MessageBird",
+  "fileName": "MessageBird",
+  "folder": "MessageBird",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/messagebird/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.messagebird/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/MessageBird/messagebird.svg",
+  "sourcePath": "packages/nodes-base/nodes/MessageBird/MessageBird.node.json",
+  "packageName": "n8n-nodes-base"
+}

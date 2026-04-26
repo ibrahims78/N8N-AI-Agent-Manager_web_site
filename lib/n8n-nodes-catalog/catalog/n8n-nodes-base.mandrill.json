@@ -1,0 +1,27 @@
+{
+  "nodeType": "n8n-nodes-base.mandrill",
+  "displayName": "Mandrill",
+  "fileName": "Mandrill",
+  "folder": "Mandrill",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/mandrill/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mandrill/",
+  "examples": [
+    {
+      "label": "Love at first sight: Ricardo’s n8n journey",
+      "url": "https://n8n.io/blog/love-at-first-sight-ricardos-n8n-journey/",
+      "icon": "❤️"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Mandrill/mandrill.svg",
+  "sourcePath": "packages/nodes-base/nodes/Mandrill/Mandrill.node.json",
+  "packageName": "n8n-nodes-base"
+}

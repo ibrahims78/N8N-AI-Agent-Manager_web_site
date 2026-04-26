@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.taigaTrigger",
+  "displayName": "Taiga",
+  "fileName": "TaigaTrigger",
+  "folder": "Taiga",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/taiga/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.taigatrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Taiga/taiga.svg",
+  "sourcePath": "packages/nodes-base/nodes/Taiga/TaigaTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

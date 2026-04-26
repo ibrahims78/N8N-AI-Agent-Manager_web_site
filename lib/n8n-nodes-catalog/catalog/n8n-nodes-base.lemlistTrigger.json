@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.lemlistTrigger",
+  "displayName": "Lemlist",
+  "fileName": "LemlistTrigger",
+  "folder": "Lemlist",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/lemlist/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.lemlisttrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Lemlist/lemlist.svg",
+  "sourcePath": "packages/nodes-base/nodes/Lemlist/LemlistTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

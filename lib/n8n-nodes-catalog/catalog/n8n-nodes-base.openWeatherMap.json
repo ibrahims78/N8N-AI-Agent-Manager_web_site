@@ -1,0 +1,32 @@
+{
+  "nodeType": "n8n-nodes-base.openWeatherMap",
+  "displayName": "OpenWeatherMap",
+  "fileName": "OpenWeatherMap",
+  "folder": "OpenWeatherMap",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Miscellaneous",
+    "Utility"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/openweathermap/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.openweathermap/",
+  "examples": [
+    {
+      "label": "Learn to Build Powerful API Endpoints Using Webhooks",
+      "url": "https://n8n.io/blog/learn-to-build-powerful-api-endpoints-using-webhooks/",
+      "icon": "🧰"
+    },
+    {
+      "label": "Creating Telegram Bots with n8n, a No-Code Platform",
+      "url": "https://n8n.io/blog/creating-telegram-bots-with-n8n-a-no-code-platform/",
+      "icon": "💬"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/OpenWeatherMap/openweathermap.svg",
+  "sourcePath": "packages/nodes-base/nodes/OpenWeatherMap/OpenWeatherMap.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.sendGrid",
+  "displayName": "SendGrid",
+  "fileName": "SendGrid",
+  "folder": "SendGrid",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/sendgrid/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.sendgrid/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/SendGrid/sendgrid.svg",
+  "sourcePath": "packages/nodes-base/nodes/SendGrid/SendGrid.node.json",
+  "packageName": "n8n-nodes-base"
+}

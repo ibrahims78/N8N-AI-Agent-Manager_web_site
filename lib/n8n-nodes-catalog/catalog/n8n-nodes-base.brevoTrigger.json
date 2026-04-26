@@ -1,0 +1,23 @@
+{
+  "nodeType": "n8n-nodes-base.brevoTrigger",
+  "displayName": "Brevo",
+  "fileName": "BrevoTrigger",
+  "folder": "Brevo",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "sendinblue"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/brevo/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.brevotrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Brevo/brevo.svg",
+  "sourcePath": "packages/nodes-base/nodes/Brevo/BrevoTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

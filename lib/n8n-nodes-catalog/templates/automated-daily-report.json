@@ -1,0 +1,167 @@
+{
+  "slug": "automated-daily-report",
+  "name": "تقرير يومي تلقائي",
+  "nameEn": "Automated Daily Report",
+  "description": "جلب البيانات من مصادر متعددة وإنشاء وإرسال تقرير يومي شامل في وقت محدد",
+  "descriptionEn": "Fetch data from multiple sources and generate & send a comprehensive daily report at a scheduled time",
+  "category": "reports",
+  "nodesCount": 6,
+  "avgRating": 4.7,
+  "workflowJson": {
+    "name": "Daily Report Generator",
+    "nodes": [
+      {
+        "id": "cron-1",
+        "name": "Daily at 8 AM",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          240,
+          300
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 8 * * *"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "http-1",
+        "name": "Fetch API Data",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          460,
+          200
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://jsonplaceholder.typicode.com/todos?_limit=5",
+          "options": {}
+        }
+      },
+      {
+        "id": "code-3",
+        "name": "Build Report",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          680,
+          300
+        ],
+        "parameters": {
+          "jsCode": "const items = $input.all();\nconst data = items[0]?.json;\nconst now = new Date();\nconst report = `=== التقرير اليومي ===\\nالتاريخ: ${now.toLocaleDateString('ar-SA')}\\n\\nملخص البيانات:\\n${JSON.stringify(data, null, 2)}\\n\\n=== انتهى التقرير ===`;\nreturn [{ json: { report, date: now.toISOString(), subject: `تقرير يومي - ${now.toLocaleDateString('ar-SA')}` } }];"
+        }
+      },
+      {
+        "id": "gmail-2",
+        "name": "Email Report",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          900,
+          300
+        ],
+        "parameters": {
+          "operation": "send",
+          "sendTo": "admin@example.com",
+          "subject": "={{ $json.subject }}",
+          "emailType": "text",
+          "message": "={{ $json.report }}"
+        },
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "1",
+            "name": "Gmail Account"
+          }
+        }
+      },
+      {
+        "id": "slack-1",
+        "name": "Notify Slack",
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          900,
+          440
+        ],
+        "parameters": {
+          "operation": "message",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "#reports",
+            "mode": "name"
+          },
+          "text": "📊 تم إرسال التقرير اليومي. راجع بريدك الإلكتروني.",
+          "otherOptions": {}
+        },
+        "credentials": {
+          "slackApi": {
+            "id": "2",
+            "name": "Slack Account"
+          }
+        }
+      },
+      {
+        "id": "error-2",
+        "name": "Log Error",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          680,
+          480
+        ],
+        "parameters": {}
+      }
+    ],
+    "connections": {
+      "Daily at 8 AM": {
+        "main": [
+          [
+            {
+              "node": "Fetch API Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch API Data": {
+        "main": [
+          [
+            {
+              "node": "Build Report",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Report": {
+        "main": [
+          [
+            {
+              "node": "Email Report",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Notify Slack",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    }
+  }
+}

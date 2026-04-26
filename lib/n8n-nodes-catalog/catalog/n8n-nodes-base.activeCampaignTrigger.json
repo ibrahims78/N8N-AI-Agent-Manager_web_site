@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.activeCampaignTrigger",
+  "displayName": "ActiveCampaign",
+  "fileName": "ActiveCampaignTrigger",
+  "folder": "ActiveCampaign",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/activecampaign/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.activecampaigntrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ActiveCampaign/activecampaign.svg",
+  "sourcePath": "packages/nodes-base/nodes/ActiveCampaign/ActiveCampaignTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

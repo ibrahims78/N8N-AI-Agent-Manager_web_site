@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.harvest",
+  "displayName": "Harvest",
+  "fileName": "Harvest",
+  "folder": "Harvest",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/harvest/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.harvest/",
+  "examples": [
+    {
+      "label": "6 e-commerce workflows to power up your Shopify s",
+      "url": "https://n8n.io/blog/no-code-ecommerce-workflow-automations/",
+      "icon": "store"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Harvest/harvest.svg",
+  "sourcePath": "packages/nodes-base/nodes/Harvest/Harvest.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,40 @@
+{
+  "nodeType": "n8n-nodes-base.interval",
+  "displayName": "Interval",
+  "fileName": "Interval",
+  "folder": "Interval",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Flow",
+      "Other Trigger Nodes"
+    ]
+  },
+  "aliases": [
+    "Time",
+    "Scheduler",
+    "Polling"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.interval/",
+  "examples": [
+    {
+      "label": "Learn to Automate Your Factory's Incident Reporting: A Step by Step Guide",
+      "url": "https://n8n.io/blog/learn-to-automate-your-factorys-incident-reporting-a-step-by-step-guide/",
+      "icon": "🏭"
+    },
+    {
+      "label": "Creating triggers for n8n workflows using polling",
+      "url": "https://n8n.io/blog/creating-triggers-for-n8n-workflows-using-polling/",
+      "icon": "⏲"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Interval/interval.svg",
+  "sourcePath": "packages/nodes-base/nodes/Interval/Interval.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.manualTrigger",
+  "displayName": "ManualTrigger",
+  "fileName": "ManualTrigger",
+  "folder": "ManualTrigger",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.manualworkflowtrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ManualTrigger/manualtrigger.svg",
+  "sourcePath": "packages/nodes-base/nodes/ManualTrigger/ManualTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

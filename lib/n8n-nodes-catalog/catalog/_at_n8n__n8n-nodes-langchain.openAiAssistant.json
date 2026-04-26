@@ -1,0 +1,28 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.openAiAssistant",
+  "displayName": "OpenAI Assistant",
+  "fileName": "OpenAiAssistant",
+  "folder": "OpenAiAssistant",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Agents",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [
+    "LangChain"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.openaiassistant/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/agents/OpenAiAssistant/OpenAiAssistant.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Utilizes Assistant API from Open AI."
+}

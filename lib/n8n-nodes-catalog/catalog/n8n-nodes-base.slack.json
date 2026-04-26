@@ -1,0 +1,67 @@
+{
+  "nodeType": "n8n-nodes-base.slack",
+  "displayName": "Slack",
+  "fileName": "Slack",
+  "folder": "Slack",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "HITL"
+  ],
+  "subcategories": {
+    "HITL": [
+      "Human in the Loop"
+    ]
+  },
+  "aliases": [
+    "human",
+    "form",
+    "wait",
+    "hitl",
+    "approval"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/slack/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.slack/",
+  "examples": [
+    {
+      "label": "6 e-commerce workflows to power up your Shopify s",
+      "url": "https://n8n.io/blog/no-code-ecommerce-workflow-automations/",
+      "icon": "store"
+    },
+    {
+      "label": "Automate your data processing pipeline in 9 steps",
+      "url": "https://n8n.io/blog/automate-your-data-processing-pipeline-in-9-steps-with-n8n/",
+      "icon": "⚙️"
+    },
+    {
+      "label": "How to get started with CRM automation (with 3 no-code workflow ideas",
+      "url": "https://n8n.io/blog/how-to-get-started-with-crm-automation-and-no-code-workflow-ideas/",
+      "icon": "👥"
+    },
+    {
+      "label": "5 tasks you can automate with the new Notion API ",
+      "url": "https://n8n.io/blog/5-tasks-you-can-automate-with-notion-api/",
+      "icon": "⚡️"
+    },
+    {
+      "label": "Build your own virtual assistant with n8n: A step by step guide",
+      "url": "https://n8n.io/blog/build-your-own-virtual-assistant-with-n8n-a-step-by-step-guide/",
+      "icon": "👦"
+    },
+    {
+      "label": "How to automatically give kudos to contributors with GitHub, Slack, and n8n",
+      "url": "https://n8n.io/blog/how-to-automatically-give-kudos-to-contributors-with-github-slack-and-n8n/",
+      "icon": "👏"
+    },
+    {
+      "label": "How Common Knowledge use workflow automation for activism",
+      "url": "https://n8n.io/blog/automations-for-activists/",
+      "icon": "✨"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Slack/slack.svg",
+  "sourcePath": "packages/nodes-base/nodes/Slack/Slack.node.json",
+  "packageName": "n8n-nodes-base"
+}

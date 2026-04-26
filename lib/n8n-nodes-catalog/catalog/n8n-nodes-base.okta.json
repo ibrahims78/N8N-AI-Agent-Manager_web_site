@@ -1,0 +1,24 @@
+{
+  "nodeType": "n8n-nodes-base.okta",
+  "displayName": "Okta",
+  "fileName": "Okta",
+  "folder": "Okta",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "authentication",
+    "users",
+    "Security"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/okta/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.okta/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Okta/okta.svg",
+  "sourcePath": "packages/nodes-base/nodes/Okta/Okta.node.json",
+  "packageName": "n8n-nodes-base"
+}

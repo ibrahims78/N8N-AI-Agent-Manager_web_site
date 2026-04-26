@@ -1,0 +1,34 @@
+{
+  "nodeType": "n8n-nodes-base.code",
+  "displayName": "Code",
+  "fileName": "Code",
+  "folder": "Code",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers",
+      "Data Transformation"
+    ]
+  },
+  "aliases": [
+    "cpde",
+    "Javascript",
+    "JS",
+    "Python",
+    "Script",
+    "Custom Code",
+    "Function"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.code/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Code/code.svg",
+  "sourcePath": "packages/nodes-base/nodes/Code/Code.node.json",
+  "packageName": "n8n-nodes-base"
+}

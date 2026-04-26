@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.webflow",
+  "displayName": "Webflow",
+  "fileName": "Webflow",
+  "folder": "Webflow",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/webflow/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.webflow/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Webflow/webflow.svg",
+  "sourcePath": "packages/nodes-base/nodes/Webflow/Webflow.node.json",
+  "packageName": "n8n-nodes-base"
+}

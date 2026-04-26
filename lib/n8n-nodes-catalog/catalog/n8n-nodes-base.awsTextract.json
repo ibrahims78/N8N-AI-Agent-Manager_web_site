@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.awsTextract",
+  "displayName": "",
+  "fileName": "",
+  "folder": "",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Utility"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/aws/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.awstextract/",
+  "examples": [
+    {
+      "label": "7 no-code workflow automations for Amazon Web Services",
+      "url": "https://n8n.io/blog/aws-workflow-automation/",
+      "icon": ""
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes//.svg",
+  "sourcePath": "packages/nodes-base/nodes/Aws/Textract/AwsTextract.node.json",
+  "packageName": "n8n-nodes-base"
+}

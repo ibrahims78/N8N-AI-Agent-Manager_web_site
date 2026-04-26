@@ -1,0 +1,32 @@
+{
+  "nodeType": "n8n-nodes-base.filter",
+  "displayName": "Filter",
+  "fileName": "Filter",
+  "folder": "Filter",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Flow",
+      "Data Transformation"
+    ]
+  },
+  "aliases": [
+    "Router",
+    "Filter",
+    "Condition",
+    "Logic",
+    "Boolean",
+    "Branch"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.filter/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Filter/filter.svg",
+  "sourcePath": "packages/nodes-base/nodes/Filter/Filter.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.intercom",
+  "displayName": "Intercom",
+  "fileName": "Intercom",
+  "folder": "Intercom",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/intercom/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.intercom/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Intercom/intercom.svg",
+  "sourcePath": "packages/nodes-base/nodes/Intercom/Intercom.node.json",
+  "packageName": "n8n-nodes-base"
+}

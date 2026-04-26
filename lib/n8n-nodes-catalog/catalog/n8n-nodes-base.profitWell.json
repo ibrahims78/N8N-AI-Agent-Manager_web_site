@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.profitWell",
+  "displayName": "ProfitWell",
+  "fileName": "ProfitWell",
+  "folder": "ProfitWell",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Analytics"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/profitwell/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.profitwell/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ProfitWell/profitwell.svg",
+  "sourcePath": "packages/nodes-base/nodes/ProfitWell/ProfitWell.node.json",
+  "packageName": "n8n-nodes-base"
+}

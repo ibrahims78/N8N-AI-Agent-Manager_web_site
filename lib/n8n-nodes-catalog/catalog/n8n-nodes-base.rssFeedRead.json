@@ -1,0 +1,31 @@
+{
+  "nodeType": "n8n-nodes-base.rssFeedRead",
+  "displayName": "RssFeedRead",
+  "fileName": "RssFeedRead",
+  "folder": "RssFeedRead",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.rssfeedread/",
+  "examples": [
+    {
+      "label": "Why business process automation with n8n can change your daily life",
+      "url": "https://n8n.io/blog/why-business-process-automation-with-n8n-can-change-your-daily-life/",
+      "icon": "🧬"
+    },
+    {
+      "label": "Why I chose n8n over Zapier in 2020",
+      "url": "https://n8n.io/blog/why-i-chose-n8n-over-zapier-in-2020/",
+      "icon": "😍"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/RssFeedRead/rssfeedread.svg",
+  "sourcePath": "packages/nodes-base/nodes/RssFeedRead/RssFeedRead.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,28 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.outputParserStructured",
+  "displayName": "Structured Output Parser",
+  "fileName": "OutputParserStructured",
+  "folder": "OutputParserStructured",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Output Parsers"
+    ]
+  },
+  "aliases": [
+    "json",
+    "zod"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.outputparserstructured/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/output_parser/OutputParserStructured/OutputParserStructured.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Return data in a defined JSON format"
+}

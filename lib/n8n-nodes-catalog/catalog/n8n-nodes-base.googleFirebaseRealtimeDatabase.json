@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.googleFirebaseRealtimeDatabase",
+  "displayName": "",
+  "fileName": "",
+  "folder": "",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/google/oauth-single-service/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecloudrealtimedatabase/",
+  "examples": [
+    {
+      "label": "15 Google apps you can combine and automate to increase productivity",
+      "url": "https://n8n.io/blog/automate-google-apps-for-productivity/",
+      "icon": "💡"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes//.svg",
+  "sourcePath": "packages/nodes-base/nodes/Google/Firebase/RealtimeDatabase/GoogleFirebaseRealtimeDatabase.node.json",
+  "packageName": "n8n-nodes-base"
+}

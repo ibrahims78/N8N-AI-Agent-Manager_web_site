@@ -1,0 +1,173 @@
+{
+  "slug": "cron-task-scheduler",
+  "name": "جدولة مهام زمنية",
+  "nameEn": "Cron Task Scheduler",
+  "description": "تنفيذ مهام متعددة في أوقات مجدولة مع إشعار بالنتيجة",
+  "descriptionEn": "Execute multiple tasks at scheduled times with result notifications",
+  "category": "scheduling",
+  "nodesCount": 5,
+  "avgRating": 4.3,
+  "workflowJson": {
+    "name": "Task Scheduler",
+    "nodes": [
+      {
+        "id": "cron-2",
+        "name": "Every Morning",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          240,
+          300
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 9 * * 1-5"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "code-4",
+        "name": "Define Tasks",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          460,
+          300
+        ],
+        "parameters": {
+          "jsCode": "const tasks = [\n  { id: 1, name: 'فحص الخادم', priority: 'high' },\n  { id: 2, name: 'تنظيف البيانات المؤقتة', priority: 'medium' },\n  { id: 3, name: 'نسخ احتياطي', priority: 'high' },\n];\nreturn tasks.map(t => ({ json: t }));"
+        }
+      },
+      {
+        "id": "switch-1",
+        "name": "Route by Priority",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          680,
+          300
+        ],
+        "parameters": {
+          "mode": "rules",
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {},
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.priority }}",
+                      "rightValue": "high",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "High Priority"
+              },
+              {
+                "conditions": {
+                  "options": {},
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.priority }}",
+                      "rightValue": "medium",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Medium Priority"
+              }
+            ]
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "code-5",
+        "name": "Execute High Priority",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          900,
+          200
+        ],
+        "parameters": {
+          "jsCode": "return [{ json: { ...($input.item.json), executed: true, executedAt: new Date().toISOString(), result: 'success' } }];"
+        }
+      },
+      {
+        "id": "code-6",
+        "name": "Execute Medium Priority",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          900,
+          400
+        ],
+        "parameters": {
+          "jsCode": "return [{ json: { ...($input.item.json), executed: true, executedAt: new Date().toISOString(), result: 'success' } }];"
+        }
+      }
+    ],
+    "connections": {
+      "Every Morning": {
+        "main": [
+          [
+            {
+              "node": "Define Tasks",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Define Tasks": {
+        "main": [
+          [
+            {
+              "node": "Route by Priority",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route by Priority": {
+        "main": [
+          [
+            {
+              "node": "Execute High Priority",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Execute Medium Priority",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    }
+  }
+}

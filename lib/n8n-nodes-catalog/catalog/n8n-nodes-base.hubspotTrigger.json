@@ -1,0 +1,31 @@
+{
+  "nodeType": "n8n-nodes-base.hubspotTrigger",
+  "displayName": "Hubspot",
+  "fileName": "HubspotTrigger",
+  "folder": "Hubspot",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/hubspot/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.hubspottrigger/",
+  "examples": [
+    {
+      "label": "How to get started with CRM automation (with 3 no-code workflow ideas",
+      "url": "https://n8n.io/blog/how-to-get-started-with-crm-automation-and-no-code-workflow-ideas/",
+      "icon": "👥"
+    },
+    {
+      "label": "Benefits of automation and n8n: An interview with HubSpot's Hugh Durkin",
+      "url": "https://n8n.io/blog/benefits-of-automation-and-n8n-an-interview-with-hubspots-hugh-durkin/",
+      "icon": "🎖"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Hubspot/hubspot.svg",
+  "sourcePath": "packages/nodes-base/nodes/Hubspot/HubspotTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

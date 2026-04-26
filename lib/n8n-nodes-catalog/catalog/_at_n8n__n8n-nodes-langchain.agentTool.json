@@ -1,0 +1,35 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.agentTool",
+  "displayName": "AI Agent Tool",
+  "fileName": "AgentTool",
+  "folder": "Agent",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Tools"
+    ],
+    "Tools": [
+      "Recommended Tools"
+    ]
+  },
+  "aliases": [
+    "LangChain",
+    "Chat",
+    "Conversational",
+    "Plan and Execute",
+    "ReAct",
+    "Tools"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": null,
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/agents/Agent/AgentTool.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Generates an action plan and executes it. Can use external tools."
+}

@@ -1,0 +1,51 @@
+{
+  "nodeType": "n8n-nodes-base.googleCalendar",
+  "displayName": "",
+  "fileName": "",
+  "folder": "",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/google/oauth-single-service/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googlecalendar/",
+  "examples": [
+    {
+      "label": "How to host virtual coffee breaks with n8n",
+      "url": "https://n8n.io/blog/how-to-host-virtual-coffee-breaks-with-n8n/",
+      "icon": "☕️"
+    },
+    {
+      "label": "Supercharging your conference registration process with n8n",
+      "url": "https://n8n.io/blog/supercharging-your-conference-registration-process-with-n8n/",
+      "icon": "🎫"
+    },
+    {
+      "label": "15 Google apps you can combine and automate to increase productivity",
+      "url": "https://n8n.io/blog/automate-google-apps-for-productivity/",
+      "icon": "💡"
+    },
+    {
+      "label": "Hey founders! Your business doesn't need you to operate",
+      "url": "https://n8n.io/blog/your-business-doesnt-need-you-to-operate/",
+      "icon": " 🖥️"
+    },
+    {
+      "label": "5 workflow automation for Mattermost that we love at n8n",
+      "url": "https://n8n.io/blog/5-workflow-automations-for-mattermost-that-we-love-at-n8n/",
+      "icon": "🤖"
+    },
+    {
+      "label": "Tracking Time Spent in Meetings With Google Calendar, Twilio, and n8n",
+      "url": "https://n8n.io/blog/tracking-time-spent-in-meetings-with-google-calendar-twilio-and-n8n/",
+      "icon": "🗓"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes//.svg",
+  "sourcePath": "packages/nodes-base/nodes/Google/Calendar/GoogleCalendar.node.json",
+  "packageName": "n8n-nodes-base"
+}

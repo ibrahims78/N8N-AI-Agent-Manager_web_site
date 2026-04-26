@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.getResponse",
+  "displayName": "GetResponse",
+  "fileName": "GetResponse",
+  "folder": "GetResponse",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/getresponse/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.getresponse/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/GetResponse/getresponse.svg",
+  "sourcePath": "packages/nodes-base/nodes/GetResponse/GetResponse.node.json",
+  "packageName": "n8n-nodes-base"
+}

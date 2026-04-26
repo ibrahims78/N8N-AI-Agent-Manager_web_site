@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.strapi",
+  "displayName": "Strapi",
+  "fileName": "Strapi",
+  "folder": "Strapi",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage",
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/strapi/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.strapi/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Strapi/strapi.svg",
+  "sourcePath": "packages/nodes-base/nodes/Strapi/Strapi.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,155 @@
+{
+  "slug": "webhook-data-receiver",
+  "name": "استقبال Webhook ومعالجة البيانات",
+  "nameEn": "Webhook Data Receiver & Processor",
+  "description": "استقبال البيانات عبر Webhook، التحقق منها، ومعالجتها وحفظها في قاعدة بيانات",
+  "descriptionEn": "Receive data via Webhook, validate, process and store it in a database",
+  "category": "api",
+  "nodesCount": 5,
+  "avgRating": 4.2,
+  "workflowJson": {
+    "name": "Webhook Data Receiver",
+    "nodes": [
+      {
+        "id": "webhook-1",
+        "name": "Webhook Trigger",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          240,
+          300
+        ],
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "data-receiver",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "webhookId": "webhook-data-receiver"
+      },
+      {
+        "id": "if-1",
+        "name": "Validate Data",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          460,
+          300
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "check-1",
+                "leftValue": "={{ $json.body }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty"
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        }
+      },
+      {
+        "id": "code-2",
+        "name": "Process & Transform",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          680,
+          220
+        ],
+        "parameters": {
+          "jsCode": "const data = $input.item.json;\nconst processed = {\n  ...data,\n  processedAt: new Date().toISOString(),\n  status: 'processed',\n  id: Math.random().toString(36).substr(2, 9)\n};\nreturn [{ json: processed }];"
+        }
+      },
+      {
+        "id": "respond-1",
+        "name": "Respond Success",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          900,
+          220
+        ],
+        "parameters": {
+          "options": {
+            "responseCode": 200
+          },
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ success: true, id: $json.id, message: 'تم استلام البيانات بنجاح' }) }}"
+        }
+      },
+      {
+        "id": "respond-err",
+        "name": "Respond Error",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          680,
+          420
+        ],
+        "parameters": {
+          "options": {
+            "responseCode": 400
+          },
+          "respondWith": "json",
+          "responseBody": "{\"success\":false,\"message\":\"البيانات غير صالحة\"}"
+        }
+      }
+    ],
+    "connections": {
+      "Webhook Trigger": {
+        "main": [
+          [
+            {
+              "node": "Validate Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Validate Data": {
+        "main": [
+          [
+            {
+              "node": "Process & Transform",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Error",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Process & Transform": {
+        "main": [
+          [
+            {
+              "node": "Respond Success",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    }
+  }
+}

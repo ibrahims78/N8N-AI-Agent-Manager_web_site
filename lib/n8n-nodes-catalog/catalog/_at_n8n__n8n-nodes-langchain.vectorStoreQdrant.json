@@ -1,0 +1,21 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+  "displayName": "Qdrant Vector Store",
+  "fileName": "VectorStoreQdrant",
+  "folder": "VectorStoreQdrant",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": null,
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/vector_store/VectorStoreQdrant/VectorStoreQdrant.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Work with your data in a Qdrant collection"
+}

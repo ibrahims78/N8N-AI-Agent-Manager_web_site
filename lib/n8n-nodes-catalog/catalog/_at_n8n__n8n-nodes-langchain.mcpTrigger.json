@@ -1,0 +1,30 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.mcpTrigger",
+  "displayName": "MCP Server Trigger",
+  "fileName": "McpTrigger",
+  "folder": "McpTrigger",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI",
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "AI": [
+      "Root Nodes",
+      "Model Context Protocol"
+    ]
+  },
+  "aliases": [
+    "Model Context Protocol",
+    "MCP Server"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/mcp/McpTrigger/McpTrigger.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Expose n8n tools as an MCP Server endpoint"
+}

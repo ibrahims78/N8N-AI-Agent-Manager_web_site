@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.gumroadTrigger",
+  "displayName": "Gumroad",
+  "fileName": "GumroadTrigger",
+  "folder": "Gumroad",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/gumroad/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.gumroadtrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Gumroad/gumroad.svg",
+  "sourcePath": "packages/nodes-base/nodes/Gumroad/GumroadTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

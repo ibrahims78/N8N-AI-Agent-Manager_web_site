@@ -1,0 +1,25 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+  "displayName": "Embeddings Hugging Face Inference",
+  "fileName": "EmbeddingsHuggingFaceInference",
+  "folder": "EmbeddingsHuggingFaceInference",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Embeddings"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.embeddingshuggingfaceinference/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/embeddings/EmbeddingsHuggingFaceInference/EmbeddingsHuggingFaceInference.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Use HuggingFace Inference Embeddings"
+}

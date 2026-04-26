@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.grist",
+  "displayName": "Grist",
+  "fileName": "Grist",
+  "folder": "Grist",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/grist/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.grist/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Grist/grist.svg",
+  "sourcePath": "packages/nodes-base/nodes/Grist/Grist.node.json",
+  "packageName": "n8n-nodes-base"
+}

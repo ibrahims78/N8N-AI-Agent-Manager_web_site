@@ -1,0 +1,41 @@
+{
+  "nodeType": "n8n-nodes-base.splitInBatches",
+  "displayName": "SplitInBatches",
+  "fileName": "SplitInBatches",
+  "folder": "SplitInBatches",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Flow"
+    ]
+  },
+  "aliases": [
+    "Loop",
+    "Concatenate",
+    "Batch",
+    "Split",
+    "Split In Batches"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.splitinbatches/",
+  "examples": [
+    {
+      "label": "How uProc scraped a multi-page website with a low-code workflow",
+      "url": "https://n8n.io/blog/how-uproc-scraped-a-multi-page-website-with-a-low-code-workflow/",
+      "icon": " 🕸️"
+    },
+    {
+      "label": "Benefits of automation and n8n: An interview with HubSpot's Hugh Durkin",
+      "url": "https://n8n.io/blog/benefits-of-automation-and-n8n-an-interview-with-hubspots-hugh-durkin/",
+      "icon": "🎖"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/SplitInBatches/splitinbatches.svg",
+  "sourcePath": "packages/nodes-base/nodes/SplitInBatches/SplitInBatches.node.json",
+  "packageName": "n8n-nodes-base"
+}

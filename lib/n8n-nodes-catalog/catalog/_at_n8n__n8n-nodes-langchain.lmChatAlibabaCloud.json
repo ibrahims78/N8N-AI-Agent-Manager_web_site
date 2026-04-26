@@ -1,0 +1,31 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatAlibabaCloud",
+  "displayName": "Alibaba Cloud Chat Model",
+  "fileName": "LmChatAlibabaCloud",
+  "folder": "LmChatAlibabaCloud",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Language Models",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [
+    "qwen",
+    "dashscope",
+    "alibaba",
+    "model studio"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatalibabacloud/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/llms/LmChatAlibabaCloud/LmChatAlibabaCloud.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "For advanced usage with an AI chain"
+}

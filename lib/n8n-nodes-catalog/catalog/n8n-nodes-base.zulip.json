@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.zulip",
+  "displayName": "Zulip",
+  "fileName": "Zulip",
+  "folder": "Zulip",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/zulip/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.zulip/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Zulip/zulip.svg",
+  "sourcePath": "packages/nodes-base/nodes/Zulip/Zulip.node.json",
+  "packageName": "n8n-nodes-base"
+}

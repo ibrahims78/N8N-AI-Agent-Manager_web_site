@@ -1,0 +1,27 @@
+{
+  "nodeType": "n8n-nodes-base.linkedIn",
+  "displayName": "LinkedIn",
+  "fileName": "LinkedIn",
+  "folder": "LinkedIn",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/linkedin/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.linkedin/",
+  "examples": [
+    {
+      "label": "Why business process automation with n8n can change your daily life",
+      "url": "https://n8n.io/blog/why-business-process-automation-with-n8n-can-change-your-daily-life/",
+      "icon": "🧬"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/LinkedIn/linkedin.svg",
+  "sourcePath": "packages/nodes-base/nodes/LinkedIn/LinkedIn.node.json",
+  "packageName": "n8n-nodes-base"
+}

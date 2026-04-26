@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.box",
+  "displayName": "Box",
+  "fileName": "Box",
+  "folder": "Box",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/box/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.box/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Box/box.svg",
+  "sourcePath": "packages/nodes-base/nodes/Box/Box.node.json",
+  "packageName": "n8n-nodes-base"
+}

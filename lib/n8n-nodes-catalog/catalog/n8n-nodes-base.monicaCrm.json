@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.monicaCrm",
+  "displayName": "MonicaCrm",
+  "fileName": "MonicaCrm",
+  "folder": "MonicaCrm",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/monicacrm/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.monicacrm/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/MonicaCrm/monicacrm.svg",
+  "sourcePath": "packages/nodes-base/nodes/MonicaCrm/MonicaCrm.node.json",
+  "packageName": "n8n-nodes-base"
+}

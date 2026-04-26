@@ -1,0 +1,73 @@
+{
+  "nodeType": "n8n-nodes-base.typeformTrigger",
+  "displayName": "Typeform",
+  "fileName": "TypeformTrigger",
+  "folder": "Typeform",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "Form"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/typeform/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.typeformtrigger/",
+  "examples": [
+    {
+      "label": "2021: The Year to Automate the New You with n8n",
+      "url": "https://n8n.io/blog/2021-the-year-to-automate-the-new-you-with-n8n/",
+      "icon": "☀️"
+    },
+    {
+      "label": "Supercharging your conference registration process with n8n",
+      "url": "https://n8n.io/blog/supercharging-your-conference-registration-process-with-n8n/",
+      "icon": "🎫"
+    },
+    {
+      "label": "How to get started with CRM automation (with 3 no-code workflow ideas",
+      "url": "https://n8n.io/blog/how-to-get-started-with-crm-automation-and-no-code-workflow-ideas/",
+      "icon": "👥"
+    },
+    {
+      "label": "5 tasks you can automate with the new Notion API ",
+      "url": "https://n8n.io/blog/5-tasks-you-can-automate-with-notion-api/",
+      "icon": "⚡️"
+    },
+    {
+      "label": "15 Google apps you can combine and automate to increase productivity",
+      "url": "https://n8n.io/blog/automate-google-apps-for-productivity/",
+      "icon": "💡"
+    },
+    {
+      "label": "Building an expense tracking app in 10 minutes",
+      "url": "https://n8n.io/blog/building-an-expense-tracking-app-in-10-minutes/",
+      "icon": "📱"
+    },
+    {
+      "label": "5 workflow automations for Mattermost that we love at n8n",
+      "url": "https://n8n.io/blog/5-workflow-automations-for-mattermost-that-we-love-at-n8n/",
+      "icon": "🤖"
+    },
+    {
+      "label": "Automating Conference Organization Processes with n8n",
+      "url": "https://n8n.io/blog/automating-conference-organization-processes-with-n8n/",
+      "icon": "🙋‍♀️"
+    },
+    {
+      "label": "How Common Knowledge use workflow automation for activism",
+      "url": "https://n8n.io/blog/automations-for-activists/",
+      "icon": "✨"
+    },
+    {
+      "label": "7 no-code workflow automations for Amazon Web Services",
+      "url": "https://n8n.io/blog/aws-workflow-automation/",
+      "icon": ""
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Typeform/typeform.svg",
+  "sourcePath": "packages/nodes-base/nodes/Typeform/TypeformTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

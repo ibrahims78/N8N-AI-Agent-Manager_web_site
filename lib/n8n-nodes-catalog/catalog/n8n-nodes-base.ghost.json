@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.ghost",
+  "displayName": "Ghost",
+  "fileName": "Ghost",
+  "folder": "Ghost",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/ghost/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.ghost/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Ghost/ghost.svg",
+  "sourcePath": "packages/nodes-base/nodes/Ghost/Ghost.node.json",
+  "packageName": "n8n-nodes-base"
+}

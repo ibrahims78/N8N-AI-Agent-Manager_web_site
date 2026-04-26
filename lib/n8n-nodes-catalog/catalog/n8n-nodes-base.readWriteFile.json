@@ -1,0 +1,37 @@
+{
+  "nodeType": "n8n-nodes-base.readWriteFile",
+  "displayName": "",
+  "fileName": "",
+  "folder": "",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Files"
+    ]
+  },
+  "aliases": [
+    "Binary",
+    "Binary File",
+    "File",
+    "Text",
+    "Open",
+    "Import",
+    "Save",
+    "Export",
+    "Disk",
+    "Transfer",
+    "Read Binary File",
+    "Write Binary File"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes//.svg",
+  "sourcePath": "packages/nodes-base/nodes/Files/ReadWriteFile/ReadWriteFile.node.json",
+  "packageName": "n8n-nodes-base"
+}

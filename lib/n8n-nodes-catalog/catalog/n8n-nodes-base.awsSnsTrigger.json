@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.awsSnsTrigger",
+  "displayName": "Aws",
+  "fileName": "AwsSnsTrigger",
+  "folder": "Aws",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/aws/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.awssnstrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Aws/aws.svg",
+  "sourcePath": "packages/nodes-base/nodes/Aws/AwsSnsTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

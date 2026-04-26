@@ -1,0 +1,28 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatMinimax",
+  "displayName": "MiniMax Chat Model",
+  "fileName": "LmChatMinimax",
+  "folder": "LmChatMinimax",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Language Models",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [
+    "minimax"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatminimax/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/llms/LmChatMinimax/LmChatMinimax.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "For advanced usage with an AI chain"
+}

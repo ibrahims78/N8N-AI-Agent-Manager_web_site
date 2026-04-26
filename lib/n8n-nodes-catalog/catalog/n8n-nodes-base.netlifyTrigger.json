@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.netlifyTrigger",
+  "displayName": "Netlify",
+  "fileName": "NetlifyTrigger",
+  "folder": "Netlify",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/netlify/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.netlifytrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Netlify/netlify.svg",
+  "sourcePath": "packages/nodes-base/nodes/Netlify/NetlifyTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

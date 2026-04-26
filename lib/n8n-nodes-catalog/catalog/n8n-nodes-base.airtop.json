@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.airtop",
+  "displayName": "Airtop",
+  "fileName": "Airtop",
+  "folder": "Airtop",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity",
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/airtop/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.airtop/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Airtop/airtop.svg",
+  "sourcePath": "packages/nodes-base/nodes/Airtop/Airtop.node.json",
+  "packageName": "n8n-nodes-base"
+}

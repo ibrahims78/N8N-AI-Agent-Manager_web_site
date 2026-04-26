@@ -1,0 +1,42 @@
+{
+  "nodeType": "n8n-nodes-base.mongoDb",
+  "displayName": "MongoDb",
+  "fileName": "MongoDb",
+  "folder": "MongoDb",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/mongodb/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mongodb/",
+  "examples": [
+    {
+      "label": "Why business process automation with n8n can change your daily life",
+      "url": "https://n8n.io/blog/why-business-process-automation-with-n8n-can-change-your-daily-life/",
+      "icon": "🧬"
+    },
+    {
+      "label": "Running n8n on ships: An interview with Maranics",
+      "url": "https://n8n.io/blog/running-n8n-on-ships-an-interview-with-maranics/",
+      "icon": "🛳"
+    },
+    {
+      "label": "Automate your data processing pipeline in 9 steps",
+      "url": "https://n8n.io/blog/automate-your-data-processing-pipeline-in-9-steps-with-n8n/",
+      "icon": "⚙️"
+    },
+    {
+      "label": "How uProc scraped a multi-page website with a low-code workflow",
+      "url": "https://n8n.io/blog/how-uproc-scraped-a-multi-page-website-with-a-low-code-workflow/",
+      "icon": " 🕸️"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/MongoDb/mongodb.svg",
+  "sourcePath": "packages/nodes-base/nodes/MongoDb/MongoDb.node.json",
+  "packageName": "n8n-nodes-base"
+}

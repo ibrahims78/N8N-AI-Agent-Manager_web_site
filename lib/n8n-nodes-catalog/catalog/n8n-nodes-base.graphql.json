@@ -1,0 +1,37 @@
+{
+  "nodeType": "n8n-nodes-base.graphql",
+  "displayName": "GraphQL",
+  "fileName": "GraphQL",
+  "folder": "GraphQL",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage",
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.graphql/",
+  "examples": [
+    {
+      "label": "What are APIs and how to use them with no code",
+      "url": "https://n8n.io/blog/what-are-apis-how-to-use-them-with-no-code/",
+      "icon": " 🪢"
+    },
+    {
+      "label": "How to automatically give kudos to contributors with GitHub, Slack, and n8n",
+      "url": "https://n8n.io/blog/how-to-automatically-give-kudos-to-contributors-with-github-slack-and-n8n/",
+      "icon": "👏"
+    },
+    {
+      "label": "How Goomer automated their operations with over 200 n8n workflows",
+      "url": "https://n8n.io/blog/how-goomer-automated-their-operations-with-over-200-n8n-workflows/",
+      "icon": "🛵"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/GraphQL/graphql.svg",
+  "sourcePath": "packages/nodes-base/nodes/GraphQL/GraphQL.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.helpScoutTrigger",
+  "displayName": "HelpScout",
+  "fileName": "HelpScoutTrigger",
+  "folder": "HelpScout",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/helpscout/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.helpscouttrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/HelpScout/helpscout.svg",
+  "sourcePath": "packages/nodes-base/nodes/HelpScout/HelpScoutTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.slackTrigger",
+  "displayName": "Slack",
+  "fileName": "SlackTrigger",
+  "folder": "Slack",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/slack/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.slacktrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Slack/slack.svg",
+  "sourcePath": "packages/nodes-base/nodes/Slack/SlackTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.phantombuster",
+  "displayName": "Phantombuster",
+  "fileName": "Phantombuster",
+  "folder": "Phantombuster",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales",
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/phantombuster/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.phantombuster/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Phantombuster/phantombuster.svg",
+  "sourcePath": "packages/nodes-base/nodes/Phantombuster/Phantombuster.node.json",
+  "packageName": "n8n-nodes-base"
+}

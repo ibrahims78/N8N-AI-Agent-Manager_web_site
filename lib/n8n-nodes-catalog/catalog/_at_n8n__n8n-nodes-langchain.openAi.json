@@ -1,0 +1,37 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.openAi",
+  "displayName": "OpenAI",
+  "fileName": "OpenAi",
+  "folder": "OpenAi",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Agents",
+      "Miscellaneous",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [
+    "LangChain",
+    "ChatGPT",
+    "Sora",
+    "DallE",
+    "whisper",
+    "audio",
+    "transcribe",
+    "tts",
+    "assistant"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/vendors/OpenAi/OpenAi.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Message an assistant or GPT, analyze images, generate audio, etc."
+}

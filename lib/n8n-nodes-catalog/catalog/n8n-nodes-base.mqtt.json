@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.mqtt",
+  "displayName": "MQTT",
+  "fileName": "Mqtt",
+  "folder": "MQTT",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/mqtt/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mqtt/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/MQTT/mqtt.svg",
+  "sourcePath": "packages/nodes-base/nodes/MQTT/Mqtt.node.json",
+  "packageName": "n8n-nodes-base"
+}

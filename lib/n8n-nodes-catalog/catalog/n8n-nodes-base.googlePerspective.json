@@ -1,0 +1,29 @@
+{
+  "nodeType": "n8n-nodes-base.googlePerspective",
+  "displayName": "",
+  "fileName": "",
+  "folder": "",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Analytics",
+    "Utility"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "Moderation"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/google/oauth-single-service/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.googleperspective/",
+  "examples": [
+    {
+      "label": "Create a toxic language detector for Telegram in 4 step",
+      "url": "https://n8n.io/blog/create-a-toxic-language-detector-for-telegram/",
+      "icon": "🤬"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes//.svg",
+  "sourcePath": "packages/nodes-base/nodes/Google/Perspective/GooglePerspective.node.json",
+  "packageName": "n8n-nodes-base"
+}

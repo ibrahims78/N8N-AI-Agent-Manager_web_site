@@ -1,0 +1,28 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.toolWolframAlpha",
+  "displayName": "Wolfram|Alpha",
+  "fileName": "ToolWolframAlpha",
+  "folder": "ToolWolframAlpha",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Tools"
+    ],
+    "Tools": [
+      "Other Tools"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolwolframalpha/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/tools/ToolWolframAlpha/ToolWolframAlpha.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Connects to WolframAlpha's computational intelligence engine."
+}

@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.clickUpTrigger",
+  "displayName": "ClickUp",
+  "fileName": "ClickUpTrigger",
+  "folder": "ClickUp",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/clickup/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.clickuptrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ClickUp/clickup.svg",
+  "sourcePath": "packages/nodes-base/nodes/ClickUp/ClickUpTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

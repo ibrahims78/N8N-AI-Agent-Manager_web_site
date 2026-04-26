@@ -1,0 +1,44 @@
+{
+  "nodeType": "n8n-nodes-base.readBinaryFile",
+  "displayName": "ReadBinaryFile",
+  "fileName": "ReadBinaryFile",
+  "folder": "ReadBinaryFile",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Files"
+    ]
+  },
+  "aliases": [
+    "Text",
+    "Open",
+    "Import"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.readwritefile/",
+  "examples": [
+    {
+      "label": "Build your own virtual assistant with n8n: A step by step guide",
+      "url": "https://n8n.io/blog/build-your-own-virtual-assistant-with-n8n-a-step-by-step-guide/",
+      "icon": "👦"
+    },
+    {
+      "label": "How uProc scraped a multi-page website with a low-code workflow",
+      "url": "https://n8n.io/blog/how-uproc-scraped-a-multi-page-website-with-a-low-code-workflow/",
+      "icon": " 🕸️"
+    },
+    {
+      "label": "How to use the HTTP Request Node - The Swiss Army Knife for Workflow Automation",
+      "url": "https://n8n.io/blog/how-to-use-the-http-request-node-the-swiss-army-knife-for-workflow-automation/",
+      "icon": "🧰"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ReadBinaryFile/readbinaryfile.svg",
+  "sourcePath": "packages/nodes-base/nodes/ReadBinaryFile/ReadBinaryFile.node.json",
+  "packageName": "n8n-nodes-base"
+}

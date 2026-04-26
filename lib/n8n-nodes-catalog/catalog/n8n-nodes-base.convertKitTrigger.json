@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.convertKitTrigger",
+  "displayName": "ConvertKit",
+  "fileName": "ConvertKitTrigger",
+  "folder": "ConvertKit",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing",
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/convertkit/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.convertkittrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ConvertKit/convertkit.svg",
+  "sourcePath": "packages/nodes-base/nodes/ConvertKit/ConvertKitTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

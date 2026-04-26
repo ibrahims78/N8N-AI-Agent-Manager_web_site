@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.Brandfetch",
+  "displayName": "Brandfetch",
+  "fileName": "Brandfetch",
+  "folder": "Brandfetch",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Utility",
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/brandfetch/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.brandfetch/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Brandfetch/brandfetch.svg",
+  "sourcePath": "packages/nodes-base/nodes/Brandfetch/Brandfetch.node.json",
+  "packageName": "n8n-nodes-base"
+}

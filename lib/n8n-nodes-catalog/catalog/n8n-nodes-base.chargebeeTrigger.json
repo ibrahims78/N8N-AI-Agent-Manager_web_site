@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.chargebeeTrigger",
+  "displayName": "Chargebee",
+  "fileName": "ChargebeeTrigger",
+  "folder": "Chargebee",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Finance & Accounting"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/chargebee/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.chargebeetrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Chargebee/chargebee.svg",
+  "sourcePath": "packages/nodes-base/nodes/Chargebee/ChargebeeTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.vero",
+  "displayName": "Vero",
+  "fileName": "Vero",
+  "folder": "Vero",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/vero/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.vero/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Vero/vero.svg",
+  "sourcePath": "packages/nodes-base/nodes/Vero/Vero.node.json",
+  "packageName": "n8n-nodes-base"
+}

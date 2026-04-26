@@ -1,0 +1,28 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.toolThink",
+  "displayName": "Think Tool",
+  "fileName": "ToolThink",
+  "folder": "ToolThink",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Tools"
+    ],
+    "Tools": [
+      "Other Tools"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolthink/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/tools/ToolThink/ToolThink.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Invite the AI agent to do some thinking"
+}

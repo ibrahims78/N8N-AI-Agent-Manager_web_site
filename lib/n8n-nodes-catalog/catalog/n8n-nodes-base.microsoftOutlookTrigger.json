@@ -1,0 +1,22 @@
+{
+  "nodeType": "n8n-nodes-base.microsoftOutlookTrigger",
+  "displayName": "",
+  "fileName": "",
+  "folder": "",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "email"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/microsoft/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.microsoftoutlooktrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes//.svg",
+  "sourcePath": "packages/nodes-base/nodes/Microsoft/Outlook/MicrosoftOutlookTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

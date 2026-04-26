@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.pushover",
+  "displayName": "Pushover",
+  "fileName": "Pushover",
+  "folder": "Pushover",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/pushover/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.pushover/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Pushover/pushover.svg",
+  "sourcePath": "packages/nodes-base/nodes/Pushover/Pushover.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.togglTrigger",
+  "displayName": "Toggl",
+  "fileName": "TogglTrigger",
+  "folder": "Toggl",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity",
+    "Utility"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/toggl/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.toggltrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Toggl/toggl.svg",
+  "sourcePath": "packages/nodes-base/nodes/Toggl/TogglTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

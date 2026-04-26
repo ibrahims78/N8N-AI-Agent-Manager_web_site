@@ -1,0 +1,21 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+  "displayName": "Simple Vector Store",
+  "fileName": "VectorStoreInMemory",
+  "folder": "VectorStoreInMemory",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": null,
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/vector_store/VectorStoreInMemory/VectorStoreInMemory.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "The easiest way to experiment with vector stores, without external setup."
+}

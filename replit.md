@@ -521,3 +521,10 @@ GPT-4o يحلل الخطأ + يصحح JSON
 - Frontend route: `/nodes-catalog` (browse), Settings → "n8n Nodes Catalog" (refresh).
 - AI agent tool: `lookup_node_catalog` for alias/folder/type resolution + docs links.
 - Updater: `pnpm --filter @workspace/n8n-nodes-catalog run fetch`.
+
+## Unified Content Cache (Phases 5-7 completed 2026-04-26)
+- Plan: `docs/plans/unified-content-cache-plan.md`. All 7 phases ✅.
+- **Phase 5**: catalog split into 541 per-node files in `lib/n8n-nodes-catalog/catalog/`; 6 system templates extracted to `lib/n8n-nodes-catalog/templates/`. Loaders fall back to legacy on missing dir.
+- **Phase 6**: unified API at `/api/content/:kind/...` with `kind ∈ {guide, node-doc}`. Verbs: `stats`, `:slug` (GET), `:slug/diff`, `:slug/override` (PUT/DELETE), `refresh-all` (POST, SSE named events), `history` (GET). Shared React component `<ContentRefreshPanel>` consumed by `guides.tsx` (full visual parity).
+- **Phase 7**: new table `content_refresh_history` (kind, mode, total/added/updated/unchanged/failed, duration_ms, ai_calls, network_bytes). Writer service `contentRefreshHistory.service.ts` is best-effort and **never writes during dry-run** (sacred contract §15.4). `?only=type1,type2` query added to node-doc refresh-all to scope `force` runs.
+- **Tests** (all green): `tests/phase5-catalog-templates.test.mjs` 8/8, `tests/phase6-unified-content-api.test.mjs` 8/8, `tests/content-cache.test.mjs` 12/12 (6 contracts × 2 kinds).

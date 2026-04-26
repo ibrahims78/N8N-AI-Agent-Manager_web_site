@@ -1,0 +1,23 @@
+{
+  "nodeType": "n8n-nodes-base.deepL",
+  "displayName": "DeepL",
+  "fileName": "DeepL",
+  "folder": "DeepL",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Utility"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "Translate",
+    "Translator"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/deepl/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.deepl/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/DeepL/deepl.svg",
+  "sourcePath": "packages/nodes-base/nodes/DeepL/DeepL.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.wooCommerce",
+  "displayName": "WooCommerce",
+  "fileName": "WooCommerce",
+  "folder": "WooCommerce",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/woocommerce/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.woocommerce/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/WooCommerce/woocommerce.svg",
+  "sourcePath": "packages/nodes-base/nodes/WooCommerce/WooCommerce.node.json",
+  "packageName": "n8n-nodes-base"
+}

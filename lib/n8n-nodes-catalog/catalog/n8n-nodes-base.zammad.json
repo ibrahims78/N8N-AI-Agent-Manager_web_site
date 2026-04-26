@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.zammad",
+  "displayName": "Zammad",
+  "fileName": "Zammad",
+  "folder": "Zammad",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/zammad/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.zammad/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Zammad/zammad.svg",
+  "sourcePath": "packages/nodes-base/nodes/Zammad/Zammad.node.json",
+  "packageName": "n8n-nodes-base"
+}

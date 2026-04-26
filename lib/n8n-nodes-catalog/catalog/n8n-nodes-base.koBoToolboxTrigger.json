@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.koBoToolboxTrigger",
+  "displayName": "KoBoToolbox",
+  "fileName": "KoBoToolboxTrigger",
+  "folder": "KoBoToolbox",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/kobotoolbox/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.kobotoolboxtrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/KoBoToolbox/kobotoolbox.svg",
+  "sourcePath": "packages/nodes-base/nodes/KoBoToolbox/KoBoToolboxTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

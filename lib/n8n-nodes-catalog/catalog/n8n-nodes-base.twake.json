@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.twake",
+  "displayName": "Twake",
+  "fileName": "Twake",
+  "folder": "Twake",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/twake/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.twake/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Twake/twake.svg",
+  "sourcePath": "packages/nodes-base/nodes/Twake/Twake.node.json",
+  "packageName": "n8n-nodes-base"
+}

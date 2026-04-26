@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.unleashedSoftware",
+  "displayName": "UnleashedSoftware",
+  "fileName": "UnleashedSoftware",
+  "folder": "UnleashedSoftware",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales",
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/unleashedsoftware/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.unleashedsoftware/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/UnleashedSoftware/unleashedsoftware.svg",
+  "sourcePath": "packages/nodes-base/nodes/UnleashedSoftware/UnleashedSoftware.node.json",
+  "packageName": "n8n-nodes-base"
+}

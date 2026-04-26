@@ -1,0 +1,23 @@
+{
+  "nodeType": "n8n-nodes-base.freshworksCrm",
+  "displayName": "FreshworksCrm",
+  "fileName": "FreshworksCrm",
+  "folder": "FreshworksCrm",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing",
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "Freshdesk"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/freshworkscrm/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.freshworkscrm/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/FreshworksCrm/freshworkscrm.svg",
+  "sourcePath": "packages/nodes-base/nodes/FreshworksCrm/FreshworksCrm.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,25 @@
+{
+  "nodeType": "n8n-nodes-base.whatsApp",
+  "displayName": "WhatsApp",
+  "fileName": "WhatsApp",
+  "folder": "WhatsApp",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "HITL"
+  ],
+  "subcategories": {
+    "HITL": [
+      "Human in the Loop"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/whatsapp/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.whatsapp/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/WhatsApp/whatsapp.svg",
+  "sourcePath": "packages/nodes-base/nodes/WhatsApp/WhatsApp.node.json",
+  "packageName": "n8n-nodes-base"
+}

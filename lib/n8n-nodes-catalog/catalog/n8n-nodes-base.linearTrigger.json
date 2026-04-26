@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.linearTrigger",
+  "displayName": "Linear",
+  "fileName": "LinearTrigger",
+  "folder": "Linear",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/linear/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.lineartrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Linear/linear.svg",
+  "sourcePath": "packages/nodes-base/nodes/Linear/LinearTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

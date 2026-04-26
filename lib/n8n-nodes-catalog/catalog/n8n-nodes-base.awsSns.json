@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.awsSns",
+  "displayName": "Aws",
+  "fileName": "AwsSns",
+  "folder": "Aws",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/aws/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.awssns/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Aws/aws.svg",
+  "sourcePath": "packages/nodes-base/nodes/Aws/AwsSns.node.json",
+  "packageName": "n8n-nodes-base"
+}

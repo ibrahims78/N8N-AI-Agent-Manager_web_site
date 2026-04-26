@@ -1,0 +1,27 @@
+{
+  "nodeType": "n8n-nodes-base.crateDb",
+  "displayName": "CrateDb",
+  "fileName": "CrateDb",
+  "folder": "CrateDb",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/cratedb/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.cratedb/",
+  "examples": [
+    {
+      "label": "Learn to Automate Your Factory's Incident Reporting: A Step by Step Guide",
+      "url": "https://n8n.io/blog/learn-to-automate-your-factorys-incident-reporting-a-step-by-step-guide/",
+      "icon": "🏭"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/CrateDb/cratedb.svg",
+  "sourcePath": "packages/nodes-base/nodes/CrateDb/CrateDb.node.json",
+  "packageName": "n8n-nodes-base"
+}

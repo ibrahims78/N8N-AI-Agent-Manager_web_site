@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.affinityTrigger",
+  "displayName": "Affinity",
+  "fileName": "AffinityTrigger",
+  "folder": "Affinity",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/affinity/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.affinitytrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Affinity/affinity.svg",
+  "sourcePath": "packages/nodes-base/nodes/Affinity/AffinityTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

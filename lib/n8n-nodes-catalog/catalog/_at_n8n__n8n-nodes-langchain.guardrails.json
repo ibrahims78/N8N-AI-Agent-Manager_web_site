@@ -1,0 +1,34 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.guardrails",
+  "displayName": "Guardrails",
+  "fileName": "Guardrails",
+  "folder": "Guardrails",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Agents",
+      "Miscellaneous",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [
+    "LangChain",
+    "Guardrails",
+    "PII",
+    "Secret",
+    "Injection",
+    "Sanitize"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.guardrails/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/Guardrails/Guardrails.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Safeguard AI models from malicious input or prevent them from generating undesirable responses"
+}

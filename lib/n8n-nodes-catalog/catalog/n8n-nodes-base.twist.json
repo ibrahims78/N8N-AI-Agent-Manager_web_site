@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.twist",
+  "displayName": "Twist",
+  "fileName": "Twist",
+  "folder": "Twist",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/twist/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.twist/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Twist/twist.svg",
+  "sourcePath": "packages/nodes-base/nodes/Twist/Twist.node.json",
+  "packageName": "n8n-nodes-base"
+}

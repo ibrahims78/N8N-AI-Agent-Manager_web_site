@@ -1,0 +1,33 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.informationExtractor",
+  "displayName": "Information Extractor",
+  "fileName": "InformationExtractor",
+  "folder": "InformationExtractor",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Chains",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [
+    "NER",
+    "parse",
+    "parsing",
+    "JSON",
+    "data extraction",
+    "structured"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.information-extractor/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/chains/InformationExtractor/InformationExtractor.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Extract information from text in a structured format"
+}

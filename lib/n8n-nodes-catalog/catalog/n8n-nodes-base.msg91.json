@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.msg91",
+  "displayName": "Msg91",
+  "fileName": "Msg91",
+  "folder": "Msg91",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/msg91/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.msg91/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Msg91/msg91.svg",
+  "sourcePath": "packages/nodes-base/nodes/Msg91/Msg91.node.json",
+  "packageName": "n8n-nodes-base"
+}

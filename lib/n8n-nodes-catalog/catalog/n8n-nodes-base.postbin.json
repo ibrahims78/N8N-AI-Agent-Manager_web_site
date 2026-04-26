@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.postbin",
+  "displayName": "PostBin",
+  "fileName": "PostBin",
+  "folder": "PostBin",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.postbin/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/PostBin/postbin.svg",
+  "sourcePath": "packages/nodes-base/nodes/PostBin/PostBin.node.json",
+  "packageName": "n8n-nodes-base"
+}

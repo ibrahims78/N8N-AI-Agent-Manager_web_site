@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.raindrop",
+  "displayName": "Raindrop",
+  "fileName": "Raindrop",
+  "folder": "Raindrop",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/raindrop/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.raindrop/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Raindrop/raindrop.svg",
+  "sourcePath": "packages/nodes-base/nodes/Raindrop/Raindrop.node.json",
+  "packageName": "n8n-nodes-base"
+}

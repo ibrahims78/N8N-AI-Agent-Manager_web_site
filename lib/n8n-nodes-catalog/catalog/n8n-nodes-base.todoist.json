@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.todoist",
+  "displayName": "Todoist",
+  "fileName": "Todoist",
+  "folder": "Todoist",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/todoist/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.todoist/",
+  "examples": [
+    {
+      "label": "Benefits of automation and n8n: An interview with HubSpot's Hugh Durkin",
+      "url": "https://n8n.io/blog/benefits-of-automation-and-n8n-an-interview-with-hubspots-hugh-durkin/",
+      "icon": "🎖"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Todoist/todoist.svg",
+  "sourcePath": "packages/nodes-base/nodes/Todoist/Todoist.node.json",
+  "packageName": "n8n-nodes-base"
+}

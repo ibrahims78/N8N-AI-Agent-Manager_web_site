@@ -1,0 +1,26 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatGroq",
+  "displayName": "Groq Chat Model",
+  "fileName": "LmChatGroq",
+  "folder": "LmChatGroq",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Language Models",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatgroq/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/llms/LmChatGroq/LmChatGroq.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Language Model Groq"
+}

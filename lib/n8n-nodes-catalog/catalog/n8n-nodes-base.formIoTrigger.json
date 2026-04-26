@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.formIoTrigger",
+  "displayName": "FormIo",
+  "fileName": "FormIoTrigger",
+  "folder": "FormIo",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/formiotrigger/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.formiotrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/FormIo/formio.svg",
+  "sourcePath": "packages/nodes-base/nodes/FormIo/FormIoTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

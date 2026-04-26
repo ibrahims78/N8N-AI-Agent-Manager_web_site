@@ -1,0 +1,27 @@
+{
+  "nodeType": "n8n-nodes-base.stripeTrigger",
+  "displayName": "Stripe",
+  "fileName": "StripeTrigger",
+  "folder": "Stripe",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Finance & Accounting",
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/stripe/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.stripetrigger/",
+  "examples": [
+    {
+      "label": "Automate your customer journey with n8n: An interview with Blent.ai",
+      "url": "https://n8n.io/blog/automate-your-customer-journey-with-n8n-an-interview-with-blent-ai/",
+      "icon": "🚀"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Stripe/stripe.svg",
+  "sourcePath": "packages/nodes-base/nodes/Stripe/StripeTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

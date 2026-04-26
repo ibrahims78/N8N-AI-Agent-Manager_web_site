@@ -1,0 +1,28 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+  "displayName": "Simple Memory",
+  "fileName": "MemoryBufferWindow",
+  "folder": "MemoryBufferWindow",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Memory"
+    ],
+    "Memory": [
+      "For beginners"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.memorybufferwindow/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/memory/MemoryBufferWindow/MemoryBufferWindow.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Stores in n8n memory, so no credentials required"
+}

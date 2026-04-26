@@ -1,0 +1,21 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.mcpClient",
+  "displayName": "MCP Client",
+  "fileName": "McpClient",
+  "folder": "McpClient",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": null,
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/mcp/McpClient/McpClient.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Standalone MCP Client"
+}

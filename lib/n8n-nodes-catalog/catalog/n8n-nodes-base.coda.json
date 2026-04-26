@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.coda",
+  "displayName": "Coda",
+  "fileName": "Coda",
+  "folder": "Coda",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/coda/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.coda/",
+  "examples": [
+    {
+      "label": "How Goomer automated their operations with over 200 n8n workflows",
+      "url": "https://n8n.io/blog/how-goomer-automated-their-operations-with-over-200-n8n-workflows/",
+      "icon": "🛵"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Coda/coda.svg",
+  "sourcePath": "packages/nodes-base/nodes/Coda/Coda.node.json",
+  "packageName": "n8n-nodes-base"
+}

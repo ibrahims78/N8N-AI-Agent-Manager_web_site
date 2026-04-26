@@ -1,0 +1,101 @@
+{
+  "nodeType": "n8n-nodes-base.webhook",
+  "displayName": "Webhook",
+  "fileName": "Webhook",
+  "folder": "Webhook",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers"
+    ]
+  },
+  "aliases": [
+    "HTTP",
+    "API",
+    "Build",
+    "WH"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/",
+  "examples": [
+    {
+      "label": "Learn how to automatically cross-post your content with n8n",
+      "url": "https://n8n.io/blog/learn-how-to-automatically-cross-post-your-content-with-n8n/",
+      "icon": "✍️"
+    },
+    {
+      "label": "Running n8n on ships: An interview with Maranics",
+      "url": "https://n8n.io/blog/running-n8n-on-ships-an-interview-with-maranics/",
+      "icon": "🛳"
+    },
+    {
+      "label": "How to build a low-code, self-hosted URL shortener in 3 steps",
+      "url": "https://n8n.io/blog/how-to-build-a-low-code-self-hosted-url-shortener/",
+      "icon": "🔗"
+    },
+    {
+      "label": "What are APIs and how to use them with no code",
+      "url": "https://n8n.io/blog/what-are-apis-how-to-use-them-with-no-code/",
+      "icon": " 🪢"
+    },
+    {
+      "label": "5 tasks you can automate with the new Notion API ",
+      "url": "https://n8n.io/blog/5-tasks-you-can-automate-with-notion-api/",
+      "icon": "⚡️"
+    },
+    {
+      "label": "How a digital strategist uses n8n for online marketing",
+      "url": "https://n8n.io/blog/how-a-digital-strategist-uses-n8n-for-online-marketing/",
+      "icon": "💻"
+    },
+    {
+      "label": "The ultimate guide to automate your video collaboration with Whereby, Mattermost, and n8n",
+      "url": "https://n8n.io/blog/the-ultimate-guide-to-automate-your-video-collaboration-with-whereby-mattermost-and-n8n/",
+      "icon": "📹"
+    },
+    {
+      "label": "How to automatically give kudos to contributors with GitHub, Slack, and n8n",
+      "url": "https://n8n.io/blog/how-to-automatically-give-kudos-to-contributors-with-github-slack-and-n8n/",
+      "icon": "👏"
+    },
+    {
+      "label": "5 workflow automations for Mattermost that we love at n8n",
+      "url": "https://n8n.io/blog/5-workflow-automations-for-mattermost-that-we-love-at-n8n/",
+      "icon": "🤖"
+    },
+    {
+      "label": "Why this Product Manager loves workflow automation with n8n",
+      "url": "https://n8n.io/blog/why-this-product-manager-loves-workflow-automation-with-n8n/",
+      "icon": "🧠"
+    },
+    {
+      "label": "How to automate every step of an incident response workflow",
+      "url": "https://n8n.io/blog/creating-custom-incident-response-workflows-with-n8n/",
+      "icon": ""
+    },
+    {
+      "label": "Learn to Build Powerful API Endpoints Using Webhooks",
+      "url": "https://n8n.io/blog/learn-to-build-powerful-api-endpoints-using-webhooks/",
+      "icon": "🧰"
+    },
+    {
+      "label": "Learn how to use webhooks with Mattermost slash commands",
+      "url": "https://n8n.io/blog/learn-how-to-use-webhooks-with-mattermost-slash-commands/",
+      "icon": "🦄"
+    },
+    {
+      "label": "How Goomer automated their operations with over 200 n8n workflows",
+      "url": "https://n8n.io/blog/how-goomer-automated-their-operations-with-over-200-n8n-workflows/",
+      "icon": "🛵"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Webhook/webhook.svg",
+  "sourcePath": "packages/nodes-base/nodes/Webhook/Webhook.node.json",
+  "packageName": "n8n-nodes-base"
+}

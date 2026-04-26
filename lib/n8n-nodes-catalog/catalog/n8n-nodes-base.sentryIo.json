@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.sentryIo",
+  "displayName": "SentryIo",
+  "fileName": "SentryIo",
+  "folder": "SentryIo",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/sentryio/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.sentryio/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/SentryIo/sentryio.svg",
+  "sourcePath": "packages/nodes-base/nodes/SentryIo/SentryIo.node.json",
+  "packageName": "n8n-nodes-base"
+}

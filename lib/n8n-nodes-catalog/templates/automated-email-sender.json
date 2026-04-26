@@ -1,0 +1,110 @@
+{
+  "slug": "automated-email-sender",
+  "name": "إرسال إيميل تلقائي",
+  "nameEn": "Automated Email Sender",
+  "description": "إرسال إشعارات بريد إلكتروني تلقائية عند حدوث أحداث محددة عبر Gmail",
+  "descriptionEn": "Send automated email notifications via Gmail when specific events occur",
+  "category": "email",
+  "nodesCount": 4,
+  "avgRating": 4.5,
+  "workflowJson": {
+    "name": "Automated Email Sender",
+    "nodes": [
+      {
+        "id": "trigger-1",
+        "name": "Schedule Trigger",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          240,
+          300
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "hours",
+                "hoursInterval": 24
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "code-1",
+        "name": "Prepare Email Data",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          460,
+          300
+        ],
+        "parameters": {
+          "jsCode": "const now = new Date();\nreturn [{\n  json: {\n    subject: `تقرير يومي - ${now.toLocaleDateString('ar-SA')}`,\n    body: `مرحباً،\\n\\nهذا تقرير يومي تلقائي.\\n\\nالتاريخ: ${now.toLocaleDateString('ar-SA')}\\nالوقت: ${now.toLocaleTimeString('ar-SA')}\\n\\nمع التحية`,\n    to: 'recipient@example.com'\n  }\n}];"
+        }
+      },
+      {
+        "id": "gmail-1",
+        "name": "Send Email via Gmail",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          680,
+          300
+        ],
+        "parameters": {
+          "operation": "send",
+          "sendTo": "={{ $json.to }}",
+          "subject": "={{ $json.subject }}",
+          "emailType": "text",
+          "message": "={{ $json.body }}"
+        },
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "1",
+            "name": "Gmail Account"
+          }
+        }
+      },
+      {
+        "id": "error-1",
+        "name": "Error Handler",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          680,
+          460
+        ],
+        "parameters": {}
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Prepare Email Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare Email Data": {
+        "main": [
+          [
+            {
+              "node": "Send Email via Gmail",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "errorWorkflow": ""
+    }
+  }
+}

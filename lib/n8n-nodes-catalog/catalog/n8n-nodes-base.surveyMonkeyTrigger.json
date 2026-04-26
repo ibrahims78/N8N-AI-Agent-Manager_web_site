@@ -1,0 +1,23 @@
+{
+  "nodeType": "n8n-nodes-base.surveyMonkeyTrigger",
+  "displayName": "SurveyMonkey",
+  "fileName": "SurveyMonkeyTrigger",
+  "folder": "SurveyMonkey",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "Form"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/surveymonkey/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.surveymonkeytrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/SurveyMonkey/surveymonkey.svg",
+  "sourcePath": "packages/nodes-base/nodes/SurveyMonkey/SurveyMonkeyTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

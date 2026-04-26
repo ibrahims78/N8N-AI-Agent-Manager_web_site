@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.trelloTrigger",
+  "displayName": "Trello",
+  "fileName": "TrelloTrigger",
+  "folder": "Trello",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/trello/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.trellotrigger/",
+  "examples": [
+    {
+      "label": "Hey founders! Your business doesn't need you to operate",
+      "url": "https://n8n.io/blog/your-business-doesnt-need-you-to-operate/",
+      "icon": " 🖥️"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Trello/trello.svg",
+  "sourcePath": "packages/nodes-base/nodes/Trello/TrelloTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

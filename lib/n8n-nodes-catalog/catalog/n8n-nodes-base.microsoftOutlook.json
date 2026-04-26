@@ -1,0 +1,32 @@
+{
+  "nodeType": "n8n-nodes-base.microsoftOutlook",
+  "displayName": "",
+  "fileName": "",
+  "folder": "",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "HITL"
+  ],
+  "subcategories": {
+    "HITL": [
+      "Human in the Loop"
+    ]
+  },
+  "aliases": [
+    "email",
+    "human",
+    "form",
+    "wait",
+    "hitl",
+    "approval"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/microsoft/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.microsoftoutlook/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes//.svg",
+  "sourcePath": "packages/nodes-base/nodes/Microsoft/Outlook/MicrosoftOutlook.node.json",
+  "packageName": "n8n-nodes-base"
+}

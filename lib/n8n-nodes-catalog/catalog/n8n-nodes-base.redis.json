@@ -1,0 +1,27 @@
+{
+  "nodeType": "n8n-nodes-base.redis",
+  "displayName": "Redis",
+  "fileName": "Redis",
+  "folder": "Redis",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/redis/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.redis/",
+  "examples": [
+    {
+      "label": "Why this Product Manager loves workflow automation with n8n",
+      "url": "https://n8n.io/blog/why-this-product-manager-loves-workflow-automation-with-n8n/",
+      "icon": "🧠"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Redis/redis.svg",
+  "sourcePath": "packages/nodes-base/nodes/Redis/Redis.node.json",
+  "packageName": "n8n-nodes-base"
+}

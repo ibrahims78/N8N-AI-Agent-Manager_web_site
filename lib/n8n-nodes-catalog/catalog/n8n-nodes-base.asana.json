@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.asana",
+  "displayName": "Asana",
+  "fileName": "Asana",
+  "folder": "Asana",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/asana/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.asana/",
+  "examples": [
+    {
+      "label": "How a digital strategist uses n8n for online marketing",
+      "url": "https://n8n.io/blog/how-a-digital-strategist-uses-n8n-for-online-marketing/",
+      "icon": "💻"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Asana/asana.svg",
+  "sourcePath": "packages/nodes-base/nodes/Asana/Asana.node.json",
+  "packageName": "n8n-nodes-base"
+}

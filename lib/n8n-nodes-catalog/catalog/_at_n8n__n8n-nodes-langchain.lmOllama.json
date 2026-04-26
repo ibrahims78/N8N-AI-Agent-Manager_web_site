@@ -1,0 +1,26 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmOllama",
+  "displayName": "Ollama Model",
+  "fileName": "LmOllama",
+  "folder": "LMOllama",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Language Models",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmollama/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/llms/LMOllama/LmOllama.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Language Model Ollama"
+}

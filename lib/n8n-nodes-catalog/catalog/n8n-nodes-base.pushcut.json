@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.pushcut",
+  "displayName": "Pushcut",
+  "fileName": "Pushcut",
+  "folder": "Pushcut",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/pushcut/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.pushcut/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Pushcut/pushcut.svg",
+  "sourcePath": "packages/nodes-base/nodes/Pushcut/Pushcut.node.json",
+  "packageName": "n8n-nodes-base"
+}

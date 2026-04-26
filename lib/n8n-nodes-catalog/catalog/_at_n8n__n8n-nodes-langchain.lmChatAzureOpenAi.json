@@ -1,0 +1,26 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+  "displayName": "Azure OpenAI Chat Model",
+  "fileName": "LmChatAzureOpenAi",
+  "folder": "LmChatAzureOpenAi",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Language Models",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatazureopenai/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/llms/LmChatAzureOpenAi/LmChatAzureOpenAi.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "For advanced usage with an AI chain"
+}

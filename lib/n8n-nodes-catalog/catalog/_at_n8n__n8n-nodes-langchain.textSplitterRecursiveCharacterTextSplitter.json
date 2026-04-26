@@ -1,0 +1,25 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+  "displayName": "Recursive Character Text Splitter",
+  "fileName": "TextSplitterRecursiveCharacterTextSplitter",
+  "folder": "TextSplitterRecursiveCharacterTextSplitter",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Text Splitters"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.textsplitterrecursivecharactertextsplitter/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/text_splitters/TextSplitterRecursiveCharacterTextSplitter/TextSplitterRecursiveCharacterTextSplitter.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Split text into chunks by characters recursively, recommended for most use cases"
+}

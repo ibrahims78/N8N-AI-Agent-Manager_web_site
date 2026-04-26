@@ -14,3 +14,4 @@ export * from "./node_docs_history";
 export * from "./node_doc_sections";
 export * from "./guides_docs";
 export * from "./docs_sync_settings";
+export * from "./content_refresh_history";

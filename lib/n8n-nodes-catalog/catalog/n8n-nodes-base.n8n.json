@@ -1,0 +1,29 @@
+{
+  "nodeType": "n8n-nodes-base.n8n",
+  "displayName": "N8n",
+  "fileName": "N8n",
+  "folder": "N8n",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers",
+      "Other Trigger Nodes"
+    ]
+  },
+  "aliases": [
+    "Workflow",
+    "Execution"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/api/authentication/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.n8n/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/N8n/n8n.svg",
+  "sourcePath": "packages/nodes-base/nodes/N8n/N8n.node.json",
+  "packageName": "n8n-nodes-base"
+}

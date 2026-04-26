@@ -1,0 +1,23 @@
+{
+  "nodeType": "n8n-nodes-base.sms77",
+  "displayName": "Sms77",
+  "fileName": "Sms77",
+  "folder": "Sms77",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "SMS",
+    "Sms77"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/sms77/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.sms77/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Sms77/sms77.svg",
+  "sourcePath": "packages/nodes-base/nodes/Sms77/Sms77.node.json",
+  "packageName": "n8n-nodes-base"
+}

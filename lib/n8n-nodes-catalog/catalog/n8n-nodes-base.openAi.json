@@ -1,0 +1,23 @@
+{
+  "nodeType": "n8n-nodes-base.openAi",
+  "displayName": "OpenAi",
+  "fileName": "OpenAi",
+  "folder": "OpenAi",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Utility"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "ChatGPT",
+    "DallE"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/openai/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-langchain.openai/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/OpenAi/openai.svg",
+  "sourcePath": "packages/nodes-base/nodes/OpenAi/OpenAi.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,28 @@
+{
+  "nodeType": "n8n-nodes-base.quickChart",
+  "displayName": "QuickChart",
+  "fileName": "QuickChart",
+  "folder": "QuickChart",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "image",
+    "graph",
+    "report",
+    "chart",
+    "diagram",
+    "data",
+    "visualize"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/quickchart/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.quickchart/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/QuickChart/quickchart.svg",
+  "sourcePath": "packages/nodes-base/nodes/QuickChart/QuickChart.node.json",
+  "packageName": "n8n-nodes-base"
+}

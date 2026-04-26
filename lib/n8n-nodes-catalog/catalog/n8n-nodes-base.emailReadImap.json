@@ -1,0 +1,31 @@
+{
+  "nodeType": "n8n-nodes-base.emailReadImap",
+  "displayName": "EmailReadImap",
+  "fileName": "EmailReadImap",
+  "folder": "EmailReadImap",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Other Trigger Nodes"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/imap/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.emailimap/",
+  "examples": [
+    {
+      "label": "Build your own virtual assistant with n8n: A step by step guide",
+      "url": "https://n8n.io/blog/build-your-own-virtual-assistant-with-n8n-a-step-by-step-guide/",
+      "icon": "👦"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/EmailReadImap/emailreadimap.svg",
+  "sourcePath": "packages/nodes-base/nodes/EmailReadImap/EmailReadImap.node.json",
+  "packageName": "n8n-nodes-base"
+}

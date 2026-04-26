@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.gong",
+  "displayName": "Gong",
+  "fileName": "Gong",
+  "folder": "Gong",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Developer Tools"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gong/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gong/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Gong/gong.svg",
+  "sourcePath": "packages/nodes-base/nodes/Gong/Gong.node.json",
+  "packageName": "n8n-nodes-base"
+}

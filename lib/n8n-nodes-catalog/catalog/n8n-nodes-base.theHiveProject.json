@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.theHiveProject",
+  "displayName": "TheHiveProject",
+  "fileName": "TheHiveProject",
+  "folder": "TheHiveProject",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "Security",
+    "Monitoring",
+    "Incident",
+    "Response",
+    "Alert"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/thehive5/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.thehive5/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/TheHiveProject/thehiveproject.svg",
+  "sourcePath": "packages/nodes-base/nodes/TheHiveProject/TheHiveProject.node.json",
+  "packageName": "n8n-nodes-base"
+}

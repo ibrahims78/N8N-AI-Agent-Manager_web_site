@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.facebookLeadAdsTrigger",
+  "displayName": "FacebookLeadAds",
+  "fileName": "FacebookLeadAdsTrigger",
+  "folder": "FacebookLeadAds",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/facebookleadads/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebookleadadstrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/FacebookLeadAds/facebookleadads.svg",
+  "sourcePath": "packages/nodes-base/nodes/FacebookLeadAds/FacebookLeadAdsTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

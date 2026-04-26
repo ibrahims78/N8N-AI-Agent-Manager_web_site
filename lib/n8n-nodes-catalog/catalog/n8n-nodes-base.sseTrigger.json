@@ -1,0 +1,31 @@
+{
+  "nodeType": "n8n-nodes-base.sseTrigger",
+  "displayName": "SseTrigger",
+  "fileName": "SseTrigger",
+  "folder": "SseTrigger",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Other Trigger Nodes"
+    ]
+  },
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.ssetrigger/",
+  "examples": [
+    {
+      "label": "What are APIs and how to use them with no code",
+      "url": "https://n8n.io/blog/what-are-apis-how-to-use-them-with-no-code/",
+      "icon": " 🪢"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/SseTrigger/ssetrigger.svg",
+  "sourcePath": "packages/nodes-base/nodes/SseTrigger/SseTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

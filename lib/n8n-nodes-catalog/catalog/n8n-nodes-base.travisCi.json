@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.travisCi",
+  "displayName": "TravisCi",
+  "fileName": "TravisCi",
+  "folder": "TravisCi",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/travisci/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.travisci/",
+  "examples": [
+    {
+      "label": "How to set up a no-code CI/CD pipeline with GitHub and TravisCI",
+      "url": "https://n8n.io/blog/how-to-set-up-a-ci-cd-pipeline-with-no-code/",
+      "icon": "🎡"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/TravisCi/travisci.svg",
+  "sourcePath": "packages/nodes-base/nodes/TravisCi/TravisCi.node.json",
+  "packageName": "n8n-nodes-base"
+}

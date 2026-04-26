@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.marketstack",
+  "displayName": "Marketstack",
+  "fileName": "Marketstack",
+  "folder": "Marketstack",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Analytics",
+    "Finance & Accounting"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/marketstack/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.marketstack/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Marketstack/marketstack.svg",
+  "sourcePath": "packages/nodes-base/nodes/Marketstack/Marketstack.node.json",
+  "packageName": "n8n-nodes-base"
+}

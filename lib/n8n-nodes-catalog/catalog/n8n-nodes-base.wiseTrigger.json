@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.wiseTrigger",
+  "displayName": "Wise",
+  "fileName": "WiseTrigger",
+  "folder": "Wise",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Finance & Accounting"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/wise/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.wisetrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Wise/wise.svg",
+  "sourcePath": "packages/nodes-base/nodes/Wise/WiseTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

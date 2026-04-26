@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.copperTrigger",
+  "displayName": "Copper",
+  "fileName": "CopperTrigger",
+  "folder": "Copper",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/copper/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.coppertrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Copper/copper.svg",
+  "sourcePath": "packages/nodes-base/nodes/Copper/CopperTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

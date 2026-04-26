@@ -1,0 +1,140 @@
+{
+  "slug": "google-sheets-sync",
+  "name": "مزامنة Google Sheets",
+  "nameEn": "Google Sheets Sync",
+  "description": "جلب بيانات من API خارجي ومزامنتها تلقائياً مع Google Sheets كل ساعة",
+  "descriptionEn": "Fetch data from an external API and automatically sync it with Google Sheets every hour",
+  "category": "reports",
+  "nodesCount": 4,
+  "avgRating": 4,
+  "workflowJson": {
+    "name": "Google Sheets Sync",
+    "nodes": [
+      {
+        "id": "trigger-2",
+        "name": "Hourly Trigger",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          240,
+          300
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "hours",
+                "hoursInterval": 1
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "http-2",
+        "name": "Fetch Source Data",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          460,
+          300
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://jsonplaceholder.typicode.com/users",
+          "options": {}
+        }
+      },
+      {
+        "id": "split-1",
+        "name": "Split Into Items",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          680,
+          300
+        ],
+        "parameters": {
+          "batchSize": 10,
+          "options": {}
+        }
+      },
+      {
+        "id": "sheets-1",
+        "name": "Append to Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          900,
+          300
+        ],
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "YOUR_SHEET_ID",
+            "mode": "id"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "Sheet1",
+            "mode": "name"
+          },
+          "columns": {
+            "mappingMode": "autoMapInputData",
+            "value": {},
+            "matchingColumns": [
+              "id"
+            ],
+            "schema": []
+          },
+          "options": {}
+        },
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "3",
+            "name": "Google Sheets"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Hourly Trigger": {
+        "main": [
+          [
+            {
+              "node": "Fetch Source Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Source Data": {
+        "main": [
+          [
+            {
+              "node": "Split Into Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Into Items": {
+        "main": [
+          [
+            {
+              "node": "Append to Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    }
+  }
+}

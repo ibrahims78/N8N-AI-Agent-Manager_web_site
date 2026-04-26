@@ -1,0 +1,34 @@
+{
+  "nodeType": "n8n-nodes-base.form",
+  "displayName": "Form",
+  "fileName": "Form",
+  "folder": "Form",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers"
+    ]
+  },
+  "aliases": [
+    "_Form",
+    "form",
+    "table",
+    "submit",
+    "post",
+    "page",
+    "step",
+    "stage",
+    "multi"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.form/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Form/form.svg",
+  "sourcePath": "packages/nodes-base/nodes/Form/Form.node.json",
+  "packageName": "n8n-nodes-base"
+}

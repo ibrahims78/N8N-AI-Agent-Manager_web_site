@@ -1,0 +1,28 @@
+{
+  "nodeType": "n8n-nodes-base.jwt",
+  "displayName": "Jwt",
+  "fileName": "Jwt",
+  "folder": "Jwt",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "Token",
+    "Key",
+    "JSON",
+    "Payload",
+    "Sign",
+    "Verify",
+    "Decode"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/jwt/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.jwt/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Jwt/jwt.svg",
+  "sourcePath": "packages/nodes-base/nodes/Jwt/Jwt.node.json",
+  "packageName": "n8n-nodes-base"
+}

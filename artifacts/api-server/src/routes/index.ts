@@ -10,6 +10,7 @@ import { settingsRouter } from "./settings.routes";
 import { catalogRouter } from "./catalog.routes";
 import { catalogDocsRouter } from "./catalogDocs.routes";
 import { docsAdvancedRouter } from "./docsAdvanced.routes";
+import { contentRouter } from "./content.routes";
 
 const router: IRouter = Router();
 
@@ -24,6 +25,7 @@ router.use("/settings", settingsRouter);
 router.use("/catalog", catalogRouter);
 router.use("/catalog/docs", catalogDocsRouter);
 router.use("/catalog/docs-advanced", docsAdvancedRouter);
+router.use("/content", contentRouter);
 
 const v1Router: IRouter = Router();
 v1Router.use("/auth", authRouter);
@@ -36,6 +38,7 @@ v1Router.use("/settings", settingsRouter);
 v1Router.use("/catalog", catalogRouter);
 v1Router.use("/catalog/docs", catalogDocsRouter);
 v1Router.use("/catalog/docs-advanced", docsAdvancedRouter);
+v1Router.use("/content", contentRouter);
 
 router.use("/v1", v1Router);
 

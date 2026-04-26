@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.onfleetTrigger",
+  "displayName": "Onfleet",
+  "fileName": "OnfleetTrigger",
+  "folder": "Onfleet",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Miscellaneous"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/onfleet/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.onfleettrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Onfleet/onfleet.svg",
+  "sourcePath": "packages/nodes-base/nodes/Onfleet/OnfleetTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

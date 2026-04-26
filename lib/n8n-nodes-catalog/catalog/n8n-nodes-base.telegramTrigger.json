@@ -1,0 +1,46 @@
+{
+  "nodeType": "n8n-nodes-base.telegramTrigger",
+  "displayName": "Telegram",
+  "fileName": "TelegramTrigger",
+  "folder": "Telegram",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/telegram/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.telegramtrigger/",
+  "examples": [
+    {
+      "label": "Create a toxic language detector for Telegram in 4 step",
+      "url": "https://n8n.io/blog/create-a-toxic-language-detector-for-telegram/",
+      "icon": "🤬"
+    },
+    {
+      "label": "Automatically Adding Expense Receipts to Google Sheets with Telegram, Mindee, Twilio, and n8n",
+      "url": "https://n8n.io/blog/automatically-adding-expense-receipts-to-google-sheets-with-telegram-mindee-twilio-and-n8n/",
+      "icon": "🧾"
+    },
+    {
+      "label": "How to set up a no-code CI/CD pipeline with GitHub and TravisCI",
+      "url": "https://n8n.io/blog/how-to-set-up-a-ci-cd-pipeline-with-no-code/",
+      "icon": "🎡"
+    },
+    {
+      "label": "Creating Telegram Bots with n8n, a No-Code Platform",
+      "url": "https://n8n.io/blog/creating-telegram-bots-with-n8n-a-no-code-platform/",
+      "icon": "💬"
+    },
+    {
+      "label": "7 no-code workflow automations for Amazon Web Services",
+      "url": "https://n8n.io/blog/aws-workflow-automation/",
+      "icon": ""
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Telegram/telegram.svg",
+  "sourcePath": "packages/nodes-base/nodes/Telegram/TelegramTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

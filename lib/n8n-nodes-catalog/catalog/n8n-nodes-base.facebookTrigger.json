@@ -1,0 +1,22 @@
+{
+  "nodeType": "n8n-nodes-base.facebookTrigger",
+  "displayName": "Facebook",
+  "fileName": "FacebookTrigger",
+  "folder": "Facebook",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "FB"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/facebookapp/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.facebooktrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Facebook/facebook.svg",
+  "sourcePath": "packages/nodes-base/nodes/Facebook/FacebookTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

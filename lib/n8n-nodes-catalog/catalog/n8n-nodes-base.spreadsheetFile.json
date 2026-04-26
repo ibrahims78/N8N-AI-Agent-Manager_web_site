@@ -1,0 +1,40 @@
+{
+  "nodeType": "n8n-nodes-base.spreadsheetFile",
+  "displayName": "SpreadsheetFile",
+  "fileName": "SpreadsheetFile",
+  "folder": "SpreadsheetFile",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage",
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Files"
+    ]
+  },
+  "aliases": [
+    "_Excel",
+    "Excel",
+    "CSV",
+    "Sheet",
+    "Spreadsheet",
+    "xls",
+    "xlsx",
+    "ods"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.converttofile/",
+  "examples": [
+    {
+      "label": "Build your own virtual assistant with n8n: A step by step guide",
+      "url": "https://n8n.io/blog/build-your-own-virtual-assistant-with-n8n-a-step-by-step-guide/",
+      "icon": "👦"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/SpreadsheetFile/spreadsheetfile.svg",
+  "sourcePath": "packages/nodes-base/nodes/SpreadsheetFile/SpreadsheetFile.node.json",
+  "packageName": "n8n-nodes-base"
+}

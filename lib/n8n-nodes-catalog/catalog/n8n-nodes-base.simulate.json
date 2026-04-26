@@ -1,0 +1,28 @@
+{
+  "nodeType": "n8n-nodes-base.simulate",
+  "displayName": "Simulate",
+  "fileName": "Simulate",
+  "folder": "Simulate",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers"
+    ]
+  },
+  "aliases": [
+    "placeholder",
+    "stub",
+    "dummy"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": null,
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Simulate/simulate.svg",
+  "sourcePath": "packages/nodes-base/nodes/Simulate/Simulate.node.json",
+  "packageName": "n8n-nodes-base"
+}

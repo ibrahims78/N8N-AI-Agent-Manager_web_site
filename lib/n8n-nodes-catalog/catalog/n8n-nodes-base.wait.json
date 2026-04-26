@@ -1,0 +1,41 @@
+{
+  "nodeType": "n8n-nodes-base.wait",
+  "displayName": "Wait",
+  "fileName": "Wait",
+  "folder": "Wait",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers",
+      "Flow"
+    ]
+  },
+  "aliases": [
+    "pause",
+    "sleep",
+    "delay",
+    "timeout"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.wait/",
+  "examples": [
+    {
+      "label": "How to get started with CRM automation (with 3 no-code workflow ideas",
+      "url": "https://n8n.io/blog/how-to-get-started-with-crm-automation-and-no-code-workflow-ideas/",
+      "icon": "👥"
+    },
+    {
+      "label": "7 no-code workflow automations for Amazon Web Services",
+      "url": "https://n8n.io/blog/aws-workflow-automation/",
+      "icon": ""
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Wait/wait.svg",
+  "sourcePath": "packages/nodes-base/nodes/Wait/Wait.node.json",
+  "packageName": "n8n-nodes-base"
+}

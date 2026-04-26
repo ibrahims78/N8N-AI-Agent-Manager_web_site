@@ -1,0 +1,27 @@
+{
+  "nodeType": "n8n-nodes-base.mauticTrigger",
+  "displayName": "Mautic",
+  "fileName": "MauticTrigger",
+  "folder": "Mautic",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/mautic/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.mautictrigger/",
+  "examples": [
+    {
+      "label": "How a Membership Development Manager automates his work and investments",
+      "url": "https://n8n.io/blog/how-a-membership-development-manager-automates-his-work-and-investments/",
+      "icon": "📈"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Mautic/mautic.svg",
+  "sourcePath": "packages/nodes-base/nodes/Mautic/MauticTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

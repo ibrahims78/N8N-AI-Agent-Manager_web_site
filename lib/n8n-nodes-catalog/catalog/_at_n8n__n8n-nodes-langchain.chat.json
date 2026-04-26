@@ -1,0 +1,35 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.chat",
+  "displayName": "Chat",
+  "fileName": "Chat",
+  "folder": "ChatTrigger",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes",
+    "HITL"
+  ],
+  "subcategories": {
+    "HITL": [
+      "Human in the Loop"
+    ]
+  },
+  "aliases": [
+    "human",
+    "wait",
+    "hitl",
+    "respond",
+    "approve",
+    "confirm",
+    "send",
+    "message"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.respondtochat/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/trigger/ChatTrigger/Chat.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Send a message into the chat"
+}

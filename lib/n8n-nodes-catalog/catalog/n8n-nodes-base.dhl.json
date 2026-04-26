@@ -1,0 +1,22 @@
+{
+  "nodeType": "n8n-nodes-base.dhl",
+  "displayName": "Dhl",
+  "fileName": "Dhl",
+  "folder": "Dhl",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Miscellaneous"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "Shipping"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/dhl/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.dhl/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Dhl/dhl.svg",
+  "sourcePath": "packages/nodes-base/nodes/Dhl/Dhl.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,25 @@
+{
+  "nodeType": "n8n-nodes-base.ssh",
+  "displayName": "Ssh",
+  "fileName": "Ssh",
+  "folder": "Ssh",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes",
+    "Development"
+  ],
+  "subcategories": [
+    "Helpers"
+  ],
+  "aliases": [
+    "remote"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.ssh/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Ssh/ssh.svg",
+  "sourcePath": "packages/nodes-base/nodes/Ssh/Ssh.node.json",
+  "packageName": "n8n-nodes-base"
+}

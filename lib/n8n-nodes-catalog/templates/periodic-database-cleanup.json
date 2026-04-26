@@ -1,0 +1,134 @@
+{
+  "slug": "periodic-database-cleanup",
+  "name": "تنظيف قاعدة البيانات الدورية",
+  "nameEn": "Periodic Database Cleanup",
+  "description": "حذف السجلات القديمة وتحسين قاعدة البيانات تلقائياً كل أسبوع",
+  "descriptionEn": "Automatically delete old records and optimize the database every week",
+  "category": "database",
+  "nodesCount": 5,
+  "avgRating": 4.1,
+  "workflowJson": {
+    "name": "Database Cleanup",
+    "nodes": [
+      {
+        "id": "cron-3",
+        "name": "Weekly on Sunday",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          240,
+          300
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 2 * * 0"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "code-7",
+        "name": "Calculate Cutoff Date",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          460,
+          300
+        ],
+        "parameters": {
+          "jsCode": "const now = new Date();\nconst cutoff = new Date(now);\ncutoff.setDate(cutoff.getDate() - 30);\nreturn [{ json: { cutoffDate: cutoff.toISOString(), cutoffDateSQL: cutoff.toISOString().split('T')[0], startedAt: now.toISOString() } }];"
+        }
+      },
+      {
+        "id": "http-3",
+        "name": "Call Cleanup API",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          680,
+          300
+        ],
+        "parameters": {
+          "method": "DELETE",
+          "url": "https://your-api.example.com/api/records/cleanup",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "before",
+                "value": "={{ $json.cutoffDate }}"
+              }
+            ]
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "code-8",
+        "name": "Build Summary",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          900,
+          300
+        ],
+        "parameters": {
+          "jsCode": "const result = $input.item.json;\nreturn [{ json: { message: `تم تنظيف قاعدة البيانات بنجاح. السجلات المحذوفة: ${result.deleted ?? 'غير متاح'}`, completedAt: new Date().toISOString() } }];"
+        }
+      },
+      {
+        "id": "error-3",
+        "name": "Error Handler",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          680,
+          480
+        ],
+        "parameters": {}
+      }
+    ],
+    "connections": {
+      "Weekly on Sunday": {
+        "main": [
+          [
+            {
+              "node": "Calculate Cutoff Date",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Calculate Cutoff Date": {
+        "main": [
+          [
+            {
+              "node": "Call Cleanup API",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call Cleanup API": {
+        "main": [
+          [
+            {
+              "node": "Build Summary",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    }
+  }
+}

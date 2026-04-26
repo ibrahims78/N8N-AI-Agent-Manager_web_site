@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.nextCloud",
+  "displayName": "NextCloud",
+  "fileName": "NextCloud",
+  "folder": "NextCloud",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/nextcloud/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.nextcloud/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/NextCloud/nextcloud.svg",
+  "sourcePath": "packages/nodes-base/nodes/NextCloud/NextCloud.node.json",
+  "packageName": "n8n-nodes-base"
+}

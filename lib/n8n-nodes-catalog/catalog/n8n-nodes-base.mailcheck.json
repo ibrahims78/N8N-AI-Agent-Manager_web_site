@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.mailcheck",
+  "displayName": "Mailcheck",
+  "fileName": "Mailcheck",
+  "folder": "Mailcheck",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Utility",
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/mailcheck/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mailcheck/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Mailcheck/mailcheck.svg",
+  "sourcePath": "packages/nodes-base/nodes/Mailcheck/Mailcheck.node.json",
+  "packageName": "n8n-nodes-base"
+}

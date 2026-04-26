@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.pipedriveTrigger",
+  "displayName": "Pipedrive",
+  "fileName": "PipedriveTrigger",
+  "folder": "Pipedrive",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/pipedrive/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.pipedrivetrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Pipedrive/pipedrive.svg",
+  "sourcePath": "packages/nodes-base/nodes/Pipedrive/PipedriveTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,22 @@
+{
+  "nodeType": "n8n-nodes-base.redisTrigger",
+  "displayName": "Redis",
+  "fileName": "RedisTrigger",
+  "folder": "Redis",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Development",
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/redis/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.redistrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Redis/redis.svg",
+  "sourcePath": "packages/nodes-base/nodes/Redis/RedisTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

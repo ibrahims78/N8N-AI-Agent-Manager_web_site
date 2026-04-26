@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.quickbooks",
+  "displayName": "QuickBooks",
+  "fileName": "QuickBooks",
+  "folder": "QuickBooks",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Finance & Accounting"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/quickbooks/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.quickbooks/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/QuickBooks/quickbooks.svg",
+  "sourcePath": "packages/nodes-base/nodes/QuickBooks/QuickBooks.node.json",
+  "packageName": "n8n-nodes-base"
+}

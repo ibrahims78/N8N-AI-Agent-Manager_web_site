@@ -1,0 +1,30 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+  "displayName": "Anthropic Chat Model",
+  "fileName": "LmChatAnthropic",
+  "folder": "LMChatAnthropic",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {
+    "AI": [
+      "Language Models",
+      "Root Nodes"
+    ]
+  },
+  "aliases": [
+    "claude",
+    "sonnet",
+    "opus"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.lmchatanthropic/",
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/llms/LMChatAnthropic/LmChatAnthropic.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Language Model Anthropic"
+}

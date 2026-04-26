@@ -1,0 +1,29 @@
+{
+  "nodeType": "n8n-nodes-base.timeSaved",
+  "displayName": "TimeSaved",
+  "fileName": "TimeSaved",
+  "folder": "TimeSaved",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes",
+    "Development"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers"
+    ]
+  },
+  "aliases": [
+    "time",
+    "track",
+    "saved"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.savedTime/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/TimeSaved/timesaved.svg",
+  "sourcePath": "packages/nodes-base/nodes/TimeSaved/TimeSaved.node.json",
+  "packageName": "n8n-nodes-base"
+}

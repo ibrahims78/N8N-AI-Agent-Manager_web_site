@@ -1,0 +1,37 @@
+{
+  "nodeType": "n8n-nodes-base.compression",
+  "displayName": "Compression",
+  "fileName": "Compression",
+  "folder": "Compression",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes",
+    "Data & Storage"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Files",
+      "Data Transformation"
+    ]
+  },
+  "aliases": [
+    "Zip",
+    "Gzip",
+    "uncompress",
+    "compress",
+    "decompress",
+    "archive",
+    "unarchive",
+    "Binary",
+    "Files",
+    "File"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.compression/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Compression/compression.svg",
+  "sourcePath": "packages/nodes-base/nodes/Compression/Compression.node.json",
+  "packageName": "n8n-nodes-base"
+}

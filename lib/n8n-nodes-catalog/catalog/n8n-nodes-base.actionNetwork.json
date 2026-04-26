@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.actionNetwork",
+  "displayName": "ActionNetwork",
+  "fileName": "ActionNetwork",
+  "folder": "ActionNetwork",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales",
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/actionnetwork/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.actionnetwork/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ActionNetwork/actionnetwork.svg",
+  "sourcePath": "packages/nodes-base/nodes/ActionNetwork/ActionNetwork.node.json",
+  "packageName": "n8n-nodes-base"
+}

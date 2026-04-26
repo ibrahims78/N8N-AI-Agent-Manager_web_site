@@ -1,0 +1,54 @@
+{
+  "nodeType": "n8n-nodes-base.itemLists",
+  "displayName": "ItemLists",
+  "fileName": "ItemLists",
+  "folder": "ItemLists",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers",
+      "Data Transformation"
+    ]
+  },
+  "aliases": [
+    "Aggregate",
+    "Dedupe",
+    "Deduplicate",
+    "Duplicates",
+    "Limit",
+    "Remove",
+    "Slice",
+    "Sort",
+    "Split",
+    "Unique",
+    "JSON",
+    "Transform",
+    "Array",
+    "List",
+    "Object",
+    "Item",
+    "Map",
+    "Format",
+    "Nested",
+    "Iterate",
+    "Summarise",
+    "Summarize",
+    "Group",
+    "Pivot",
+    "Sum",
+    "Count",
+    "Min",
+    "Max"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.itemlists/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ItemLists/itemlists.svg",
+  "sourcePath": "packages/nodes-base/nodes/ItemLists/ItemLists.node.json",
+  "packageName": "n8n-nodes-base"
+}

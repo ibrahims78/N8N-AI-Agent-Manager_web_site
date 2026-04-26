@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.flowTrigger",
+  "displayName": "Flow",
+  "fileName": "FlowTrigger",
+  "folder": "Flow",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/flow/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.flowtrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Flow/flow.svg",
+  "sourcePath": "packages/nodes-base/nodes/Flow/FlowTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.mailjet",
+  "displayName": "Mailjet",
+  "fileName": "Mailjet",
+  "folder": "Mailjet",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/mailjet/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.mailjet/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Mailjet/mailjet.svg",
+  "sourcePath": "packages/nodes-base/nodes/Mailjet/Mailjet.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,28 @@
+{
+  "nodeType": "n8n-nodes-base.html",
+  "displayName": "Html",
+  "fileName": "Html",
+  "folder": "Html",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Data Transformation"
+    ]
+  },
+  "aliases": [
+    "extract",
+    "template",
+    "table"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.html/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Html/html.svg",
+  "sourcePath": "packages/nodes-base/nodes/Html/Html.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,34 @@
+{
+  "nodeType": "n8n-nodes-base.aiTransform",
+  "displayName": "AiTransform",
+  "fileName": "AiTransform",
+  "folder": "AiTransform",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Data Transformation"
+    ]
+  },
+  "aliases": [
+    "code",
+    "Javascript",
+    "JS",
+    "Script",
+    "Custom Code",
+    "Function",
+    "AI",
+    "LLM"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.aitransform/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/AiTransform/aitransform.svg",
+  "sourcePath": "packages/nodes-base/nodes/AiTransform/AiTransform.node.json",
+  "packageName": "n8n-nodes-base"
+}

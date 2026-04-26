@@ -5,10 +5,13 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./data": "./data/catalog.json"
+    "./templates": "./src/templates.ts",
+    "./data": "./data/catalog.json",
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "fetch": "node ./scripts/fetch.mjs"
+    "fetch": "node ./scripts/fetch.mjs",
+    "split-catalog": "node ./scripts/split-catalog.mjs"
   },
   "dependencies": {}
 }

@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.oneSimpleApi",
+  "displayName": "OneSimpleApi",
+  "fileName": "OneSimpleApi",
+  "folder": "OneSimpleApi",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Utility"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/onesimpleapi/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.onesimpleapi/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/OneSimpleApi/onesimpleapi.svg",
+  "sourcePath": "packages/nodes-base/nodes/OneSimpleApi/OneSimpleApi.node.json",
+  "packageName": "n8n-nodes-base"
+}

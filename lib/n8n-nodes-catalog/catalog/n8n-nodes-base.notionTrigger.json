@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.notionTrigger",
+  "displayName": "Notion",
+  "fileName": "NotionTrigger",
+  "folder": "Notion",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/notion/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.notiontrigger/",
+  "examples": [
+    {
+      "label": "5 tasks you can automate with the new Notion API ",
+      "url": "https://n8n.io/blog/5-tasks-you-can-automate-with-notion-api/",
+      "icon": "⚡️"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Notion/notion.svg",
+  "sourcePath": "packages/nodes-base/nodes/Notion/NotionTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

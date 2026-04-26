@@ -1,0 +1,28 @@
+{
+  "nodeType": "n8n-nodes-base.iCal",
+  "displayName": "ICalendar",
+  "fileName": "ICalendar",
+  "folder": "ICalendar",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes",
+    "Productivity"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Files"
+    ]
+  },
+  "aliases": [
+    "ics",
+    ".ics"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.converttofile/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ICalendar/icalendar.svg",
+  "sourcePath": "packages/nodes-base/nodes/ICalendar/ICalendar.node.json",
+  "packageName": "n8n-nodes-base"
+}

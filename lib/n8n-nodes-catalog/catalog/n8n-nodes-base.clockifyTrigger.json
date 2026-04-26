@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.clockifyTrigger",
+  "displayName": "Clockify",
+  "fileName": "ClockifyTrigger",
+  "folder": "Clockify",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Utility",
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/clockify/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.clockifytrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Clockify/clockify.svg",
+  "sourcePath": "packages/nodes-base/nodes/Clockify/ClockifyTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

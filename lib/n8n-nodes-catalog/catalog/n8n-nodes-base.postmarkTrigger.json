@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.postmarkTrigger",
+  "displayName": "Postmark",
+  "fileName": "PostmarkTrigger",
+  "folder": "Postmark",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/postmark/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.postmarktrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Postmark/postmark.svg",
+  "sourcePath": "packages/nodes-base/nodes/Postmark/PostmarkTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

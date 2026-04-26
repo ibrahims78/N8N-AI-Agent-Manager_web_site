@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.payPalTrigger",
+  "displayName": "PayPal",
+  "fileName": "PayPalTrigger",
+  "folder": "PayPal",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Finance & Accounting",
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/paypal/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.paypaltrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/PayPal/paypal.svg",
+  "sourcePath": "packages/nodes-base/nodes/PayPal/PayPalTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

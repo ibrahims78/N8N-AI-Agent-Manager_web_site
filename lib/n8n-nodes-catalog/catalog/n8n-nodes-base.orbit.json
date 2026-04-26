@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.orbit",
+  "displayName": "Orbit",
+  "fileName": "Orbit",
+  "folder": "Orbit",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Analytics"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/orbit/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.orbit/",
+  "examples": [
+    {
+      "label": "Migrating Community Metrics to Orbit using n8n",
+      "url": "https://n8n.io/blog/migrating-community-metrics-to-orbit-using-n8n/",
+      "icon": "📈"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Orbit/orbit.svg",
+  "sourcePath": "packages/nodes-base/nodes/Orbit/Orbit.node.json",
+  "packageName": "n8n-nodes-base"
+}

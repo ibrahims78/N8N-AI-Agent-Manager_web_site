@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.mailchimpTrigger",
+  "displayName": "Mailchimp",
+  "fileName": "MailchimpTrigger",
+  "folder": "Mailchimp",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Marketing",
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/mailchimp/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.mailchimptrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Mailchimp/mailchimp.svg",
+  "sourcePath": "packages/nodes-base/nodes/Mailchimp/MailchimpTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

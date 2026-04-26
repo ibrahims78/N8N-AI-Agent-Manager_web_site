@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.bitbucketTrigger",
+  "displayName": "Bitbucket",
+  "fileName": "BitbucketTrigger",
+  "folder": "Bitbucket",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Productivity"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/bitbucket/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/trigger-nodes/n8n-nodes-base.bitbuckettrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Bitbucket/bitbucket.svg",
+  "sourcePath": "packages/nodes-base/nodes/Bitbucket/BitbucketTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

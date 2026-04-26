@@ -1,0 +1,21 @@
+{
+  "nodeType": "@n8n/n8n-nodes-langchain.toolExecutor",
+  "displayName": "Tool Executor",
+  "fileName": "ToolExecutor",
+  "folder": "ToolExecutor",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "AI"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": null,
+  "examples": [],
+  "iconUrl": null,
+  "sourcePath": "packages/@n8n/nodes-langchain/nodes/ToolExecutor/ToolExecutor.node.ts",
+  "packageName": "@n8n/n8n-nodes-langchain",
+  "description": "Key-value pairs, where key is the name of the tool name and value is the parameters to pass to the tool"
+}

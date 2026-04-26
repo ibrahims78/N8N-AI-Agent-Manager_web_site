@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.databricks",
+  "displayName": "Databricks",
+  "fileName": "Databricks",
+  "folder": "Databricks",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/databricks/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.databricks/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Databricks/databricks.svg",
+  "sourcePath": "packages/nodes-base/nodes/Databricks/Databricks.node.json",
+  "packageName": "n8n-nodes-base"
+}

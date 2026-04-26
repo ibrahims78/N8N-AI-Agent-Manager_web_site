@@ -1,0 +1,27 @@
+{
+  "nodeType": "n8n-nodes-base.zohoCrm",
+  "displayName": "Zoho",
+  "fileName": "ZohoCrm",
+  "folder": "Zoho",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication",
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/zoho/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.zohocrm/",
+  "examples": [
+    {
+      "label": "6 e-commerce workflows to power up your Shopify s",
+      "url": "https://n8n.io/blog/no-code-ecommerce-workflow-automations/",
+      "icon": "store"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Zoho/zoho.svg",
+  "sourcePath": "packages/nodes-base/nodes/Zoho/ZohoCrm.node.json",
+  "packageName": "n8n-nodes-base"
+}

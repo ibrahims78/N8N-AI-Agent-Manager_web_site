@@ -1,0 +1,21 @@
+{
+  "nodeType": "n8n-nodes-base.storyblok",
+  "displayName": "Storyblok",
+  "fileName": "Storyblok",
+  "folder": "Storyblok",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage",
+    "Marketing"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/storyblok/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.storyblok/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Storyblok/storyblok.svg",
+  "sourcePath": "packages/nodes-base/nodes/Storyblok/Storyblok.node.json",
+  "packageName": "n8n-nodes-base"
+}

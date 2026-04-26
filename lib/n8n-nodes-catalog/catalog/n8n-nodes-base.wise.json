@@ -1,0 +1,22 @@
+{
+  "nodeType": "n8n-nodes-base.wise",
+  "displayName": "Wise",
+  "fileName": "Wise",
+  "folder": "Wise",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Finance & Accounting"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "Currency"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/wise/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.wise/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Wise/wise.svg",
+  "sourcePath": "packages/nodes-base/nodes/Wise/Wise.node.json",
+  "packageName": "n8n-nodes-base"
+}

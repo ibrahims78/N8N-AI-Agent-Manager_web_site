@@ -1,0 +1,29 @@
+{
+  "nodeType": "n8n-nodes-base.debughelper",
+  "displayName": "DebugHelper",
+  "fileName": "DebugHelper",
+  "folder": "DebugHelper",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "Mock",
+    "Sample",
+    "Demo",
+    "Test",
+    "Throw error",
+    "OOM",
+    "Out of Memory",
+    "placeholder"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.debughelper/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/DebugHelper/debughelper.svg",
+  "sourcePath": "packages/nodes-base/nodes/DebugHelper/DebugHelper.node.json",
+  "packageName": "n8n-nodes-base"
+}

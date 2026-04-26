@@ -1,0 +1,41 @@
+{
+  "nodeType": "n8n-nodes-base.executeCommand",
+  "displayName": "ExecuteCommand",
+  "fileName": "ExecuteCommand",
+  "folder": "ExecuteCommand",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Helpers"
+    ]
+  },
+  "aliases": [
+    "Shell",
+    "Command",
+    "OS",
+    "Bash"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executecommand/",
+  "examples": [
+    {
+      "label": "How uProc scraped a multi-page website with a low-code workflow",
+      "url": "https://n8n.io/blog/how-uproc-scraped-a-multi-page-website-with-a-low-code-workflow/",
+      "icon": " 🕸️"
+    },
+    {
+      "label": "Why this Product Manager loves workflow automation with n8n",
+      "url": "https://n8n.io/blog/why-this-product-manager-loves-workflow-automation-with-n8n/",
+      "icon": "🧠"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/ExecuteCommand/executecommand.svg",
+  "sourcePath": "packages/nodes-base/nodes/ExecuteCommand/ExecuteCommand.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,24 @@
+{
+  "nodeType": "n8n-nodes-base.ldap",
+  "displayName": "Ldap",
+  "fileName": "Ldap",
+  "folder": "Ldap",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Developer Tools"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "ad",
+    "active directory"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/ldap/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.ldap/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Ldap/ldap.svg",
+  "sourcePath": "packages/nodes-base/nodes/Ldap/Ldap.node.json",
+  "packageName": "n8n-nodes-base"
+}

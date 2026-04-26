@@ -1,0 +1,28 @@
+{
+  "nodeType": "n8n-nodes-base.localFileTrigger",
+  "displayName": "LocalFileTrigger",
+  "fileName": "LocalFileTrigger",
+  "folder": "LocalFileTrigger",
+  "isTrigger": true,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Core Nodes"
+  ],
+  "subcategories": {
+    "Core Nodes": [
+      "Files",
+      "Other Trigger Nodes"
+    ]
+  },
+  "aliases": [
+    "Watch",
+    "Monitor"
+  ],
+  "credentialDocsUrl": null,
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.localfiletrigger/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/LocalFileTrigger/localfiletrigger.svg",
+  "sourcePath": "packages/nodes-base/nodes/LocalFileTrigger/LocalFileTrigger.node.json",
+  "packageName": "n8n-nodes-base"
+}

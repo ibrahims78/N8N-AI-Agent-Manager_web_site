@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.matrix",
+  "displayName": "Matrix",
+  "fileName": "Matrix",
+  "folder": "Matrix",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Communication"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/matrix/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.matrix/",
+  "examples": [
+    {
+      "label": "How to host virtual coffee breaks with n8n",
+      "url": "https://n8n.io/blog/how-to-host-virtual-coffee-breaks-with-n8n/",
+      "icon": "☕️"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Matrix/matrix.svg",
+  "sourcePath": "packages/nodes-base/nodes/Matrix/Matrix.node.json",
+  "packageName": "n8n-nodes-base"
+}

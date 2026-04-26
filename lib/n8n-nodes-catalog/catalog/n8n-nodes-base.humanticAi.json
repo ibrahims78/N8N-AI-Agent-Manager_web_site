@@ -1,0 +1,26 @@
+{
+  "nodeType": "n8n-nodes-base.humanticAi",
+  "displayName": "HumanticAI",
+  "fileName": "HumanticAi",
+  "folder": "HumanticAI",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Analytics"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/humanticai/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.humanticai/",
+  "examples": [
+    {
+      "label": "5 tasks you can automate with the new Notion API ",
+      "url": "https://n8n.io/blog/5-tasks-you-can-automate-with-notion-api/",
+      "icon": "⚡️"
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/HumanticAI/humanticai.svg",
+  "sourcePath": "packages/nodes-base/nodes/HumanticAI/HumanticAi.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,20 @@
+{
+  "nodeType": "n8n-nodes-base.uplead",
+  "displayName": "Uplead",
+  "fileName": "Uplead",
+  "folder": "Uplead",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Sales"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/uplead/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.uplead/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Uplead/uplead.svg",
+  "sourcePath": "packages/nodes-base/nodes/Uplead/Uplead.node.json",
+  "packageName": "n8n-nodes-base"
+}

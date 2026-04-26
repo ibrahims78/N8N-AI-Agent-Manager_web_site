@@ -1,0 +1,31 @@
+{
+  "nodeType": "n8n-nodes-base.dropbox",
+  "displayName": "Dropbox",
+  "fileName": "Dropbox",
+  "folder": "Dropbox",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Data & Storage"
+  ],
+  "subcategories": {},
+  "aliases": [],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/dropbox/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.dropbox/",
+  "examples": [
+    {
+      "label": "Hey founders! Your business doesn't need you to operate",
+      "url": "https://n8n.io/blog/your-business-doesnt-need-you-to-operate/",
+      "icon": " 🖥️"
+    },
+    {
+      "label": "7 no-code workflow automations for Amazon Web Services",
+      "url": "https://n8n.io/blog/aws-workflow-automation/",
+      "icon": ""
+    }
+  ],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/Dropbox/dropbox.svg",
+  "sourcePath": "packages/nodes-base/nodes/Dropbox/Dropbox.node.json",
+  "packageName": "n8n-nodes-base"
+}

@@ -1,0 +1,23 @@
+{
+  "nodeType": "n8n-nodes-base.urlScanIo",
+  "displayName": "UrlScanIo",
+  "fileName": "UrlScanIo",
+  "folder": "UrlScanIo",
+  "isTrigger": false,
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development",
+    "Utility"
+  ],
+  "subcategories": {},
+  "aliases": [
+    "Scrape"
+  ],
+  "credentialDocsUrl": "https://docs.n8n.io/integrations/builtin/credentials/urlscanio/",
+  "primaryDocsUrl": "https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.urlscanio/",
+  "examples": [],
+  "iconUrl": "https://raw.githubusercontent.com/ibrahims78/n8n/master/packages/nodes-base/nodes/UrlScanIo/urlscanio.svg",
+  "sourcePath": "packages/nodes-base/nodes/UrlScanIo/UrlScanIo.node.json",
+  "packageName": "n8n-nodes-base"
+}
