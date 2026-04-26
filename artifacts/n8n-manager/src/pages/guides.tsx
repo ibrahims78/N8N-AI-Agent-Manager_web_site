@@ -97,10 +97,15 @@ export default function GuidesPage() {
   const [searching, setSearching] = useState(false);
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Bulk refresh state
+  // Bulk refresh state. `progress` carries an optional running breakdown
+  // (`enAdded` etc.) that the smart backend emits so the UI can render a
+  // multi-segment progress bar instead of a single bar.
   const [refreshAll, setRefreshAll] = useState(false);
   const [progress, setProgress] = useState<{
     done: number; total: number; current: string; phase?: "fetch" | "translate";
+    dryRun?: boolean;
+    enAdded?: number; enUpdated?: number; enUnchanged?: number; enFailed?: number;
+    arAdded?: number; arUpdated?: number; arUnchanged?: number; arFailed?: number;
   } | null>(null);
 
   // Manual edit state
@@ -178,24 +183,28 @@ export default function GuidesPage() {
     return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
   }, [filter, lang]);
 
-  /* ────────────────── Bulk refresh (SSE) ────────────────── */
-
-  async function refreshAllGuides(translate: boolean) {
+  /* ────────────────── Bulk refresh (SSE) ──────────────────
+   *
+   * One unified entry point for the three admin buttons:
+   *   - Fetch all (EN)         → smart, no translate
+   *   - Fetch + Translate AR   → smart + translate
+   *   - Check for updates      → smart + translate + dryRun (no DB/AI writes)
+   *
+   * `force=true` is intentionally NOT exposed in the UI anymore — the smart
+   * path is correct for every normal refresh. If a future need arises, the
+   * backend still accepts `?force=true`.
+   */
+  async function refreshAllGuides(opts: { translate?: boolean; dryRun?: boolean } = {}) {
     if (!isAdmin) return;
+    const { translate = false, dryRun = false } = opts;
     setRefreshAll(true);
-    setProgress({ done: 0, total: 0, current: "", phase: "fetch" });
+    setProgress({ done: 0, total: 0, current: "", phase: "fetch", dryRun });
     try {
       const auth = getAuthHeader().Authorization;
       const params = new URLSearchParams();
-      if (translate) {
-        // AR button: smart update — only re-fetch + re-translate items whose
-        // upstream content actually changed. No AI calls when nothing changed.
-        params.set("translate", "true");
-        params.set("smart", "true");
-      } else {
-        // EN-only button still uses force for now (Phase 2 will move it to smart).
-        params.set("force", "true");
-      }
+      params.set("smart", "true");
+      if (translate) params.set("translate", "true");
+      if (dryRun) params.set("dryRun", "true");
       const res = await fetch(
         `${API_BASE}/catalog/docs-advanced/guides/refresh-all?${params.toString()}`,
         {
@@ -219,25 +228,36 @@ export default function GuidesPage() {
           if (!m) continue;
           const evt = JSON.parse(m[1]);
           if (evt.type === "progress") {
-            setProgress({ done: evt.done, total: evt.total, current: evt.current, phase: evt.phase });
+            // Carry the running breakdown so the multi-segment bar can render
+            // it in real time. Falsy/undefined values are tolerated.
+            setProgress({
+              done: evt.done, total: evt.total, current: evt.current, phase: evt.phase,
+              dryRun,
+              enAdded: evt.enAdded, enUpdated: evt.enUpdated,
+              enUnchanged: evt.enUnchanged, enFailed: evt.enFailed,
+              arAdded: evt.arAdded, arUpdated: evt.arUpdated,
+              arUnchanged: evt.arUnchanged, arFailed: evt.arFailed,
+            });
           } else if (evt.type === "done") {
             // Smart mode emits per-bucket counters (added/updated/unchanged).
-            // Build a richer summary line so the user can see exactly how many
-            // items were re-translated vs. skipped without spending AI quota.
-            const enLine = evt.smart
-              ? `EN: ${evt.enAdded ?? 0} ${t("جديد","new")} · ${evt.enUpdated ?? 0} ${t("محدَّث","updated")} · ${evt.enUnchanged ?? 0} ${t("بلا تغيير","unchanged")}` +
-                (evt.failed ? ` · ${evt.failed} ${t("فشل","failed")}` : "")
-              : `${evt.fetched}/${evt.total}` + (evt.failed ? ` (${evt.failed} ${t("فشل","failed")})` : "");
+            // The wording flips to the conditional ("would …") in dry-run so
+            // users understand nothing was actually written.
+            const verbNew     = dryRun ? t("ستُضاف",   "would add")     : t("جديد",     "new");
+            const verbUpdated = dryRun ? t("ستُحدَّث", "would update")   : t("محدَّث",   "updated");
+            const verbSame    = t("بلا تغيير", "unchanged");
+            const verbFailed  = t("فشل", "failed");
+            const enLine =
+              `EN: ${evt.enAdded ?? 0} ${verbNew} · ${evt.enUpdated ?? 0} ${verbUpdated} · ${evt.enUnchanged ?? 0} ${verbSame}` +
+              (evt.failed ? ` · ${evt.failed} ${verbFailed}` : "");
             const arLine = translate
-              ? evt.smart
-                ? ` — AR: ${evt.arAdded ?? 0} ${t("جديد","new")} · ${evt.arUpdated ?? 0} ${t("محدَّث","updated")} · ${evt.arUnchanged ?? 0} ${t("بلا تغيير","unchanged")}` +
-                  (evt.translateFailed ? ` · ${evt.translateFailed} ${t("فشل","failed")}` : "")
-                : ` — ${t("ترجمة","AR")}: ${evt.translated ?? 0}/${evt.total}`
+              ? ` — AR: ${evt.arAdded ?? 0} ${verbNew} · ${evt.arUpdated ?? 0} ${verbUpdated} · ${evt.arUnchanged ?? 0} ${verbSame}` +
+                (evt.translateFailed ? ` · ${evt.translateFailed} ${verbFailed}` : "")
               : "";
             // If the AR phase failed entirely because no AI key is configured,
             // show a single actionable banner pointing to Settings instead of
-            // a vague "translation failed" line.
-            if (translate && evt.aiKeyMissing) {
+            // a vague "translation failed" line. (Doesn't apply in dry-run —
+            // dry-run never calls the AI.)
+            if (!dryRun && translate && evt.aiKeyMissing) {
               toast({
                 title: t("لم تعمل الترجمة — مطلوب مفتاح ذكاء اصطناعي", "Translation skipped — AI key required"),
                 description: t(
@@ -248,7 +268,9 @@ export default function GuidesPage() {
               });
             } else {
               toast({
-                title: t("اكتمل تحديث الأدلة", "Guides refreshed"),
+                title: dryRun
+                  ? t("معاينة التحديثات (بدون كتابة)", "Update preview (no writes)")
+                  : t("اكتمل تحديث الأدلة", "Guides refreshed"),
                 description: enLine + arLine,
               });
             }
@@ -261,9 +283,11 @@ export default function GuidesPage() {
           }
         }
       }
-      await loadList();
-      // reload current doc if any
-      if (selectedSlug) await loadDoc(selectedSlug);
+      // Dry-run never mutates the DB, so list/doc reload would be wasted work.
+      if (!dryRun) {
+        await loadList();
+        if (selectedSlug) await loadDoc(selectedSlug);
+      }
     } catch (err) {
       toast({ title: t("خطأ","Error"), description: String(err), variant: "destructive" });
     } finally {
@@ -425,11 +449,28 @@ export default function GuidesPage() {
             </div>
             {isAdmin && (
               <div className="flex items-center gap-2 flex-wrap">
-                <Button size="sm" variant="outline" onClick={() => refreshAllGuides(false)} disabled={refreshAll} title={t("جلب النسخة الإنجليزية لكل الأدلة", "Fetch English source for all guides")}>
+                {/* Light-touch preview: HEAD-equivalent dry-run that compares
+                    upstream SHA against what we cache, without any DB write
+                    or AI translation. Lets the admin see *exactly* what would
+                    happen before committing. */}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => refreshAllGuides({ translate: true, dryRun: true })}
+                  disabled={refreshAll}
+                  title={t(
+                    "فحص خفيف: يكتشف ما يحتاج لتحديث دون كتابة شيء أو استهلاك ذكاء اصطناعي",
+                    "Dry-run: discover what would change without any DB write or AI usage"
+                  )}
+                >
+                  {refreshAll ? <Loader2 size={14} className="animate-spin me-1.5" /> : <Search size={14} className="me-1.5" />}
+                  {t("تحقق من التحديثات", "Check for updates")}
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => refreshAllGuides({ translate: false })} disabled={refreshAll} title={t("جلب النسخة الإنجليزية لكل الأدلة (تحديث ذكي)", "Fetch English source for all guides (smart update)")}>
                   {refreshAll ? <Loader2 size={14} className="animate-spin me-1.5" /> : <RefreshCw size={14} className="me-1.5" />}
                   {t("جلب الكل (EN)", "Fetch all (EN)")}
                 </Button>
-                <Button size="sm" onClick={() => refreshAllGuides(true)} disabled={refreshAll} title={t("جلب وترجمة كل الأدلة للعربية", "Fetch and translate all guides into Arabic")}>
+                <Button size="sm" onClick={() => refreshAllGuides({ translate: true })} disabled={refreshAll} title={t("جلب وترجمة كل الأدلة للعربية (تحديث ذكي)", "Fetch and translate all guides into Arabic (smart update)")}>
                   {refreshAll ? <Loader2 size={14} className="animate-spin me-1.5" /> : <Languages size={14} className="me-1.5" />}
                   {t("جلب + ترجمة AR", "Fetch + Translate AR")}
                 </Button>
@@ -472,22 +513,65 @@ export default function GuidesPage() {
           </div>
         </div>
 
-        {/* Progress strip */}
-        {progress && (
-          <div className="px-5 py-2 bg-amber-500/10 border-t border-amber-500/30 text-xs flex items-center gap-2">
-            {progress.phase === "translate" ? <Languages size={12} /> : <RefreshCw size={12} className="animate-spin" />}
+        {/* Progress strip — multi-segment bar driven by the smart-mode running
+            counters so the user can see at a glance how the work is breaking
+            down (added vs updated vs unchanged vs failed). Falls back to a
+            plain bar when the backend doesn't provide buckets. */}
+        {progress && (() => {
+          // Pick the bucket set for the current phase so the colours track
+          // what's actually happening *now*.
+          const isTr = progress.phase === "translate";
+          const added    = (isTr ? progress.arAdded    : progress.enAdded)    ?? 0;
+          const updated  = (isTr ? progress.arUpdated  : progress.enUpdated)  ?? 0;
+          const same     = (isTr ? progress.arUnchanged: progress.enUnchanged)?? 0;
+          const failedC  = (isTr ? progress.arFailed   : progress.enFailed)   ?? 0;
+          const total    = progress.total || 1;
+          const pctOf    = (n: number) => `${Math.min(100, (n / total) * 100)}%`;
+          const haveBuckets = (added + updated + same + failedC) > 0;
+          const stripBg = progress.dryRun
+            ? "bg-sky-500/10 border-sky-500/30"
+            : "bg-amber-500/10 border-amber-500/30";
+          return (
+          <div className={`px-5 py-2 ${stripBg} border-t text-xs flex items-center gap-2`}>
+            {progress.dryRun
+              ? <Search size={12} className="text-sky-600 dark:text-sky-400" />
+              : (progress.phase === "translate"
+                  ? <Languages size={12} />
+                  : <RefreshCw size={12} className="animate-spin" />)}
             <span className="font-medium">
-              {progress.phase === "translate"
-                ? t("جاري الترجمة:", "Translating:")
-                : t("جاري الجلب:", "Fetching:")}
+              {progress.dryRun
+                ? (isTr
+                    ? t("فحص الترجمة:", "Checking translation:")
+                    : t("فحص المصدر:", "Checking source:"))
+                : (isTr
+                    ? t("جاري الترجمة:", "Translating:")
+                    : t("جاري الجلب:", "Fetching:"))}
             </span>
             <span className="text-muted-foreground truncate flex-1">{progress.current}</span>
+            {haveBuckets && (
+              <span className="font-mono text-[11px] tabular-nums hidden sm:inline-flex items-center gap-2">
+                {added   > 0 && <span className="text-emerald-700 dark:text-emerald-400">+{added}</span>}
+                {updated > 0 && <span className="text-blue-700    dark:text-blue-400">~{updated}</span>}
+                {same    > 0 && <span className="text-muted-foreground">={same}</span>}
+                {failedC > 0 && <span className="text-rose-700    dark:text-rose-400">!{failedC}</span>}
+              </span>
+            )}
             <span className="font-mono text-[11px] tabular-nums">{progress.done}/{progress.total}</span>
-            <div className="w-32 h-1.5 bg-amber-500/20 rounded-full overflow-hidden">
-              <div className="h-full bg-amber-500 transition-all" style={{ width: `${progress.total ? (progress.done / progress.total) * 100 : 0}%` }} />
+            <div className="w-32 h-1.5 bg-muted rounded-full overflow-hidden flex">
+              {haveBuckets ? (
+                <>
+                  <div className="h-full bg-emerald-500 transition-all" style={{ width: pctOf(added) }}   title={`${added} ${t("جديد","new")}`} />
+                  <div className="h-full bg-blue-500    transition-all" style={{ width: pctOf(updated) }} title={`${updated} ${t("محدَّث","updated")}`} />
+                  <div className="h-full bg-slate-400   transition-all" style={{ width: pctOf(same) }}    title={`${same} ${t("بلا تغيير","unchanged")}`} />
+                  <div className="h-full bg-rose-500    transition-all" style={{ width: pctOf(failedC) }} title={`${failedC} ${t("فشل","failed")}`} />
+                </>
+              ) : (
+                <div className={`h-full ${progress.dryRun ? "bg-sky-500" : "bg-amber-500"} transition-all`} style={{ width: pctOf(progress.done) }} />
+              )}
             </div>
           </div>
-        )}
+          );
+        })()}
       </div>
 
       {/* ── BODY ─────────────────────────────────────────────────────── */}

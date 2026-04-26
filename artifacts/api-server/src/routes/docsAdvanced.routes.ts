@@ -232,6 +232,9 @@ router.post(
     // ?smart=true enables content-SHA based skip: items unchanged upstream
     // are not re-fetched and not re-translated. `force=true` always wins.
     const smart = req.query.smart === "true";
+    // ?dryRun=true predicts the outcome without writing to DB or calling AI.
+    // Only meaningful in smart mode (silently ignored otherwise).
+    const dryRun = req.query.dryRun === "true";
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
@@ -242,7 +245,7 @@ router.post(
         (p) => {
           res.write(`data: ${JSON.stringify({ type: "progress", ...p })}\n\n`);
         },
-        { translate, smart }
+        { translate, smart, dryRun }
       );
       res.write(`data: ${JSON.stringify({ type: "done", ...summary })}\n\n`);
     } catch (err) {

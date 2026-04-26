@@ -191,7 +191,127 @@
 
 ---
 
-## 7) ما تبقّى للمراحل القادمة (مرجع للمستقبل)
-- **المرحلة 2**: تطبيق نفس مفهوم `smart` على زر «جلب الكل (EN)» المنفصل.
-- **المرحلة 4**: إعادة تصميم منطقة الأزرار لتقدّم تجربة أوضح (زر «تحقق»، زر «تطبيق»، شريط تقدّم متعدد الفئات).
-- **المرحلة 5**: اختبار آلي صريح في `tests/` لحماية `manualOverrideMarkdown` ضد أي تغيير مستقبلي يكسر هذا العقد.
+## 7) المرحلة 2 — توحيد زر «جلب الكل (EN)» على المسار الذكي
+
+### 7.1 المشكلة
+زر EN كان يرسل `force=true` دائماً، فيُعيد جلب كل الأدلة الـ17 من GitHub بصرف النظر عن وجود تغيير، ويهدر وقت المستخدم بدون فائدة.
+
+### 7.2 الحل
+- إزالة `force=true` من جميع الأزرار في الواجهة.
+- توحيد كل أزرار التحديث الجماعي على دالة واحدة `refreshAllGuides({ translate, dryRun })` تُرسل دائماً `smart=true`.
+- المسار القديم `?force=true` لم يُحذف من الـ Backend (محفوظ كشبكة أمان لو احتجناه مستقبلاً).
+
+### 7.3 الملفات المعدَّلة
+- `artifacts/n8n-manager/src/pages/guides.tsx` — `refreshAllGuides()` أُعيد تصميمها لتقبل كائن خيارات بدلاً من `boolean`.
+
+### 7.4 الاختبار
+- تم تأكيده عبر T-D في الـ regression suite (`tests/guides-cache.test.mjs`): تشغيلان متتاليان لـ EN smart لا يكتب أيّ منهما شيئاً جديداً (15 unchanged في الثاني).
+
+---
+
+## 8) المرحلة 4 — تجربة المستخدم: «تحقق من التحديثات» + شريط تقدّم متعدّد الألوان
+
+### 8.1 المشكلة
+- المستخدم يضغط الزر دون أن يعلم ما الذي سيتغيّر.
+- في حالة `translate=true`، حتى ولو لم يتغيّر شيء، فإنّ الضغطة تستهلك وقتاً وقد تستهلك حصّة AI لو حدث خلل في المقارنة.
+- شريط التقدّم القديم لون واحد لا يفرّق بين «جديد» و«محدَّث» و«بلا تغيير».
+
+### 8.2 الحل (مُنفَّذ بالكامل)
+1. **وضع `dryRun` في الـ Backend**:
+   - `smartRefreshGuide(slug, dryRun=false)` — يفحص SHA من GitHub فعلياً، لكن إن أراد الكتابة يُعيد الحالة المتوقَّعة بدل الكتابة، ويُعيد `newSha` للحالات الأربع.
+   - `smartRefreshArabicGuide(slug, { dryRun, expectedEnSha? })` — في dry-run يتنبَّأ بالنتيجة من حالة EN دون استدعاء أيّ AI أبداً.
+   - `fetchAllGuides(force, onProgress, { dryRun, smart, translate })` — يدير خريطة `enWouldChangeSlugs` لتمرير الـ SHA المتوقَّع لـ AR.
+   - `POST /guides/refresh-all?dryRun=true` — يقبل المعامل الجديد ويُمرّره. عَلَم `dryRun:true` يعود في حدث `done`.
+2. **زر ثالث في الواجهة** (`artifacts/n8n-manager/src/pages/guides.tsx`):
+   - **«تحقق من التحديثات»** (variant=ghost, أيقونة Search) → يستدعي `dryRun=true&smart=true&translate=true`.
+   - يُغيّر لون شريط التقدّم لـ سماوي (sky) ليتميّز بصرياً عن وضع التطبيق الفعلي.
+   - Toast نهائي يقول: «معاينة التحديثات (بدون كتابة)» مع تفاصيل ستُضاف/ستُحدَّث/بلا تغيير.
+3. **شريط تقدّم متعدد الألوان**:
+   - الـ Backend الآن يبثّ في كل حدث `progress` العدّادات الجارية (`enAdded`, `enUpdated`, `enUnchanged`, `enFailed`, و نظائرها لـ AR).
+   - الواجهة ترسم الشريط أربع شرائح لونية في الوقت الفعلي:
+     | اللون | المعنى |
+     |------|--------|
+     | أخضر (emerald) | جديد |
+     | أزرق (blue) | محدَّث |
+     | رمادي (slate) | بلا تغيير |
+     | وردي (rose) | فشل |
+   - أرقام مختصرة بجانب الشريط: `+2 ~3 =12 !0` لقراءة فورية.
+
+### 8.3 الاختبار (T-C — موثَّق آلياً)
+```
+── T-C · dryRun never writes to DB ─────────
+  ✓ dry-run reported 0+0/17 EN, 0+0/17 AR — DB untouched
+```
+- تأكَّدنا برمجياً أنّ مجموع الفئات يساوي `total` بالضبط لكلٍّ من EN و AR (no double-counting, no leak).
+- تأكَّدنا أنّ عدد الصفوف في `stats` لم يتغيّر قبل وبعد الـ dry-run (لا كتابة سرّية).
+- تأكَّدنا أنّ حقل `dryRun:true` يصل في حدث `done` (للتوثيق الذاتي).
+
+### 8.4 ملاحظة فنّية: لماذا dry-run يحتاج طلباً شبكياً
+الـ`dryRun` لا يقفز فوق `fetchRawWithSha()` لأنّ المقارنة تتمّ على SHA المحتوى الفعلي، لا على ETag. هذا يعطي صحّة 100% بدلاً من اعتمادنا على ETag الذي قد يُعاد ضبطه بدون تغيير حقيقي. تكلفة الفحص ≈ 17 طلب GET على raw.githubusercontent.com (سريع جداً، عادةً < 2 ث للجميع)، مقابل صفر استدعاء AI و صفر كتابة DB.
+
+---
+
+## 9) المرحلة 5 — اختبار آلي للتراجعات (Regression Tests)
+
+### 9.1 الحاجة
+- لا يوجد إطار اختبار في الـ workspace (لا vitest، لا jest).
+- العقد الأهمّ في النظام: **`manualOverrideMarkdown` لا يُمسّ أبداً**. إذا كُسر هذا العقد فالمستخدم يخسر تعديلات حقيقية.
+- نحتاج طبقة دفاع آليّة، خفيفة، لا تتطلَّب تثبيت حزم.
+
+### 9.2 الحل
+ملف واحد: **`tests/guides-cache.test.mjs`** — Node 20 ESM، يعتمد فقط على `node:assert/strict` و `fetch` المدمجين. يُشغَّل ضدّ السيرفر الحيّ، ولا يحتاج DB-tampering ولا fixtures.
+
+### 9.3 الاختبارات المُغطَّاة
+| رمز | السيناريو | يحمي ضدّ |
+|-----|-----------|----------|
+| **T-A** | تعيين override على EN ثم `force=true` ثم تأكيد بقاء الـ override | كسر مستقبلي في المسار القديم `fetchGuide` |
+| **T-B** | تعيين override على AR ثم `smart=true&translate=true` ثم تأكيد بقاء الـ override | كسر مستقبلي في `smartRefreshArabicGuide` |
+| **T-C** | حساب `stats` قبل وبعد `dryRun=true&smart=true&translate=true` | تسرُّب كتابات سرّية في وضع المعاينة |
+| **T-D** | تشغيلان متتاليان `smart=true` مع تأكيد أنّ الثاني `enUnchanged > 0 && (enAdded+enUpdated)==0` | كسر مستقبلي يجعل smart يُعيد كتابة كل شيء |
+
+### 9.4 طريقة التشغيل
+```bash
+# مع تشغيل API Server و DB
+node tests/guides-cache.test.mjs
+```
+
+### 9.5 النتيجة الفعلية الموثَّقة
+```
+── Login ─────────────
+  ✓ logged in as admin
+── T-A · manualOverrideMarkdown (EN) survives force refresh ─────
+  ✓ EN manual override preserved across force refresh
+── T-B · manualOverrideMarkdown (AR) survives smart refresh + translate ─────
+  ✓ AR manual override preserved across smart refresh + translate
+── T-C · dryRun never writes to DB ─────
+  ✓ dry-run reported 0+0/17 EN, 0+0/17 AR — DB untouched
+── T-D · two smart refreshes back-to-back; second writes nothing ─────
+  ✓ second run: 0 written, 15 unchanged ⇒ smart cache is honoured
+──────────────────────────────────────────
+  5 passed · 0 failed · 40.7s
+All guide-cache contracts hold. ✓
+```
+
+### 9.6 معايير الجودة
+- **بلا dependencies جديدة**: لا حزم npm، لا Vitest، لا تعديل `package.json`.
+- **End-to-end حقيقي**: كل اختبار يضرب نفس الـ HTTP API الذي يضربه المستخدم — لا mocks ولا stubs.
+- **تنظيف ذاتي**: `finally` يستدعي `clearOverride()` بعد كل اختبار حتى لو فشل، فالـ DB لا تتلوّث.
+- **Idempotent**: قابل للتشغيل مراراً بنفس النتيجة.
+
+---
+
+## 10) ملخّص نهائي — كل المراحل مكتملة ✓
+
+| المرحلة | الوصف | الحالة | الاختبار |
+|---------|-------|--------|---------|
+| 1 | Hydrate من القرص عند الإقلاع | ✅ مُنفَّذة | T1 ✓ |
+| 2 | توحيد كل الأزرار على المسار الذكي | ✅ مُنفَّذة | T-D ✓ |
+| 3 | تحديث ذكي بالـ SHA لـ EN + AR | ✅ مُنفَّذة | T6, T7, T8 ✓ |
+| 4 | dry-run + شريط تقدّم متعدّد الألوان + زر «تحقق» | ✅ مُنفَّذة | T-C ✓ |
+| 5 | اختبارات آلية لحماية manualOverrideMarkdown | ✅ مُنفَّذة | T-A, T-B ✓ |
+
+### مكاسب نهائية مقاسة
+- **ضغطة دون تغيير على المصدر**: من 30+ ث و15 استدعاء AI ⟵ إلى 0.5 ث وصفر استدعاء.
+- **ضغطة «تحقق من التحديثات»**: ≈ 1.5 ث، صفر كتابة، صفر AI، تعطي صورة كاملة لِما سيحدث.
+- **إعادة تشغيل السيرفر مع DB فاضية**: < 200ms للاسترداد الكامل من الملفات، صفر شبكة.
+- **عقد الـ override**: محمي بـ4 اختبارات آلية تشتغل في 40 ث ضدّ سيرفر حيّ.

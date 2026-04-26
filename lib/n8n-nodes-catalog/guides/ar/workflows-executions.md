@@ -1,6 +1,6 @@
 ---
 description: التنفيذ هو تشغيل واحد لسير العمل.
-contentType: overview
+contentType: نظرة عامة
 ---
 
 # عمليات التنفيذ
@@ -20,12 +20,12 @@ contentType: overview
 
 ## قوائم التنفيذ
 
-توفر n8n قائمتين للتنفيذ:
+يوفر n8n قائمتين للتنفيذ:
 
 *   [عمليات التنفيذ على مستوى سير العمل](/workflows/executions/single-workflow-executions.md): تعرض قائمة التنفيذ هذه عمليات التنفيذ لسير عمل واحد.
-*   [جميع عمليات التنفيذ](/workflows/executions/all-executions.md): تعرض هذه القائمة جميع عمليات التنفيذ لجميع سير العمل الخاصة بك.
+*   [جميع عمليات التنفيذ](/workflows/executions/all-executions.md): تعرض هذه القائمة جميع عمليات التنفيذ لجميع سير العمل الخاص بك.
 
-تدعم n8n [إضافة بيانات مخصصة إلى عمليات التنفيذ](/workflows/executions/custom-executions-data.md).
+يدعم n8n [إضافة بيانات مخصصة إلى عمليات التنفيذ](/workflows/executions/custom-executions-data.md).
 
 ## إخفاء بيانات التنفيذ
 

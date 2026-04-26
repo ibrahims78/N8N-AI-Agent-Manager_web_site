@@ -439,10 +439,15 @@ export type GuideRefreshStatus = "added" | "updated" | "unchanged" | "failed";
  *  - `failed`:    upstream fetch failed and we have nothing in DB to fall back on.
  *
  * The `manualOverrideMarkdown` column is **never** touched by this function.
+ *
+ * If `dryRun=true`, the function reports what *would* happen but performs no
+ * DB write and no file write. The upstream HTTP fetch still runs because we
+ * need it to compute the comparison SHA.
  */
-async function smartRefreshGuide(slug: string): Promise<{
+async function smartRefreshGuide(slug: string, dryRun = false): Promise<{
   status: GuideRefreshStatus;
   doc: typeof guidesDocsTable.$inferSelect | null;
+  newSha?: string | null;
   error?: string;
 }> {
   const meta = CORE_GUIDE_PAGES.find((g) => g.slug === slug);
@@ -475,16 +480,21 @@ async function smartRefreshGuide(slug: string): Promise<{
 
   if (!result) {
     // Upstream failed. Preserve whatever we already have rather than wiping it.
-    if (existing?.markdown) return { status: "unchanged", doc: existing };
+    if (existing?.markdown) return { status: "unchanged", doc: existing, newSha: existing.sourceSha };
     return { status: "failed", doc: null, error: "Guide not found upstream" };
   }
 
   // SHA-based equality → upstream content is identical to what we cached.
   if (existing && existing.sourceSha === result.sha && existing.markdown) {
-    return { status: "unchanged", doc: existing };
+    return { status: "unchanged", doc: existing, newSha: result.sha };
   }
 
   const isNew = !existing || !existing.markdown;
+
+  // Dry-run: report what would happen without writing.
+  if (dryRun) {
+    return { status: isNew ? "added" : "updated", doc: existing ?? null, newSha: result.sha };
+  }
 
   const inserted = await db
     .insert(guidesDocsTable)
@@ -519,7 +529,7 @@ async function smartRefreshGuide(slug: string): Promise<{
     logger.warn({ err, slug }, "Failed to save EN guide to local file");
   }
 
-  return { status: isNew ? "added" : "updated", doc: inserted[0] };
+  return { status: isNew ? "added" : "updated", doc: inserted[0], newSha: result.sha };
 }
 
 /**
@@ -528,11 +538,22 @@ async function smartRefreshGuide(slug: string): Promise<{
  * If AR is already up-to-date the function is a no-op (no AI call, no DB write).
  *
  * `manualOverrideMarkdown` is never touched.
+ *
+ * Options:
+ *  - `dryRun`: predict the outcome without calling the AI provider or writing.
+ *  - `expectedEnSha`: when called from a dry-run flow, the EN smart refresh
+ *    might have decided EN *would* change. Pass the predicted EN sha here so
+ *    that AR's prediction reflects "EN about to change ⇒ AR will need
+ *    re-translation". When omitted, the live `en.sourceSha` is used.
  */
-async function smartRefreshArabicGuide(slug: string): Promise<{
+async function smartRefreshArabicGuide(
+  slug: string,
+  options: { dryRun?: boolean; expectedEnSha?: string | null } = {}
+): Promise<{
   status: GuideRefreshStatus;
   error?: string;
 }> {
+  const { dryRun = false, expectedEnSha } = options;
   const meta = CORE_GUIDE_PAGES.find((g) => g.slug === slug);
   if (!meta) return { status: "failed", error: "unknown slug" };
 
@@ -543,7 +564,11 @@ async function smartRefreshArabicGuide(slug: string): Promise<{
       .where(and(eq(guidesDocsTable.slug, slug), eq(guidesDocsTable.language, "en")))
       .limit(1)
   )[0];
-  if (!en?.markdown) return { status: "failed", error: "EN markdown unavailable" };
+  // In dry-run the EN row may not yet exist (would be added). If we have an
+  // expected sha we can still predict the outcome.
+  if (!en?.markdown && !expectedEnSha) {
+    return { status: "failed", error: "EN markdown unavailable" };
+  }
 
   const existingAr = (
     await db
@@ -553,14 +578,28 @@ async function smartRefreshArabicGuide(slug: string): Promise<{
       .limit(1)
   )[0];
 
+  // The "current" EN sha to compare AR against. If the caller knows the
+  // upstream is about to change, this will already be the *new* sha.
+  const referenceEnSha = expectedEnSha !== undefined ? expectedEnSha : en?.sourceSha;
+
   // AR already tracks the same EN snapshot → skip translation.
   if (
     existingAr?.markdown &&
-    en.sourceSha &&
-    existingAr.sourceSha === en.sourceSha
+    referenceEnSha &&
+    existingAr.sourceSha === referenceEnSha
   ) {
     return { status: "unchanged" };
   }
+
+  const isNew = !existingAr || !existingAr.markdown;
+
+  // Dry-run: predict only, no AI call, no DB write.
+  if (dryRun) {
+    return { status: isNew ? "added" : "updated" };
+  }
+
+  // Live path requires an actual EN markdown to translate.
+  if (!en?.markdown) return { status: "failed", error: "EN markdown unavailable" };
 
   let translated: string | null = null;
   let errorMsg: string | null = null;
@@ -574,8 +613,6 @@ async function smartRefreshArabicGuide(slug: string): Promise<{
   if (!translated) {
     return { status: "failed", error: errorMsg ?? "translation returned empty" };
   }
-
-  const isNew = !existingAr || !existingAr.markdown;
 
   await db
     .insert(guidesDocsTable)
@@ -696,8 +733,23 @@ export async function hydrateGuidesFromLocalFiles(
  */
 export async function fetchAllGuides(
   force = false,
-  onProgress?: (p: { total: number; done: number; current: string; phase?: "fetch" | "translate" }) => void,
-  opts: { translate?: boolean; concurrency?: number; smart?: boolean } = {}
+  onProgress?: (p: {
+    total: number;
+    done: number;
+    current: string;
+    phase?: "fetch" | "translate";
+    // Running breakdown — only populated in smart mode for the multi-segment
+    // progress bar in the UI.
+    enAdded?: number;
+    enUpdated?: number;
+    enUnchanged?: number;
+    enFailed?: number;
+    arAdded?: number;
+    arUpdated?: number;
+    arUnchanged?: number;
+    arFailed?: number;
+  }) => void,
+  opts: { translate?: boolean; concurrency?: number; smart?: boolean; dryRun?: boolean } = {}
 ): Promise<{
   total: number;
   fetched: number;
@@ -711,12 +763,15 @@ export async function fetchAllGuides(
   arUpdated: number;
   arUnchanged: number;
   smart: boolean;
+  dryRun: boolean;
   aiKeyMissing: boolean;
   lastErrorMsg: string;
 }> {
   const total = CORE_GUIDE_PAGES.length;
   // smart is disabled when force=true; force always trumps smart.
   const smart = !!opts.smart && !force;
+  // dryRun only makes sense in smart mode; ignored otherwise.
+  const dryRun = !!opts.dryRun && smart;
   let fetched = 0;
   let failed = 0;
   let translated = 0;
@@ -724,18 +779,29 @@ export async function fetchAllGuides(
   let enAdded = 0, enUpdated = 0, enUnchanged = 0;
   let arAdded = 0, arUpdated = 0, arUnchanged = 0;
 
+  // For dry-run AR prediction we need to know the EN sha each slug *would*
+  // end up with (the upstream sha, even if not written).
+  const enShaPerSlug = new Map<string, string | null>();
+  // Track which EN slugs would change so AR prediction knows to mark them
+  // as "needs re-translation" even though en.sourceSha hasn't been written.
+  const enWouldChangeSlugs = new Set<string>();
+
   // Phase 1: fetch all English guides (sequential — GitHub raw is fast and we
   // want deterministic progress events).
   for (let i = 0; i < CORE_GUIDE_PAGES.length; i++) {
     const g = CORE_GUIDE_PAGES[i];
-    onProgress?.({ total, done: i, current: g.slug, phase: "fetch" });
+    onProgress?.({
+      total, done: i, current: g.slug, phase: "fetch",
+      enAdded, enUpdated, enUnchanged, enFailed: failed,
+    });
     try {
       if (smart) {
-        const r = await smartRefreshGuide(g.slug);
-        if (r.status === "added") { enAdded++; fetched++; }
-        else if (r.status === "updated") { enUpdated++; fetched++; }
+        const r = await smartRefreshGuide(g.slug, dryRun);
+        if (r.status === "added") { enAdded++; fetched++; enWouldChangeSlugs.add(g.slug); }
+        else if (r.status === "updated") { enUpdated++; fetched++; enWouldChangeSlugs.add(g.slug); }
         else if (r.status === "unchanged") { enUnchanged++; fetched++; }
         else { failed++; }
+        if (r.newSha !== undefined) enShaPerSlug.set(g.slug, r.newSha ?? null);
       } else {
         const r = await fetchGuide(g.slug, force);
         if (r?.markdown) fetched++;
@@ -746,7 +812,10 @@ export async function fetchAllGuides(
       logger.warn({ err, slug: g.slug }, "fetch guide failed");
     }
   }
-  onProgress?.({ total, done: total, current: "", phase: "fetch" });
+  onProgress?.({
+    total, done: total, current: "", phase: "fetch",
+    enAdded, enUpdated, enUnchanged, enFailed: failed,
+  });
 
   // Phase 2 (optional): translate each fetched guide to Arabic, in parallel.
   if (opts.translate) {
@@ -754,7 +823,11 @@ export async function fetchAllGuides(
     const targets = CORE_GUIDE_PAGES.map((g) => g.slug);
     let idx = 0;
     let done = 0;
-    onProgress?.({ total, done: 0, current: "", phase: "translate" });
+    onProgress?.({
+      total, done: 0, current: "", phase: "translate",
+      enAdded, enUpdated, enUnchanged, enFailed: failed,
+      arAdded, arUpdated, arUnchanged, arFailed: translateFailed,
+    });
 
     let lastErrorMsg = "";
     const worker = async () => {
@@ -763,7 +836,14 @@ export async function fetchAllGuides(
         const slug = targets[i];
         try {
           if (smart) {
-            const r = await smartRefreshArabicGuide(slug);
+            // In dry-run, pass the predicted EN sha so AR prediction knows
+            // whether EN is about to change.
+            const expectedEnSha = dryRun
+              ? (enWouldChangeSlugs.has(slug)
+                  ? enShaPerSlug.get(slug) ?? null
+                  : undefined /* unchanged → fall through to live en.sourceSha */)
+              : undefined;
+            const r = await smartRefreshArabicGuide(slug, { dryRun, expectedEnSha });
             if (r.status === "added") { arAdded++; translated++; }
             else if (r.status === "updated") { arUpdated++; translated++; }
             else if (r.status === "unchanged") { arUnchanged++; translated++; }
@@ -782,25 +862,33 @@ export async function fetchAllGuides(
           logger.warn({ err, slug }, "translate guide failed");
         }
         done++;
-        onProgress?.({ total, done, current: slug, phase: "translate" });
+        onProgress?.({
+          total, done, current: slug, phase: "translate",
+          enAdded, enUpdated, enUnchanged, enFailed: failed,
+          arAdded, arUpdated, arUnchanged, arFailed: translateFailed,
+        });
       }
     };
     await Promise.all(Array.from({ length: concurrency }, () => worker()));
-    onProgress?.({ total, done: total, current: "", phase: "translate" });
+    onProgress?.({
+      total, done: total, current: "", phase: "translate",
+      enAdded, enUpdated, enUnchanged, enFailed: failed,
+      arAdded, arUpdated, arUnchanged, arFailed: translateFailed,
+    });
     // Surface a friendly flag the UI can show as a single big banner instead
     // of N identical toasts.
     const aiKeyMissing = /لا يوجد مفتاح AI|no ai key|api key/i.test(lastErrorMsg);
     return {
       total, fetched, failed, translated, translateFailed,
       enAdded, enUpdated, enUnchanged, arAdded, arUpdated, arUnchanged,
-      smart, aiKeyMissing, lastErrorMsg,
+      smart, dryRun, aiKeyMissing, lastErrorMsg,
     };
   }
 
   return {
     total, fetched, failed, translated, translateFailed,
     enAdded, enUpdated, enUnchanged, arAdded, arUpdated, arUnchanged,
-    smart, aiKeyMissing: false, lastErrorMsg: "",
+    smart, dryRun, aiKeyMissing: false, lastErrorMsg: "",
   };
 }
 

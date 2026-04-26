@@ -10,7 +10,7 @@ contentType: overview
 على مستوى عالٍ، يمكنك:
 
 *   إجراء [تدقيق أمني](/hosting/securing/security-audit.md) لتحديد المخاطر الأمنية.
-*   [إعداد SSL](/hosting/securing/set-up-ssl.md) لفرض الاتصالات الآمنة.
+*   [إعداد SSL](/hosting/securing/set-up-ssl.md) لفرض اتصالات آمنة.
 *   [إعداد تسجيل الدخول الموحد (Single Sign-On)](/hosting/securing/set-up-sso.md) لإدارة حسابات المستخدمين.
 *   استخدام [المصادقة الثنائية (2FA)](/user-management/two-factor-auth.md) لمستخدميك.
 
@@ -20,7 +20,7 @@ contentType: overview
 
 بشكل أكثر تفصيلاً، فكر في حظر أو إلغاء الاشتراك في الميزات أو جمع البيانات التي لا ترغب فيها:
 
-*   [تعطيل الـ API العام](/hosting/securing/disable-public-api.md) إذا كنت لا تستخدمه.
+*   [تعطيل واجهة برمجة التطبيقات العامة (public API)](/hosting/securing/disable-public-api.md) إذا كنت لا تستخدمها.
 *   [إلغاء الاشتراك في جمع البيانات](/hosting/securing/telemetry-opt-out.md) للبيانات المجهولة التي يجمعها n8n تلقائيًا.
 *   [حظر عقد معينة](/hosting/securing/blocking-nodes.md) من أن تكون متاحة لمستخدميك.
 *   [الحماية من هجمات SSRF](/hosting/securing/ssrf-protection.md) للتحكم في المضيفين ونطاقات IP التي يمكن لعقد سير العمل الاتصال بها.

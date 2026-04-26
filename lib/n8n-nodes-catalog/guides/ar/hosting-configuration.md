@@ -1,6 +1,6 @@
 ---
 title: طرق التهيئة
-description: كيفية تعيين متغيرات البيئة لـ n8n.
+description: كيفية تعيين متغيرات البيئة لمنصة n8n.
 contentType: howto
 ---
 
@@ -46,7 +46,7 @@ docker run -it --rm \
 
 ## ملف Docker Compose
 
-في Docker، يمكنك تعيين متغيرات البيئة الخاصة بك في العنصر `n8n: environment:` ضمن ملف `docker-compose.yaml` الخاص بك.
+في Docker، يمكنك تعيين متغيرات البيئة الخاصة بك في العنصر `n8n: environment:` ضمن ملف `docker-compose.yaml`.
 
 على سبيل المثال:
 
@@ -58,7 +58,7 @@ n8n:
 
 ## الاحتفاظ بالبيانات الحساسة في ملفات منفصلة
 
-يمكنك إلحاق `_FILE` بمتغيرات البيئة الفردية لتوفير تهيئتها في ملف منفصل، مما يتيح لك تجنب تمرير التفاصيل الحساسة باستخدام متغيرات البيئة. يقوم n8n بتحميل البيانات من الملف بالاسم المحدد، مما يجعل من الممكن تحميل البيانات من [Docker-Secrets](https://docs.docker.com/engine/swarm/secrets/) و [Kubernetes-Secrets](https://kubernetes.io/docs/concepts/configuration/secret/).
+يمكنك إلحاق `_FILE` بمتغيرات البيئة الفردية لتوفير تهيئتها في ملف منفصل، مما يتيح لك تجنب تمرير التفاصيل الحساسة باستخدام متغيرات البيئة. تقوم n8n بتحميل البيانات من الملف بالاسم المحدد، مما يجعل من الممكن تحميل البيانات من [Docker-Secrets](https://docs.docker.com/engine/swarm/secrets/) و [Kubernetes-Secrets](https://kubernetes.io/docs/concepts/configuration/secret/).
 
 ارجع إلى [متغيرات البيئة](/hosting/configuration/environment-variables/index.md) للحصول على تفاصيل حول كل متغير.
 

@@ -1,14 +1,14 @@
 ```markdown
 ---
-contentType: [تكامل, مرجع]
+contentType: [integration, reference]
 tags:
-  - عقدة الكود
-  - كود
+  - code node
+  - code
 hide:
-  - الوسوم
+  - tags
 ---
 
-# استخدام عقدة الكود
+# استخدام العقدة Code
 
 --8<-- "_snippets/integrations/builtin/core-nodes/code-node.md"
 ```
