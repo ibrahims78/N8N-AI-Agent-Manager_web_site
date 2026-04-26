@@ -229,6 +229,9 @@ router.post(
     const force = req.query.force === "true";
     // ?translate=true also produces Arabic translations after the EN fetch.
     const translate = req.query.translate === "true";
+    // ?smart=true enables content-SHA based skip: items unchanged upstream
+    // are not re-fetched and not re-translated. `force=true` always wins.
+    const smart = req.query.smart === "true";
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
@@ -239,7 +242,7 @@ router.post(
         (p) => {
           res.write(`data: ${JSON.stringify({ type: "progress", ...p })}\n\n`);
         },
-        { translate }
+        { translate, smart }
       );
       res.write(`data: ${JSON.stringify({ type: "done", ...summary })}\n\n`);
     } catch (err) {

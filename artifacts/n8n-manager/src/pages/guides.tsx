@@ -186,8 +186,16 @@ export default function GuidesPage() {
     setProgress({ done: 0, total: 0, current: "", phase: "fetch" });
     try {
       const auth = getAuthHeader().Authorization;
-      const params = new URLSearchParams({ force: "true" });
-      if (translate) params.set("translate", "true");
+      const params = new URLSearchParams();
+      if (translate) {
+        // AR button: smart update — only re-fetch + re-translate items whose
+        // upstream content actually changed. No AI calls when nothing changed.
+        params.set("translate", "true");
+        params.set("smart", "true");
+      } else {
+        // EN-only button still uses force for now (Phase 2 will move it to smart).
+        params.set("force", "true");
+      }
       const res = await fetch(
         `${API_BASE}/catalog/docs-advanced/guides/refresh-all?${params.toString()}`,
         {
@@ -213,8 +221,19 @@ export default function GuidesPage() {
           if (evt.type === "progress") {
             setProgress({ done: evt.done, total: evt.total, current: evt.current, phase: evt.phase });
           } else if (evt.type === "done") {
-            const enLine = `${evt.fetched}/${evt.total}` + (evt.failed ? ` (${evt.failed} ${t("فشل","failed")})` : "");
-            const arLine = translate ? ` — ${t("ترجمة","AR")}: ${evt.translated ?? 0}/${evt.total}` : "";
+            // Smart mode emits per-bucket counters (added/updated/unchanged).
+            // Build a richer summary line so the user can see exactly how many
+            // items were re-translated vs. skipped without spending AI quota.
+            const enLine = evt.smart
+              ? `EN: ${evt.enAdded ?? 0} ${t("جديد","new")} · ${evt.enUpdated ?? 0} ${t("محدَّث","updated")} · ${evt.enUnchanged ?? 0} ${t("بلا تغيير","unchanged")}` +
+                (evt.failed ? ` · ${evt.failed} ${t("فشل","failed")}` : "")
+              : `${evt.fetched}/${evt.total}` + (evt.failed ? ` (${evt.failed} ${t("فشل","failed")})` : "");
+            const arLine = translate
+              ? evt.smart
+                ? ` — AR: ${evt.arAdded ?? 0} ${t("جديد","new")} · ${evt.arUpdated ?? 0} ${t("محدَّث","updated")} · ${evt.arUnchanged ?? 0} ${t("بلا تغيير","unchanged")}` +
+                  (evt.translateFailed ? ` · ${evt.translateFailed} ${t("فشل","failed")}` : "")
+                : ` — ${t("ترجمة","AR")}: ${evt.translated ?? 0}/${evt.total}`
+              : "";
             // If the AR phase failed entirely because no AI key is configured,
             // show a single actionable banner pointing to Settings instead of
             // a vague "translation failed" line.

@@ -422,20 +422,307 @@ export async function fetchArabicGuide(slug: string, force = false): Promise<Gui
   return inserted[0];
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   Smart refresh helpers (Phase 3 — content-SHA-based update detection)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/** Outcome of a single smart refresh operation for one guide. */
+export type GuideRefreshStatus = "added" | "updated" | "unchanged" | "failed";
+
 /**
- * Bulk-fetch guides. When `translate=true`, also produces Arabic translations
- * for every successfully-fetched guide (translation runs in parallel, bounded).
+ * Refresh a single English guide *only when the upstream content actually
+ * changed* (compared via deterministic SHA-1 of the cleaned markdown).
+ *
+ *  - `added`:     row didn't exist before, or had no markdown.
+ *  - `updated`:   row existed but the upstream SHA differs.
+ *  - `unchanged`: SHA matches what we already store. No DB write, no file write.
+ *  - `failed`:    upstream fetch failed and we have nothing in DB to fall back on.
+ *
+ * The `manualOverrideMarkdown` column is **never** touched by this function.
+ */
+async function smartRefreshGuide(slug: string): Promise<{
+  status: GuideRefreshStatus;
+  doc: typeof guidesDocsTable.$inferSelect | null;
+  error?: string;
+}> {
+  const meta = CORE_GUIDE_PAGES.find((g) => g.slug === slug);
+  if (!meta) return { status: "failed", doc: null, error: "unknown slug" };
+
+  const existing = (
+    await db
+      .select()
+      .from(guidesDocsTable)
+      .where(and(eq(guidesDocsTable.slug, slug), eq(guidesDocsTable.language, "en")))
+      .limit(1)
+  )[0];
+
+  // Try candidates and pick the first one that succeeds.
+  // IMPORTANT: We store `r.sha` (SHA-1 of the *raw* upstream bytes) — the same
+  // value the legacy `fetchGuide` stores. This keeps the SHA comparison
+  // consistent for rows that were written by either path.
+  const candidates = [
+    `${DOCS_REPO_RAW}/docs/${meta.path}.md`,
+    `${DOCS_REPO_RAW}/docs/${meta.path}/index.md`,
+  ];
+  let result: { markdown: string; sha: string; sourceUrl: string } | null = null;
+  for (const u of candidates) {
+    const r = await fetchRawWithSha(u);
+    if (r) {
+      result = { markdown: cleanGuideMarkdown(r.markdown), sha: r.sha, sourceUrl: u };
+      break;
+    }
+  }
+
+  if (!result) {
+    // Upstream failed. Preserve whatever we already have rather than wiping it.
+    if (existing?.markdown) return { status: "unchanged", doc: existing };
+    return { status: "failed", doc: null, error: "Guide not found upstream" };
+  }
+
+  // SHA-based equality → upstream content is identical to what we cached.
+  if (existing && existing.sourceSha === result.sha && existing.markdown) {
+    return { status: "unchanged", doc: existing };
+  }
+
+  const isNew = !existing || !existing.markdown;
+
+  const inserted = await db
+    .insert(guidesDocsTable)
+    .values({
+      slug,
+      language: "en",
+      title: meta.title,
+      category: meta.category,
+      markdown: result.markdown,
+      sourceUrl: result.sourceUrl,
+      sourceSha: result.sha,
+      error: null,
+      fetchedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: [guidesDocsTable.slug, guidesDocsTable.language],
+      set: {
+        title: meta.title,
+        category: meta.category,
+        markdown: result.markdown,
+        sourceUrl: result.sourceUrl,
+        sourceSha: result.sha,
+        error: null,
+        fetchedAt: new Date(),
+      },
+    })
+    .returning();
+
+  try {
+    await saveGuideToFile(slug, "en", result.markdown);
+  } catch (err) {
+    logger.warn({ err, slug }, "Failed to save EN guide to local file");
+  }
+
+  return { status: isNew ? "added" : "updated", doc: inserted[0] };
+}
+
+/**
+ * Refresh the Arabic translation of a single guide *only when needed*:
+ *   - There is no AR row, OR the AR row's sourceSha != current EN sourceSha.
+ * If AR is already up-to-date the function is a no-op (no AI call, no DB write).
+ *
+ * `manualOverrideMarkdown` is never touched.
+ */
+async function smartRefreshArabicGuide(slug: string): Promise<{
+  status: GuideRefreshStatus;
+  error?: string;
+}> {
+  const meta = CORE_GUIDE_PAGES.find((g) => g.slug === slug);
+  if (!meta) return { status: "failed", error: "unknown slug" };
+
+  const en = (
+    await db
+      .select()
+      .from(guidesDocsTable)
+      .where(and(eq(guidesDocsTable.slug, slug), eq(guidesDocsTable.language, "en")))
+      .limit(1)
+  )[0];
+  if (!en?.markdown) return { status: "failed", error: "EN markdown unavailable" };
+
+  const existingAr = (
+    await db
+      .select()
+      .from(guidesDocsTable)
+      .where(and(eq(guidesDocsTable.slug, slug), eq(guidesDocsTable.language, "ar")))
+      .limit(1)
+  )[0];
+
+  // AR already tracks the same EN snapshot → skip translation.
+  if (
+    existingAr?.markdown &&
+    en.sourceSha &&
+    existingAr.sourceSha === en.sourceSha
+  ) {
+    return { status: "unchanged" };
+  }
+
+  let translated: string | null = null;
+  let errorMsg: string | null = null;
+  try {
+    translated = await translateMarkdownToArabic(en.markdown);
+  } catch (err) {
+    errorMsg = err instanceof Error ? err.message : String(err);
+    logger.warn({ err, slug }, "Arabic guide translation failed");
+  }
+
+  if (!translated) {
+    return { status: "failed", error: errorMsg ?? "translation returned empty" };
+  }
+
+  const isNew = !existingAr || !existingAr.markdown;
+
+  await db
+    .insert(guidesDocsTable)
+    .values({
+      slug,
+      language: "ar",
+      title: meta.title,
+      category: meta.category,
+      markdown: translated,
+      sourceUrl: en.sourceUrl,
+      sourceSha: en.sourceSha,
+      error: null,
+      fetchedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: [guidesDocsTable.slug, guidesDocsTable.language],
+      set: {
+        title: meta.title,
+        category: meta.category,
+        markdown: translated,
+        sourceUrl: en.sourceUrl,
+        sourceSha: en.sourceSha,
+        error: null,
+        fetchedAt: new Date(),
+      },
+    });
+
+  try {
+    await saveGuideToFile(slug, "ar", translated);
+  } catch (err) {
+    logger.warn({ err, slug }, "Failed to save AR guide to local file");
+  }
+
+  return { status: isNew ? "added" : "updated" };
+}
+
+/**
+ * Re-import guide markdown from on-disk files into the DB after a reset.
+ *
+ * Mirrors `hydrateDocsFromLocalFiles` (for node docs) but targets the
+ * `guides_docs` table. Only fills in rows that are missing or empty —
+ * never overwrites existing markdown nor `manualOverrideMarkdown`.
+ *
+ * Files whose slug is not registered in CORE_GUIDE_PAGES are skipped to
+ * keep the table consistent with what the app actually exposes.
+ */
+export async function hydrateGuidesFromLocalFiles(
+  lang: DocLang
+): Promise<{ scanned: number; imported: number; skipped: number }> {
+  const dir = path.join(LOCAL_GUIDES_DIR, lang);
+  let files: string[];
+  try {
+    files = (await fs.readdir(dir)).filter((f) => f.endsWith(".md"));
+  } catch {
+    return { scanned: 0, imported: 0, skipped: 0 };
+  }
+  if (files.length === 0) return { scanned: 0, imported: 0, skipped: 0 };
+
+  // One round-trip to find which slugs already have content (or a manual
+  // override) — never overwrite either.
+  const existingRows = await db
+    .select({
+      slug: guidesDocsTable.slug,
+      hasMd: sql<boolean>`(${guidesDocsTable.markdown} IS NOT NULL OR ${guidesDocsTable.manualOverrideMarkdown} IS NOT NULL)`,
+    })
+    .from(guidesDocsTable)
+    .where(eq(guidesDocsTable.language, lang));
+  const existing = new Map(existingRows.map((r) => [r.slug, r]));
+
+  let imported = 0;
+  let skipped = 0;
+  for (const file of files) {
+    const slug = file.replace(/\.md$/, "");
+    const meta = CORE_GUIDE_PAGES.find((g) => g.slug === slug);
+    if (!meta) { skipped++; continue; }
+    const cur = existing.get(slug);
+    if (cur?.hasMd) { skipped++; continue; }
+    try {
+      const md = await fs.readFile(path.join(dir, file), "utf-8");
+      if (!md || md.length < 10) { skipped++; continue; }
+      await db
+        .insert(guidesDocsTable)
+        .values({
+          slug,
+          language: lang,
+          title: meta.title,
+          category: meta.category,
+          markdown: md,
+          sourceUrl: null,
+          sourceSha: null,
+          error: null,
+          fetchedAt: new Date(),
+        })
+        .onConflictDoNothing({
+          target: [guidesDocsTable.slug, guidesDocsTable.language],
+        });
+      imported++;
+    } catch (err) {
+      logger.warn({ err, slug, lang }, "hydrateGuidesFromLocalFiles: failed to import file");
+      skipped++;
+    }
+  }
+  return { scanned: files.length, imported, skipped };
+}
+
+/**
+ * Bulk-fetch guides.
+ *
+ * Two modes (besides `translate`):
+ *  - `force=true`           → legacy mode: re-download and re-translate everything.
+ *  - `opts.smart=true`      → smart mode: only download / translate items whose
+ *                             upstream content SHA changed (or that are missing).
+ *                             `force=true` always wins over `smart`.
+ *
+ * Counters in the result distinguish between `added` / `updated` / `unchanged`
+ * for both EN and AR. The legacy fields (`fetched`, `translated`) include
+ * `unchanged` items so existing UIs that only read those keep working.
  */
 export async function fetchAllGuides(
   force = false,
   onProgress?: (p: { total: number; done: number; current: string; phase?: "fetch" | "translate" }) => void,
-  opts: { translate?: boolean; concurrency?: number } = {}
-): Promise<{ total: number; fetched: number; failed: number; translated: number; translateFailed: number }> {
+  opts: { translate?: boolean; concurrency?: number; smart?: boolean } = {}
+): Promise<{
+  total: number;
+  fetched: number;
+  failed: number;
+  translated: number;
+  translateFailed: number;
+  enAdded: number;
+  enUpdated: number;
+  enUnchanged: number;
+  arAdded: number;
+  arUpdated: number;
+  arUnchanged: number;
+  smart: boolean;
+  aiKeyMissing: boolean;
+  lastErrorMsg: string;
+}> {
   const total = CORE_GUIDE_PAGES.length;
+  // smart is disabled when force=true; force always trumps smart.
+  const smart = !!opts.smart && !force;
   let fetched = 0;
   let failed = 0;
   let translated = 0;
   let translateFailed = 0;
+  let enAdded = 0, enUpdated = 0, enUnchanged = 0;
+  let arAdded = 0, arUpdated = 0, arUnchanged = 0;
 
   // Phase 1: fetch all English guides (sequential — GitHub raw is fast and we
   // want deterministic progress events).
@@ -443,9 +730,17 @@ export async function fetchAllGuides(
     const g = CORE_GUIDE_PAGES[i];
     onProgress?.({ total, done: i, current: g.slug, phase: "fetch" });
     try {
-      const r = await fetchGuide(g.slug, force);
-      if (r?.markdown) fetched++;
-      else failed++;
+      if (smart) {
+        const r = await smartRefreshGuide(g.slug);
+        if (r.status === "added") { enAdded++; fetched++; }
+        else if (r.status === "updated") { enUpdated++; fetched++; }
+        else if (r.status === "unchanged") { enUnchanged++; fetched++; }
+        else { failed++; }
+      } else {
+        const r = await fetchGuide(g.slug, force);
+        if (r?.markdown) fetched++;
+        else failed++;
+      }
     } catch (err) {
       failed++;
       logger.warn({ err, slug: g.slug }, "fetch guide failed");
@@ -467,9 +762,20 @@ export async function fetchAllGuides(
         const i = idx++;
         const slug = targets[i];
         try {
-          const r = await fetchArabicGuide(slug, force);
-          if (r?.markdown) translated++;
-          else translateFailed++;
+          if (smart) {
+            const r = await smartRefreshArabicGuide(slug);
+            if (r.status === "added") { arAdded++; translated++; }
+            else if (r.status === "updated") { arUpdated++; translated++; }
+            else if (r.status === "unchanged") { arUnchanged++; translated++; }
+            else {
+              translateFailed++;
+              if (r.error) lastErrorMsg = r.error;
+            }
+          } else {
+            const r = await fetchArabicGuide(slug, force);
+            if (r?.markdown) translated++;
+            else translateFailed++;
+          }
         } catch (err) {
           translateFailed++;
           lastErrorMsg = err instanceof Error ? err.message : String(err);
@@ -484,10 +790,18 @@ export async function fetchAllGuides(
     // Surface a friendly flag the UI can show as a single big banner instead
     // of N identical toasts.
     const aiKeyMissing = /لا يوجد مفتاح AI|no ai key|api key/i.test(lastErrorMsg);
-    return { total, fetched, failed, translated, translateFailed, aiKeyMissing, lastErrorMsg };
+    return {
+      total, fetched, failed, translated, translateFailed,
+      enAdded, enUpdated, enUnchanged, arAdded, arUpdated, arUnchanged,
+      smart, aiKeyMissing, lastErrorMsg,
+    };
   }
 
-  return { total, fetched, failed, translated, translateFailed, aiKeyMissing: false, lastErrorMsg: "" };
+  return {
+    total, fetched, failed, translated, translateFailed,
+    enAdded, enUpdated, enUnchanged, arAdded, arUpdated, arUnchanged,
+    smart, aiKeyMissing: false, lastErrorMsg: "",
+  };
 }
 
 export async function listGuides(language: DocLang = "en") {

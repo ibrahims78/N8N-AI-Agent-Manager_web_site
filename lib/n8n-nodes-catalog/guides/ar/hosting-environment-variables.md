@@ -13,7 +13,7 @@ hide:
 
 يسرد هذا القسم متغيرات البيئة التي يمكنك استخدامها لتغيير إعدادات تكوين n8n عند استضافة n8n ذاتيًا.
 
-للحصول على القائمة الكاملة والأكثر حداثة لجميع متغيرات البيئة، راجع المرجع الكامل في مستودع وثائق n8n: [فهرس متغيرات البيئة الكامل](https://github.com/n8n-io/n8n-docs/tree/main/docs/hosting/configuration/environment-variables).
+للحصول على القائمة الكاملة والأحدث لجميع متغيرات البيئة، راجع المرجع الكامل في مستودع وثائق n8n: [فهرس متغيرات البيئة الكامل](https://github.com/n8n-io/n8n-docs/tree/main/docs/hosting/configuration/environment-variables).
 
 /// ملاحظة | التكوين المستند إلى الملفات
 يمكنك توفير [ملف تكوين](/hosting/configuration/configuration-methods.md) لـ n8n. يمكنك أيضًا إلحاق `_FILE` بمتغيرات معينة لتوفير تكوينها في ملف منفصل.

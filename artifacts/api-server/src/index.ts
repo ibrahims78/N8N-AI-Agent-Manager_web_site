@@ -4,6 +4,7 @@ import { seedDatabase } from "./seed";
 import {
   ensureSectionsIndexBootstrap,
   setupSyncScheduler,
+  hydrateGuidesFromLocalFiles,
 } from "./services/docsAdvanced.service";
 import { hydrateDocsFromLocalFiles } from "./services/nodeDocs.service";
 
@@ -33,13 +34,18 @@ async function start() {
   Promise.all([
     hydrateDocsFromLocalFiles("en"),
     hydrateDocsFromLocalFiles("ar"),
+    hydrateGuidesFromLocalFiles("en"),
+    hydrateGuidesFromLocalFiles("ar"),
   ])
-    .then(([en, ar]) => {
+    .then(([en, ar, gEn, gAr]) => {
       if (en.imported || ar.imported) {
         logger.info({ en, ar }, "Hydrated docs from local files");
       }
+      if (gEn.imported || gAr.imported) {
+        logger.info({ en: gEn, ar: gAr }, "Hydrated guides from local files");
+      }
     })
-    .catch((err) => logger.warn({ err }, "hydrateDocsFromLocalFiles failed (non-fatal)"))
+    .catch((err) => logger.warn({ err }, "hydrate*FromLocalFiles failed (non-fatal)"))
     .finally(() => {
       ensureSectionsIndexBootstrap().catch((err) =>
         logger.warn({ err }, "ensureSectionsIndexBootstrap failed (non-fatal)")
