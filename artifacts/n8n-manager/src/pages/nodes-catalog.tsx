@@ -17,6 +17,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { CodeBlock } from "@/components/reading/CodeBlock";
 import {
   Search, ExternalLink, BookOpen, KeyRound, Filter, Loader2,
   Zap, Package, ChevronLeft, ChevronRight, Tag, RefreshCw, Globe,
@@ -1178,6 +1179,36 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
                     );
                   },
                   img: ({ ...props }) => <img {...props} loading="lazy" />,
+                  // Render fenced code blocks with the shared CodeBlock
+                  // component (Prism syntax highlighting + copy button +
+                  // language tag). Inline code falls through to the default.
+                  code({
+                    inline,
+                    className,
+                    children,
+                    ...props
+                  }: {
+                    inline?: boolean;
+                    className?: string;
+                    children?: React.ReactNode;
+                  }) {
+                    const match = /language-(\w+)/.exec(className ?? "");
+                    const codeString = String(children).replace(/\n$/, "");
+                    if (!inline && match) {
+                      return (
+                        <CodeBlock
+                          language={match[1] ?? "text"}
+                          code={codeString}
+                          isRTL={lang === "ar"}
+                        />
+                      );
+                    }
+                    return (
+                      <code className={className} {...props}>
+                        {children}
+                      </code>
+                    );
+                  },
                   // Add an `id` to each heading so the TOC anchors work.
                   // We pair TOC entries (e.g. `[حذف](#delete)`) with the
                   // headings below them in document order.

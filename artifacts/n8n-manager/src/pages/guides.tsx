@@ -19,6 +19,10 @@ import {
 } from "@/components/ui/resizable";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { ReadingMarkdown } from "@/components/reading/ReadingMarkdown";
+import { ReadingProgressBar } from "@/components/reading/ReadingProgressBar";
+import { TableOfContents } from "@/components/reading/TableOfContents";
+import { useSavedScrollPosition } from "@/hooks/useSavedScrollPosition";
 import { useTranslation } from "react-i18next";
 import {
   BookOpen, Loader2, RefreshCw, Search, ExternalLink, Folder,
@@ -130,6 +134,8 @@ export default function GuidesPage() {
   // on the panel ref, and the panel reports its own state via onCollapse/Expand.
   // Sizes are persisted via the PanelGroup's autoSaveId.
   const sidebarPanelRef = useRef<ImperativePanelHandle | null>(null);
+  const readerScrollRef = useRef<HTMLDivElement | null>(null);
+  useSavedScrollPosition(readerScrollRef, doc?.slug ?? null, !!doc?.slug && !editing);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const toggleSidebar = () => {
     const p = sidebarPanelRef.current;
@@ -876,7 +882,20 @@ export default function GuidesPage() {
                   </ScrollArea>
                 </div>
               ) : (
-                <ScrollArea className="flex-1">
+                <div className="relative flex-1 flex flex-col min-h-0">
+                  <ReadingProgressBar
+                    containerRef={readerScrollRef}
+                    resetKey={doc.slug}
+                  />
+                  {doc.effectiveMarkdown && (
+                    <TableOfContents
+                      source={doc.effectiveMarkdown}
+                      containerRef={readerScrollRef}
+                      resetKey={doc.slug}
+                      isRTL={lang === "ar"}
+                    />
+                  )}
+                  <ScrollArea ref={readerScrollRef} className="flex-1">
                   <article
                     dir={lang === "ar" ? "rtl" : "ltr"}
                     /* `fontSize` is the single zoom knob: prose's headings,
@@ -902,7 +921,10 @@ export default function GuidesPage() {
                                 ${lang === "ar" ? "prose-rtl leading-[1.85]" : ""}`}
                   >
                     {doc.effectiveMarkdown ? (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{doc.effectiveMarkdown}</ReactMarkdown>
+                      <ReadingMarkdown
+                        source={doc.effectiveMarkdown}
+                        isRTL={lang === "ar"}
+                      />
                     ) : (
                       <div className="not-prose text-center py-12">
                         <AlertCircle className="mx-auto text-rose-500 mb-2" />
@@ -919,6 +941,7 @@ export default function GuidesPage() {
                     )}
                   </article>
                 </ScrollArea>
+                </div>
               )}
             </>
           )}

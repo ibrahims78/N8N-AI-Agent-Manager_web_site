@@ -4,8 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard, Workflow, MessageSquare, FileText, History,
-  Users, Settings, LogOut, ChevronLeft, ChevronRight, Sun, Moon, User, Package, BookOpen,
+  Users, Settings, LogOut, ChevronLeft, ChevronRight, Sun, Moon, User, Package, BookOpen, Search,
 } from "lucide-react";
+import { useCommandPalette } from "@/components/CommandPalette";
+import { IS_MAC } from "@/hooks/useKeyboardShortcuts";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { apiRequest } from "@/lib/api";
@@ -62,6 +65,23 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden" dir={isRTL ? "rtl" : "ltr"}>
+      {/* Skip-to-content link — invisible until focused with Tab. Lets
+          keyboard / screen-reader users bypass the sidebar nav and jump
+          straight into the page content. */}
+      <a
+        href="#main-content"
+        onClick={(e) => {
+          e.preventDefault();
+          const el = document.getElementById("main-content");
+          if (el) {
+            el.focus({ preventScroll: false });
+            el.scrollIntoView({ block: "start" });
+          }
+        }}
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:start-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-md focus:bg-accent focus:text-accent-foreground focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+      >
+        {isRTL ? "تخطّى إلى المحتوى" : "Skip to content"}
+      </a>
       <motion.aside
         animate={{ width: sidebarCollapsed ? 64 : 240 }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
@@ -86,6 +106,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           {sidebarCollapsed ? (
             <button
               onClick={() => setSidebarCollapsed(false)}
+              aria-label={isRTL ? "توسيع الشريط الجانبي" : "Expand sidebar"}
+              aria-expanded="false"
+              aria-controls="app-sidebar-nav"
               className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center mx-auto hover:bg-accent/80 transition-colors"
               title={t("app.expand")}
             >
@@ -94,6 +117,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           ) : (
             <button
               onClick={() => setSidebarCollapsed(true)}
+              aria-label={isRTL ? "طيّ الشريط الجانبي" : "Collapse sidebar"}
+              aria-expanded="true"
+              aria-controls="app-sidebar-nav"
               className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
             >
               <CollapseIcon size={16} />
@@ -101,7 +127,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           )}
         </div>
 
-        <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
+        <nav
+          id="app-sidebar-nav"
+          aria-label={isRTL ? "التنقّل الرئيسي" : "Main navigation"}
+          className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto"
+        >
           {navItems.map(({ icon: Icon, label, path }) => {
             const isActive = path === "/" ? location === "/" : location.startsWith(path);
             return (
@@ -109,6 +139,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <motion.div
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
+                  role="link"
+                  aria-current={isActive ? "page" : undefined}
+                  aria-label={sidebarCollapsed ? label : undefined}
+                  title={sidebarCollapsed ? label : undefined}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${
                     isActive
                       ? "bg-accent/10 text-accent font-medium"
@@ -154,8 +188,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </h1>
 
           <div className="flex items-center gap-2">
+            <CommandPaletteTrigger isRTL={isRTL} />
             <button
               onClick={toggleLanguage}
+              aria-label={isRTL ? "تبديل اللغة إلى الإنكليزية" : "Switch to Arabic"}
+              title={isRTL ? "تبديل اللغة (⌘J)" : "Toggle language (⌘J)"}
               className="px-3 py-1.5 rounded-md text-xs font-medium border border-border hover:bg-muted transition-colors text-foreground"
             >
               {language === "ar" ? "EN" : "عر"}
@@ -163,6 +200,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
             <button
               onClick={toggleTheme}
+              aria-label={
+                theme === "light"
+                  ? isRTL
+                    ? "تفعيل المظهر الداكن"
+                    : "Switch to dark theme"
+                  : isRTL
+                    ? "تفعيل المظهر الفاتح"
+                    : "Switch to light theme"
+              }
+              title={isRTL ? "تبديل المظهر (⌘.)" : "Toggle theme (⌘.)"}
               className="p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
             >
               {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
@@ -192,10 +239,41 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 overflow-y-auto p-6 focus:outline-none"
+        >
           {children}
         </main>
       </div>
     </div>
+  );
+}
+
+function CommandPaletteTrigger({ isRTL }: { isRTL: boolean }) {
+  const palette = useCommandPalette();
+  const modKey = IS_MAC ? "⌘" : "Ctrl";
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          onClick={() => palette.open()}
+          aria-label={isRTL ? "فتح لوحة الأوامر" : "Open command palette"}
+          className="hidden sm:inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs font-medium border border-border bg-muted/40 text-muted-foreground hover:text-foreground hover:bg-muted transition-default"
+        >
+          <Search size={13} />
+          <span className="hidden md:inline">
+            {isRTL ? "ابحث أو نفّذ…" : "Search or run…"}
+          </span>
+          <kbd className="font-mono text-[10px] bg-background border border-border px-1.5 py-0.5 rounded ms-1 hidden md:inline">
+            {modKey}K
+          </kbd>
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="text-xs">
+        {isRTL ? "لوحة الأوامر" : "Command palette"} · {modKey}K
+      </TooltipContent>
+    </Tooltip>
   );
 }

@@ -1,8 +1,10 @@
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MotionConfig } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConfirmDialogProvider } from "@/components/ConfirmDialogProvider";
+import { CommandPaletteProvider } from "@/components/CommandPalette";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppLayout } from "@/components/Layout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -130,14 +132,23 @@ function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <ConfirmDialogProvider>
-            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-              <AppRoutes />
-            </WouterRouter>
-            <Toaster />
-          </ConfirmDialogProvider>
-        </TooltipProvider>
+        {/* `reducedMotion="user"` makes EVERY framer-motion component honour
+            the OS-level "Reduce motion" preference. This complements the
+            global CSS @media (prefers-reduced-motion: reduce) block in
+            index.css so nothing animates aggressively for users with
+            vestibular sensitivities. */}
+        <MotionConfig reducedMotion="user">
+          <TooltipProvider>
+            <ConfirmDialogProvider>
+              <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+                <CommandPaletteProvider>
+                  <AppRoutes />
+                </CommandPaletteProvider>
+              </WouterRouter>
+              <Toaster />
+            </ConfirmDialogProvider>
+          </TooltipProvider>
+        </MotionConfig>
       </QueryClientProvider>
     </ErrorBoundary>
   );

@@ -275,3 +275,105 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================================
+   Print styles — Phase 7
+   When the user prints/saves a docs page (guides, nodes-catalog,
+   templates), strip the chrome: hide sidebar/topbar/floating UI,
+   force light colours, and let the article take the full page.
+   ============================================================ */
+@media print {
+  /* Hide app chrome that shouldn't appear on paper */
+  aside,
+  header,
+  nav,
+  [data-radix-popper-content-wrapper],
+  [role="dialog"],
+  [data-state="open"][role="tooltip"],
+  .reading-progress-bar,
+  .toc-sidebar {
+    display: none !important;
+  }
+
+  /* Reset main column to full bleed and remove scroll containers */
+  body,
+  html,
+  #root,
+  main {
+    background: #ffffff !important;
+    color: #111111 !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Article body — comfortable column at print sizes */
+  article,
+  .prose {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 11pt;
+    line-height: 1.55;
+    color: #111111 !important;
+  }
+
+  /* Headings get a touch more breathing room and stay together */
+  h1, h2, h3, h4 {
+    color: #000000 !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Links: show URL after the text so paper readers can find them */
+  article a[href]::after,
+  .prose a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #555555;
+  }
+  /* But NOT for in-page anchors — those are noise on paper */
+  article a[href^="#"]::after,
+  .prose a[href^="#"]::after {
+    content: "";
+  }
+
+  /* Code blocks: avoid splitting mid-block when possible */
+  pre, code {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    background: #f5f5f5 !important;
+    color: #111111 !important;
+    border: 1px solid #dddddd !important;
+  }
+
+  /* Tables shouldn't break across pages mid-row */
+  tr, img {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Hide our custom controls inside code blocks (copy buttons, etc) */
+  .code-block-toolbar,
+  button[data-print-hidden] {
+    display: none !important;
+  }
+}
+
+/* ============================================================
+   Focus-visible polish — Phase 7
+   Most components ship their own focus styles via shadcn, but a
+   few native elements (anchors in markdown, ad-hoc buttons) fall
+   through to UA defaults. Provide a consistent ring for those.
+   ============================================================ */
+@layer base {
+  /* Only apply to elements that don't already define their own
+     focus-visible style. shadcn buttons set their own and stay intact. */
+  :where(a, button, [role="button"], [role="link"], summary):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
