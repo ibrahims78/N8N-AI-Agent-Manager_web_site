@@ -42,3 +42,9 @@ id = "FRQF3PvD054uSIoOE0xWg"
 uri = "file://docs/شرح-آلية-عمل-التوثيقات.md"
 type = "text"
 title = "شرح آلية عمل نظام التوثيقات"
+
+[[outputs]]
+id = "48nLwdMvB2bIHqj8PSawE"
+uri = "file://docs/UNIFIED_DESIGN_SYSTEM_AR.md"
+type = "text"
+title = "دراسة البصمة البصرية الموحّدة (UNIFIED_DESIGN_SYSTEM_AR.md)"
