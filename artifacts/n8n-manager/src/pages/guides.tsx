@@ -19,6 +19,7 @@ import {
   Languages, Pencil, Save, X, Copy, Download, CheckCircle2,
   AlertCircle, Clock, FileText, Eye, Trash2, Sparkles,
   PanelLeftClose, PanelLeftOpen, MoreHorizontal, ChevronRight,
+  ZoomIn, ZoomOut,
 } from "lucide-react";
 import { apiRequest } from "@/lib/api";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -117,6 +118,42 @@ export default function GuidesPage() {
 
   // UI state — collapsible sidebar gives a wide reading mode.
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Reading-zoom: multiplier applied to the article's root font-size.
+  // Persisted so the user's preferred reading size sticks across sessions.
+  // The `prose` typography scale uses em units, so changing the root size
+  // scales every element (headings, paragraphs, code, tables) proportionally.
+  const ZOOM_MIN = 0.8;
+  const ZOOM_MAX = 1.6;
+  const ZOOM_STEP = 0.1;
+  const [zoom, setZoom] = useState<number>(() => {
+    if (typeof window === "undefined") return 1;
+    const raw = window.localStorage.getItem("guides:zoom");
+    const n = raw ? parseFloat(raw) : NaN;
+    return Number.isFinite(n) && n >= ZOOM_MIN && n <= ZOOM_MAX ? n : 1;
+  });
+  useEffect(() => {
+    try { window.localStorage.setItem("guides:zoom", String(zoom)); } catch {}
+  }, [zoom]);
+  const zoomIn = () => setZoom((z) => Math.min(ZOOM_MAX, +(z + ZOOM_STEP).toFixed(2)));
+  const zoomOut = () => setZoom((z) => Math.max(ZOOM_MIN, +(z - ZOOM_STEP).toFixed(2)));
+  const zoomReset = () => setZoom(1);
+  const zoomPct = Math.round(zoom * 100);
+
+  // Keyboard shortcuts for the reading-zoom: Ctrl/Cmd  +  · −  · 0
+  // Mirrors the browser's native zoom UX, but scoped to the article only,
+  // so the chrome (toolbar/sidebar) keeps its own size.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      if (e.key === "+" || e.key === "=") { e.preventDefault(); zoomIn(); }
+      else if (e.key === "-" || e.key === "_") { e.preventDefault(); zoomOut(); }
+      else if (e.key === "0") { e.preventDefault(); zoomReset(); }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, []);
 
   const t = (ar: string, en: string) => (isRTL ? ar : en);
 
@@ -675,6 +712,41 @@ export default function GuidesPage() {
 
                 {/* Action bar — icon-only, compact */}
                 <div className="flex items-center gap-0.5 shrink-0">
+                  {/* Reading-zoom controls. Visible whenever a doc is shown
+                      (including in edit-mode preview). Click the % to reset. */}
+                  {!editing && doc.effectiveMarkdown && (
+                    <div className="inline-flex items-center rounded-md border border-border bg-background h-8 me-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={zoomOut}
+                        disabled={zoom <= ZOOM_MIN + 1e-6}
+                        className="h-8 w-7 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed rounded-s-md transition-colors"
+                        title={t("تصغير الخط (Ctrl/Cmd −)", "Zoom out (Ctrl/Cmd −)")}
+                        aria-label={t("تصغير الخط", "Zoom out")}
+                      >
+                        <ZoomOut size={13} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={zoomReset}
+                        className="h-8 px-1.5 text-[10px] font-medium tabular-nums text-muted-foreground hover:text-foreground hover:bg-muted border-x border-border min-w-[40px] text-center transition-colors"
+                        title={t("إعادة الحجم الطبيعي (Ctrl/Cmd 0)", "Reset zoom (Ctrl/Cmd 0)")}
+                        aria-label={t("إعادة الحجم", "Reset zoom")}
+                      >
+                        {zoomPct}%
+                      </button>
+                      <button
+                        type="button"
+                        onClick={zoomIn}
+                        disabled={zoom >= ZOOM_MAX - 1e-6}
+                        className="h-8 w-7 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed rounded-e-md transition-colors"
+                        title={t("تكبير الخط (Ctrl/Cmd +)", "Zoom in (Ctrl/Cmd +)")}
+                        aria-label={t("تكبير الخط", "Zoom in")}
+                      >
+                        <ZoomIn size={13} />
+                      </button>
+                    </div>
+                  )}
                   {!editing && doc.effectiveMarkdown && (
                     <>
                       <Button size="sm" variant="ghost" className="h-8 w-8 p-0" title={t("نسخ","Copy")} onClick={copyMarkdown}>
@@ -737,10 +809,28 @@ export default function GuidesPage() {
                     />
                   </div>
                   <ScrollArea className="bg-muted/10">
-                    <div className="px-3 py-1.5 bg-muted/40 border-b border-border text-[11px] font-medium text-muted-foreground flex items-center gap-1.5 sticky top-0 z-10">
-                      <Eye size={11} /> {t("معاينة","Preview")}
+                    <div className="px-3 py-1.5 bg-muted/40 border-b border-border text-[11px] font-medium text-muted-foreground flex items-center justify-between gap-1.5 sticky top-0 z-10">
+                      <span className="inline-flex items-center gap-1.5">
+                        <Eye size={11} /> {t("معاينة","Preview")}
+                      </span>
+                      {/* Compact zoom controls in the preview header too,
+                          so the editor view stays consistent with reading. */}
+                      <span className="inline-flex items-center rounded-md border border-border bg-background h-6">
+                        <button type="button" onClick={zoomOut} disabled={zoom <= ZOOM_MIN + 1e-6} className="h-6 w-6 flex items-center justify-center hover:bg-muted disabled:opacity-40 rounded-s-md" title={t("تصغير","Zoom out")}>
+                          <ZoomOut size={11} />
+                        </button>
+                        <button type="button" onClick={zoomReset} className="h-6 px-1 text-[9px] font-medium tabular-nums hover:bg-muted border-x border-border min-w-[36px]" title={t("إعادة الحجم","Reset zoom")}>
+                          {zoomPct}%
+                        </button>
+                        <button type="button" onClick={zoomIn} disabled={zoom >= ZOOM_MAX - 1e-6} className="h-6 w-6 flex items-center justify-center hover:bg-muted disabled:opacity-40 rounded-e-md" title={t("تكبير","Zoom in")}>
+                          <ZoomIn size={11} />
+                        </button>
+                      </span>
                     </div>
-                    <article className={`prose prose-sm dark:prose-invert max-w-none p-5 ${lang === "ar" ? "prose-rtl" : ""}`}>
+                    <article
+                      style={{ fontSize: `${zoom * 16}px` }}
+                      className={`prose prose-sm dark:prose-invert max-w-none p-5 ${lang === "ar" ? "prose-rtl" : ""}`}
+                    >
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>{draft || "*(empty)*"}</ReactMarkdown>
                     </article>
                   </ScrollArea>
@@ -749,7 +839,16 @@ export default function GuidesPage() {
                 <ScrollArea className="flex-1">
                   <article
                     dir={lang === "ar" ? "rtl" : "ltr"}
-                    className={`prose prose-sm md:prose-base dark:prose-invert max-w-3xl mx-auto p-6 md:p-8
+                    /* `fontSize` is the single zoom knob: prose's headings,
+                       paragraphs, code, tables, and lists are all sized in
+                       em/rem relative to this root, so they scale together
+                       with no layout drift. We scale max-width by the same
+                       factor so line length stays comfortable when zoomed. */
+                    style={{
+                      fontSize: `${zoom * 16}px`,
+                      maxWidth: `${48 * zoom}rem`,
+                    }}
+                    className={`prose prose-sm md:prose-base dark:prose-invert mx-auto p-6 md:p-8
                                 prose-headings:scroll-mt-16 prose-headings:font-semibold
                                 prose-h1:text-2xl prose-h1:mb-4 prose-h1:pb-2 prose-h1:border-b prose-h1:border-border
                                 prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3 prose-h2:pb-1 prose-h2:border-b prose-h2:border-border/60
@@ -760,7 +859,7 @@ export default function GuidesPage() {
                                 prose-blockquote:border-s-4 prose-blockquote:border-accent/40 prose-blockquote:bg-muted/40 prose-blockquote:py-1 prose-blockquote:not-italic
                                 prose-table:text-sm prose-th:bg-muted/40 prose-td:border-border prose-th:border-border
                                 prose-img:rounded-lg prose-img:border prose-img:border-border
-                                ${lang === "ar" ? "prose-rtl text-[15px] leading-[1.85]" : ""}`}
+                                ${lang === "ar" ? "prose-rtl leading-[1.85]" : ""}`}
                   >
                     {doc.effectiveMarkdown ? (
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>{doc.effectiveMarkdown}</ReactMarkdown>
