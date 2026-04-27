@@ -11,6 +11,12 @@
  *   - نسخ وتنزيل المحتوى
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { ImperativePanelHandle } from "react-resizable-panels";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useTranslation } from "react-i18next";
@@ -116,8 +122,18 @@ export default function GuidesPage() {
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // UI state — collapsible sidebar gives a wide reading mode.
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // UI state — collapsible & resizable sidebar gives a wide reading mode.
+  // We use react-resizable-panels: the toggle button calls collapse()/expand()
+  // on the panel ref, and the panel reports its own state via onCollapse/Expand.
+  // Sizes are persisted via the PanelGroup's autoSaveId.
+  const sidebarPanelRef = useRef<ImperativePanelHandle | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const toggleSidebar = () => {
+    const p = sidebarPanelRef.current;
+    if (!p) return;
+    if (p.isCollapsed()) p.expand();
+    else p.collapse();
+  };
 
   // Reading-zoom: multiplier applied to the article's root font-size.
   // Persisted so the user's preferred reading size sticks across sessions.
@@ -347,15 +363,16 @@ export default function GuidesPage() {
           controls are condensed, dropdownned, or moved into the sidebar. */}
       <div className="border-b border-border bg-card/60 backdrop-blur supports-[backdrop-filter]:bg-card/40">
         <div className="px-3 sm:px-4 h-12 flex items-center gap-2">
-          {/* Sidebar toggle (visible on md+; on mobile the sidebar is always open) */}
+          {/* Sidebar toggle — collapses just the navigation panel; the
+              document content always remains visible. */}
           <Button
             size="sm"
             variant="ghost"
-            className="h-8 w-8 p-0 hidden md:inline-flex"
-            onClick={() => setSidebarOpen((v) => !v)}
-            title={sidebarOpen ? t("إخفاء القائمة", "Hide sidebar") : t("إظهار القائمة", "Show sidebar")}
+            className="h-8 w-8 p-0"
+            onClick={toggleSidebar}
+            title={sidebarCollapsed ? t("إظهار القائمة", "Show sidebar") : t("إخفاء القائمة", "Hide sidebar")}
           >
-            {sidebarOpen ? <PanelLeftClose size={15} /> : <PanelLeftOpen size={15} />}
+            {sidebarCollapsed ? <PanelLeftOpen size={15} /> : <PanelLeftClose size={15} />}
           </Button>
 
           {/* Brand mark */}
@@ -560,21 +577,28 @@ export default function GuidesPage() {
       </div>
 
       {/* ── BODY ─────────────────────────────────────────────────────────
-          Sidebar collapses on demand to give the document full width
-          (reading mode). The grid template responds to `sidebarOpen`. */}
-      <div
-        className={`flex-1 grid grid-cols-1 ${
-          sidebarOpen
-            ? "md:grid-cols-[260px_1fr] lg:grid-cols-[300px_1fr]"
-            : "md:grid-cols-[0_1fr]"
-        } overflow-hidden transition-[grid-template-columns] duration-200`}
+          Resizable two-pane layout: drag the handle to adjust the sidebar
+          width, or click the toggle in the toolbar to fully collapse it.
+          Sizes are persisted between sessions via `autoSaveId`.
+          Works at every viewport width — content always stays visible. */}
+      <ResizablePanelGroup
+        direction="horizontal"
+        autoSaveId="guides-layout"
+        className="flex-1 min-h-0"
       >
-        {/* SIDEBAR */}
-        <ScrollArea
-          className={`${isRTL ? "border-s" : "border-e"} border-border bg-muted/20 ${
-            sidebarOpen ? "" : "md:hidden"
-          }`}
+        {/* SIDEBAR PANEL */}
+        <ResizablePanel
+          ref={sidebarPanelRef}
+          defaultSize={24}
+          minSize={14}
+          maxSize={45}
+          collapsible
+          collapsedSize={0}
+          onCollapse={() => setSidebarCollapsed(true)}
+          onExpand={() => setSidebarCollapsed(false)}
+          className="bg-muted/20"
         >
+          <ScrollArea className="h-full">
           <div className="p-3 space-y-4">
             {loadingList ? (
               <div className="flex items-center justify-center py-12">
@@ -640,10 +664,18 @@ export default function GuidesPage() {
               ))
             )}
           </div>
-        </ScrollArea>
+          </ScrollArea>
+        </ResizablePanel>
 
-        {/* CONTENT */}
-        <div className="flex flex-col overflow-hidden bg-background">
+        {/* Drag handle (with grip) — drag to resize, double-click to collapse */}
+        <ResizableHandle
+          withHandle
+          onDoubleClick={toggleSidebar}
+          className={`${isRTL ? "border-s" : "border-e"} border-border hover:bg-accent/30 transition-colors`}
+        />
+
+        {/* CONTENT PANEL */}
+        <ResizablePanel defaultSize={76} minSize={40} className="flex flex-col overflow-hidden bg-background">
           {loadingDoc ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-2 text-muted-foreground">
               <Loader2 className="animate-spin" />
@@ -882,8 +914,8 @@ export default function GuidesPage() {
               )}
             </>
           )}
-        </div>
-      </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }
