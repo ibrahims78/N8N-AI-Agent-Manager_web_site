@@ -177,3 +177,101 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* =========================================================================
+ * UNIFIED DESIGN SYSTEM TOKENS — added in Phase 1/2 of UNIFIED_DESIGN_SYSTEM_AR
+ * ========================================================================= */
+:root {
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+
+  /* Motion */
+  --motion-fast: 100ms;
+  --motion-normal: 150ms;
+  --motion-slow: 250ms;
+  --motion-slower: 350ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-decel: cubic-bezier(0, 0, 0.2, 1);
+  --ease-accel: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Semantic category colors (used for badges, accents) */
+  --cat-glossary: 199 89% 48%;
+  --cat-workflows: 258 90% 66%;
+  --cat-expressions: 38 92% 50%;
+  --cat-credentials: 160 84% 39%;
+  --cat-hosting: 350 89% 60%;
+  --cat-api: 188 94% 43%;
+}
+
+/* Unified motion utilities */
+@layer utilities {
+  .transition-default {
+    transition: all var(--motion-normal) var(--ease-decel);
+  }
+  .transition-fast {
+    transition: all var(--motion-fast) var(--ease-decel);
+  }
+  .transition-slow {
+    transition: all var(--motion-slow) var(--ease-standard);
+  }
+  .press-feedback {
+    transition: transform 80ms var(--ease-decel);
+  }
+  .press-feedback:active {
+    transform: scale(0.97);
+  }
+}
+
+/* Improved typography for prose (longer-line height + better AR/EN balance) */
+@layer base {
+  .prose {
+    --tw-prose-body-leading: 1.75;
+    line-height: var(--tw-prose-body-leading);
+  }
+  [dir="rtl"] .prose {
+    --tw-prose-body-leading: 1.85;
+  }
+  /* Heading anchor link reveal */
+  .prose h2:hover .heading-anchor,
+  .prose h3:hover .heading-anchor {
+    opacity: 1;
+  }
+  .heading-anchor {
+    opacity: 0;
+    margin-inline-start: 8px;
+    color: var(--color-muted-foreground);
+    font-weight: normal;
+    transition: opacity var(--motion-normal) var(--ease-decel);
+  }
+}
+
+/* Honor reduced motion preference globally */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

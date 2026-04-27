@@ -26,6 +26,7 @@ import {
   Languages,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE, getAuthHeader } from "@/lib/api";
 
@@ -240,16 +241,22 @@ export function ContentRefreshButtons({
   const { refresh, refreshing } = ctrl;
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      <Button
-        size="sm"
-        variant="ghost"
-        onClick={() => refresh({ translate: supportsTranslation, dryRun: true })}
-        disabled={refreshing}
-        title="Dry-run: discover what would change without any DB write or AI usage"
-      >
-        {refreshing ? <Loader2 size={14} className="animate-spin me-1.5" /> : <Search size={14} className="me-1.5" />}
-        {labels.check ?? "Check for updates"}
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => refresh({ translate: supportsTranslation, dryRun: true })}
+            disabled={refreshing}
+          >
+            {refreshing ? <Loader2 size={14} className="animate-spin me-1.5" /> : <Search size={14} className="me-1.5" />}
+            {labels.check ?? "Check for updates"}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-xs text-xs">
+          Dry-run: discover what would change without any DB write or AI usage
+        </TooltipContent>
+      </Tooltip>
       <Button
         size="sm"
         variant="outline"

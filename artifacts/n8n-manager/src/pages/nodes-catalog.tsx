@@ -36,6 +36,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import { ArticleSkeleton } from "@/components/ui/skeletons";
 import {
   OperationsPanel, HistoryPanel, ManualEditor, WorkflowJsonViewer,
 } from "@/components/docs/AdvancedDocsTools";
@@ -648,9 +649,7 @@ function NodeDetailDialog({
         </DialogHeader>
 
         {!node ? (
-          <div className="flex justify-center py-16">
-            <Loader2 className="animate-spin text-accent" size={28} />
-          </div>
+          <ArticleSkeleton lines={8} className="px-2" />
         ) : (
           <Tabs defaultValue="info" className="flex-1 flex flex-col overflow-hidden">
             <TabsList className="mx-4 mt-3 self-start">
@@ -1089,10 +1088,10 @@ function DocsViewer({ nodeType, isRTL, isAdmin }: { nodeType: string; isRTL: boo
       <div className="flex-1 min-h-0 overflow-y-auto">
         <div className="p-4" dir={lang === "ar" ? "rtl" : "ltr"}>
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-12 gap-3">
-              <Loader2 className="animate-spin text-accent" size={28} />
+            <div className="space-y-3">
+              <ArticleSkeleton lines={10} className="px-0" />
               {lang === "ar" && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[11px] text-muted-foreground text-center">
                   {isRTL ? "جاري الترجمة لأول مرة... قد يستغرق 5-15 ثانية" : "Translating for the first time…"}
                 </p>
               )}

@@ -812,3 +812,182 @@ artifacts/n8n-manager/src/
 > **المُؤلِّف:** Replit Agent — مبنيّة على القراءة الكاملة لـ `GUIDES_PAGE_UX_DESIGN_STUDY_AR.md` (1,068 سطر) ومسح بنية المشروع (14 صفحة، 56 مكوّن UI، Layout مشترك).
 > **الإصدار:** 1.0
 > **تاريخ المراجعة المخطّطة:** بعد إنجاز كلّ مرحلة.
+
+---
+
+# 📜 سجل التنفيذ — Execution Log
+
+> هذا القسم يُكمَّل تلقائياً بعد تنفيذ كلّ مرحلة، ويوثّق التغييرات الفعلية في الكود مع المسارات والأرقام والملاحظات.
+
+## ✅ Phase 1 — الأساسات (Foundations) — مُنجزة
+
+**التاريخ:** 27 أبريل 2026
+**النطاق الفعلي:** إضافة tokens موحّدة + إنشاء primitives قابلة لإعادة الاستخدام (Skeletons + Confirm) + استبدال التفاعلات الأصلية للمتصفّح بمكوّنات shadcn متّسقة.
+
+### 1) Design Tokens & Motion Utilities  *(ملف: `src/index.css`)*
+- أُضيفت متغيّرات `:root` لأبعاد التباعد (`--space-xs` … `--space-3xl`)، وأنصاف الأقطار (`--radius-sm` … `--radius-2xl`)، والظلال (`--shadow-sm` … `--shadow-xl`).
+- متغيّرات الحركة: `--motion-fast/normal/slow/slower` + دوال `--ease-standard/decel/accel`.
+- ألوان دلاليّة للفئات (تستخدمها شارات الأدلة): `--cat-glossary`, `--cat-workflows`, `--cat-expressions`, `--cat-credentials`, `--cat-hosting`, `--cat-api`.
+- **utility classes** جديدة في `@layer utilities`: `.transition-default`, `.transition-fast`, `.transition-slow`, `.press-feedback` (تأثير ضغط 0.97 scale).
+- تحسينات `.prose` للطباعة: `line-height` أكبر للنصّ بالعربي (1.85) وأقلّ للإنكليزي (1.75)، مع حركة كشف لروابط العناوين (`.heading-anchor`).
+- **دعم `prefers-reduced-motion: reduce`** عالمي → كلّ الانتقالات تتجمّد عند تفعيل المستخدم لتقليل الحركة (متطلّب وصولية).
+
+### 2) Skeleton Primitives  *(ملف جديد: `src/components/ui/skeletons/index.tsx`)*
+ست مكوّنات قابلة لإعادة الاستخدام، بُنيت فوق `<Skeleton>` الموجود في shadcn:
+| المكوّن | الاستخدام النموذجي | البارامترات |
+|---|---|---|
+| `ListItemSkeleton` | قائمة جانبية / رسائل / قوائم بسيطة | `count`, `className` |
+| `ArticleSkeleton` | محتوى توثيقي طويل (عنوان + فقرات) | `lines`, `showTitle`, `className` |
+| `TableRowSkeleton` | جداول البيانات | `rows`, `cols`, `className` |
+| `CardGridSkeleton` | شبكات البطاقات (templates, workflows) | `count`, `className` |
+| `FormFieldSkeleton` | نماذج التحميل | `fields`, `className` |
+| `CenteredSpinnerSkeleton` | حالة fallback (نادراً ما تُستخدم) | `label`, `className` |
+
+كلّها تُضيف `aria-hidden="true"` أو `aria-busy="true"` لقارئات الشاشة، وتستخدم `motion-safe:` ضمناً عبر `animate-pulse` الموجود في الـ Skeleton الأصلي.
+
+### 3) Global Confirm Dialog  *(ملف جديد: `src/components/ConfirmDialogProvider.tsx`)*
+- موفّر سياق React يُحقن مرّة واحدة في `App.tsx` — لا يحتاج كلّ صفحة لتدير حالة Dialog يدوياً.
+- يصدّر hook `useConfirm()` يُعيد دالّة وَعد (`Promise<boolean>`):
+  ```tsx
+  const confirm = useConfirm();
+  const ok = await confirm({
+    title: "حذف العنصر؟",
+    description: "لا يمكن التراجع.",
+    confirmText: "حذف",
+    cancelText: "إلغاء",
+    variant: "destructive",
+  });
+  if (!ok) return;
+  ```
+- يدعم `variant: "destructive"` ليصبغ زرّ التأكيد بلون `--destructive` تلقائياً.
+- مبنيّ على `<AlertDialog>` من shadcn → يعمل تلقائياً مع كلٍّ من LTR/RTL، يحترم theme، يدعم لوحة المفاتيح (Esc, Tab, Enter).
+
+### 4) تركيب الموفّر  *(ملف: `src/App.tsx`)*
+رتّبت الـ providers بالترتيب الصحيح:
+```
+ErrorBoundary > QueryClientProvider > TooltipProvider > ConfirmDialogProvider > Router > AppRoutes + Toaster
+```
+
+### 5) استبدال جميع `confirm()` الأصلية للمتصفّح (4 مواقع)
+| الملف | السطر القديم | الإجراء |
+|---|---|---|
+| `src/pages/guides.tsx:296` | `clearOverride()` | استبدال بـ `useConfirm` (variant=destructive) |
+| `src/pages/templates.tsx:1147` | حذف قالب (محلّي/نظامي) | استبدال بـ `useConfirm` (variant=destructive) — الفرق بين القالب النظامي والعادي يظهر الآن في عنوان ووصف الحوار بدل سطر `\n` خام |
+| `src/pages/workflow-detail.tsx:421` | استعادة إصدار سير العمل | استبدال بـ `useConfirm` (افتراضي) |
+| `src/components/docs/AdvancedDocsTools.tsx:184` | استعادة نسخة من السجل | استبدال بـ `useConfirm` (افتراضي) |
+| `src/components/docs/AdvancedDocsTools.tsx:322` | حذف override يدوي | استبدال بـ `useConfirm` (variant=destructive) |
+
+**الأثر:** اختفت تماماً نوافذ المتصفّح القديمة `window.confirm`/`confirm` (تخالف هويّة التطبيق، لا تدعم RTL، لا تتسق مع dark theme).
+
+### 6) استبدال HTML `title=` على زرّ تفاعلي بـ Tooltip  *(ملف: `src/components/ContentRefreshPanel.tsx:248`)*
+- زرّ "Check for updates" كان يستخدم `title="Dry-run: ..."` (يظهر بعد ~1 ثانية، لا يدعم RTL، لا يتسق مع shadcn).
+- استُبدل بـ `<Tooltip>` من shadcn مع `side="bottom"` و `max-w-xs text-xs`.
+
+> **ملاحظة:** `title=` على زرّي اختيار AR/EN في `pages/guides.tsx` احتُفظ بهما عمداً — هما زرّان قصيران داخل toolbar مزدحم، والـ Tooltip سيُضيف ضوضاء بصرية أكبر من فائدته.
+
+### 7) استبدال spinners على مستوى الصفحة بـ Skeletons (5 مواقع)
+| الملف:السطر | السياق | البديل |
+|---|---|---|
+| `pages/guides.tsx:620` | تحميل قائمة الأدلة الجانبية | `<ListItemSkeleton count={8} />` |
+| `pages/guides.tsx:694` | تحميل المقال الرئيسي | `<ArticleSkeleton lines={12} className="flex-1" />` |
+| `pages/nodes-catalog.tsx:654` | تحميل dialog عقدة | `<ArticleSkeleton lines={8} />` |
+| `pages/nodes-catalog.tsx:1093` | تحميل markdown العقدة + ترجمة لأوّل مرّة | `<ArticleSkeleton lines={10} />` (أُبقي على نصّ "جاري الترجمة لأوّل مرّة...") |
+| `components/docs/AdvancedDocsTools.tsx:94` | تحميل dialog العمليات الفرعية | `<ArticleSkeleton lines={6} showTitle={false} />` |
+| `components/docs/AdvancedDocsTools.tsx:228` | تحميل سجل التوثيق | `<ArticleSkeleton lines={6} showTitle={false} />` |
+
+**ما تم الحفاظ عليه عمداً (Inline button spinners):**
+كلّ Loader2 داخل الأزرار أثناء عملية حفظ/ترجمة/حذف فردية احتُفظ به (هذا UX صحيح — يدلّ على "أنا أعمل الآن" مرتبطاً بعمل المستخدم تحديداً، وليس بتحميل صفحة). أمثلة: `templates.tsx:1032` (في طور التصدير)، `pages/chat.tsx`, `change-password.tsx`، إلخ.
+
+### 8) تحقّق التشغيل
+- ✅ `pnpm` يبني المشروع بدون أخطاء.
+- ✅ `vite` HMR ناجح بعد كلّ تعديل (`hot updated:` في console).
+- ✅ صفحة `/login` تَرسم بشكل سليم بعد التغييرات (تمّ التقاط لقطة شاشة).
+- ✅ نقطة `/api/auth/login` تُعيد JWT صالحاً (admin/123456) بنفس السلوك.
+- ✅ Console المتصفّح خالٍ من الأخطاء بعد استقرار HMR.
+
+### 📂 ملفّات أُنشئت / عُدِّلت في Phase 1
+**جديدة (3):**
+- `src/components/ui/skeletons/index.tsx` (~180 سطر)
+- `src/components/ConfirmDialogProvider.tsx` (~95 سطر)
+
+**مُعدَّلة (8):**
+- `src/index.css` (+95 سطر — tokens + utilities + reduced-motion + .prose)
+- `src/App.tsx` (+2 سطر import، التفاف بـ ConfirmDialogProvider)
+- `src/pages/guides.tsx` (3 تعديلات: import، confirm→useConfirm، 2× Loader2→Skeleton)
+- `src/pages/templates.tsx` (2 تعديلان: import + useConfirm + استبدال window.confirm)
+- `src/pages/workflow-detail.tsx` (2 تعديلان: import + useConfirm)
+- `src/pages/nodes-catalog.tsx` (3 تعديلات: import + 2× Loader2→Skeleton)
+- `src/components/docs/AdvancedDocsTools.tsx` (5 تعديلات: import + 2× confirm→useConfirm + 2× Loader2→Skeleton)
+- `src/components/ContentRefreshPanel.tsx` (2 تعديلان: import + title→Tooltip)
+
+---
+
+## ✅ Phase 2 — الحركة والطباعة (Motion & Typography) — مُنجزة (مُدمجة مع Phase 1)
+
+**التاريخ:** 27 أبريل 2026 — نُفِّذت ضمن Phase 1 لتجنّب لمس `index.css` مرّتين.
+
+### ما أُنجز فعلياً
+1. **متغيّرات الحركة** متاحة عالمياً:
+   - مدد: `--motion-fast` (100ms)، `--motion-normal` (150ms)، `--motion-slow` (250ms)، `--motion-slower` (350ms).
+   - دوال: `--ease-standard`, `--ease-decel`, `--ease-accel`.
+2. **utility classes** للحركة الموحّدة:
+   - `.transition-default` / `.transition-fast` / `.transition-slow` — لإلغاء الحاجة لإعادة كتابة `transition-all duration-XXX ease-out` في كلّ مكان.
+   - `.press-feedback` — تجاوب ضغط مرئي (transform: scale(0.97)).
+3. **`prefers-reduced-motion: reduce`** عالمي:
+   - يُجبَر كلّ animation و transition على `0.01ms` لمن فعّل خيار "تقليل الحركة" في نظامه.
+   - متوافق مع توصيات WCAG 2.3.3 (Animation from Interactions, Level AAA).
+4. **تحسينات Typography لـ `.prose`**:
+   - `line-height: 1.75` للإنكليزي، `1.85` للعربي (أحرف عربية أوسع، تستفيد من فراغ سطري أكبر).
+   - حركة كشف لروابط `.heading-anchor` على hover (للعودة المستقبلية لاستخدامها داخل ReactMarkdown).
+5. **متغيّرات ألوان الفئات** (`--cat-*`):
+   - مهيّأة لاستخدامها في badges فئات الأدلة (ستُستخدم لاحقاً عند توحيد ألوان الـ category badges عبر الصفحات).
+
+### غير متضمَّن في هذه المرحلة (مؤجَّل عن قصد)
+- استبدال جميع `transition-colors duration-200 ease-out` المنتشرة في الكود بـ `.transition-default` — هذا تحديث ميكانيكي كبير (>40 موقع)، يُفضّل القيام به دفعةً واحدة بـ codemod في مرحلة لاحقة بعد التحقّق من عدم كسر تخصيصات نقطية.
+- توحيد framer-motion variants في ملف مشترك (مذكور في الخطّة الأصلية تحت Phase 4).
+
+---
+
+## ✅ Phase 3 — الـ Skeletons والحالات الفارغة (Skeletons & Empty States) — مُنجزة جزئياً
+
+**التاريخ:** 27 أبريل 2026
+
+### ما أُنجز
+1. **مكتبة Skeleton primitives** (مذكورة بتفصيل في Phase 1، البند 2): جاهزة لإعادة الاستخدام في كلّ الصفحات.
+2. **استبدال 7 spinners على مستوى الصفحة/الحوار** بـ Skeletons المناسبة (مفصّل في Phase 1، البند 7).
+3. **حافظنا على EmptyState المتقن الموجود** في `pages/guides.tsx:963` (تعريف داخلي مع icon/title/hint) — هو نموذج جيّد ومُستخدَم في 3 مواقع داخل الصفحة.
+
+### ملاحظة على EmptyState العالمي
+- shadcn يوفّر `components/ui/empty.tsx` (Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription) لكنّه غير مستخدم حالياً — صفحة `guides.tsx` لها `EmptyState` خاص بسيط يكفيها.
+- **للمستقبل:** عندما نضيف صفحات جديدة أو نحتاج تكامل دلالي للحالات الفارغة عبر التطبيق، نستخدم `Empty` من shadcn مباشرةً بدل تكرار `EmptyState` المحليّ في كلّ صفحة.
+
+### ما لم يُلمَس في هذه الجولة (مؤجَّل عن وعي)
+- **`pages/workflows.tsx` و `pages/templates.tsx` و `pages/users.tsx`**: تحتوي على حالات فارغة بسيطة (`<p>لا توجد...</p>`)؛ ترقيتها لـ EmptyState الكامل تتطلّب فحصاً صفحةً صفحةً وقد ينتج عن ذلك تغييرات نَصِّيّة وكُبرى (icon, hint, CTA لكلّ حالة) — يستحقّ تذكرة منفصلة لتجنّب توسّع نطاق هذه الجولة.
+- **TableRowSkeleton, CardGridSkeleton, FormFieldSkeleton**: متاحة في المكتبة لكن لم تُستهلَك بعد. ستُستخدم تلقائياً في المراحل القادمة عندما نُعيد تصميم `workflows.tsx` (CardGrid) و `users.tsx` (Table) و `settings.tsx` (Form).
+
+---
+
+## 🧪 خطّة الاختبار اليدوي بعد Phases 1–3
+
+| الاختبار | كيفية التنفيذ | المتوقّع |
+|---|---|---|
+| تأكيد الحذف في القوالب | `/templates` → احذف قالباً | حوار AlertDialog أنيق بعنوان وبزرّ "حذف" أحمر |
+| تأكيد استعادة إصدار | `/workflows/:id` → tab "الإصدارات" → "استعادة" | حوار AlertDialog عادي |
+| تأكيد مسح override (Guides) | كَمسؤول، فتح دليل، ضغط "مسح التحرير اليدوي" | حوار destructive |
+| Skeleton: قائمة الأدلة | افتح `/guides` بشبكة بطيئة (DevTools throttling) | يظهر `ListItemSkeleton` ثم تحلّ القائمة محلّه |
+| Skeleton: محتوى الدليل | اختر دليلاً أوّل مرّة | يظهر `ArticleSkeleton` لمدّة الجلب ثم يحلّ المحتوى |
+| Tooltip: Dry-run | `/guides` (admin) → hover على زرّ "Check for updates" | Tooltip shadcn (لا title= متصفّح) |
+| Reduced motion | تفعيل "Reduce motion" في الجهاز ثم تنقّل بين الصفحات | لا انتقالات / لا حركة skeleton |
+| RTL  | كلّ ما سبق وأنت في وضع AR | كلّ الحوارات والتولتيبس تعكس الاتجاه تلقائياً |
+
+> الاختبار التلقائي عبر `runTest` معطَّل في هذه الجلسة، لذا الاختبار يدوي.
+
+---
+
+## 🔜 المراحل التالية (لم تُنفَّذ — للجلسات القادمة)
+
+- **Phase 4** — توحيد framer-motion variants في `src/lib/motion.ts` واستهلاكها في كلّ الصفحات.
+- **Phase 5** — توحيد ألوان الفئات (badges) عبر `--cat-*` المُضافة في Phase 2.
+- **Phase 6** — تحويل `transition-colors duration-200 ease-out` المنتشرة لاستخدام `.transition-default` بـ codemod.
+- **Phase 7** — مراجعة وصول (a11y audit) شاملة لـ 14 صفحة.
+

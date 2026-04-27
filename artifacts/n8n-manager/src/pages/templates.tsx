@@ -15,6 +15,7 @@ import { getAuthHeader, API_BASE } from "@/lib/api";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/components/ConfirmDialogProvider";
 
 interface WorkflowNode {
   id: string;
@@ -1078,6 +1079,7 @@ export default function TemplatesPage() {
   const isRTL = language === "ar";
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const confirmDialog = useConfirm();
   const { user } = useAuthStore();
   const isAdmin = user?.role === "admin";
 
@@ -1142,16 +1144,25 @@ export default function TemplatesPage() {
   const handleDeleteTemplate = async (template: LocalTemplate) => {
     const isSystemTemplate = template.isSystem;
     let confirmMsg: string;
-    if (isSystemTemplate) {
-      confirmMsg = isRTL
-        ? `⚠️ تحذير: "${template.name}" هو قالب نظامي!\n\nسيُعاد إنشاؤه تلقائياً عند إعادة تشغيل الخادم.\nهل أنت متأكد من الحذف المؤقت؟`
-        : `⚠️ Warning: "${template.name}" is a system template!\n\nIt will be recreated automatically on server restart.\nAre you sure you want to temporarily delete it?`;
-    } else {
-      confirmMsg = isRTL
-        ? `هل أنت متأكد من حذف القالب "${template.name}"؟`
-        : `Are you sure you want to delete "${template.name}"?`;
-    }
-    const confirmed = window.confirm(confirmMsg);
+    const confirmed = await confirmDialog({
+      title: isSystemTemplate
+        ? isRTL
+          ? `⚠️ "${template.name}" قالب نظامي`
+          : `⚠️ "${template.name}" is a system template`
+        : isRTL
+        ? `حذف القالب "${template.name}"؟`
+        : `Delete template "${template.name}"?`,
+      description: isSystemTemplate
+        ? isRTL
+          ? "سيُعاد إنشاؤه تلقائياً عند إعادة تشغيل الخادم. هل أنت متأكد من الحذف المؤقت؟"
+          : "It will be recreated automatically on server restart. Are you sure you want to temporarily delete it?"
+        : isRTL
+        ? "لا يمكن التراجع عن هذا الإجراء."
+        : "This action cannot be undone.",
+      confirmText: isRTL ? "حذف" : "Delete",
+      cancelText: isRTL ? "إلغاء" : "Cancel",
+      variant: "destructive",
+    });
     if (!confirmed) return;
     setDeletingTemplateId(template.id);
     try {

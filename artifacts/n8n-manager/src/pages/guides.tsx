@@ -34,6 +34,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/components/ConfirmDialogProvider";
+import { ListItemSkeleton, ArticleSkeleton } from "@/components/ui/skeletons";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -97,6 +99,7 @@ export default function GuidesPage() {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
   const { toast } = useToast();
+  const confirmDialog = useConfirm();
   const isAdmin = useAuthStore((s) => s.user?.role === "admin");
   const appLang = useAppStore((s) => s.language);
   // Independent per-page language for guide *content* (defaults to the app
@@ -288,7 +291,17 @@ export default function GuidesPage() {
 
   async function clearOverride() {
     if (!doc) return;
-    if (!confirm(t("مسح التحرير اليدوي والعودة للنص الأصلي؟", "Clear manual edit and revert to upstream?"))) return;
+    const ok = await confirmDialog({
+      title: t("مسح التحرير اليدوي", "Clear manual edit"),
+      description: t(
+        "هل تريد العودة إلى النص الأصلي من المصدر؟",
+        "Revert to the original upstream content?",
+      ),
+      confirmText: t("مسح", "Clear"),
+      cancelText: t("إلغاء", "Cancel"),
+      variant: "destructive",
+    });
+    if (!ok) return;
     try {
       await apiRequest(
         `/catalog/docs-advanced/guides/${doc.slug}/manual?lang=${lang}`,
@@ -601,9 +614,7 @@ export default function GuidesPage() {
           <ScrollArea className="h-full">
           <div className="p-3 space-y-4">
             {loadingList ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="animate-spin text-muted-foreground" />
-              </div>
+              <ListItemSkeleton count={8} />
             ) : list.length === 0 ? (
               <EmptyState
                 icon={<BookOpen size={28} />}
@@ -677,10 +688,7 @@ export default function GuidesPage() {
         {/* CONTENT PANEL */}
         <ResizablePanel defaultSize={76} minSize={40} className="flex flex-col overflow-hidden bg-background">
           {loadingDoc ? (
-            <div className="flex-1 flex flex-col items-center justify-center gap-2 text-muted-foreground">
-              <Loader2 className="animate-spin" />
-              <span className="text-xs">{t("جاري التحميل...","Loading...")}</span>
-            </div>
+            <ArticleSkeleton lines={12} className="flex-1" />
           ) : !doc ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center px-6">
               <div className="w-14 h-14 rounded-full bg-muted/60 flex items-center justify-center text-muted-foreground">

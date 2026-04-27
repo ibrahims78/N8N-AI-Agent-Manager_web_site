@@ -21,6 +21,8 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/components/ConfirmDialogProvider";
+import { ArticleSkeleton } from "@/components/ui/skeletons";
 
 type Lang = "en" | "ar";
 
@@ -87,7 +89,7 @@ export function OperationsPanel({
           </DialogHeader>
           <ScrollArea className="h-[65vh]">
             {loading ? (
-              <div className="flex items-center justify-center py-12"><Loader2 className="animate-spin" /></div>
+              <ArticleSkeleton lines={6} showTitle={false} className="p-4" />
             ) : !ops || ops.length === 0 ? (
               <p className="text-sm text-muted-foreground p-4">
                 {isRTL ? "لم يتم العثور على عمليات قابلة للاستخراج لهذه العقدة." : "No extractable operations for this node."}
@@ -176,7 +178,15 @@ export function HistoryPanel({
   }
 
   async function rollback(e: HistoryEntry) {
-    if (!confirm(isRTL ? "استعادة هذه النسخة كتعديل يدوي؟" : "Restore this version as a manual override?")) return;
+    const ok = await confirmDialog({
+      title: isRTL ? "استعادة هذه النسخة" : "Restore this version",
+      description: isRTL
+        ? "سيتم حفظها كتعديل يدوي يطغى على المصدر الأصلي."
+        : "It will be saved as a manual override that takes precedence over the upstream source.",
+      confirmText: isRTL ? "استعادة" : "Restore",
+      cancelText: isRTL ? "إلغاء" : "Cancel",
+    });
+    if (!ok) return;
     try {
       await apiRequest(`/catalog/docs-advanced/history/${e.id}/rollback`, { method: "POST" });
       toast({ title: isRTL ? "تمت الاستعادة ✅" : "Restored ✅" });
@@ -213,7 +223,7 @@ export function HistoryPanel({
           </DialogHeader>
           <ScrollArea className="h-[60vh]">
             {loading ? (
-              <div className="flex items-center justify-center py-12"><Loader2 className="animate-spin" /></div>
+              <ArticleSkeleton lines={6} showTitle={false} className="p-4" />
             ) : !entries || entries.length === 0 ? (
               <p className="text-sm text-muted-foreground p-4">
                 {isRTL ? "لا توجد إصدارات سابقة محفوظة لهذه العقدة بعد." : "No previous versions saved yet."}
@@ -306,7 +316,16 @@ export function ManualEditor({
   }
 
   async function clearOverride() {
-    if (!confirm(isRTL ? "حذف التعديل اليدوي والعودة للنسخة الأصلية؟" : "Clear manual override and revert to original?")) return;
+    const ok = await confirmDialog({
+      title: isRTL ? "حذف التعديل اليدوي" : "Clear manual override",
+      description: isRTL
+        ? "هل تريد العودة إلى النسخة الأصلية من المصدر؟"
+        : "Revert to the original upstream version?",
+      confirmText: isRTL ? "حذف" : "Clear",
+      cancelText: isRTL ? "إلغاء" : "Cancel",
+      variant: "destructive",
+    });
+    if (!ok) return;
     try {
       await apiRequest(`/catalog/docs-advanced/${encodeURIComponent(nodeType)}/manual?lang=${lang}`, { method: "DELETE" });
       toast({ title: isRTL ? "تم الحذف ✅" : "Cleared ✅" });

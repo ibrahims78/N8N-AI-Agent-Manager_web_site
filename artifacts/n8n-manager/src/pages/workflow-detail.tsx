@@ -11,6 +11,7 @@ import { useAppStore } from "@/stores/useAppStore";
 import { getAuthHeader, apiRequest, API_BASE } from "@/lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/components/ConfirmDialogProvider";
 
 interface Workflow {
   id: string;
@@ -164,6 +165,7 @@ export default function WorkflowDetailPage() {
   const authHeader = getAuthHeader();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const confirmDialog = useConfirm();
 
   const [activeTab, setActiveTab] = useState<"executions" | "versions">("executions");
   const [executionFilter, setExecutionFilter] = useState<"all" | "success" | "error">("all");
@@ -415,10 +417,18 @@ export default function WorkflowDetailPage() {
                             {isRTL ? "معاينة" : "Preview"}
                           </button>
                           <button
-                            onClick={() => {
-                              if (confirm(isRTL ? `هل تريد استعادة الإصدار ${ver.versionNumber}؟` : `Restore version ${ver.versionNumber}?`)) {
-                                restoreMutation.mutate(ver.id);
-                              }
+                            onClick={async () => {
+                              const ok = await confirmDialog({
+                                title: isRTL
+                                  ? `استعادة الإصدار ${ver.versionNumber}؟`
+                                  : `Restore version ${ver.versionNumber}?`,
+                                description: isRTL
+                                  ? "سيتم الكتابة فوق الحالة الحالية لسير العمل."
+                                  : "This will overwrite the current workflow state.",
+                                confirmText: isRTL ? "استعادة" : "Restore",
+                                cancelText: isRTL ? "إلغاء" : "Cancel",
+                              });
+                              if (ok) restoreMutation.mutate(ver.id);
                             }}
                             disabled={restoreMutation.isPending}
                             className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-accent/10 text-accent text-xs hover:bg-accent/20 transition-colors disabled:opacity-50"
