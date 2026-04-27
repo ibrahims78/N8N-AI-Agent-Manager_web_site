@@ -18,7 +18,6 @@
  */
 import path from "path";
 import { promises as fs } from "fs";
-import { fileURLToPath } from "url";
 import { db, nodeCatalogTable, nodeDocsTable } from "@workspace/db";
 import { and, eq, sql } from "drizzle-orm";
 import { logger } from "../lib/logger";
@@ -44,9 +43,8 @@ const DOCS_REPO_RAW = "https://raw.githubusercontent.com/n8n-io/n8n-docs/main";
  * Docs root at:       `<root>/lib/n8n-nodes-catalog/docs`
  *      ⇒ go up 5 levels.
  */
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const LOCAL_DOCS_ROOT = path.resolve(__dirname, "../../../../lib/n8n-nodes-catalog/docs");
+import { CATALOG_DOCS_ROOT } from "../lib/catalogPaths";
+const LOCAL_DOCS_ROOT = CATALOG_DOCS_ROOT;
 
 export interface NodeDocsKey {
   nodeType: string;

@@ -39,7 +39,6 @@
  */
 import fs from "fs/promises";
 import path from "path";
-import { fileURLToPath } from "url";
 import { logger } from "../lib/logger";
 
 const DOCS_REPO_RAW = "https://raw.githubusercontent.com/n8n-io/n8n-docs/main";
@@ -53,10 +52,8 @@ const DOCS_SITE_BASE = "https://docs.n8n.io";
  * root. See nodeDocs.adapter.ts for the same pattern. Phase 3 of
  * unified-content-cache-plan.md.
  */
-const LOCAL_DOCS_DIR = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../../../../lib/n8n-nodes-catalog/docs",
-);
+import { CATALOG_DOCS_ROOT } from "../lib/catalogPaths";
+const LOCAL_DOCS_DIR = CATALOG_DOCS_ROOT;
 const ASSETS_DIR = path.join(LOCAL_DOCS_DIR, "_assets");
 const META_DIR = path.join(LOCAL_DOCS_DIR, "_meta");
 const TREE_CACHE_FILE = path.join(META_DIR, "_repo-tree.json");

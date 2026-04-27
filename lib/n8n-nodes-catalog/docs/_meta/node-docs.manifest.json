@@ -1,7 +1,7 @@
 {
   "kind": "node-docs",
   "version": 1,
-  "updatedAt": "2026-04-26T22:08:30.763Z",
+  "updatedAt": "2026-04-27T21:03:26.922Z",
   "entries": {
     "n8n-nodes-base.set:en": {
       "slug": "n8n-nodes-base.set",
@@ -29,6 +29,15 @@
       "etag": "W/\"1b41761bf3777fd97c28fe71fdeec086bf0f117173cad5552ff10fe180ab7ef3\"",
       "fetchedAt": "2026-04-26T22:08:30.762Z",
       "bytes": 1875
+    },
+    "n8n-nodes-base.aggregate:en": {
+      "slug": "n8n-nodes-base.aggregate",
+      "language": "en",
+      "sourceUrl": "https://raw.githubusercontent.com/n8n-io/n8n-docs/main/docs/integrations/builtin/core-nodes/n8n-nodes-base.aggregate.md",
+      "sha": "2351d9307e28ad69fb8fb9f72e44e05c25092259",
+      "etag": "W/\"b13f31dc6757b447113421a84db5928386618e49efd1e175e3b0e2c9df5aef94\"",
+      "fetchedAt": "2026-04-27T21:03:26.922Z",
+      "bytes": 3307
     }
   }
 }

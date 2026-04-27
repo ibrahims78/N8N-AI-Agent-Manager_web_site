@@ -19,7 +19,6 @@
  */
 import fs from "fs/promises";
 import path from "path";
-import { fileURLToPath } from "url";
 import { db, nodeCatalogTable, nodeDocsTable, systemSettingsTable } from "@workspace/db";
 import { eq, and, sql } from "drizzle-orm";
 import { logger } from "../lib/logger";
@@ -43,18 +42,11 @@ const DOCS_API = "https://api.github.com/repos/n8n-io/n8n-docs/contents";
 
 /**
  * Local docs directory — sibling to the n8n-nodes-catalog package.
- * Resolved relative to *this file* so the path is correct whether the server
- * is launched from `artifacts/api-server` (workflow) or from the monorepo root
- * (tests / scripts). Fixes the latent `process.cwd()` brittleness that
- * surfaced in Phase 3 of unified-content-cache-plan.md.
- *
- * This file: `<root>/artifacts/api-server/src/services/nodeDocs.service.ts`
- * Target:    `<root>/lib/n8n-nodes-catalog/docs` ⇒ go up 4 levels.
+ * Resolved via the workspace package root so the path is correct in both
+ * dev (`tsx`) and production (esbuild bundle in `dist/`).
  */
-const LOCAL_DOCS_DIR = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../../../../lib/n8n-nodes-catalog/docs",
-);
+import { CATALOG_DOCS_ROOT } from "../lib/catalogPaths";
+const LOCAL_DOCS_DIR = CATALOG_DOCS_ROOT;
 
 export type DocLang = "en" | "ar";
 

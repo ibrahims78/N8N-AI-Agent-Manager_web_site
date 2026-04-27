@@ -44,7 +44,8 @@ import { promises as fs } from "fs";
 const DOCS_REPO_RAW = "https://raw.githubusercontent.com/n8n-io/n8n-docs/main";
 
 /** المجلد المحلّي لحفظ نُسخ الأدلة (مثل توثيقات العقد). */
-const LOCAL_GUIDES_DIR = path.resolve(process.cwd(), "../../lib/n8n-nodes-catalog/guides");
+import { CATALOG_GUIDES_ROOT } from "../lib/catalogPaths";
+const LOCAL_GUIDES_DIR = CATALOG_GUIDES_ROOT;
 
 async function saveGuideToFile(slug: string, lang: DocLang, markdown: string): Promise<void> {
   const dir = path.join(LOCAL_GUIDES_DIR, lang);
