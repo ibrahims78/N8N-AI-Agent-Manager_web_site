@@ -18,6 +18,7 @@ import {
   BookOpen, Loader2, RefreshCw, Search, ExternalLink, Folder,
   Languages, Pencil, Save, X, Copy, Download, CheckCircle2,
   AlertCircle, Clock, FileText, Eye, Trash2, Sparkles,
+  PanelLeftClose, PanelLeftOpen, MoreHorizontal, ChevronRight,
 } from "lucide-react";
 import { apiRequest } from "@/lib/api";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -27,8 +28,15 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   useContentRefresh,
-  ContentRefreshButtons,
   ContentRefreshStrip,
 } from "@/components/ContentRefreshPanel";
 
@@ -106,6 +114,9 @@ export default function GuidesPage() {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
+
+  // UI state — collapsible sidebar gives a wide reading mode.
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const t = (ar: string, en: string) => (isRTL ? ar : en);
 
@@ -293,107 +304,213 @@ export default function GuidesPage() {
 
   return (
     <div className="h-full flex flex-col bg-background" dir={isRTL ? "rtl" : "ltr"}>
-      {/* ── HEADER ───────────────────────────────────────────────────── */}
-      <div className="border-b border-border bg-gradient-to-b from-muted/40 to-background">
-        <div className="px-5 py-4 flex flex-col gap-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-accent/10 text-accent flex items-center justify-center">
-                <BookOpen size={18} />
-              </div>
-              <div>
-                <h1 className="text-base font-semibold leading-tight">
-                  {t("أدلة n8n العامة", "n8n General Guides")}
-                </h1>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {t(
-                    "Glossary وWorkflows وExpressions والاستضافة وAPI — جميعها في مكان واحد.",
-                    "Glossary, Workflows, Expressions, Hosting & API — all in one place."
-                  )}
-                </p>
-              </div>
+      {/* ── COMPACT TOOLBAR ─────────────────────────────────────────────
+          A single, slim row that surfaces *all* controls without eating
+          vertical space. The data (the actual document) is the star —
+          controls are condensed, dropdownned, or moved into the sidebar. */}
+      <div className="border-b border-border bg-card/60 backdrop-blur supports-[backdrop-filter]:bg-card/40">
+        <div className="px-3 sm:px-4 h-12 flex items-center gap-2">
+          {/* Sidebar toggle (visible on md+; on mobile the sidebar is always open) */}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 w-8 p-0 hidden md:inline-flex"
+            onClick={() => setSidebarOpen((v) => !v)}
+            title={sidebarOpen ? t("إخفاء القائمة", "Hide sidebar") : t("إظهار القائمة", "Show sidebar")}
+          >
+            {sidebarOpen ? <PanelLeftClose size={15} /> : <PanelLeftOpen size={15} />}
+          </Button>
+
+          {/* Brand mark */}
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-accent/20 to-accent/5 text-accent flex items-center justify-center shrink-0">
+              <BookOpen size={14} />
             </div>
-            <div className="flex-1" />
-            {/* Per-page language toggle for guide content (EN ↔ AR). */}
-            <div
-              className="inline-flex items-center rounded-md border border-border bg-background p-0.5 text-xs font-medium"
-              role="group"
-              aria-label={t("لغة الأدلة", "Guides language")}
-            >
-              <button
-                type="button"
-                onClick={() => setLang("ar")}
-                className={`px-2.5 py-1 rounded-[5px] transition-colors flex items-center gap-1 ${
-                  lang === "ar" ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted"
-                }`}
-                aria-pressed={lang === "ar"}
-                title={t("عرض الأدلة بالعربية", "Show guides in Arabic")}
-              >
-                <Languages size={12} />
-                <span>AR</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setLang("en")}
-                className={`px-2.5 py-1 rounded-[5px] transition-colors flex items-center gap-1 ${
-                  lang === "en" ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted"
-                }`}
-                aria-pressed={lang === "en"}
-                title={t("عرض الأدلة بالإنجليزية", "Show guides in English")}
-              >
-                <Languages size={12} />
-                <span>EN</span>
-              </button>
-            </div>
-            <ContentRefreshButtons
-              ctrl={refreshCtrl}
-              isAdmin={isAdmin}
-              supportsTranslation
-              labels={{
-                check: t("تحقق من التحديثات", "Check for updates"),
-                fetchEn: t("جلب الكل (EN)", "Fetch all (EN)"),
-                fetchAndTranslate: t("جلب + ترجمة AR", "Fetch + Translate AR"),
-              }}
-            />
+            <h1 className="text-sm font-semibold leading-tight truncate">
+              {t("أدلة n8n", "n8n Guides")}
+            </h1>
           </div>
 
-          {/* Stats */}
+          {/* Inline stat chips — all key numbers at a glance, on one line. */}
           {stats && (
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2.5">
-              <StatCard icon={<FileText size={14} />} label={t("الإجمالي","Total")} value={stats.total} tone="muted" />
-              <StatCard icon={<CheckCircle2 size={14} />} label={t("إنجليزي","English")} value={`${stats.en}/${stats.total}`} tone="blue" sub={pct(stats.en, stats.total)} />
-              <StatCard icon={<Languages size={14} />} label={t("عربي","Arabic")} value={`${stats.ar}/${stats.total}`} tone="emerald" sub={pct(stats.ar, stats.total)} />
-              <StatCard icon={<Pencil size={14} />} label={t("تعديل يدوي","Overrides")} value={stats.overrides} tone="amber" />
-              <StatCard icon={<Clock size={14} />} label={t("آخر تحديث","Last updated")} value={stats.lastUpdated ? fmtDate(stats.lastUpdated).split(",")[0] : "—"} tone="muted" small />
+            <div className="hidden lg:flex items-center gap-1 ms-2 ps-2 border-s border-border/60">
+              <StatChip
+                icon={<FileText size={11} />}
+                label={t("الإجمالي", "Total")}
+                value={stats.total}
+                tone="muted"
+              />
+              <StatChip
+                icon={<CheckCircle2 size={11} />}
+                label="EN"
+                value={`${stats.en}`}
+                sub={pct(stats.en, stats.total)}
+                tone="blue"
+              />
+              <StatChip
+                icon={<Languages size={11} />}
+                label="AR"
+                value={`${stats.ar}`}
+                sub={pct(stats.ar, stats.total)}
+                tone="emerald"
+              />
+              {stats.overrides > 0 && (
+                <StatChip
+                  icon={<Pencil size={11} />}
+                  label={t("تحرير", "Edits")}
+                  value={stats.overrides}
+                  tone="amber"
+                />
+              )}
             </div>
           )}
 
-          {/* Search */}
-          <div className="relative max-w-2xl">
-            <Search size={15} className={`absolute ${isRTL ? "right-3" : "left-3"} top-1/2 -translate-y-1/2 text-muted-foreground`} />
+          {/* Spacer */}
+          <div className="flex-1" />
+
+          {/* Global search — compact, expands on focus */}
+          <div className="relative w-44 sm:w-56 md:w-64 lg:w-72">
+            <Search size={13} className={`absolute ${isRTL ? "right-2.5" : "left-2.5"} top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none`} />
             <input
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              placeholder={t("ابحث في عناوين ومحتوى الأدلة...", "Search guide titles and content...")}
-              className={`w-full bg-background border border-border rounded-lg ${isRTL ? "pr-10 pl-10" : "pl-10 pr-10"} py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition`}
+              placeholder={t("بحث في الأدلة...", "Search guides...")}
+              className={`w-full bg-background border border-border rounded-md ${isRTL ? "pr-8 pl-8" : "pl-8 pr-8"} h-8 text-xs focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition`}
             />
             {filter && (
               <button
                 onClick={() => setFilter("")}
-                className={`absolute ${isRTL ? "left-2" : "right-2"} top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground`}
+                className={`absolute ${isRTL ? "left-1.5" : "right-1.5"} top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted text-muted-foreground`}
                 aria-label="clear"
               >
-                <X size={14} />
+                <X size={12} />
               </button>
             )}
             {searching && (
-              <Loader2 size={14} className={`absolute ${isRTL ? "left-9" : "right-9"} top-1/2 -translate-y-1/2 animate-spin text-muted-foreground`} />
+              <Loader2 size={12} className={`absolute ${isRTL ? "left-7" : "right-7"} top-1/2 -translate-y-1/2 animate-spin text-muted-foreground`} />
             )}
           </div>
+
+          {/* Per-page language toggle (compact pill) */}
+          <div
+            className="inline-flex items-center rounded-md border border-border bg-background p-0.5 text-[11px] font-medium shrink-0"
+            role="group"
+            aria-label={t("لغة الأدلة", "Guides language")}
+          >
+            <button
+              type="button"
+              onClick={() => setLang("ar")}
+              className={`px-2 py-1 rounded-[4px] transition-colors ${
+                lang === "ar" ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted"
+              }`}
+              aria-pressed={lang === "ar"}
+              title={t("عرض الأدلة بالعربية", "Show guides in Arabic")}
+            >
+              AR
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang("en")}
+              className={`px-2 py-1 rounded-[4px] transition-colors ${
+                lang === "en" ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted"
+              }`}
+              aria-pressed={lang === "en"}
+              title={t("عرض الأدلة بالإنجليزية", "Show guides in English")}
+            >
+              EN
+            </button>
+          </div>
+
+          {/* Admin: refresh actions tucked into a dropdown to keep toolbar slim */}
+          {isAdmin && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 gap-1.5"
+                  disabled={refreshCtrl.refreshing}
+                  title={t("إجراءات المسؤول", "Admin actions")}
+                >
+                  {refreshCtrl.refreshing
+                    ? <Loader2 size={13} className="animate-spin" />
+                    : <RefreshCw size={13} />}
+                  <span className="hidden sm:inline text-xs">{t("تحديث", "Refresh")}</span>
+                  <MoreHorizontal size={12} className="opacity-60" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-60">
+                <DropdownMenuLabel className="text-[11px]">
+                  {t("إجراءات المحتوى", "Content actions")}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => refreshCtrl.refresh({ translate: true, dryRun: true })}
+                  disabled={refreshCtrl.refreshing}
+                  className="text-xs gap-2"
+                >
+                  <Search size={13} className="text-sky-600 dark:text-sky-400" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium">{t("تحقق من التحديثات", "Check for updates")}</div>
+                    <div className="text-[10px] text-muted-foreground">
+                      {t("بدون كتابة على القاعدة أو استدعاء AI", "No DB writes or AI calls")}
+                    </div>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => refreshCtrl.refresh({ translate: false })}
+                  disabled={refreshCtrl.refreshing}
+                  className="text-xs gap-2"
+                >
+                  <RefreshCw size={13} />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium">{t("جلب الكل (EN)", "Fetch all (EN)")}</div>
+                    <div className="text-[10px] text-muted-foreground">
+                      {t("تحديث المصدر الإنجليزي فقط", "Update English source only")}
+                    </div>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => refreshCtrl.refresh({ translate: true })}
+                  disabled={refreshCtrl.refreshing}
+                  className="text-xs gap-2"
+                >
+                  <Languages size={13} className="text-emerald-600 dark:text-emerald-400" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium">{t("جلب + ترجمة AR", "Fetch + Translate AR")}</div>
+                    <div className="text-[10px] text-muted-foreground">
+                      {t("يستهلك مفاتيح OpenAI/Gemini", "Uses OpenAI/Gemini keys")}
+                    </div>
+                  </div>
+                </DropdownMenuItem>
+                {stats?.lastUpdated && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <div className="px-2 py-1.5 text-[10px] text-muted-foreground flex items-center gap-1.5">
+                      <Clock size={10} />
+                      {t("آخر تحديث:", "Last updated:")} {fmtDate(stats.lastUpdated)}
+                    </div>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
+        {/* Mini stats row — only on small screens where they don't fit in the toolbar */}
+        {stats && (
+          <div className="lg:hidden px-3 sm:px-4 pb-2 flex items-center gap-1.5 overflow-x-auto">
+            <StatChip icon={<FileText size={11} />} label={t("الإجمالي","Total")} value={stats.total} tone="muted" />
+            <StatChip icon={<CheckCircle2 size={11} />} label="EN" value={`${stats.en}`} sub={pct(stats.en, stats.total)} tone="blue" />
+            <StatChip icon={<Languages size={11} />} label="AR" value={`${stats.ar}`} sub={pct(stats.ar, stats.total)} tone="emerald" />
+            {stats.overrides > 0 && (
+              <StatChip icon={<Pencil size={11} />} label={t("تحرير","Edits")} value={stats.overrides} tone="amber" />
+            )}
+          </div>
+        )}
+
         {/* Phase 6B: shared multi-segment progress strip wired to the
-            unified content API. Visual parity preserved. */}
+            unified content API. Only renders while a refresh is active. */}
         <ContentRefreshStrip
           ctrl={refreshCtrl}
           labels={{
@@ -405,10 +522,22 @@ export default function GuidesPage() {
         />
       </div>
 
-      {/* ── BODY ─────────────────────────────────────────────────────── */}
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] overflow-hidden">
+      {/* ── BODY ─────────────────────────────────────────────────────────
+          Sidebar collapses on demand to give the document full width
+          (reading mode). The grid template responds to `sidebarOpen`. */}
+      <div
+        className={`flex-1 grid grid-cols-1 ${
+          sidebarOpen
+            ? "md:grid-cols-[260px_1fr] lg:grid-cols-[300px_1fr]"
+            : "md:grid-cols-[0_1fr]"
+        } overflow-hidden transition-[grid-template-columns] duration-200`}
+      >
         {/* SIDEBAR */}
-        <ScrollArea className={`${isRTL ? "border-s" : "border-e"} border-border bg-muted/20`}>
+        <ScrollArea
+          className={`${isRTL ? "border-s" : "border-e"} border-border bg-muted/20 ${
+            sidebarOpen ? "" : "md:hidden"
+          }`}
+        >
           <div className="p-3 space-y-4">
             {loadingList ? (
               <div className="flex items-center justify-center py-12">
@@ -500,90 +629,97 @@ export default function GuidesPage() {
             </div>
           ) : (
             <>
-              {/* Doc header */}
-              <div className="border-b border-border bg-muted/20 px-5 py-3">
-                <div className="flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`text-[10px] px-2 py-0.5 rounded border font-medium ${categoryColors[doc.category] || "border-border"}`}>
-                        {categoryLabels[doc.category] || doc.category}
-                      </span>
-                      {doc.manualOverrideMarkdown && (
-                        <Badge variant="outline" className="text-[10px] gap-1 border-amber-500/40 text-amber-700 dark:text-amber-400">
-                          <Pencil size={10} /> {t("تحرير يدوي","Manual edit")}
-                        </Badge>
-                      )}
-                      {doc.error && (
-                        <Badge variant="outline" className="text-[10px] gap-1 border-rose-500/40 text-rose-700 dark:text-rose-400">
-                          <AlertCircle size={10} /> {t("خطأ","Error")}
-                        </Badge>
-                      )}
-                    </div>
-                    <h2 className="font-semibold text-base mt-1.5 leading-snug">{doc.title}</h2>
-                    <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-1.5 flex-wrap">
-                      <span className="inline-flex items-center gap-1">
-                        <Clock size={10} />
-                        {t("آخر تحديث:","Updated:")} {fmtDate(doc.updatedAt)}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <FileText size={10} />
-                        {(doc.effectiveMarkdown?.length ?? 0).toLocaleString()} {t("حرف","chars")}
-                      </span>
-                      {doc.sourceUrl && (
-                        <a href={doc.sourceUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-accent transition">
-                          <ExternalLink size={10} /> {t("المصدر","source")}
-                        </a>
-                      )}
-                    </div>
+              {/* Doc header — slim, content-focused, with breadcrumb context.
+                  Action bar is icon-only (with tooltips) to maximize the
+                  reading area. */}
+              <div className="border-b border-border bg-card/30 px-4 sm:px-6 py-2.5 flex items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  {/* Breadcrumb: Category › Title (replaces the old badge row) */}
+                  <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground mb-0.5">
+                    <Folder size={10} />
+                    <span className={`font-medium ${(categoryColors[doc.category] || "").includes("text-") ? categoryColors[doc.category].split(" ").find((c) => c.startsWith("text-")) ?? "" : ""}`}>
+                      {categoryLabels[doc.category] || doc.category}
+                    </span>
+                    <ChevronRight size={10} className={isRTL ? "rotate-180" : ""} />
+                    <span className="truncate">{doc.title}</span>
                   </div>
-
-                  {/* Action bar */}
-                  <div className="flex items-center gap-1">
-                    {!editing && doc.effectiveMarkdown && (
-                      <>
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0" title={t("نسخ","Copy")} onClick={copyMarkdown}>
-                          <Copy size={14} />
-                        </Button>
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0" title={t("تنزيل .md","Download .md")} onClick={downloadMarkdown}>
-                          <Download size={14} />
-                        </Button>
-                      </>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="font-semibold text-[15px] leading-tight truncate">{doc.title}</h2>
+                    {doc.manualOverrideMarkdown && (
+                      <Badge variant="outline" className="text-[10px] h-5 gap-1 border-amber-500/40 text-amber-700 dark:text-amber-400">
+                        <Pencil size={9} /> {t("تحرير يدوي","Manual")}
+                      </Badge>
                     )}
-                    {isAdmin && !editing && (
-                      <>
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0" title={t("إعادة الجلب","Re-fetch")} onClick={() => loadDoc(doc.slug, true)}>
-                          <RefreshCw size={14} />
-                        </Button>
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0" title={t("تحرير يدوي","Edit manually")} onClick={startEdit}>
-                          <Pencil size={14} />
-                        </Button>
-                        {doc.manualOverrideMarkdown && (
-                          <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700" title={t("مسح التحرير اليدوي","Clear manual edit")} onClick={clearOverride}>
-                            <Trash2 size={14} />
-                          </Button>
-                        )}
-                      </>
+                    {doc.error && (
+                      <Badge variant="outline" className="text-[10px] h-5 gap-1 border-rose-500/40 text-rose-700 dark:text-rose-400">
+                        <AlertCircle size={9} /> {t("خطأ","Error")}
+                      </Badge>
                     )}
-                    {editing && (
-                      <>
-                        <Button size="sm" variant="outline" onClick={() => setEditing(false)} disabled={saving}>
-                          <X size={14} className="me-1" /> {t("إلغاء","Cancel")}
-                        </Button>
-                        <Button size="sm" onClick={saveOverride} disabled={saving}>
-                          {saving ? <Loader2 size={14} className="animate-spin me-1" /> : <Save size={14} className="me-1" />}
-                          {t("حفظ","Save")}
-                        </Button>
-                      </>
+                  </div>
+                  <div className="flex items-center gap-3 text-[10px] text-muted-foreground mt-1 flex-wrap">
+                    <span className="inline-flex items-center gap-1">
+                      <Clock size={9} />
+                      {fmtDate(doc.updatedAt)}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <FileText size={9} />
+                      {(doc.effectiveMarkdown?.length ?? 0).toLocaleString()} {t("حرف","chars")}
+                    </span>
+                    {doc.sourceUrl && (
+                      <a href={doc.sourceUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-accent transition">
+                        <ExternalLink size={9} /> {t("المصدر","source")}
+                      </a>
                     )}
                   </div>
                 </div>
-                {doc.manualOverrideMarkdown && doc.manualOverrideAt && !editing && (
-                  <p className="text-[10px] text-amber-700 dark:text-amber-400 mt-2 inline-flex items-center gap-1">
-                    <Eye size={10} />
-                    {t("هذه نسخة محرَّرة يدوياً — تجاوز للترجمة الآلية. آخر تعديل:", "Manually edited version — overrides the auto translation. Last edit:")} {fmtDate(doc.manualOverrideAt)}
-                  </p>
-                )}
+
+                {/* Action bar — icon-only, compact */}
+                <div className="flex items-center gap-0.5 shrink-0">
+                  {!editing && doc.effectiveMarkdown && (
+                    <>
+                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0" title={t("نسخ","Copy")} onClick={copyMarkdown}>
+                        <Copy size={14} />
+                      </Button>
+                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0" title={t("تنزيل .md","Download .md")} onClick={downloadMarkdown}>
+                        <Download size={14} />
+                      </Button>
+                    </>
+                  )}
+                  {isAdmin && !editing && (
+                    <>
+                      <div className="w-px h-5 bg-border mx-1" />
+                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0" title={t("إعادة الجلب","Re-fetch")} onClick={() => loadDoc(doc.slug, true)}>
+                        <RefreshCw size={14} />
+                      </Button>
+                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0" title={t("تحرير يدوي","Edit manually")} onClick={startEdit}>
+                        <Pencil size={14} />
+                      </Button>
+                      {doc.manualOverrideMarkdown && (
+                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700" title={t("مسح التحرير اليدوي","Clear manual edit")} onClick={clearOverride}>
+                          <Trash2 size={14} />
+                        </Button>
+                      )}
+                    </>
+                  )}
+                  {editing && (
+                    <>
+                      <Button size="sm" variant="outline" onClick={() => setEditing(false)} disabled={saving}>
+                        <X size={14} className="me-1" /> {t("إلغاء","Cancel")}
+                      </Button>
+                      <Button size="sm" onClick={saveOverride} disabled={saving}>
+                        {saving ? <Loader2 size={14} className="animate-spin me-1" /> : <Save size={14} className="me-1" />}
+                        {t("حفظ","Save")}
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
+              {doc.manualOverrideMarkdown && doc.manualOverrideAt && !editing && (
+                <div className="bg-amber-500/5 border-b border-amber-500/20 px-4 sm:px-6 py-1.5 text-[10px] text-amber-700 dark:text-amber-400 inline-flex items-center gap-1.5">
+                  <Eye size={10} />
+                  {t("هذه نسخة محرَّرة يدوياً — تجاوز للترجمة الآلية. آخر تعديل:", "Manually edited version — overrides the auto translation. Last edit:")} {fmtDate(doc.manualOverrideAt)}
+                </div>
+              )}
 
               {/* Body */}
               {editing ? (
@@ -660,36 +796,35 @@ function pct(num: number, den: number): string {
   return `${Math.round((num / den) * 100)}%`;
 }
 
-function StatCard({
-  icon, label, value, tone = "muted", sub, small,
+/**
+ * Compact inline stat pill used in the slim toolbar.
+ * Replaces the old big-card grid: icon + label + value + optional %, all
+ * on one line so 4–5 stats fit comfortably next to the title.
+ */
+function StatChip({
+  icon, label, value, tone = "muted", sub,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string | number;
   tone?: "muted" | "blue" | "emerald" | "amber";
   sub?: string;
-  small?: boolean;
 }) {
   const tones: Record<string, string> = {
-    muted: "border-border bg-muted/30",
-    blue: "border-blue-500/30 bg-blue-500/5",
-    emerald: "border-emerald-500/30 bg-emerald-500/5",
-    amber: "border-amber-500/30 bg-amber-500/5",
-  };
-  const iconTone: Record<string, string> = {
-    muted: "text-muted-foreground",
-    blue: "text-blue-600 dark:text-blue-400",
-    emerald: "text-emerald-600 dark:text-emerald-400",
-    amber: "text-amber-600 dark:text-amber-400",
+    muted: "border-border/70 bg-muted/40 text-foreground",
+    blue: "border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-300",
+    emerald: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+    amber: "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300",
   };
   return (
-    <div className={`rounded-lg border px-3 py-2 ${tones[tone]}`}>
-      <div className={`flex items-center gap-1.5 text-[11px] ${iconTone[tone]}`}>
-        {icon}
-        <span className="font-medium">{label}</span>
-      </div>
-      <div className={`mt-1 font-semibold tabular-nums ${small ? "text-xs" : "text-lg"}`}>{value}</div>
-      {sub && <div className="text-[10px] text-muted-foreground mt-0.5">{sub}</div>}
+    <div
+      className={`inline-flex items-center gap-1.5 rounded-md border px-2 h-7 text-[11px] font-medium tabular-nums whitespace-nowrap ${tones[tone]}`}
+      title={sub ? `${label} · ${value} (${sub})` : `${label} · ${value}`}
+    >
+      <span className="opacity-80">{icon}</span>
+      <span className="opacity-70">{label}</span>
+      <span className="font-semibold">{value}</span>
+      {sub && <span className="opacity-60 text-[10px]">· {sub}</span>}
     </div>
   );
 }
