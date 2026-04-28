@@ -48,3 +48,9 @@ id = "48nLwdMvB2bIHqj8PSawE"
 uri = "file://docs/UNIFIED_DESIGN_SYSTEM_AR.md"
 type = "text"
 title = "دراسة البصمة البصرية الموحّدة (UNIFIED_DESIGN_SYSTEM_AR.md)"
+
+[[outputs]]
+id = "Nwc9DuSkiMS4Rm-6Li-7q"
+uri = "file://docs/AI_ASSISTANT_ROADMAP_AR.md"
+type = "text"
+title = "خارطة طريق تطوير المساعد الذكي — N8N AI Agent Manager"
